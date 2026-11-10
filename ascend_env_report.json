@@ -1,0 +1,693 @@
+{
+  "schema_version": 1,
+  "time_utc": "2026-11-10T11:24:08.635672+00:00",
+  "expected": {
+    "device": "Ascend950PR_9579",
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "system": {
+    "os": "Linux",
+    "release": "5.4.0-144-generic",
+    "machine": "x86_64",
+    "python": "3.12.15 (main, Oct 13 2026, 16:52:04) [GCC 15.3.0]",
+    "executable": "/root/miniconda3/envs/zwh/bin/python",
+    "cpu_count": 256
+  },
+  "environment": {
+    "ASCEND_HOME_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+    "ASCEND_TOOLKIT_HOME": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+    "ASCEND_OPP_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp",
+    "ASCEND_AICPU_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+    "ASCEND_RT_VISIBLE_DEVICES": "4",
+    "LD_LIBRARY_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/lib64:/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/lib64/plugin/opskernel:/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/lib64/plugin/nnengine:/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/x86_64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver",
+    "PYTHONPATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/python/site-packages:/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe:",
+    "CONDA_PREFIX": "/root/miniconda3/envs/zwh",
+    "CC": "/root/miniconda3/envs/zwh/bin/x86_64-conda-linux-gnu-cc",
+    "CXX": "/root/miniconda3/envs/zwh/bin/x86_64-conda-linux-gnu-c++"
+  },
+  "packages": [
+    {
+      "name": "apache-tvm-ffi",
+      "version": "0.1.12",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "asc_op_compile_base",
+      "version": "0.1.0"
+    },
+    {
+      "name": "asc_opc_tool",
+      "version": "0.1.0"
+    },
+    {
+      "name": "auto_tune",
+      "version": "0.1.0"
+    },
+    {
+      "name": "build",
+      "version": "1.6.1"
+    },
+    {
+      "name": "cann_ops_nn",
+      "version": "1.0.1"
+    },
+    {
+      "name": "cann_ops_transformer",
+      "version": "1.0.0"
+    },
+    {
+      "name": "cannsim",
+      "version": "0.1.0"
+    },
+    {
+      "name": "cloudpickle",
+      "version": "3.1.2"
+    },
+    {
+      "name": "cmake",
+      "version": "4.4.4"
+    },
+    {
+      "name": "cuda-bindings",
+      "version": "13.4.4"
+    },
+    {
+      "name": "cuda-pathfinder",
+      "version": "1.8.4"
+    },
+    {
+      "name": "cuda-toolkit",
+      "version": "13.0.3.0"
+    },
+    {
+      "name": "Cython",
+      "version": "3.3.0"
+    },
+    {
+      "name": "dataflow",
+      "version": "0.0.1"
+    },
+    {
+      "name": "decorator",
+      "version": "5.2.1"
+    },
+    {
+      "name": "deep_gemm",
+      "version": "0.1.1+3a35326"
+    },
+    {
+      "name": "deep_gemm",
+      "version": "0.1.1+local"
+    },
+    {
+      "name": "es_cv",
+      "version": "1.0.0"
+    },
+    {
+      "name": "es_hccl",
+      "version": "1.0.0"
+    },
+    {
+      "name": "es_math",
+      "version": "1.0.0"
+    },
+    {
+      "name": "es_nn",
+      "version": "1.0.0"
+    },
+    {
+      "name": "es_transformer",
+      "version": "1.0.0"
+    },
+    {
+      "name": "execnet",
+      "version": "2.1.2"
+    },
+    {
+      "name": "filelock",
+      "version": "4.2.4"
+    },
+    {
+      "name": "fsspec",
+      "version": "2026.9.0"
+    },
+    {
+      "name": "ge-py",
+      "version": "0.0.1"
+    },
+    {
+      "name": "hccl",
+      "version": "0.1.0"
+    },
+    {
+      "name": "hixl",
+      "version": "0.0.1"
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.1"
+    },
+    {
+      "name": "Jinja2",
+      "version": "3.1.6"
+    },
+    {
+      "name": "llm_datadist",
+      "version": "0.0.1"
+    },
+    {
+      "name": "llm_datadist_v1",
+      "version": "0.0.1"
+    },
+    {
+      "name": "MarkupSafe",
+      "version": "3.0.4"
+    },
+    {
+      "name": "mindstudio-kl",
+      "version": "26.2.0"
+    },
+    {
+      "name": "mindstudio-kpp",
+      "version": "26.2.0"
+    },
+    {
+      "name": "mindstudio-opgen",
+      "version": "26.0.0"
+    },
+    {
+      "name": "mindstudio-opgen",
+      "version": "26.2.0"
+    },
+    {
+      "name": "mindstudio-opst",
+      "version": "26.0.0"
+    },
+    {
+      "name": "mindstudio-opst",
+      "version": "26.2.0"
+    },
+    {
+      "name": "ml_dtypes",
+      "version": "0.6.0"
+    },
+    {
+      "name": "mpmath",
+      "version": "1.3.0"
+    },
+    {
+      "name": "ms_service_profiler",
+      "version": "26.0.0"
+    },
+    {
+      "name": "msboost",
+      "version": "26.2.0"
+    },
+    {
+      "name": "msobjdump",
+      "version": "0.1.0"
+    },
+    {
+      "name": "mspti",
+      "version": "26.2.0"
+    },
+    {
+      "name": "networkx",
+      "version": "3.7"
+    },
+    {
+      "name": "ninja",
+      "version": "1.13.2"
+    },
+    {
+      "name": "numpy",
+      "version": "2.5.4",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "nvidia-cublas",
+      "version": "13.1.1.3"
+    },
+    {
+      "name": "nvidia-cuda-cupti",
+      "version": "13.0.85"
+    },
+    {
+      "name": "nvidia-cuda-nvrtc",
+      "version": "13.0.88"
+    },
+    {
+      "name": "nvidia-cuda-runtime",
+      "version": "13.0.96"
+    },
+    {
+      "name": "nvidia-cudnn-cu13",
+      "version": "9.20.0.48"
+    },
+    {
+      "name": "nvidia-cufft",
+      "version": "12.0.0.61"
+    },
+    {
+      "name": "nvidia-cufile",
+      "version": "1.15.1.6"
+    },
+    {
+      "name": "nvidia-curand",
+      "version": "10.4.0.35"
+    },
+    {
+      "name": "nvidia-cusolver",
+      "version": "12.0.4.66"
+    },
+    {
+      "name": "nvidia-cusparse",
+      "version": "12.6.3.3"
+    },
+    {
+      "name": "nvidia-cusparselt-cu13",
+      "version": "0.8.1"
+    },
+    {
+      "name": "nvidia-nccl-cu13",
+      "version": "2.29.7"
+    },
+    {
+      "name": "nvidia-nvjitlink",
+      "version": "13.4.92"
+    },
+    {
+      "name": "nvidia-nvshmem-cu13",
+      "version": "3.4.5"
+    },
+    {
+      "name": "nvidia-nvtx",
+      "version": "13.0.85"
+    },
+    {
+      "name": "op_compile_tool",
+      "version": "0.1.0"
+    },
+    {
+      "name": "opc_tool",
+      "version": "0.1.0"
+    },
+    {
+      "name": "optype_collector",
+      "version": "0.1.0"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3"
+    },
+    {
+      "name": "pip",
+      "version": "26.2.2"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.7.0"
+    },
+    {
+      "name": "psutil",
+      "version": "7.2.2"
+    },
+    {
+      "name": "ptoas",
+      "version": "0.66"
+    },
+    {
+      "name": "pybind11",
+      "version": "3.1.0"
+    },
+    {
+      "name": "Pygments",
+      "version": "2.21.0"
+    },
+    {
+      "name": "pyproject_hooks",
+      "version": "1.3.3"
+    },
+    {
+      "name": "pypto",
+      "version": "0.2.1"
+    },
+    {
+      "name": "pytest",
+      "version": "9.1.1",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "pytest-repeat",
+      "version": "0.9.4",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "pytest-xdist",
+      "version": "3.8.0",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "PyYAML",
+      "version": "6.0.3"
+    },
+    {
+      "name": "regex",
+      "version": "2024.11.6"
+    },
+    {
+      "name": "schedule_search",
+      "version": "0.0.1"
+    },
+    {
+      "name": "scipy",
+      "version": "1.15.3"
+    },
+    {
+      "name": "setuptools",
+      "version": "84.2.1"
+    },
+    {
+      "name": "setuptools-scm",
+      "version": "10.3.4"
+    },
+    {
+      "name": "show_kernel_debug_data",
+      "version": "0.1.0"
+    },
+    {
+      "name": "superkernel",
+      "version": "0.1.0"
+    },
+    {
+      "name": "sympy",
+      "version": "1.14.0"
+    },
+    {
+      "name": "te",
+      "version": "0.4.0"
+    },
+    {
+      "name": "tile_kernels",
+      "version": "0.1.dev7+gc1cf914a8",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "tilelang",
+      "version": "0.1.15+cpu.gita7cb753d",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "torch",
+      "version": "2.13.0+cpu",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "torch_c_dlpack_ext",
+      "version": "0.1.5",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "torch_npu",
+      "version": "2.13.0",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.1"
+    },
+    {
+      "name": "tree-sitter",
+      "version": "0.26.0"
+    },
+    {
+      "name": "tree-sitter-cpp",
+      "version": "0.23.4"
+    },
+    {
+      "name": "triton",
+      "version": "3.7.1",
+      "location": "/root/miniconda3/envs/zwh/lib/python3.12/site-packages"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "vcs-versioning",
+      "version": "2.6.0"
+    },
+    {
+      "name": "wheel",
+      "version": "0.48.0"
+    },
+    {
+      "name": "z3-solver",
+      "version": "4.15.4.0"
+    }
+  ],
+  "commands": {
+    "uname -a": {
+      "command": [
+        "uname",
+        "-a"
+      ],
+      "returncode": 0,
+      "stdout": "Linux ubuntu162 5.4.0-144-generic #161-Ubuntu SMP Fri Feb 3 14:49:04 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux\n",
+      "stderr": ""
+    },
+    "lscpu": {
+      "command": [
+        "lscpu"
+      ],
+      "returncode": 0,
+      "stdout": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   52 bits physical, 57 bits virtual\nCPU(s):                          256\nOn-line CPU(s) list:             0-255\nThread(s) per core:              2\nCore(s) per socket:              64\nSocket(s):                       2\nNUMA node(s):                    2\nVendor ID:                       AuthenticAMD\nCPU family:                      26\nModel:                           2\nModel name:                      AMD EPYC 9575F 64-Core Processor\nStepping:                        1\nFrequency boost:                 enabled\nCPU MHz:                         5033.636\nCPU max MHz:                     3300.0000\nCPU min MHz:                     1500.0000\nBogoMIPS:                        6589.77\nVirtualization:                  AMD-V\nL1d cache:                       6 MiB\nL1i cache:                       4 MiB\nL2 cache:                        128 MiB\nL3 cache:                        512 MiB\nNUMA node0 CPU(s):               0-63,128-191\nNUMA node1 CPU(s):               64-127,192-255\nVulnerability Itlb multihit:     Not affected\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Mmio stale data:   Not affected\nVulnerability Retbleed:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Retpolines, IBPB conditional, IBRS_FW, STIBP always-on, RSB filling, PBRSB-eIBRS Not affected\nVulnerability Srbds:             Not affected\nVulnerability Tsx async abort:   Not affected\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf pni pclmulqdq monitor ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 invpcid_single hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local avx512_bf16 clzero irperf xsaveerptr wbnoinvd arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid movdiri movdir64b overflow_recov succor smca avx512_vp2intersect flush_l1d\n",
+      "stderr": ""
+    },
+    "free -h": {
+      "command": [
+        "free",
+        "-h"
+      ],
+      "returncode": 0,
+      "stdout": "              total        used        free      shared  buff/cache   available\nMem:          1.5Ti       135Gi       121Gi        19Mi       1.2Ti       1.3Ti\nSwap:         8.0Gi       436Mi       7.6Gi\n",
+      "stderr": ""
+    },
+    "df -h .": {
+      "command": [
+        "df",
+        "-h",
+        "."
+      ],
+      "returncode": 0,
+      "stdout": "Filesystem                         Size  Used Avail Use% Mounted on\n/dev/mapper/ubuntu--vg-ubuntu--lv   25T  2.9T   22T  12% /\n",
+      "stderr": ""
+    },
+    "npu-smi info": {
+      "command": [
+        "npu-smi",
+        "info"
+      ],
+      "returncode": 0,
+      "stdout": "+------------------------------------------------------------------------------------------------------------------+\n| npu-smi 25.7.rc1.12                              Version: 25.7.rc1.12                                            |\n+--------+------------------+---------------+----------------------------------------------------------------------+\n| NPU ID | Name             | Health        | Power(W)              Temp(C)                  Hugepages-Usage(page) |\n|        |                  | Bus-Id        | NPU Util(%)           Memory-Usage(MB)         HBM-Usage(MB)         |\n+========+==================+===============+======================================================================+\n| 0      | Ascend950PR      | OK            | 200.4                 58                       0     / 0             |\n|        |                  | 0000:0D:00.0  | 0                     0     / 0                6073  / 131072        |\n+===========================+===============+======================================================================+\n| 1      | Ascend950PR      | Alarm         | 208.4                 58                       0     / 0             |\n|        |                  | 0000:0E:00.0  | 100                   0     / 0                5172  / 131072        |\n+===========================+===============+======================================================================+\n| 2      | Ascend950PR      | Alarm         | 201.4                 58                       0     / 0             |\n|        |                  | 0000:57:00.0  | 0                     0     / 0                5168  / 131072        |\n+===========================+===============+======================================================================+\n| 3      | Ascend950PR      | OK            | 204.0                 58                       0     / 0             |\n|        |                  | 0000:55:00.0  | 0                     0     / 0                5144  / 131072        |\n+===========================+===============+======================================================================+\n| 4      | Ascend950PR      | OK            | 208.2                 59                       0     / 0             |\n|        |                  | 0000:D7:00.0  | 0                     0     / 0                5172  / 131072        |\n+===========================+===============+======================================================================+\n| 5      | Ascend950PR      | OK            | 204.0                 60                       0     / 0             |\n|        |                  | 0000:D4:00.0  | 0                     0     / 0                5142  / 131072        |\n+===========================+===============+======================================================================+\n| 6      | Ascend950PR      | OK            | 206.7                 60                       0     / 0             |\n|        |                  | 0000:8C:00.0  | 0                     0     / 0                5143  / 131072        |\n+===========================+===============+======================================================================+\n| 7      | Ascend950PR      | OK            | 202.5                 59                       0     / 0             |\n|        |                  | 0000:8B:00.0  | 0                     0     / 0                5165  / 131072        |\n+===========================+===============+======================================================================+\n+---------------------------+---------------+----------------------------------------------------------------------+\n| NPU ID                    | Process id    | Process name       | Process memory(MB)    | Process id in container |\n+===========================+===============+======================================================================+\n| 0                         | 1528837       | python             | 325                   | NA                      |\n| 0                         | 761439        | python             | 383                   | NA                      |\n+===========================+===============+======================================================================+\n| No running processes found in NPU 1                                                                              |\n+===========================+===============+======================================================================+\n| No running processes found in NPU 2                                                                              |\n+===========================+===============+======================================================================+\n| No running processes found in NPU 3                                                                              |\n+===========================+===============+======================================================================+\n| No running processes found in NPU 4                                                                              |\n+===========================+===============+======================================================================+\n| No running processes found in NPU 5                                                                              |\n+===========================+===============+======================================================================+\n| No running processes found in NPU 6                                                                              |\n+===========================+===============+======================================================================+\n| No running processes found in NPU 7                                                                              |\n+===========================+===============+======================================================================+\n",
+      "stderr": ""
+    },
+    "npu-smi info -l": {
+      "command": [
+        "npu-smi",
+        "info",
+        "-l"
+      ],
+      "returncode": 0,
+      "stdout": "\tTotal Count                    : 8\n\n\tNPU ID                         : 0\n\tProduct Name                   : A310-50-C00MM304A1\n\tSerial Number                  : 10265L527786\n\n\tNPU ID                         : 1\n\tProduct Name                   : A310-50-C00MM304A1\n\tSerial Number                  : 10265L527785\n\n\tNPU ID                         : 2\n\tProduct Name                   : A310-50-C00MM304A1\n\tSerial Number                  : 10265L527887\n\n\tNPU ID                         : 3\n\tProduct Name                   : A310-50-C00MM304A1\n\tSerial Number                  : 10265L527784\n\n\tNPU ID                         : 4\n\tProduct Name                   : A310-50-C00MM304A1\n\tSerial Number                  : 10265L527876\n\n\tNPU ID                         : 5\n\tProduct Name                   : A310-50-C00MM304A1\n\tSerial Number                  : 10265L527873\n\n\tNPU ID                         : 6\n\tProduct Name                   : A310-50-C00MM304A1\n\tSerial Number                  : 10265L527788\n\n\tNPU ID                         : 7\n\tProduct Name                   : A310-50-C00MM304A1\n\tSerial Number                  : 10265L527886\n\n",
+      "stderr": ""
+    },
+    "gcc --version": {
+      "command": [
+        "gcc",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0\nCopyright (C) 2019 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    },
+    "g++ --version": {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "g++ (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0\nCopyright (C) 2019 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    },
+    "cmake --version": {
+      "command": [
+        "cmake",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "cmake version 4.4.4\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+      "stderr": ""
+    },
+    "ninja --version": {
+      "command": [
+        "ninja",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "1.13.2.git.kitware.jobserver-pipe-1\n",
+      "stderr": ""
+    },
+    "bisheng --version": {
+      "command": [
+        "bisheng",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "2026-09-29T23:53:43+08:00 clang version 15.0.5 (clang-5c68a1cb1231 flang-5c68a1cb1231)\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/bin\n",
+      "stderr": ""
+    },
+    "ccec --version": {
+      "command": [
+        "ccec",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "2026-09-29T23:53:43+08:00 clang version 15.0.5 (clang-5c68a1cb1231 flang-5c68a1cb1231)\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/bin\n",
+      "stderr": ""
+    },
+    "git --version": {
+      "command": [
+        "git",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "git version 2.25.1\n",
+      "stderr": ""
+    },
+    "ldd --version": {
+      "command": [
+        "ldd",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "ldd (Ubuntu GLIBC 2.31-0ubuntu9.9) 2.31\nCopyright (C) 2020 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nWritten by Roland McGrath and Ulrich Drepper.\n",
+      "stderr": ""
+    }
+  },
+  "version_files": {
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/compiler/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_bisheng-compiler_version=\"9.2\"\nrequired_package_tbe-tik_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_asc-devkit_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/vendors/custom_transformer/version.info": "custom_opp_compiler_version=9.2.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/asc-tools/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_asc-devkit_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ncs/version.info": "Version=9.2.0\nversion_dir=cann\ntimestamp=20260930_000324083\nrequired_package_acl-extend_version=\"9.2\"\nrequired_package_aoe_version=\"9.2\"\nrequired_package_ge-compiler_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_opbase_version=\"9.2\"\nrequired_package_runtime_version=\"9.2\"\nrequired_package_tbe-tik_version=\"9.2\"\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/dvpp/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_opbase_version=\">=8.5\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/hcomm/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\ntimestamp=20260930_000324083\nhost_only=true\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ops_transformer/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_opbase_version=\">=8.5\"\nrequired_package_hcomm_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_ge-compiler_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\nrequired_package_asc-tools_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\nrequired_package_ops-nn_version=\">=8.5\"\nrequired_package_hccl_version=\">=8.5\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/metadef/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/acl_extend/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/platform_profiler/version.info": "[PACKAGE]\nName=platform-profiler\nVersion=1.0.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/runtime/version.info": "Version=9.2.0\nversion_dir=cann\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ge-executor/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_hcomm_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/hccl/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_hcomm_version=\">=8.5\"\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\ntimestamp=20260930_000324083\nhost_only=false\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/aoe/version.info": "Version=9.2.0\nversion_dir=cann\ntimestamp=20260930_000324083\nrequired_package_acl-extend_version=\"9.2\"\nrequired_package_ge-compiler_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_ncs_version=\"9.2\"\nrequired_package_opbase_version=\"9.2\"\nrequired_package_runtime_version=\"9.2\"\nrequired_package_tbe-tik_version=\"9.2\"\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/mindstudio-opprof/version.info": "[PACKAGE]\nName=mindstudio-opprof\nVersion=26.2.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ge-compiler/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_hcomm_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/bisheng-compiler/version.info": "Version=9.2.0\nversion_dir=cann\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/msmemscope/version.info": "[PACKAGE]\nName=mindstudio-memscope\nVersion=26.2.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/pto_isa/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_opbase_version=\"9.2\"\nrequired_package_asc-devkit_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\nrequired_package_bisheng-compiler_version=\"9.2\"\nrequired_package_asc-tools_version=\"9.2\"\nrequired_package_ge-compiler_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/test-ops/version.info": "Version=9.3.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/dflow-executor/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_hcomm_version=\"9.2\"\nrequired_package_bisheng-compiler_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/mindstudio-operator-tools/version.info": "[PACKAGE]\nName=mindstudio-operator-tools\nVersion=26.2.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ops_legacy/version.info": "Version=9.2.0\nversion_dir=cann\ntimestamp=20260930_000324083\nops_version=9.2.0\nadk_version=9.2.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/msprof/version.info": "[PACKAGE]\nName=mindstudio-profiler\nVersion=26.2.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/oam_tools/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=9.0\"\nrequired_package_bisheng-compiler_version=\">=9.0\"\nrequired_package_ops-cv_version=\">=9.0\"\nrequired_package_ops-math_version=\">=9.0\"\nrequired_package_ops-legacy_version=\">=9.0\"\nrequired_package_metadef_version=\">=9.0\"\nrequired_package_hcomm_version=\">=9.0\"\nrequired_package_hccl_version=\">=9.0\"\nrequired_package_ge-executor_version=\">=9.0\"\nrequired_package_ge-compiler_version=\">=9.0\"\nrequired_package_tbe-tik_version=\">=9.0\"\nrequired_package_asc-devkit_version=\">=9.0\"\nrequired_package_graph-autofusion_version=\">=9.0\"\nrequired_package_opbase_version=\">=9.0\"\nrequired_package_ops-nn_version=\">=9.0\"\nrequired_package_ops-transformer_version=\">=9.0\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/mstx/version.info": "[PACKAGE]\nName=mindstudio-TX\nVersion=26.2.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/pypto/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_driver_version=\">=25.5.0\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ascendnpu-ir/version.info": "Version=1.2.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/hixl/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_hcomm_version=\">=8.5\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ops_math/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_opbase_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\nrequired_package_asc-devkit_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_asc-tools_version=\">=8.5\"\nrequired_package_ops-legacy_version=\">=8.5\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ops_cv/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_opbase_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\nrequired_package_asc-devkit_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_asc-tools_version=\">=8.5\"\nrequired_package_ops-legacy_version=\">=8.5\"\nrequired_package_ops-math_version=\">=8.5\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/msboost/version.info": "[PACKAGE]\nName=mindstudio-boost\nVersion=26.2.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/mindstudio-sanitizer/version.info": "[PACKAGE]\nName=mindstudio-sanitizer\nVersion=26.2.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/msserviceprofiler/version.info": "[PACKAGE]\nName=mindstudio-serviceprofiler\nVersion=26.2.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/operator_cmp/version.info": "[PACKAGE]\nName=mindstudio-accucmp\nVersion=26.2.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/graph_autofusion/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_asc-devkit_version=\"9.2\"\nrequired_package_ge-compiler_version=\"9.2\"\nrequired_package_bisheng-compiler_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/tbe-tik/version.info": "Version=9.2.0\nversion_dir=cann\ntimestamp=20260930_000324083\nrequired_opp_abi_version=tbe-tik\nrequired_package_ge-compiler_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_runtime_version=\"9.2\"\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/mindstudio-debugger/version.info": "[PACKAGE]\nName=mindstudio-debugger\nVersion=26.2.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/simulator/version.info": "Version=9.2.0\nversion_dir=cann\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/opbase/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_asc-devkit_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/mspti/version.info": "[PACKAGE]\nName=mindstudio-profiler-tools-interface\nVersion=26.2.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ops_nn/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_opbase_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\nrequired_package_asc-devkit_version=\">=8.5\"\nrequired_package_asc-tools_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_ops_legacy_version=\">=8.5\"\nrequired_package_ops_math_version=\">=8.5\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/pyACL/version.info": "Version=9.3.0\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/ms_fmk_transplt/version.info": "[PACKAGE]\nName=mindstudio-transplt\nVersion=26.2.0",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/pto_as/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_opbase_version=\"9.2\"\nrequired_package_asc-devkit_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\nrequired_package_bisheng-compiler_version=\"9.2\"\nrequired_package_asc-tools_version=\"9.2\"\nrequired_package_ge-compiler_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/share/info/asc-devkit/version.info": "Version=9.2.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.2\"\nrequired_package_ge-executor_version=\"9.2\"\nrequired_package_metadef_version=\"9.2\"\nrequired_package_bisheng-compiler_version=\"9.2\"\nrequired_package_tbe-tik_version=\"9.2\"\ntimestamp=20260930_000324083\n",
+    "/usr/local/Ascend/version.info": "version=25.7.rc1.12\n",
+    "/usr/local/Ascend/driver/version.info": "Version=25.7.rc1.12\nascendhal_version=7.35.23\naicpu_version=1.0\ntdt_version=1.0\nlog_version=1.0\nprof_version=2.0\ndvppkernels_version=1.1\ntsfw_version=1.0\nInnerversion=V100R001C11SPC201B200\ncompatible_version=[V100R001C22],[V100R001C23],[V100R001C25],[V100R001C10],[V100R001C11]\ncompatible_version_fw=[7.0.0,9.9.9]\npackage_version=25.7.rc1.12\n",
+    "/usr/local/Ascend/firmware/version.info": "Version=7.0.9.201.200\nfirmware_version=1.0\npackage_version=25.7.rc1.12\ncompatible_version_drv=[23.0.rc3,23.0.rc3.],[23.0.0,23.0.0.],[24.0,24.0.],[24.1,24.1.],[25.0,25.7.]\n",
+    "/usr/local/Ascend/cann-9.1.0/compiler/version.info": "Version=9.1.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.1\"\nrequired_package_ge-executor_version=\"9.1\"\nrequired_package_metadef_version=\"9.1\"\nrequired_package_bisheng-compiler_version=\"9.1\"\nrequired_package_tbe-tik_version=\"9.1\"\ntimestamp=20260730_231653901\n",
+    "/usr/local/Ascend/cann-9.1.0/opp/version.info": "Version=9.1.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_asc-devkit_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\ntimestamp=20260730_231653901\n",
+    "/usr/local/Ascend/cann/compiler/version.info": "Version=9.1.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.1\"\nrequired_package_ge-executor_version=\"9.1\"\nrequired_package_metadef_version=\"9.1\"\nrequired_package_bisheng-compiler_version=\"9.1\"\nrequired_package_tbe-tik_version=\"9.1\"\ntimestamp=20260730_231653901\n",
+    "/usr/local/Ascend/cann/opp/version.info": "Version=9.1.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_asc-devkit_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\ntimestamp=20260730_231653901\n",
+    "/usr/local/Ascend/ascend-toolkit/latest/compiler/version.info": "Version=9.1.0\nversion_dir=cann\nrequired_package_runtime_version=\"9.1\"\nrequired_package_ge-executor_version=\"9.1\"\nrequired_package_metadef_version=\"9.1\"\nrequired_package_bisheng-compiler_version=\"9.1\"\nrequired_package_tbe-tik_version=\"9.1\"\ntimestamp=20260730_231653901\n",
+    "/usr/local/Ascend/ascend-toolkit/latest/opp/version.info": "Version=9.1.0\nversion_dir=cann\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_ge-executor_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\nrequired_package_asc-devkit_version=\">=8.5\"\nrequired_package_bisheng-compiler_version=\">=8.5\"\ntimestamp=20260730_231653901\n",
+    "/etc/ascend_install.info": "UserName=HwHiAiUser\nUserGroup=HwHiAiUser\nFirmware_Install_Type=full\nFirmware_Install_Path_Param=/usr/local/Ascend\nDriver_Install_Type=full\nDriver_Install_Path_Param=/usr/local/Ascend\nDriver_Install_For_All=yes\nDriver_Install_Mode=normal\nDriver_Install_Status=complete\n"
+  },
+  "torch_probe": {
+    "command": [
+      "/root/miniconda3/envs/zwh/bin/python",
+      "-c",
+      "\nimport json, torch, torch_npu\ndef attempt(fn):\n    try: return fn()\n    except Exception as e: return {\"error\": repr(e)}\nnpu = torch.npu\ndata = {\"torch\": torch.__version__, \"torch_path\": torch.__file__,\n        \"torch_npu\": torch_npu.__version__, \"torch_npu_path\": torch_npu.__file__,\n        \"torch_git\": torch.version.git_version, \"torch_cuda\": torch.version.cuda,\n        \"available\": attempt(npu.is_available), \"count\": attempt(npu.device_count),\n        \"torch_config\": torch.__config__.show()}\ndata[\"devices\"] = []\nif data[\"available\"] is True:\n    for i in range(npu.device_count()):\n        data[\"devices\"].append({\"index\": i,\n            \"name\": attempt(lambda: npu.get_device_name(i)),\n            \"properties\": attempt(lambda: str(npu.get_device_properties(i))),\n            \"mem_get_info\": attempt(lambda: npu.mem_get_info(i))})\nfor name in (\"_C\", \"version\"):\n    obj = getattr(torch_npu, name, None)\n    data[name + \"_version_symbols\"] = {\n        key: str(getattr(obj, key)) for key in dir(obj)\n        if any(s in key.lower() for s in (\"version\", \"cann\", \"soc\"))}\nprint(json.dumps(data, indent=2, default=str))\n"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"torch\": \"2.13.0+cpu\",\n  \"torch_path\": \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch/__init__.py\",\n  \"torch_npu\": \"2.13.0\",\n  \"torch_npu_path\": \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch_npu/__init__.py\",\n  \"torch_git\": \"cf30153c4c131c8164ee7798e5022d810682e2cb\",\n  \"torch_cuda\": null,\n  \"available\": true,\n  \"count\": 1,\n  \"torch_config\": \"PyTorch built with:\\n  - GCC 13.3\\n  - C++ Version: 202002\\n  - Intel(R) oneAPI Math Kernel Library Version 2024.2-Product Build 20240605 for Intel(R) 64 architecture applications\\n  - Intel(R) MKL-DNN v3.12.0 (Git Hash 80afa71049cd69a3df32adcccb623b12cd7baa22)\\n  - OpenMP 201511 (a.k.a. OpenMP 4.5)\\n  - LAPACK is enabled (usually provided by MKL)\\n  - NNPACK is enabled\\n  - CPU capability usage: AVX512\\n  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, COMMIT_SHA=cf30153c4c131c8164ee7798e5022d810682e2cb, CUDA_FLAGS= -DLIBCUDACXX_ENABLE_SIMPLIFIED_COMPLEX_OPERATIONS -Xfatbin -compress-all  -Wno-deprecated-gpu-targets --expt-extended-lambda -DCUB_WRAPPED_NAMESPACE=at_cuda_detail -DDISABLE_CUSPARSE_DEPRECATED -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -DC10_NODEPRECATED, CXX_COMPILER=/opt/rh/gcc-toolset-13/root/usr/bin/c++, CXX_FLAGS= -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DUSE_FBGEMM -DUSE_PYTORCH_QNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -DC10_NODEPRECATED -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=range-loop-construct -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=old-style-cast -faligned-new -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-dangling-reference -Wno-error=dangling-reference -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, TORCH_VERSION=2.13.0, USE_CUDA=0, USE_CUDNN=OFF, USE_CUSPARSELT=OFF, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, USE_XCCL=OFF, USE_XPU=OFF, \\n\",\n  \"devices\": [\n    {\n      \"index\": 0,\n      \"name\": \"Ascend950PR_9579\",\n      \"properties\": \"_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=0008d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)\",\n      \"mem_get_info\": [\n        131775074304,\n        132338679808\n      ]\n    }\n  ],\n  \"_C_version_symbols\": {\n    \"_get_cann_version\": \"<built-in function _get_cann_version>\",\n    \"_get_silent_check_version\": \"<built-in function _get_silent_check_version>\",\n    \"_is_gte_cann_version\": \"<built-in function _is_gte_cann_version>\",\n    \"_npu_get_soc_version\": \"<built-in function _npu_get_soc_version>\"\n  },\n  \"version_version_symbols\": {\n    \"__version__\": \"2.13.0\",\n    \"git_version\": \"c798c6532a0d05c1863489e83cb7e3985be4e830\"\n  }\n}\n",
+    "stderr": ""
+  },
+  "tilelang_probe": {
+    "command": [
+      "/root/miniconda3/envs/zwh/bin/python",
+      "-c",
+      "\nimport json, pathlib, tilelang\nroot = pathlib.Path(tilelang.__file__).resolve().parent\ndata = {\"version\": getattr(tilelang, \"__version__\", None), \"path\": str(root),\n        \"symbols\": [x for x in dir(tilelang) if not x.startswith(\"_\")]}\ntry:\n    import tilelang.language as T\n    data[\"language_symbols\"] = [x for x in dir(T) if not x.startswith(\"_\")]\nexcept Exception as e: data[\"language_error\"] = repr(e)\ntry:\n    from tilelang import tvm\n    data[\"tvm_version\"] = tvm.__version__\n    data[\"tvm_build\"] = tvm.support.libinfo()\n    data[\"target_kinds\"] = list(tvm.target.Target.list_kinds())\n    data[\"ascend_global_functions\"] = [x for x in tvm.get_global_func(\"runtime.ListGlobalNames\")()\n        if any(s in x.lower() for s in (\"ascend\", \"npu\", \"cce\"))]\nexcept Exception as e: data[\"tvm_error\"] = repr(e)\nmatches = []\nfor p in root.rglob(\"*\"):\n    if any(s in p.name.lower() for s in (\"ascend\", \"cann\", \"npu\", \"pto\")):\n        matches.append(str(p.relative_to(root)))\n        if len(matches) >= 300: break\ndata[\"ascend_related_files\"] = matches\ndata[\"note\"] = \"Symbols/targets/files are evidence only; no TileLang NPU kernel compilation was attempted.\"\nprint(json.dumps(data, indent=2, default=str))\n"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"version\": \"0.1.15+cpu.gita7cb753d\",\n  \"path\": \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang\",\n  \"symbols\": [\n    \"DataType\",\n    \"Fragment\",\n    \"JITKernel\",\n    \"Layout\",\n    \"PassConfigKey\",\n    \"Path\",\n    \"Profiler\",\n    \"TensorSupplyType\",\n    \"analysis\",\n    \"ascend\",\n    \"autotune\",\n    \"autotuner\",\n    \"backend\",\n    \"build_date\",\n    \"cache\",\n    \"carver\",\n    \"cdiv\",\n    \"compile\",\n    \"contextlib\",\n    \"contrib\",\n    \"cpu\",\n    \"ctypes\",\n    \"cuda\",\n    \"deprecated\",\n    \"disable_cache\",\n    \"dtypes\",\n    \"enable_cache\",\n    \"engine\",\n    \"env\",\n    \"get_runtime_library_dirs\",\n    \"instrumentation\",\n    \"ir\",\n    \"is_cache_enabled\",\n    \"jit\",\n    \"language\",\n    \"layout\",\n    \"libinfo\",\n    \"logger\",\n    \"logging\",\n    \"lower\",\n    \"math\",\n    \"metal\",\n    \"next_power_of_2\",\n    \"os\",\n    \"par_compile\",\n    \"path\",\n    \"prepend_dll_search_path\",\n    \"profiler\",\n    \"register_c_postproc\",\n    \"register_cuda_postproc\",\n    \"register_hip_postproc\",\n    \"rocm\",\n    \"runtime_library_dirs\",\n    \"set_log_level\",\n    \"sys\",\n    \"tileop\",\n    \"tools\",\n    \"transform\",\n    \"tvm\",\n    \"utils\",\n    \"warnings\",\n    \"webgpu\"\n  ],\n  \"language_symbols\": [\n    \"Add\",\n    \"And\",\n    \"Any\",\n    \"AnyDType\",\n    \"Assert\",\n    \"BaseTileScheduler\",\n    \"Broadcast\",\n    \"Buffer\",\n    \"BufferLoad\",\n    \"CUDASourceCodeKernel\",\n    \"Call\",\n    \"CallEffectKind\",\n    \"Cast\",\n    \"ClusterKernel\",\n    \"CommReducer\",\n    \"Div\",\n    \"EQ\",\n    \"Else\",\n    \"FloatImm\",\n    \"FloorDiv\",\n    \"FloorMod\",\n    \"Fragment\",\n    \"FragmentBuffer\",\n    \"GE\",\n    \"GT\",\n    \"GemmWarpPolicy\",\n    \"If\",\n    \"IntImm\",\n    \"IterVar\",\n    \"JITFunc\",\n    \"Kernel\",\n    \"KernelLaunchFrame\",\n    \"LE\",\n    \"LT\",\n    \"Layout\",\n    \"Let\",\n    \"LocalBuffer\",\n    \"Max\",\n    \"Min\",\n    \"Mod\",\n    \"Mul\",\n    \"NE\",\n    \"Not\",\n    \"Or\",\n    \"Parallel\",\n    \"PartialFragment\",\n    \"Persistent\",\n    \"PersistentTileScheduler\",\n    \"Pipelined\",\n    \"PrimExpr\",\n    \"PrimFunc\",\n    \"ProducerLoad\",\n    \"Ptr\",\n    \"Ramp\",\n    \"Range\",\n    \"Reduce\",\n    \"Ref\",\n    \"Select\",\n    \"Serial\",\n    \"SharedBuffer\",\n    \"Shuffle\",\n    \"SizeVar\",\n    \"SparseTensorCoreIntrinEmitter\",\n    \"StridedTensor\",\n    \"StringImm\",\n    \"Sub\",\n    \"TCGEN05DescriptorParams\",\n    \"TCGEN05TensorCoreIntrinEmitter\",\n    \"TVMBackendAllocWorkspace\",\n    \"TVMBackendFreeWorkspace\",\n    \"Tensor\",\n    \"TensorCoreIntrinEmitter\",\n    \"TensorCoreIntrinEmitterSM120\",\n    \"TensorCoreIntrinEmitterWithLadderTransform\",\n    \"Then\",\n    \"Unroll\",\n    \"Var\",\n    \"Vectorized\",\n    \"WGMMADescriptorParams\",\n    \"WGMMATensorCoreIntrinEmitter\",\n    \"WGSparseTensorCoreIntrinEmitter\",\n    \"WSID\",\n    \"WSInstr\",\n    \"WSOpRef\",\n    \"WSPipeline\",\n    \"WSRole\",\n    \"WSSchedule\",\n    \"WSScope\",\n    \"WSSync\",\n    \"WSSyncKind\",\n    \"WarpSpecialize\",\n    \"WarpSpecializeFrame\",\n    \"While\",\n    \"abs\",\n    \"abs2\",\n    \"access_ptr\",\n    \"acos\",\n    \"acosh\",\n    \"activemask\",\n    \"add2\",\n    \"address_of\",\n    \"align_up\",\n    \"all_of\",\n    \"all_sync\",\n    \"alloc_barrier\",\n    \"alloc_buffer\",\n    \"alloc_cluster_barrier\",\n    \"alloc_descriptor\",\n    \"alloc_fragment\",\n    \"alloc_global\",\n    \"alloc_local\",\n    \"alloc_reducer\",\n    \"alloc_shared\",\n    \"alloc_tcgen05_instr_desc\",\n    \"alloc_tcgen05_instruction_desc\",\n    \"alloc_tcgen05_smem_desc\",\n    \"alloc_tmem\",\n    \"alloc_var\",\n    \"alloc_wgmma_desc\",\n    \"allocate\",\n    \"annotate_compile_flags\",\n    \"annotate_consumer_reg_alloc\",\n    \"annotate_l2_hit_ratio\",\n    \"annotate_layout\",\n    \"annotate_min_blocks_per_sm\",\n    \"annotate_pass_configs\",\n    \"annotate_producer_reg_dealloc\",\n    \"annotate_restrict_buffers\",\n    \"annotate_safe_value\",\n    \"annotate_ws_pipeline_depth\",\n    \"annotate_ws_schedule\",\n    \"annotations\",\n    \"any_of\",\n    \"any_sync\",\n    \"anylist_getitem\",\n    \"anylist_resetitem\",\n    \"anylist_setitem_call_cpacked\",\n    \"anylist_setitem_call_packed\",\n    \"arg\",\n    \"asin\",\n    \"asinh\",\n    \"assume\",\n    \"async_copy\",\n    \"atan\",\n    \"atan2\",\n    \"atanh\",\n    \"atomic\",\n    \"atomic_add\",\n    \"atomic_addx2\",\n    \"atomic_addx4\",\n    \"atomic_load\",\n    \"atomic_max\",\n    \"atomic_min\",\n    \"atomic_or\",\n    \"atomic_store\",\n    \"attr\",\n    \"axis\",\n    \"ballot\",\n    \"ballot_sync\",\n    \"barrier_arrive\",\n    \"barrier_wait\",\n    \"bfloat16\",\n    \"bfloat16x16\",\n    \"bfloat16x2\",\n    \"bfloat16x32\",\n    \"bfloat16x4\",\n    \"bfloat16x64\",\n    \"bfloat16x8\",\n    \"bind\",\n    \"bitwise_and\",\n    \"bitwise_not\",\n    \"bitwise_or\",\n    \"bitwise_xor\",\n    \"block_name_suffix_context\",\n    \"block_rank_in_cluster\",\n    \"bool\",\n    \"boolean\",\n    \"break_loop\",\n    \"broadcast\",\n    \"buffer\",\n    \"buffer_decl\",\n    \"buffer_store\",\n    \"buffer_var\",\n    \"builtin\",\n    \"c2d_im2col\",\n    \"call_cpacked\",\n    \"call_cpacked_lowered\",\n    \"call_extern\",\n    \"call_intrin\",\n    \"call_kernel\",\n    \"call_llvm_intrin\",\n    \"call_llvm_pure_intrin\",\n    \"call_packed\",\n    \"call_packed_lowered\",\n    \"call_pure_extern\",\n    \"cast\",\n    \"cdiv\",\n    \"ceil\",\n    \"ceildiv\",\n    \"clamp\",\n    \"clc_get_first_ctaid_x\",\n    \"clc_get_first_ctaid_y\",\n    \"clc_get_first_ctaid_z\",\n    \"clc_is_canceled\",\n    \"clc_try_cancel\",\n    \"clc_try_cancel_multicast\",\n    \"clear\",\n    \"cluster_arrive\",\n    \"cluster_arrive_relaxed\",\n    \"cluster_sync\",\n    \"cluster_wait\",\n    \"clz\",\n    \"comm_reducer\",\n    \"common\",\n    \"compute_gmma_descriptor\",\n    \"compute_umma_descriptor\",\n    \"const\",\n    \"continue_loop\",\n    \"copy\",\n    \"copy_cluster\",\n    \"copy_op\",\n    \"copysign\",\n    \"cos\",\n    \"cosh\",\n    \"cp_async_barrier_noinc\",\n    \"create_barriers\",\n    \"create_tma_descriptor\",\n    \"cummax\",\n    \"cumsum\",\n    \"customize\",\n    \"deallocate_tmem\",\n    \"dec_max_nreg\",\n    \"decl_buffer\",\n    \"device_assert\",\n    \"disable_warp_group_reg_alloc\",\n    \"double\",\n    \"dp4a\",\n    \"dtype\",\n    \"dtypes\",\n    \"dynamic\",\n    \"eager\",\n    \"empty\",\n    \"end_profile_intrinsic\",\n    \"env_thread\",\n    \"erf\",\n    \"evaluate\",\n    \"exp\",\n    \"exp10\",\n    \"exp2\",\n    \"experimental\",\n    \"extract_lane\",\n    \"fabs\",\n    \"fast_rcp\",\n    \"fence_proxy_async\",\n    \"fill\",\n    \"fill_op\",\n    \"finalize_reducer\",\n    \"float\",\n    \"float16\",\n    \"float16x16\",\n    \"float16x2\",\n    \"float16x32\",\n    \"float16x4\",\n    \"float16x64\",\n    \"float16x8\",\n    \"float32\",\n    \"float32x16\",\n    \"float32x2\",\n    \"float32x32\",\n    \"float32x4\",\n    \"float32x64\",\n    \"float32x8\",\n    \"float4_e2m1_unpacked\",\n    \"float4_e2m1fn\",\n    \"float4_e2m1fnx16\",\n    \"float4_e2m1fnx2\",\n    \"float4_e2m1fnx32\",\n    \"float4_e2m1fnx4\",\n    \"float4_e2m1fnx64\",\n    \"float4_e2m1fnx8\",\n    \"float64\",\n    \"float64x16\",\n    \"float64x2\",\n    \"float64x32\",\n    \"float64x4\",\n    \"float64x64\",\n    \"float64x8\",\n    \"float6_e2m3fn\",\n    \"float6_e2m3fnx16\",\n    \"float6_e2m3fnx2\",\n    \"float6_e2m3fnx32\",\n    \"float6_e2m3fnx4\",\n    \"float6_e2m3fnx64\",\n    \"float6_e2m3fnx8\",\n    \"float6_e3m2fn\",\n    \"float6_e3m2fnx16\",\n    \"float6_e3m2fnx2\",\n    \"float6_e3m2fnx32\",\n    \"float6_e3m2fnx4\",\n    \"float6_e3m2fnx64\",\n    \"float6_e3m2fnx8\",\n    \"float8_e3m4\",\n    \"float8_e3m4x16\",\n    \"float8_e3m4x2\",\n    \"float8_e3m4x32\",\n    \"float8_e3m4x4\",\n    \"float8_e3m4x64\",\n    \"float8_e3m4x8\",\n    \"float8_e4m3\",\n    \"float8_e4m3b11fnuz\",\n    \"float8_e4m3b11fnuzx16\",\n    \"float8_e4m3b11fnuzx2\",\n    \"float8_e4m3b11fnuzx32\",\n    \"float8_e4m3b11fnuzx4\",\n    \"float8_e4m3b11fnuzx64\",\n    \"float8_e4m3b11fnuzx8\",\n    \"float8_e4m3fn\",\n    \"float8_e4m3fnuz\",\n    \"float8_e4m3fnuzx16\",\n    \"float8_e4m3fnuzx2\",\n    \"float8_e4m3fnuzx32\",\n    \"float8_e4m3fnuzx4\",\n    \"float8_e4m3fnuzx64\",\n    \"float8_e4m3fnuzx8\",\n    \"float8_e4m3fnx16\",\n    \"float8_e4m3fnx2\",\n    \"float8_e4m3fnx32\",\n    \"float8_e4m3fnx4\",\n    \"float8_e4m3fnx64\",\n    \"float8_e4m3fnx8\",\n    \"float8_e4m3x16\",\n    \"float8_e4m3x2\",\n    \"float8_e4m3x32\",\n    \"float8_e4m3x4\",\n    \"float8_e4m3x64\",\n    \"float8_e4m3x8\",\n    \"float8_e5m2\",\n    \"float8_e5m2fnuz\",\n    \"float8_e5m2fnuzx16\",\n    \"float8_e5m2fnuzx2\",\n    \"float8_e5m2fnuzx32\",\n    \"float8_e5m2fnuzx4\",\n    \"float8_e5m2fnuzx64\",\n    \"float8_e5m2fnuzx8\",\n    \"float8_e5m2x16\",\n    \"float8_e5m2x2\",\n    \"float8_e5m2x32\",\n    \"float8_e5m2x4\",\n    \"float8_e5m2x64\",\n    \"float8_e5m2x8\",\n    \"float8_e8m0fnu\",\n    \"float8_e8m0fnux16\",\n    \"float8_e8m0fnux2\",\n    \"float8_e8m0fnux32\",\n    \"float8_e8m0fnux4\",\n    \"float8_e8m0fnux64\",\n    \"float8_e8m0fnux8\",\n    \"floor\",\n    \"floordiv\",\n    \"floormod\",\n    \"fma\",\n    \"fma2\",\n    \"fmod\",\n    \"fmul\",\n    \"frame\",\n    \"func_attr\",\n    \"func_name\",\n    \"func_ret\",\n    \"gemm\",\n    \"gemm_blockscaled\",\n    \"gemm_op\",\n    \"gemm_sp\",\n    \"get_active_lane_mask\",\n    \"get_block_binding\",\n    \"get_block_bindings\",\n    \"get_block_extent\",\n    \"get_block_extents\",\n    \"get_cluster_dims\",\n    \"get_cluster_extent\",\n    \"get_cluster_extents\",\n    \"get_cluster_id\",\n    \"get_cluster_ids\",\n    \"get_cluster_size\",\n    \"get_lane_idx\",\n    \"get_ldmatrix_offset\",\n    \"get_let_value\",\n    \"get_mma_micro_size\",\n    \"get_swizzle_layout\",\n    \"get_thread_binding\",\n    \"get_thread_bindings\",\n    \"get_thread_extent\",\n    \"get_thread_extents\",\n    \"get_tvm_dtype\",\n    \"get_warp_group_idx\",\n    \"get_warp_idx\",\n    \"get_warp_idx_sync\",\n    \"grid\",\n    \"half\",\n    \"handle\",\n    \"handle_add_byte_offset\",\n    \"has_let_value\",\n    \"hypot\",\n    \"ieee_add\",\n    \"ieee_fdiv\",\n    \"ieee_fmaf\",\n    \"ieee_frcp\",\n    \"ieee_frsqrt\",\n    \"ieee_fsqrt\",\n    \"ieee_mul\",\n    \"ieee_sub\",\n    \"if_then_else\",\n    \"ignore_loop_partition\",\n    \"im2col\",\n    \"import_source\",\n    \"inc_max_nreg\",\n    \"increase_descriptor_offset\",\n    \"index_map\",\n    \"index_to_coordinates\",\n    \"infinity\",\n    \"init\",\n    \"initialize_tcgen05_descriptor\",\n    \"initialize_wgmma_descriptor\",\n    \"inline\",\n    \"int\",\n    \"int16\",\n    \"int16x16\",\n    \"int16x2\",\n    \"int16x32\",\n    \"int16x4\",\n    \"int16x64\",\n    \"int16x8\",\n    \"int32\",\n    \"int32x16\",\n    \"int32x2\",\n    \"int32x32\",\n    \"int32x4\",\n    \"int32x64\",\n    \"int32x8\",\n    \"int4\",\n    \"int64\",\n    \"int64x16\",\n    \"int64x2\",\n    \"int64x32\",\n    \"int64x4\",\n    \"int64x64\",\n    \"int64x8\",\n    \"int8\",\n    \"int8x16\",\n    \"int8x2\",\n    \"int8x32\",\n    \"int8x4\",\n    \"int8x64\",\n    \"int8x8\",\n    \"is_f8f6f4_family\",\n    \"is_float4\",\n    \"is_float4_e2m1_unpacked\",\n    \"is_float4_e2m1fn\",\n    \"isfinite\",\n    \"isinf\",\n    \"isnan\",\n    \"isnullptr\",\n    \"iter_var\",\n    \"kernel\",\n    \"launch_thread\",\n    \"ldexp\",\n    \"ldg128\",\n    \"ldg256\",\n    \"ldg32\",\n    \"ldg64\",\n    \"lds128\",\n    \"lds32\",\n    \"lds64\",\n    \"let\",\n    \"likely\",\n    \"llvm_lookup_intrinsic_id\",\n    \"log\",\n    \"log10\",\n    \"log1p\",\n    \"log2\",\n    \"logical\",\n    \"long\",\n    \"lookup_param\",\n    \"loop\",\n    \"loop_break\",\n    \"macro\",\n    \"make_blockscaled_gemm_layout\",\n    \"make_mma_swizzle_layout\",\n    \"make_tensor\",\n    \"make_tensor_from_addr\",\n    \"match_all_sync\",\n    \"match_any_sync\",\n    \"match_buffer\",\n    \"math_intrinsics\",\n    \"max\",\n    \"max2\",\n    \"max_value\",\n    \"mbarrier_arrive\",\n    \"mbarrier_arrive_expect_tx\",\n    \"mbarrier_expect_tx\",\n    \"mbarrier_wait_parity\",\n    \"meta\",\n    \"meta_class\",\n    \"meta_var\",\n    \"min\",\n    \"min2\",\n    \"min_value\",\n    \"mma_fill\",\n    \"mma_gemm_blockscaled\",\n    \"mma_store\",\n    \"mma_store_index_map\",\n    \"mul2\",\n    \"named_barrier_arrive\",\n    \"nearbyint\",\n    \"nextafter\",\n    \"no_set_max_nreg\",\n    \"overrides\",\n    \"parallel\",\n    \"pdl_sync\",\n    \"pdl_trigger\",\n    \"popcount\",\n    \"pow\",\n    \"prim_func\",\n    \"print\",\n    \"proxy\",\n    \"ptr\",\n    \"ptx_arrive_barrier\",\n    \"ptx_arrive_barrier_expect_tx\",\n    \"ptx_arrive_cluster_barrier\",\n    \"ptx_commit_group\",\n    \"ptx_cp_async\",\n    \"ptx_cp_async_barrier\",\n    \"ptx_cp_async_bulk\",\n    \"ptx_fence_barrier_init\",\n    \"ptx_init_barrier_thread_count\",\n    \"ptx_ldmatrix\",\n    \"ptx_mma\",\n    \"ptx_mma_block_scale\",\n    \"ptx_mma_sm70\",\n    \"ptx_mma_sp\",\n    \"ptx_tcgen05_mma_blockscaled_ss\",\n    \"ptx_tcgen05_mma_ss\",\n    \"ptx_tcgen05_mma_ts\",\n    \"ptx_wait_barrier\",\n    \"ptx_wait_group\",\n    \"ptx_wgmma_rs\",\n    \"ptx_wgmma_sp_rs\",\n    \"ptx_wgmma_sp_ss\",\n    \"ptx_wgmma_ss\",\n    \"q_multiply_shift\",\n    \"q_multiply_shift_per_axis\",\n    \"ramp\",\n    \"reads\",\n    \"reduce\",\n    \"reduce_absmax\",\n    \"reduce_abssum\",\n    \"reduce_bitand\",\n    \"reduce_bitor\",\n    \"reduce_bitxor\",\n    \"reduce_max\",\n    \"reduce_min\",\n    \"reduce_op\",\n    \"reduce_sum\",\n    \"reducer_init\",\n    \"reducer_update\",\n    \"reinterpret\",\n    \"reshape\",\n    \"ret\",\n    \"rng_init\",\n    \"rng_rand\",\n    \"rng_rand_float\",\n    \"round\",\n    \"rsqrt\",\n    \"sblock\",\n    \"sblock_alloc_buffer\",\n    \"sblock_attr\",\n    \"scan_op\",\n    \"serial\",\n    \"set_max_nreg\",\n    \"shfl_down\",\n    \"shfl_sync\",\n    \"shfl_up\",\n    \"shfl_xor\",\n    \"shift_left\",\n    \"shift_right\",\n    \"short\",\n    \"shuffle_elect\",\n    \"sigmoid\",\n    \"sin\",\n    \"sinh\",\n    \"sqrt\",\n    \"start_profile_intrinsic\",\n    \"stg128\",\n    \"stg256\",\n    \"stg32\",\n    \"stg64\",\n    \"sts128\",\n    \"sts32\",\n    \"sts64\",\n    \"sub2\",\n    \"symbolic\",\n    \"symbolics\",\n    \"sync_grid\",\n    \"sync_threads\",\n    \"sync_warp\",\n    \"syncthreads_and\",\n    \"syncthreads_count\",\n    \"syncthreads_or\",\n    \"tan\",\n    \"tanh\",\n    \"target\",\n    \"tcgen05_after_thread_sync\",\n    \"tcgen05_before_thread_sync\",\n    \"tcgen05_cp_warpx4\",\n    \"tcgen05_gemm\",\n    \"tcgen05_gemm_blockscaled\",\n    \"tcgen05_gemm_sp\",\n    \"tcgen05_mma\",\n    \"tcgen05_mma_arrive\",\n    \"tcgen05_mma_blockscaled\",\n    \"tcgen05_sf_warp_transpose\",\n    \"tfloat32\",\n    \"tfloat32x16\",\n    \"tfloat32x2\",\n    \"tfloat32x32\",\n    \"tfloat32x4\",\n    \"tfloat32x64\",\n    \"tfloat32x8\",\n    \"thread_binding\",\n    \"thread_return\",\n    \"tile_schedule\",\n    \"tir\",\n    \"tma_copy\",\n    \"tma_gather4\",\n    \"tma_gather4_bytes\",\n    \"tma_load\",\n    \"tma_load_2sm\",\n    \"tma_scatter4\",\n    \"tma_store_arrive\",\n    \"tma_store_wait\",\n    \"transpose\",\n    \"trunc\",\n    \"truncdiv\",\n    \"truncmod\",\n    \"tvm_access_ptr\",\n    \"tvm_bmma_sync\",\n    \"tvm_call_cpacked\",\n    \"tvm_call_cpacked_lowered\",\n    \"tvm_call_packed\",\n    \"tvm_call_packed_lowered\",\n    \"tvm_fill_fragment\",\n    \"tvm_load_matrix_sync\",\n    \"tvm_mma_sync\",\n    \"tvm_stack_alloca\",\n    \"tvm_stack_make_array\",\n    \"tvm_stack_make_shape\",\n    \"tvm_storage_sync\",\n    \"tvm_store_matrix_sync\",\n    \"tvm_struct_get\",\n    \"tvm_struct_set\",\n    \"tvm_thread_allreduce\",\n    \"tvm_thread_invariant\",\n    \"tvm_throw_last_error\",\n    \"tvm_tuple\",\n    \"tvm_warp_activemask\",\n    \"tvm_warp_shuffle\",\n    \"tvm_warp_shuffle_down\",\n    \"tvm_warp_shuffle_up\",\n    \"type_annotation\",\n    \"uint\",\n    \"uint16\",\n    \"uint16x16\",\n    \"uint16x2\",\n    \"uint16x32\",\n    \"uint16x4\",\n    \"uint16x64\",\n    \"uint16x8\",\n    \"uint32\",\n    \"uint32x16\",\n    \"uint32x2\",\n    \"uint32x32\",\n    \"uint32x4\",\n    \"uint32x64\",\n    \"uint32x8\",\n    \"uint64\",\n    \"uint64x16\",\n    \"uint64x2\",\n    \"uint64x32\",\n    \"uint64x4\",\n    \"uint64x64\",\n    \"uint64x8\",\n    \"uint8\",\n    \"uint8x16\",\n    \"uint8x2\",\n    \"uint8x32\",\n    \"uint8x4\",\n    \"uint8x64\",\n    \"uint8x8\",\n    \"undef\",\n    \"unroll\",\n    \"use_swizzle\",\n    \"utils\",\n    \"validate_gemm_ab_dtypes\",\n    \"var\",\n    \"vectorcombine\",\n    \"vectorhigh\",\n    \"vectorized\",\n    \"vectorlow\",\n    \"view\",\n    \"void\",\n    \"vscale\",\n    \"wait_wgmma\",\n    \"warp_reduce_bitand\",\n    \"warp_reduce_bitor\",\n    \"warp_reduce_max\",\n    \"warp_reduce_min\",\n    \"warp_reduce_sum\",\n    \"warp_specialize\",\n    \"warpgroup_arrive\",\n    \"warpgroup_commit_batch\",\n    \"warpgroup_fence_operand\",\n    \"warpgroup_wait\",\n    \"wgmma_gemm\",\n    \"wgmma_gemm_sp\",\n    \"wgmma_mma\",\n    \"where\",\n    \"writes\",\n    \"ws\",\n    \"ws_op\"\n  ],\n  \"tvm_version\": \"0.25.dev0\",\n  \"tvm_error\": \"AttributeError(\\\"module 'tvm.support' has no attribute 'libinfo'\\\")\",\n  \"ascend_related_files\": [\n    \"ascend\",\n    \"cache/ascend_binary_cache.py\",\n    \"lib/tilelang_ascend_npu_exchange.abi3.so\",\n    \"lib/libstub_ascendcl.so\",\n    \"lib/tilelang_pto_wrapper.abi3.so\",\n    \"layout/ascend.py\",\n    \"src/ascend\",\n    \"ascend/torch_npu_exchange.pyx\",\n    \"contrib/ptodsl\",\n    \"cache/__pycache__/ascend_binary_cache.cpython-312.pyc\",\n    \"jit/adapter/pto\",\n    \"carver/arch/driver/ascend_driver.py\",\n    \"carver/arch/driver/__pycache__/ascend_driver.cpython-312.pyc\",\n    \"3rdparty/cutlass/include/cutlass/detail/collective/mixed_input_utils.hpp\",\n    \"3rdparty/cutlass/include/cutlass/gemm/collective/sm90_mma_tma_gmma_rs_warpspecialized_mixed_input.hpp\",\n    \"3rdparty/cutlass/include/cutlass/gemm/collective/sm100_mma_warpspecialized_mixed_input.hpp\",\n    \"3rdparty/cutlass/include/cutlass/gemm/collective/sm90_mma_array_tma_gmma_rs_warpspecialized_mixed_input.hpp\",\n    \"3rdparty/cutlass/include/cutlass/gemm/warp/mma_mixed_input_tensor_op.h\",\n    \"3rdparty/cutlass/include/cutlass/gemm/kernel/sm100_gemm_array_tma_warpspecialized_input_transform.hpp\",\n    \"3rdparty/cutlass/include/cutlass/gemm/kernel/sm100_gemm_tma_warpspecialized_input_transform.hpp\",\n    \"3rdparty/cutlass/include/cutlass/gemm/kernel/sm100_gemm_tma_warpspecialized_mixed_input_transform.hpp\",\n    \"3rdparty/cutlass/include/cutlass/gemm/collective/builders/sm100_mixed_input_umma_builder.inl\",\n    \"3rdparty/cutlass/tools/library/src/reference/gemm_fp_mixed_input.cu\",\n    \"3rdparty/cutlass/tools/library/src/reference/gemm_int_mixed_input.cu\",\n    \"3rdparty/tvm/python/tvm/relax/backend/contrib/example_npu\",\n    \"3rdparty/tvm/src/runtime/hexagon/hexagon_user_dma_descriptors.h\",\n    \"3rdparty/tvm/src/runtime/contrib/example_npu\",\n    \"3rdparty/tvm/src/runtime/contrib/example_npu/example_npu_runtime.cc\",\n    \"3rdparty/tvm/src/relax/backend/contrib/example_npu\",\n    \"layout/__pycache__/ascend.cpython-312.pyc\",\n    \"src/tl_templates/ascend\",\n    \"src/tl_templates/ascend/ascend_fp8.h\",\n    \"src/ascend/runtime/ascend_device_api.cc\",\n    \"src/ascend/runtime/ascend_module.cc\",\n    \"src/ascend/runtime/ascend_profiling.h\",\n    \"src/ascend/codegen/codegen_ascend.h\",\n    \"src/ascend/codegen/codegen_ascend.cc\",\n    \"src/ascend/codegen/rt_mod_ascend.cc\",\n    \"src/ascend/codegen/rt_mod_pto.cc\",\n    \"src/ascend/codegen/codegen_pto.h\",\n    \"src/ascend/codegen/codegen_pto.cc\",\n    \"src/ascend/codegen/intrin_rule_ascend.cc\",\n    \"src/ascend/stubs/ascendcl.cc\",\n    \"src/ascend/stubs/ascendcl.h\",\n    \"src/ascend/op/ascend_mte_plan.h\",\n    \"src/ascend/transform/ascend_simdvf_lower_parallel.cc\",\n    \"src/ascend/transform/ascend_pipe.h\",\n    \"src/ascend/layout/ascend_layouts.cc\",\n    \"src/ascend/layout/ascend_layouts.h\"\n  ],\n  \"note\": \"Symbols/targets/files are evidence only; no TileLang NPU kernel compilation was attempted.\"\n}\n",
+    "stderr": ""
+  },
+  "npu_smoke": {
+    "command": [
+      "/root/miniconda3/envs/zwh/bin/python",
+      "-c",
+      "\nimport json, torch, torch_npu\nresults = {}\nfor dtype in (torch.float32, torch.float16, torch.bfloat16):\n    try:\n        x = torch.linspace(-1, 1, 1024).reshape(4, 256).to(dtype)\n        a = x.to(\"npu:0\")\n        y = a * 2 + 1\n        norm = a.float() * torch.rsqrt(a.float().square().mean(-1, keepdim=True) + 1e-6)\n        mm = a @ a.T\n        torch.npu.synchronize()\n        ref = x.float() @ x.float().T\n        results[str(dtype)] = {\"elementwise_max_error\": (y.cpu().float() - (x * 2 + 1).float()).abs().max().item(),\n            \"rmsnorm_finite\": bool(torch.isfinite(norm).all().cpu().item()),\n            \"matmul_max_error\": (mm.cpu().float() - ref).abs().max().item()}\n    except Exception as e: results[str(dtype)] = {\"error\": repr(e)}\nprint(json.dumps(results, indent=2))\n"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"torch.float32\": {\n    \"elementwise_max_error\": 0.0,\n    \"rmsnorm_finite\": true,\n    \"matmul_max_error\": 7.62939453125e-05\n  },\n  \"torch.float16\": {\n    \"elementwise_max_error\": 0.0,\n    \"rmsnorm_finite\": true,\n    \"matmul_max_error\": 0.0574951171875\n  },\n  \"torch.bfloat16\": {\n    \"elementwise_max_error\": 0.0,\n    \"rmsnorm_finite\": true,\n    \"matmul_max_error\": 0.333984375\n  }\n}\n",
+    "stderr": ""
+  },
+  "verification": {
+    "torch": {
+      "expected": "2.13.0+cpu",
+      "actual": "2.13.0+cpu",
+      "match": true
+    },
+    "torch_npu": {
+      "expected": "2.13.0",
+      "actual": "2.13.0",
+      "match": true
+    },
+    "device": {
+      "expected": "Ascend950PR_9579",
+      "actual": [
+        "Ascend950PR_9579"
+      ],
+      "match": true
+    },
+    "tilelang": {
+      "expected": "0.1.15+cpu.gita7cb753d",
+      "actual": "0.1.15+cpu.gita7cb753d",
+      "match": true
+    }
+  }
+}
