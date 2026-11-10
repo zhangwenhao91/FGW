@@ -2,7 +2,7 @@
   "status": "passed",
   "stage": "complete",
   "target": "ascend",
-  "time_utc": "2026-11-10T16:53:39.199066+00:00",
+  "time_utc": "2026-11-10T18:27:44.989867+00:00",
   "python": "/root/miniconda3/envs/zwh/bin/python",
   "logical_device": 0,
   "versions": {
@@ -11,7 +11,7 @@
     "tilelang": "0.1.15+cpu.gita7cb753d"
   },
   "device_name": "Ascend950PR_9579",
-  "compile_seconds": 2.28643939900212,
+  "compile_seconds": 0.11517478502355516,
   "cases": [
     {
       "case": "random",
