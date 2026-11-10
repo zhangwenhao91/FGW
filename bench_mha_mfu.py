@@ -7,6 +7,7 @@ import argparse
 import datetime
 import json
 import math
+import importlib
 import pathlib
 import statistics
 import traceback
@@ -38,15 +39,33 @@ def main():
                         help="MFU.md 28-AIC FP16/BF16 dense Cube peak; override for another configuration")
     parser.add_argument("--cache", choices=["warm", "flush"], default="warm")
     parser.add_argument("--flush-mb", type=int, default=256)
-    parser.add_argument("--output", default="mha_mfu_report.json")
+    parser.add_argument("--impl", choices=["v0", "v1"], default="v0")
+    parser.add_argument("--baseline-report", help="Optional v0 JSON report for matched-case speedup")
+    parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     args = parser.parse_args()
+    if args.output is None:
+        args.output = "mha_mfu_report.json" if args.impl == "v0" else "mha_mfu_v1_report.json"
     if args.repeat < 3 or args.warmup < 1 or not math.isfinite(args.cube_peak_tflops) or args.cube_peak_tflops <= 0 or args.flush_mb <= 0:
         parser.error("repeat >= 3, warmup >= 1, and finite positive peak/flush size required")
     cases = [c for c in CASES if not args.cases or c[0] in args.cases]
     if args.list_only:
         print(json.dumps(cases, indent=2))
         return 0
+    baseline = {}
+    if args.baseline_report:
+        if pathlib.Path(args.baseline_report).resolve() == pathlib.Path(args.output).resolve():
+            parser.error("Output must not overwrite baseline report")
+        base = json.loads(pathlib.Path(args.baseline_report).read_text(encoding="utf-8"))
+        if base.get("status") != "passed":
+            parser.error("Baseline report must have passed")
+        settings = base["settings"]
+        if settings.get("impl", "v0") != "v0":
+            parser.error("Baseline implementation must be v0")
+        for key in ("cache", "flush_mb", "cube_peak_tflops", "repeat", "warmup", "device"):
+            if settings.get(key) != getattr(args, key):
+                parser.error(f"Baseline setting mismatch: {key}")
+        baseline = {(r["case"], r["dtype"], r["causal"]): r for r in base["results"]}
     report = {"status": "running", "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "settings": vars(args), "results": [],
               "flops_policy": "4*H*D*sum_bq(visible_keys); QK and PV only; excludes softmax/rescaling",
@@ -66,7 +85,8 @@ def main():
         import torch
         import torch_npu
         import tilelang
-        from mha_paged_decode_ascend_v0 import build_kernel, reference
+        from mha_paged_decode_ascend_v0 import reference
+        build_kernel = importlib.import_module(f"mha_paged_decode_ascend_{args.impl}").build_kernel
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__, "tilelang": tilelang.__version__}
@@ -94,8 +114,9 @@ def main():
                            "causal": causal, "status": "running"}
                     report["results"].append(row)
                     save()
+                    extra = {"device_index": args.device} if args.impl == "v1" else {}
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,
-                                          "float16" if dtype == torch.float16 else "bfloat16")
+                                          "float16" if dtype == torch.float16 else "bfloat16", **extra)
                     got = kernel(*inputs).cpu()
                     expected = reference(q, k, v, table, lengths, p, causal)
                     rtol, atol = (1e-2, 4e-3) if dtype == torch.bfloat16 else (2e-3, 2e-3)
@@ -127,9 +148,16 @@ def main():
                                effective_flops=flops, effective_tflops=achieved,
                                cube_peak_tflops=args.cube_peak_tflops,
                                cube_normalized_mfu_percent=100 * achieved / args.cube_peak_tflops)
+                    previous = baseline.get((name, str(dtype), causal))
+                    if previous is not None:
+                        if previous["effective_flops"] != flops:
+                            raise ValueError("Baseline effective FLOPs mismatch")
+                        row.update(baseline_median_ms=previous["median_ms"],
+                                   speedup_vs_v0=previous["median_ms"] / latency)
                     save()
                     print(f"{name} {dtype} causal={causal}: {latency:.6f} ms, "
-                          f"{achieved:.8f} TFLOPS, MFU={row['cube_normalized_mfu_percent']:.8f}%", flush=True)
+                          f"{achieved:.8f} TFLOPS, MFU={row['cube_normalized_mfu_percent']:.8f}% "
+                          f"speedup_vs_v0={row.get('speedup_vs_v0', 'n/a')}", flush=True)
         report["status"] = "passed"
     except Exception:
         report.update(status="error", error=traceback.format_exc())

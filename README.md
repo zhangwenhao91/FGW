@@ -1,5 +1,32 @@
 # FGW
 
+## v1 分块KV版本：精度回归及性能对比
+
+新增 `mha_paged_decode_ascend_v1.py`，v0保持不变。v1每次搬运16或32行K/V，每块一次SIMT VF，完成块内QK、softmax与加权V归约，再更新online softmax。tile整除页大小，不跨物理页；尾块可能加载缓存中的无效行，但计算在读取这些行前做条件判断，避免NaN传播。仍使用FP32 Vector计算，未使用Cube或split-KV。
+
+在先前成功的NPU环境中运行：
+
+```bash
+git pull --ff-only
+bash run_mha_v1.sh
+```
+
+脚本依次执行：v1全部540项精度回归 → 重新测量v0的20项MFU基准 → 测量v1相同20项并计算 `speedup_vs_v0`。保持原有误差容限，任一步失败即停止。不会覆盖此前v0报告；运行前应确认逻辑设备0对应的物理卡空闲。
+
+请上传以下六个文件：
+
+- `mha_paged_accuracy_v1_report.json`、`mha_paged_accuracy_v1.log`
+- `mha_mfu_v0_recheck_report.json`、`mha_mfu_v0_recheck.log`
+- `mha_mfu_v1_report.json`、`mha_mfu_v1.log`
+
+可先做较短编译/精度验证：
+
+```bash
+python -u test_mha_paged_accuracy.py --impl v1 --suite quick --seeds 7 --output mha_paged_accuracy_v1_quick.json
+```
+
+v1尚未在作者当前机器上进行NPU编译运行；数学分块更新式与Python语法已本地检查，实际兼容性、精度和加速以NPU报告为准。
+
 ## 当前 MHA 的 MFU 基准
 
 读取 `MFU.md` 后新增 `bench_mha_mfu.py`，沿用已通过精度检查的v0 kernel。默认5种形状 × FP16/BF16 × 因果/非因果，共20项，每项先校验精度，再预热5次、用NPU Event测31次，取中位数。编译、输入传输、CPU参考计算不计时；直接调用已编译kernel，不包括Python参数校验。计时包含流内可见的启动间隙及输出分配影响，不是host wall time。

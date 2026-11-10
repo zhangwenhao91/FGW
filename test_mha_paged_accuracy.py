@@ -6,6 +6,7 @@ The unoptimized token-serial kernel can be slow on long caches.
 import argparse
 import datetime
 import itertools
+import importlib
 import json
 import pathlib
 import time
@@ -72,11 +73,14 @@ def main():
     parser.add_argument("--suite", choices=["quick", "standard", "extended"], default="standard")
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 42, 2026])
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--output", default="mha_paged_accuracy_report.json")
+    parser.add_argument("--impl", choices=["v0", "v1"], default="v0")
+    parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED],
                         help="Run only these named cases from the selected suite")
     args = parser.parse_args()
+    if args.output is None:
+        args.output = "mha_paged_accuracy_report.json" if args.impl == "v0" else "mha_paged_accuracy_v1_report.json"
     cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED}[args.suite]
     if args.cases:
         missing = set(args.cases) - {c[0] for c in cases}
@@ -93,7 +97,7 @@ def main():
     output = pathlib.Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "suite": args.suite, "seeds": args.seeds,
-              "selected_cases": [c[0] for c in cases],
+              "selected_cases": [c[0] for c in cases], "implementation": args.impl,
               "total_checks": total, "results": [], "logical_device": args.device,
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "note": "Timing includes launch/copies/checks and is not a kernel benchmark."}
@@ -108,7 +112,8 @@ def main():
         import torch
         import torch_npu
         import tilelang
-        from mha_paged_decode_ascend_v0 import mha_paged_decode, reference
+        from mha_paged_decode_ascend_v0 import reference
+        mha_paged_decode = importlib.import_module(f"mha_paged_decode_ascend_{args.impl}").mha_paged_decode
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,
