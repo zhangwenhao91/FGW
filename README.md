@@ -1,5 +1,24 @@
 # FGW
 
+## 分页 MHA Ascend 原型精度检查
+
+`mha_paged_decode_ascend_v0.py` 是独立 SIMT 原型：每个 program 处理一个请求、query 位置和 head，逐 token 更新 FP32 online softmax。尚未完成 NPU 验证，也没有性能优化或 TileOPs 集成。
+
+在原来成功运行向量加法的环境中执行：
+
+```bash
+conda activate zwh
+source /home/CANN/9.3.0.weekly.20260930/ascend-toolkit/set_env.sh
+export ASCEND_RT_VISIBLE_DEVICES=4
+git pull --ff-only
+set -o pipefail
+python -u mha_paged_decode_ascend_v0.py 2>&1 | tee mha_paged_decode_v0.log
+```
+
+直接运行文件会用 CPU FP32 参考结果检查 FP16/BF16 × 因果/非因果四种组合，包括分页乱序、共享页、缓存尾部 NaN、零长度及完全被掩码的 query。四条 `PASS` 且进程退出码为 0 表示这些小用例通过，不代表完整算子精度或性能验收。若编译失败，请保留完整日志。
+
+可将 `mha_paged_decode_v0.log` 上传到此仓库或发回聊天，以继续定位。逻辑 `npu:0` 对应可见物理卡4。
+
 ## TileLang Ascend 最小编译运行验证
 
 在此前成功采集环境的同一终端、同一 conda/CANN 环境执行：
