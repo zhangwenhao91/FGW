@@ -45,8 +45,11 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             state = T.alloc_shared((8,), "float32")
             T.copy(Q[b, qpos, h, :], q_ub)
             with T.SimtVF(threads=threads):
-                for d in T.Parallel(dim):
-                    acc_ub[d] = 0
+                # A 192-wide domain with 128 threads leaves a partial thread
+                # tile. Use a full padded iteration space, guarding UB accesses.
+                for d in T.Parallel(padded):
+                    if d < dim:
+                        acc_ub[d] = 0
                 for i in T.Parallel(1):
                     state[0] = -1.0e30
                     state[1] = 0
@@ -69,12 +72,13 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     score = T.alloc_fragment((1,), "float32")
                     T.finalize_reducer(dot, score)
                     # Keep old state until every output dimension has consumed it.
-                    for d in T.Parallel(dim):
-                        s = score[0] * scale
-                        new_max = T.max(state[0], s)
-                        alpha = T.exp(state[0] - new_max)
-                        probability = T.exp(s - new_max)
-                        acc_ub[d] = acc_ub[d] * alpha + probability * T.cast(v_ub[d], "float32")
+                    for d in T.Parallel(padded):
+                        if d < dim:
+                            s = score[0] * scale
+                            new_max = T.max(state[0], s)
+                            alpha = T.exp(state[0] - new_max)
+                            probability = T.exp(s - new_max)
+                            acc_ub[d] = acc_ub[d] * alpha + probability * T.cast(v_ub[d], "float32")
                     for i in T.Parallel(1):
                         s = score[0] * scale
                         new_max = T.max(state[0], s)
@@ -82,9 +86,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                         state[0] = new_max
 
             with T.SimtVF(threads=threads):
-                for d in T.Parallel(dim):
-                    denominator = T.max(state[1], 1.0e-30)
-                    out_ub[d] = T.cast(acc_ub[d] / denominator, dtype)
+                for d in T.Parallel(padded):
+                    if d < dim:
+                        denominator = T.max(state[1], 1.0e-30)
+                        out_ub[d] = T.cast(acc_ub[d] / denominator, dtype)
             T.copy(out_ub, O[b, qpos, h, :])
 
     return tilelang.compile(main, out_idx=-1, target="ascend", execution_backend="auto")

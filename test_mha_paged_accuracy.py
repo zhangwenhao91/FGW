@@ -74,8 +74,15 @@ def main():
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output", default="mha_paged_accuracy_report.json")
     parser.add_argument("--list-only", action="store_true")
+    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED],
+                        help="Run only these named cases from the selected suite")
     args = parser.parse_args()
     cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED}[args.suite]
+    if args.cases:
+        missing = set(args.cases) - {c[0] for c in cases}
+        if missing:
+            parser.error(f"Cases not in selected suite: {sorted(missing)}")
+        cases = [c for c in cases if c[0] in args.cases]
     patterns = ("mixed", "full", "empty")
     total = len(cases) * len(args.seeds) * 2 * 2 * len(patterns)
     if args.list_only:
@@ -86,6 +93,7 @@ def main():
     output = pathlib.Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "suite": args.suite, "seeds": args.seeds,
+              "selected_cases": [c[0] for c in cases],
               "total_checks": total, "results": [], "logical_device": args.device,
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "note": "Timing includes launch/copies/checks and is not a kernel benchmark."}

@@ -2,6 +2,16 @@
 
 ## 扩大分页 MHA 精度覆盖
 
+D=192 的原始版本曾在 SIMT 布局检查失败；现在将所有按 head 维度并行的循环统一补齐到2的幂，并保护真实UB边界。NPU重测命令（108次，包含此前未完成的三组规格）：
+
+```bash
+git pull --ff-only
+set -o pipefail
+python -u test_mha_paged_accuracy.py --suite extended --cases dim192 cache4096 cache8192 --output mha_paged_accuracy_remaining.json 2>&1 | tee mha_paged_accuracy_remaining.log
+```
+
+剩余用例通过后，建议用更新后的kernel完整重跑extended，输出新文件名以保留旧报告。
+
 沿用已成功运行原型的 conda/CANN 环境：
 
 ```bash
