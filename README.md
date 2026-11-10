@@ -1,5 +1,27 @@
 # FGW
 
+## TileLang Ascend 最小编译运行验证
+
+在此前成功采集环境的同一终端、同一 conda/CANN 环境执行：
+
+```bash
+git pull --ff-only
+python collect_env.py
+python verify_tilelang_ascend.py
+```
+
+第二个命令更新环境报告，第三个命令显式以 `target="ascend"` 编译 FP32 向量加法，随后执行随机输入、更换输入、全零输入三组 CPU 参考比对。不运行性能基准，不使用 CPU 回退。初次编译可能较慢。
+
+看到 `PASS: compiled and executed TileLang Ascend kernel` 且进程退出码为 0，才表示这条编译和执行链路通过。脚本保存 `tilelang_ascend_smoke.json`；失败时也会保存阶段、版本及异常堆栈。若 Python 进程被原生运行库终止，报告可能来不及生成，此时请保留终端日志。
+
+当前 `ASCEND_RT_VISIBLE_DEVICES=4` 时，默认逻辑设备 `--device 0` 即物理卡 4，无需改成 `--device 4`。
+
+请将更新的 `ascend_env_report.json` 和 `tilelang_ascend_smoke.json` 发回聊天；也可将报告手动提交到仓库（smoke 报告默认被 gitignore 忽略，可用 `git add -f tilelang_ascend_smoke.json`）。
+
+API 和缓冲区配置依据安装版本对应的[官方 Ascend 向量加法示例](https://github.com/tile-ai/tilelang/blob/a7cb753dafc6b2514cbbd7c8431260c9d05e7df0/examples/ascend/example_vecadd.py)及[后端说明](https://github.com/tile-ai/tilelang/blob/a7cb753dafc6b2514cbbd7c8431260c9d05e7df0/tilelang/ascend/README.md)。
+
+环境探测中的 TVM 构建信息、目标类型、注册函数和 Ascend 语言模块已拆成独立项，某项 API 不可用不会跳过后续探测。
+
 用于 TileOPs Ascend 适配的环境诊断工具。脚本仅依赖 Python 标准库，不安装软件、不需要 sudo、不访问网络。
 
 ## 运行

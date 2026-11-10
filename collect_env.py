@@ -68,10 +68,33 @@ except Exception as e: data["language_error"] = repr(e)
 try:
     from tilelang import tvm
     data["tvm_version"] = tvm.__version__
-    data["tvm_build"] = tvm.support.libinfo()
-    data["target_kinds"] = list(tvm.target.Target.list_kinds())
-    data["ascend_global_functions"] = [x for x in tvm.get_global_func("runtime.ListGlobalNames")()
-        if any(s in x.lower() for s in ("ascend", "npu", "cce"))]
+    def attempt(key, fn):
+        try: data[key] = fn()
+        except Exception as e: data[key + "_error"] = repr(e)
+    def build_info():
+        if hasattr(tvm.support, "libinfo"):
+            return tvm.support.libinfo()
+        from tvm._ffi import libinfo
+        return {"library_paths": libinfo.find_lib_path()}
+    attempt("tvm_build", build_info)
+    attempt("target_kinds", lambda: list(tvm.target.Target.list_kinds()))
+    def global_names():
+        try:
+            import tvm_ffi
+            return tvm_ffi.registry.list_global_func_names()
+        except (ImportError, AttributeError):
+            return tvm.get_global_func("runtime.ListGlobalNames")()
+    attempt("ascend_global_functions", lambda: [x for x in global_names()
+        if any(s in x.lower() for s in ("ascend", "npu", "cce", "pto"))])
+    for key in ("target.build.tilelang_ascend", "target.build.tilelang_ascend_without_compile",
+                "target.build.tilelang_pto_without_compile"):
+        attempt(key, lambda key=key: tvm.get_global_func(key, allow_missing=True) is not None)
+    import inspect
+    attempt("compile_signature", lambda: str(inspect.signature(tilelang.compile)))
+    def dialect_info():
+        import tilelang.ascend.language as A
+        return {"path": A.__file__, "symbols": [x for x in dir(A) if not x.startswith("_")]}
+    attempt("ascend_language", dialect_info)
 except Exception as e: data["tvm_error"] = repr(e)
 matches = []
 for p in root.rglob("*"):
@@ -115,6 +138,9 @@ def collect(args):
             "ASCEND_CUSTOM_OPP_PATH", "ASCEND_RT_VISIBLE_DEVICES", "ASCEND_VISIBLE_DEVICES",
             "NPU_VISIBLE_DEVICES", "LD_LIBRARY_PATH", "PYTHONPATH", "VIRTUAL_ENV", "CONDA_PREFIX",
             "TILELANG_TARGET", "TVM_HOME", "CC", "CXX") if k in os.environ}}
+    for key in ("TILELANG_DEFAULT_TARGET", "TILELANG_EXECUTION_BACKEND", "ASCEND_NPU_ARCH", "BISHENG_HOME"):
+        if key in os.environ:
+            result["environment"][key] = os.environ[key]
     packages = []
     for d in importlib.metadata.distributions():
         name = d.metadata.get("Name", "")
