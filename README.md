@@ -1,5 +1,32 @@
 # FGW
 
+## 扩大分页 MHA 精度覆盖
+
+沿用已成功运行原型的 conda/CANN 环境：
+
+```bash
+git pull --ff-only
+set -o pipefail
+python -u test_mha_paged_accuracy.py --suite standard 2>&1 | tee mha_paged_accuracy.log
+```
+
+默认使用随机种子7、42、2026，10种规格 × 3种子 × 2类型 × 2掩码模式 × 3长度模式，共360次检查。覆盖 B=1/2/3/4/8、Sq=1/2/4/8、H=2/4/8、D=16/32/64/80/128/256、页大小16/32/64/128/256、最长2048 token。
+
+每个规格切换混合长度、满缓存、全空缓存；随机页表包含跨请求共享和请求内重复物理页，物理池大于单请求容量。未使用物理行填NaN；零可见长度的输出要求严格为零。使用与原型相同的FP16/BF16容限，同时记录最大/平均绝对误差以及误差与容限之比，不因长缓存放宽容限。
+
+```bash
+# 较短检查：108次
+python -u test_mha_paged_accuracy.py --suite quick
+# 扩展：540次，包括D=48/96/192、页大小48和4096/8192 token缓存
+python -u test_mha_paged_accuracy.py --suite extended --output mha_paged_accuracy_extended.json
+# 自定义种子；仅列出计划不导入NPU依赖
+python test_mha_paged_accuracy.py --list-only --seeds 1 2 3
+```
+
+原型逐token计算，长缓存回归可能较慢；输出中的wall_seconds包含编译、数据传输及校验，不是性能基准。报告每次检查后更新，精度不匹配会记录后继续，其他运行错误会停止，避免NPU上下文异常造成连续误报。
+
+完成后请上传 `mha_paged_accuracy_report.json` 和 `mha_paged_accuracy.log`。如果进程被原生运行库终止，报告中的最后一个running用例可辅助定位，并请一并保留日志。
+
 ## 分页 MHA Ascend 原型精度检查
 
 `mha_paged_decode_ascend_v0.py` 是独立 SIMT 原型：每个 program 处理一个请求、query 位置和 head，逐 token 更新 FP32 online softmax。尚未完成 NPU 验证，也没有性能优化或 TileOPs 集成。
