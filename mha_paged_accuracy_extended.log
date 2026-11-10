@@ -1,12 +1,20 @@
+2026-11-10 20:27:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [1/540] tiny seed=7 torch.float16 causal=False mixed: passed max_error=0.0
 [2/540] tiny seed=7 torch.float16 causal=False full: passed max_error=0.0
 [3/540] tiny seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:27:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [4/540] tiny seed=7 torch.float16 causal=True mixed: passed max_error=0.0
 [5/540] tiny seed=7 torch.float16 causal=True full: passed max_error=0.0
 [6/540] tiny seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:27:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [7/540] tiny seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
 [8/540] tiny seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
 [9/540] tiny seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:27:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [10/540] tiny seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [11/540] tiny seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
 [12/540] tiny seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -34,15 +42,23 @@
 [34/540] tiny seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [35/540] tiny seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
 [36/540] tiny seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:27:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [37/540] non_power_two_dim seed=7 torch.float16 causal=False mixed: passed max_error=1.52587890625e-05
 [38/540] non_power_two_dim seed=7 torch.float16 causal=False full: passed max_error=1.52587890625e-05
 [39/540] non_power_two_dim seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:27:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [40/540] non_power_two_dim seed=7 torch.float16 causal=True mixed: passed max_error=5.960464477539063e-08
 [41/540] non_power_two_dim seed=7 torch.float16 causal=True full: passed max_error=3.0517578125e-05
 [42/540] non_power_two_dim seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:27:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [43/540] non_power_two_dim seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
 [44/540] non_power_two_dim seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
 [45/540] non_power_two_dim seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:27:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [46/540] non_power_two_dim seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [47/540] non_power_two_dim seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
 [48/540] non_power_two_dim seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -70,15 +86,23 @@
 [70/540] non_power_two_dim seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [71/540] non_power_two_dim seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
 [72/540] non_power_two_dim seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:27:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [73/540] wide_head seed=7 torch.float16 causal=False mixed: passed max_error=0.0001220703125
 [74/540] wide_head seed=7 torch.float16 causal=False full: passed max_error=0.0001220703125
 [75/540] wide_head seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:27:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [76/540] wide_head seed=7 torch.float16 causal=True mixed: passed max_error=3.0517578125e-05
 [77/540] wide_head seed=7 torch.float16 causal=True full: passed max_error=0.0001220703125
 [78/540] wide_head seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:27:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [79/540] wide_head seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
 [80/540] wide_head seed=7 torch.bfloat16 causal=False full: passed max_error=3.0517578125e-05
 [81/540] wide_head seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:27:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [82/540] wide_head seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [83/540] wide_head seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
 [84/540] wide_head seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -106,15 +130,23 @@
 [106/540] wide_head seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [107/540] wide_head seed=2026 torch.bfloat16 causal=True full: passed max_error=4.76837158203125e-07
 [108/540] wide_head seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:27:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:27:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [109/540] single_decode seed=7 torch.float16 causal=False mixed: passed max_error=9.5367431640625e-07
 [110/540] single_decode seed=7 torch.float16 causal=False full: passed max_error=3.0517578125e-05
 [111/540] single_decode seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:27:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [112/540] single_decode seed=7 torch.float16 causal=True mixed: passed max_error=9.5367431640625e-07
 [113/540] single_decode seed=7 torch.float16 causal=True full: passed max_error=3.0517578125e-05
 [114/540] single_decode seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [115/540] single_decode seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
 [116/540] single_decode seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
 [117/540] single_decode seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [118/540] single_decode seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [119/540] single_decode seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
 [120/540] single_decode seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -142,15 +174,23 @@
 [142/540] single_decode seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [143/540] single_decode seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
 [144/540] single_decode seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [145/540] dim32 seed=7 torch.float16 causal=False mixed: passed max_error=3.814697265625e-06
 [146/540] dim32 seed=7 torch.float16 causal=False full: passed max_error=0.0
 [147/540] dim32 seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [148/540] dim32 seed=7 torch.float16 causal=True mixed: passed max_error=0.0
 [149/540] dim32 seed=7 torch.float16 causal=True full: passed max_error=3.814697265625e-06
 [150/540] dim32 seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [151/540] dim32 seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
 [152/540] dim32 seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
 [153/540] dim32 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [154/540] dim32 seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [155/540] dim32 seed=7 torch.bfloat16 causal=True full: passed max_error=3.814697265625e-06
 [156/540] dim32 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -178,15 +218,23 @@
 [178/540] dim32 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [179/540] dim32 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
 [180/540] dim32 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [181/540] dim128 seed=7 torch.float16 causal=False mixed: passed max_error=1.52587890625e-05
 [182/540] dim128 seed=7 torch.float16 causal=False full: passed max_error=6.103515625e-05
 [183/540] dim128 seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [184/540] dim128 seed=7 torch.float16 causal=True mixed: passed max_error=0.0001220703125
 [185/540] dim128 seed=7 torch.float16 causal=True full: passed max_error=0.0001220703125
 [186/540] dim128 seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [187/540] dim128 seed=7 torch.bfloat16 causal=False mixed: passed max_error=5.960464477539063e-08
 [188/540] dim128 seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
 [189/540] dim128 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [190/540] dim128 seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.00048828125
 [191/540] dim128 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
 [192/540] dim128 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -214,15 +262,23 @@
 [214/540] dim128 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [215/540] dim128 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
 [216/540] dim128 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [217/540] many_queries seed=7 torch.float16 causal=False mixed: passed max_error=6.103515625e-05
 [218/540] many_queries seed=7 torch.float16 causal=False full: passed max_error=6.103515625e-05
 [219/540] many_queries seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [220/540] many_queries seed=7 torch.float16 causal=True mixed: passed max_error=0.0
 [221/540] many_queries seed=7 torch.float16 causal=True full: passed max_error=6.103515625e-05
 [222/540] many_queries seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [223/540] many_queries seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
 [224/540] many_queries seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
 [225/540] many_queries seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [226/540] many_queries seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [227/540] many_queries seed=7 torch.bfloat16 causal=True full: passed max_error=5.960464477539063e-08
 [228/540] many_queries seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -250,15 +306,23 @@
 [250/540] many_queries seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [251/540] many_queries seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
 [252/540] many_queries seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [253/540] many_requests seed=7 torch.float16 causal=False mixed: passed max_error=4.76837158203125e-07
 [254/540] many_requests seed=7 torch.float16 causal=False full: passed max_error=1.52587890625e-05
 [255/540] many_requests seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [256/540] many_requests seed=7 torch.float16 causal=True mixed: passed max_error=4.76837158203125e-07
 [257/540] many_requests seed=7 torch.float16 causal=True full: passed max_error=1.52587890625e-05
 [258/540] many_requests seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [259/540] many_requests seed=7 torch.bfloat16 causal=False mixed: passed max_error=1.1920928955078125e-07
 [260/540] many_requests seed=7 torch.bfloat16 causal=False full: passed max_error=4.284083843231201e-08
 [261/540] many_requests seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [262/540] many_requests seed=7 torch.bfloat16 causal=True mixed: passed max_error=1.1920928955078125e-07
 [263/540] many_requests seed=7 torch.bfloat16 causal=True full: passed max_error=1.9073486328125e-06
 [264/540] many_requests seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -286,15 +350,23 @@
 [286/540] many_requests seed=2026 torch.bfloat16 causal=True mixed: passed max_error=4.76837158203125e-07
 [287/540] many_requests seed=2026 torch.bfloat16 causal=True full: passed max_error=7.62939453125e-06
 [288/540] many_requests seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [289/540] page256 seed=7 torch.float16 causal=False mixed: passed max_error=3.0517578125e-05
 [290/540] page256 seed=7 torch.float16 causal=False full: passed max_error=3.0517578125e-05
 [291/540] page256 seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [292/540] page256 seed=7 torch.float16 causal=True mixed: passed max_error=3.0517578125e-05
 [293/540] page256 seed=7 torch.float16 causal=True full: passed max_error=3.0517578125e-05
 [294/540] page256 seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [295/540] page256 seed=7 torch.bfloat16 causal=False mixed: passed max_error=9.5367431640625e-07
 [296/540] page256 seed=7 torch.bfloat16 causal=False full: passed max_error=9.5367431640625e-07
 [297/540] page256 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [298/540] page256 seed=7 torch.bfloat16 causal=True mixed: passed max_error=9.5367431640625e-07
 [299/540] page256 seed=7 torch.bfloat16 causal=True full: passed max_error=9.5367431640625e-07
 [300/540] page256 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -322,15 +394,23 @@
 [322/540] page256 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [323/540] page256 seed=2026 torch.bfloat16 causal=True full: passed max_error=1.52587890625e-05
 [324/540] page256 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [325/540] cache2048 seed=7 torch.float16 causal=False mixed: passed max_error=3.0517578125e-05
 [326/540] cache2048 seed=7 torch.float16 causal=False full: passed max_error=3.814697265625e-06
 [327/540] cache2048 seed=7 torch.float16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [328/540] cache2048 seed=7 torch.float16 causal=True mixed: passed max_error=3.0517578125e-05
 [329/540] cache2048 seed=7 torch.float16 causal=True full: passed max_error=7.62939453125e-06
 [330/540] cache2048 seed=7 torch.float16 causal=True empty: passed max_error=0.0
+2026-11-10 20:28:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [331/540] cache2048 seed=7 torch.bfloat16 causal=False mixed: passed max_error=2.384185791015625e-07
 [332/540] cache2048 seed=7 torch.bfloat16 causal=False full: passed max_error=2.384185791015625e-07
 [333/540] cache2048 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+2026-11-10 20:28:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [334/540] cache2048 seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [335/540] cache2048 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
 [336/540] cache2048 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -358,23 +438,23 @@
 [358/540] cache2048 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [359/540] cache2048 seed=2026 torch.bfloat16 causal=True full: passed max_error=2.9802322387695312e-08
 [360/540] cache2048 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
-2026-11-10 20:22:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-2026-11-10 20:22:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+2026-11-10 20:28:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [361/540] dim48 seed=7 torch.float16 causal=False mixed: passed max_error=5.960464477539063e-08
 [362/540] dim48 seed=7 torch.float16 causal=False full: passed max_error=5.960464477539063e-08
 [363/540] dim48 seed=7 torch.float16 causal=False empty: passed max_error=0.0
-2026-11-10 20:22:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-2026-11-10 20:22:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+2026-11-10 20:28:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [364/540] dim48 seed=7 torch.float16 causal=True mixed: passed max_error=3.814697265625e-06
 [365/540] dim48 seed=7 torch.float16 causal=True full: passed max_error=3.814697265625e-06
 [366/540] dim48 seed=7 torch.float16 causal=True empty: passed max_error=0.0
-2026-11-10 20:22:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-2026-11-10 20:22:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+2026-11-10 20:28:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [367/540] dim48 seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
 [368/540] dim48 seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
 [369/540] dim48 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
-2026-11-10 20:22:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-2026-11-10 20:22:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+2026-11-10 20:28:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [370/540] dim48 seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [371/540] dim48 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
 [372/540] dim48 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -402,23 +482,23 @@
 [394/540] dim48 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [395/540] dim48 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
 [396/540] dim48 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
-2026-11-10 20:22:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-2026-11-10 20:22:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+2026-11-10 20:28:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [397/540] dim96 seed=7 torch.float16 causal=False mixed: passed max_error=4.76837158203125e-07
 [398/540] dim96 seed=7 torch.float16 causal=False full: passed max_error=3.0517578125e-05
 [399/540] dim96 seed=7 torch.float16 causal=False empty: passed max_error=0.0
-2026-11-10 20:22:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-2026-11-10 20:22:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+2026-11-10 20:28:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [400/540] dim96 seed=7 torch.float16 causal=True mixed: passed max_error=2.384185791015625e-07
 [401/540] dim96 seed=7 torch.float16 causal=True full: passed max_error=4.76837158203125e-07
 [402/540] dim96 seed=7 torch.float16 causal=True empty: passed max_error=0.0
-2026-11-10 20:22:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-2026-11-10 20:22:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+2026-11-10 20:28:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [403/540] dim96 seed=7 torch.bfloat16 causal=False mixed: passed max_error=1.4901161193847656e-08
 [404/540] dim96 seed=7 torch.bfloat16 causal=False full: passed max_error=2.384185791015625e-07
 [405/540] dim96 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
-2026-11-10 20:22:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-2026-11-10 20:22:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+2026-11-10 20:28:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-10 20:28:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
 [406/540] dim96 seed=7 torch.bfloat16 causal=True mixed: passed max_error=1.4901161193847656e-08
 [407/540] dim96 seed=7 torch.bfloat16 causal=True full: passed max_error=1.1920928955078125e-07
 [408/540] dim96 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
@@ -446,60 +526,112 @@
 [430/540] dim96 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
 [431/540] dim96 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
 [432/540] dim96 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
-2026-11-10 20:22:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
-[433/540] dim192 seed=7 torch.float16 causal=False mixed: error max_error=n/a
-Traceback (most recent call last):
-  File "/home/z30086261/FGW/test_mha_paged_accuracy.py", line 131, in main
-    got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW/mha_paged_decode_ascend_v0.py", line 119, in mha_paged_decode
-    kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW/mha_paged_decode_ascend_v0.py", line 90, in build_kernel
-    return tilelang.compile(main, out_idx=-1, target="ascend", execution_backend="auto")
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 166, in compile
-    return cached(
-           ^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/__init__.py", line 91, in cached
-    return cache.cached(
-           ^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/kernel_cache.py", line 427, in cached
-    kernel = JITKernel(
-             ^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 140, in __init__
-    adapter = self._compile_and_create_adapter(func, out_idx)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 280, in _compile_and_create_adapter
-    self.artifact = self._compile_artifact(tilelang_func, pass_configs, compile_metadata)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 321, in _compile_artifact
-    artifact = lower_with_context(
-               ^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 165, in lower_with_context
-    return _lower_with_context_impl(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 184, in _lower_with_context_impl
-    host_mod, device_mod, params, target, target_host = lower_to_host_device_ir(
-                                                        ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 136, in lower_to_host_device_ir
-    mod = context.lower(mod)
-          ^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py", line 214, in lower
-    return self.module.lower(mod, self.target)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py", line 115, in lower
-    return self.get_pipeline(target).lower(mod, target)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/pass_pipeline/pipeline.py", line 31, in lower
-    return self._lower(mod, target)
-           ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/pipeline.py", line 122, in AscendPassPipelineBody
-    mod = ascend_transform.AscendLowerTileOp()(mod)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/ir/transform.py", line 171, in __call__
-    return _ffi_transform_api.RunPass(self, mod)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
-tvm.error.InternalError: Layout Layout((192, 1) -> (2, 128), transform: (_i, _j) -> (_i // 128, _i % 128)) has errors: ("The iterations do not traverse full iter space", "Index mapping does not form a bijective transform.")
-ERROR: 432/540 passed; report=mha_paged_accuracy_extended.json
+[433/540] dim192 seed=7 torch.float16 causal=False mixed: passed max_error=6.103515625e-05
+[434/540] dim192 seed=7 torch.float16 causal=False full: passed max_error=6.103515625e-05
+[435/540] dim192 seed=7 torch.float16 causal=False empty: passed max_error=0.0
+[436/540] dim192 seed=7 torch.float16 causal=True mixed: passed max_error=6.103515625e-05
+[437/540] dim192 seed=7 torch.float16 causal=True full: passed max_error=6.103515625e-05
+[438/540] dim192 seed=7 torch.float16 causal=True empty: passed max_error=0.0
+[439/540] dim192 seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
+[440/540] dim192 seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
+[441/540] dim192 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+[442/540] dim192 seed=7 torch.bfloat16 causal=True mixed: passed max_error=0.000244140625
+[443/540] dim192 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
+[444/540] dim192 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
+[445/540] dim192 seed=42 torch.float16 causal=False mixed: passed max_error=3.0517578125e-05
+[446/540] dim192 seed=42 torch.float16 causal=False full: passed max_error=3.0517578125e-05
+[447/540] dim192 seed=42 torch.float16 causal=False empty: passed max_error=0.0
+[448/540] dim192 seed=42 torch.float16 causal=True mixed: passed max_error=3.0517578125e-05
+[449/540] dim192 seed=42 torch.float16 causal=True full: passed max_error=3.0517578125e-05
+[450/540] dim192 seed=42 torch.float16 causal=True empty: passed max_error=0.0
+[451/540] dim192 seed=42 torch.bfloat16 causal=False mixed: passed max_error=0.0
+[452/540] dim192 seed=42 torch.bfloat16 causal=False full: passed max_error=0.0
+[453/540] dim192 seed=42 torch.bfloat16 causal=False empty: passed max_error=0.0
+[454/540] dim192 seed=42 torch.bfloat16 causal=True mixed: passed max_error=3.814697265625e-06
+[455/540] dim192 seed=42 torch.bfloat16 causal=True full: passed max_error=0.0
+[456/540] dim192 seed=42 torch.bfloat16 causal=True empty: passed max_error=0.0
+[457/540] dim192 seed=2026 torch.float16 causal=False mixed: passed max_error=0.0
+[458/540] dim192 seed=2026 torch.float16 causal=False full: passed max_error=1.52587890625e-05
+[459/540] dim192 seed=2026 torch.float16 causal=False empty: passed max_error=0.0
+[460/540] dim192 seed=2026 torch.float16 causal=True mixed: passed max_error=0.0
+[461/540] dim192 seed=2026 torch.float16 causal=True full: passed max_error=9.5367431640625e-07
+[462/540] dim192 seed=2026 torch.float16 causal=True empty: passed max_error=0.0
+[463/540] dim192 seed=2026 torch.bfloat16 causal=False mixed: passed max_error=0.0
+[464/540] dim192 seed=2026 torch.bfloat16 causal=False full: passed max_error=0.0
+[465/540] dim192 seed=2026 torch.bfloat16 causal=False empty: passed max_error=0.0
+[466/540] dim192 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
+[467/540] dim192 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
+[468/540] dim192 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+[469/540] cache4096 seed=7 torch.float16 causal=False mixed: passed max_error=3.0517578125e-05
+[470/540] cache4096 seed=7 torch.float16 causal=False full: passed max_error=3.0517578125e-05
+[471/540] cache4096 seed=7 torch.float16 causal=False empty: passed max_error=0.0
+[472/540] cache4096 seed=7 torch.float16 causal=True mixed: passed max_error=1.52587890625e-05
+[473/540] cache4096 seed=7 torch.float16 causal=True full: passed max_error=1.52587890625e-05
+[474/540] cache4096 seed=7 torch.float16 causal=True empty: passed max_error=0.0
+[475/540] cache4096 seed=7 torch.bfloat16 causal=False mixed: passed max_error=0.0
+[476/540] cache4096 seed=7 torch.bfloat16 causal=False full: passed max_error=0.0
+[477/540] cache4096 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+[478/540] cache4096 seed=7 torch.bfloat16 causal=True mixed: passed max_error=1.52587890625e-05
+[479/540] cache4096 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
+[480/540] cache4096 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
+[481/540] cache4096 seed=42 torch.float16 causal=False mixed: passed max_error=6.103515625e-05
+[482/540] cache4096 seed=42 torch.float16 causal=False full: passed max_error=3.814697265625e-06
+[483/540] cache4096 seed=42 torch.float16 causal=False empty: passed max_error=0.0
+[484/540] cache4096 seed=42 torch.float16 causal=True mixed: passed max_error=3.0517578125e-05
+[485/540] cache4096 seed=42 torch.float16 causal=True full: passed max_error=3.814697265625e-06
+[486/540] cache4096 seed=42 torch.float16 causal=True empty: passed max_error=0.0
+[487/540] cache4096 seed=42 torch.bfloat16 causal=False mixed: passed max_error=4.76837158203125e-07
+[488/540] cache4096 seed=42 torch.bfloat16 causal=False full: passed max_error=6.103515625e-05
+[489/540] cache4096 seed=42 torch.bfloat16 causal=False empty: passed max_error=0.0
+[490/540] cache4096 seed=42 torch.bfloat16 causal=True mixed: passed max_error=1.4901161193847656e-08
+[491/540] cache4096 seed=42 torch.bfloat16 causal=True full: passed max_error=4.76837158203125e-07
+[492/540] cache4096 seed=42 torch.bfloat16 causal=True empty: passed max_error=0.0
+[493/540] cache4096 seed=2026 torch.float16 causal=False mixed: passed max_error=0.0
+[494/540] cache4096 seed=2026 torch.float16 causal=False full: passed max_error=3.0517578125e-05
+[495/540] cache4096 seed=2026 torch.float16 causal=False empty: passed max_error=0.0
+[496/540] cache4096 seed=2026 torch.float16 causal=True mixed: passed max_error=0.0
+[497/540] cache4096 seed=2026 torch.float16 causal=True full: passed max_error=3.0517578125e-05
+[498/540] cache4096 seed=2026 torch.float16 causal=True empty: passed max_error=0.0
+[499/540] cache4096 seed=2026 torch.bfloat16 causal=False mixed: passed max_error=0.0
+[500/540] cache4096 seed=2026 torch.bfloat16 causal=False full: passed max_error=0.0
+[501/540] cache4096 seed=2026 torch.bfloat16 causal=False empty: passed max_error=0.0
+[502/540] cache4096 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
+[503/540] cache4096 seed=2026 torch.bfloat16 causal=True full: passed max_error=3.0517578125e-05
+[504/540] cache4096 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+[505/540] cache8192 seed=7 torch.float16 causal=False mixed: passed max_error=7.62939453125e-06
+[506/540] cache8192 seed=7 torch.float16 causal=False full: passed max_error=7.62939453125e-06
+[507/540] cache8192 seed=7 torch.float16 causal=False empty: passed max_error=0.0
+[508/540] cache8192 seed=7 torch.float16 causal=True mixed: passed max_error=7.62939453125e-06
+[509/540] cache8192 seed=7 torch.float16 causal=True full: passed max_error=9.5367431640625e-07
+[510/540] cache8192 seed=7 torch.float16 causal=True empty: passed max_error=0.0
+[511/540] cache8192 seed=7 torch.bfloat16 causal=False mixed: passed max_error=9.5367431640625e-07
+[512/540] cache8192 seed=7 torch.bfloat16 causal=False full: passed max_error=4.76837158203125e-07
+[513/540] cache8192 seed=7 torch.bfloat16 causal=False empty: passed max_error=0.0
+[514/540] cache8192 seed=7 torch.bfloat16 causal=True mixed: passed max_error=9.5367431640625e-07
+[515/540] cache8192 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0
+[516/540] cache8192 seed=7 torch.bfloat16 causal=True empty: passed max_error=0.0
+[517/540] cache8192 seed=42 torch.float16 causal=False mixed: passed max_error=3.0517578125e-05
+[518/540] cache8192 seed=42 torch.float16 causal=False full: passed max_error=3.814697265625e-06
+[519/540] cache8192 seed=42 torch.float16 causal=False empty: passed max_error=0.0
+[520/540] cache8192 seed=42 torch.float16 causal=True mixed: passed max_error=3.0517578125e-05
+[521/540] cache8192 seed=42 torch.float16 causal=True full: passed max_error=3.814697265625e-06
+[522/540] cache8192 seed=42 torch.float16 causal=True empty: passed max_error=0.0
+[523/540] cache8192 seed=42 torch.bfloat16 causal=False mixed: passed max_error=6.103515625e-05
+[524/540] cache8192 seed=42 torch.bfloat16 causal=False full: passed max_error=4.76837158203125e-07
+[525/540] cache8192 seed=42 torch.bfloat16 causal=False empty: passed max_error=0.0
+[526/540] cache8192 seed=42 torch.bfloat16 causal=True mixed: passed max_error=6.103515625e-05
+[527/540] cache8192 seed=42 torch.bfloat16 causal=True full: passed max_error=0.0
+[528/540] cache8192 seed=42 torch.bfloat16 causal=True empty: passed max_error=0.0
+[529/540] cache8192 seed=2026 torch.float16 causal=False mixed: passed max_error=0.0
+[530/540] cache8192 seed=2026 torch.float16 causal=False full: passed max_error=1.52587890625e-05
+[531/540] cache8192 seed=2026 torch.float16 causal=False empty: passed max_error=0.0
+[532/540] cache8192 seed=2026 torch.float16 causal=True mixed: passed max_error=0.0
+[533/540] cache8192 seed=2026 torch.float16 causal=True full: passed max_error=1.52587890625e-05
+[534/540] cache8192 seed=2026 torch.float16 causal=True empty: passed max_error=0.0
+[535/540] cache8192 seed=2026 torch.bfloat16 causal=False mixed: passed max_error=0.0
+[536/540] cache8192 seed=2026 torch.bfloat16 causal=False full: passed max_error=0.0
+[537/540] cache8192 seed=2026 torch.bfloat16 causal=False empty: passed max_error=0.0
+[538/540] cache8192 seed=2026 torch.bfloat16 causal=True mixed: passed max_error=0.0
+[539/540] cache8192 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0
+[540/540] cache8192 seed=2026 torch.bfloat16 causal=True empty: passed max_error=0.0
+PASSED: 540/540 passed; report=mha_paged_accuracy_extended.json
