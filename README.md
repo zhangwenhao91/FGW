@@ -1,5 +1,29 @@
 # FGW
 
+## 当前 MHA 的 MFU 基准
+
+读取 `MFU.md` 后新增 `bench_mha_mfu.py`，沿用已通过精度检查的v0 kernel。默认5种形状 × FP16/BF16 × 因果/非因果，共20项，每项先校验精度，再预热5次、用NPU Event测31次，取中位数。编译、输入传输、CPU参考计算不计时；直接调用已编译kernel，不包括Python参数校验。计时包含流内可见的启动间隙及输出分配影响，不是host wall time。
+
+```bash
+git pull --ff-only
+set -o pipefail
+python -u bench_mha_mfu.py 2>&1 | tee mha_mfu.log
+```
+
+有效FLOPs按 `4 * H * D * sum(每个请求每个query可见的KV数量)` 计算，QK和PV各贡献一半，不统计softmax或online rescale。decode因果对齐缓存末尾，不能一律按非因果计算量除以2。
+
+分母采用文档给出的28 AIC、FP16/BF16 dense Cube峰值378 TFLOPS；当前kernel实际是FP32 SIMT Vector运算，报告中的 `cube_normalized_mfu_percent` 是相对该模型计算目标的比率，不能解释为Vector或Cube实际占用率。峰值来自用户文档，没有在脚本中独立测定。
+
+默认重复读取同一份输入（warm cache），也可另测每次清理256MiB缓存后的结果：
+
+```bash
+python -u bench_mha_mfu.py --cache flush --output mha_mfu_flush_report.json 2>&1 | tee mha_mfu_flush.log
+# 先只跑最小规格，共4项
+python -u bench_mha_mfu.py --cases decode_b1_k512 --output mha_mfu_small_report.json
+```
+
+清理发生在计时区间之外；该模式是软件驱逐缓存的近似，不保证完全冷缓存。请在目标卡空闲时测试。上传 `mha_mfu_report.json` 和 `mha_mfu.log` 后可分析每种形状的MFU。
+
 ## 扩大分页 MHA 精度覆盖
 
 D=192 的原始版本曾在 SIMT 布局检查失败；现在将所有按 head 维度并行的循环统一补齐到2的幂，并保护真实UB边界。NPU重测命令（108次，包含此前未完成的三组规格）：
