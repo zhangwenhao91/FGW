@@ -1,0 +1,21 @@
+decode_b1_k512 torch.float16 causal=False: 0.241584 ms, 0.01736168 TFLOPS, MFU=0.00459304% speedup_vs_v0=n/a
+decode_b1_k512 torch.float16 causal=True: 0.241647 ms, 0.01735715 TFLOPS, MFU=0.00459184% speedup_vs_v0=n/a
+decode_b1_k512 torch.bfloat16 causal=False: 0.241436 ms, 0.01737232 TFLOPS, MFU=0.00459585% speedup_vs_v0=n/a
+decode_b1_k512 torch.bfloat16 causal=True: 0.241308 ms, 0.01738154 TFLOPS, MFU=0.00459829% speedup_vs_v0=n/a
+decode_b2_k2048 torch.float16 causal=False: 0.934680 ms, 0.00897485 TFLOPS, MFU=0.00237430% speedup_vs_v0=n/a
+decode_b2_k2048 torch.float16 causal=True: 0.934650 ms, 0.00897513 TFLOPS, MFU=0.00237437% speedup_vs_v0=n/a
+decode_b2_k2048 torch.bfloat16 causal=False: 0.934462 ms, 0.00897694 TFLOPS, MFU=0.00237485% speedup_vs_v0=n/a
+decode_b2_k2048 torch.bfloat16 causal=True: 0.934320 ms, 0.00897830 TFLOPS, MFU=0.00237521% speedup_vs_v0=n/a
+spec_b2_q4_k2048 torch.float16 causal=False: 1.864523 ms, 0.03599251 TFLOPS, MFU=0.00952183% speedup_vs_v0=n/a
+spec_b2_q4_k2048 torch.float16 causal=True: 1.896226 ms, 0.03536483 TFLOPS, MFU=0.00935578% speedup_vs_v0=n/a
+spec_b2_q4_k2048 torch.bfloat16 causal=False: 1.869785 ms, 0.03589122 TFLOPS, MFU=0.00949503% speedup_vs_v0=n/a
+spec_b2_q4_k2048 torch.bfloat16 causal=True: 1.900396 ms, 0.03528723 TFLOPS, MFU=0.00933525% speedup_vs_v0=n/a
+decode_b8_k2048 torch.float16 causal=False: 1.820598 ms, 0.01843045 TFLOPS, MFU=0.00487578% speedup_vs_v0=n/a
+decode_b8_k2048 torch.float16 causal=True: 1.821033 ms, 0.01842604 TFLOPS, MFU=0.00487461% speedup_vs_v0=n/a
+decode_b8_k2048 torch.bfloat16 causal=False: 1.830991 ms, 0.01832583 TFLOPS, MFU=0.00484810% speedup_vs_v0=n/a
+decode_b8_k2048 torch.bfloat16 causal=True: 1.830539 ms, 0.01833036 TFLOPS, MFU=0.00484930% speedup_vs_v0=n/a
+decode_b1_k8192 torch.float16 causal=False: 3.640916 ms, 0.00460797 TFLOPS, MFU=0.00121904% speedup_vs_v0=n/a
+decode_b1_k8192 torch.float16 causal=True: 3.641301 ms, 0.00460748 TFLOPS, MFU=0.00121891% speedup_vs_v0=n/a
+decode_b1_k8192 torch.bfloat16 causal=False: 3.640796 ms, 0.00460812 TFLOPS, MFU=0.00121908% speedup_vs_v0=n/a
+decode_b1_k8192 torch.bfloat16 causal=True: 3.640851 ms, 0.00460805 TFLOPS, MFU=0.00121906% speedup_vs_v0=n/a
+PASSED; report=mha_mfu_v0_recheck_report.json

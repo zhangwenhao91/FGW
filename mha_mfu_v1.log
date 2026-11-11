@@ -1,0 +1,61 @@
+2026-11-11 09:18:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b1_k512 torch.float16 causal=False: 0.190631 ms, 0.02200221 TFLOPS, MFU=0.00582069% speedup_vs_v0=1.2672860143374947
+2026-11-11 09:18:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b1_k512 torch.float16 causal=True: 0.194774 ms, 0.02153421 TFLOPS, MFU=0.00569688% speedup_vs_v0=1.240653284331449
+2026-11-11 09:18:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b1_k512 torch.bfloat16 causal=False: 0.190912 ms, 0.02196983 TFLOPS, MFU=0.00581212% speedup_vs_v0=1.2646455592372927
+2026-11-11 09:18:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b1_k512 torch.bfloat16 causal=True: 0.194850 ms, 0.02152581 TFLOPS, MFU=0.00569466% speedup_vs_v0=1.238429594249444
+2026-11-11 09:18:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b2_k2048 torch.float16 causal=False: 0.721543 ms, 0.01162593 TFLOPS, MFU=0.00307564% speedup_vs_v0=1.2953905267555206
+2026-11-11 09:18:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b2_k2048 torch.float16 causal=True: 0.719804 ms, 0.01165402 TFLOPS, MFU=0.00308307% speedup_vs_v0=1.2984785000911288
+2026-11-11 09:18:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b2_k2048 torch.bfloat16 causal=False: 0.717990 ms, 0.01168346 TFLOPS, MFU=0.00309086% speedup_vs_v0=1.301497284588672
+2026-11-11 09:18:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b2_k2048 torch.bfloat16 causal=True: 0.721120 ms, 0.01163275 TFLOPS, MFU=0.00307745% speedup_vs_v0=1.2956511719827752
+2026-11-11 09:18:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:18:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+spec_b2_q4_k2048 torch.float16 causal=False: 1.462479 ms, 0.04588706 TFLOPS, MFU=0.01213943% speedup_vs_v0=1.2749058681401608
+2026-11-11 09:18:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+spec_b2_q4_k2048 torch.float16 causal=True: 1.679271 ms, 0.03993382 TFLOPS, MFU=0.01056450% speedup_vs_v0=1.1291959832313296
+2026-11-11 09:19:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+spec_b2_q4_k2048 torch.bfloat16 causal=False: 1.472401 ms, 0.04557784 TFLOPS, MFU=0.01205763% speedup_vs_v0=1.2698883810290256
+2026-11-11 09:19:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+spec_b2_q4_k2048 torch.bfloat16 causal=True: 1.679038 ms, 0.03993936 TFLOPS, MFU=0.01056597% speedup_vs_v0=1.1318361676906552
+2026-11-11 09:19:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b8_k2048 torch.float16 causal=False: 1.425431 ms, 0.02353985 TFLOPS, MFU=0.00622747% speedup_vs_v0=1.2772263192728976
+2026-11-11 09:19:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b8_k2048 torch.float16 causal=True: 1.440254 ms, 0.02329758 TFLOPS, MFU=0.00616338% speedup_vs_v0=1.2643832512010287
+2026-11-11 09:19:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b8_k2048 torch.bfloat16 causal=False: 1.427779 ms, 0.02350114 TFLOPS, MFU=0.00621723% speedup_vs_v0=1.2824051074894895
+2026-11-11 09:19:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b8_k2048 torch.bfloat16 causal=True: 1.435583 ms, 0.02337338 TFLOPS, MFU=0.00618343% speedup_vs_v0=1.2751188847737558
+2026-11-11 09:19:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b1_k8192 torch.float16 causal=False: 2.846804 ms, 0.00589335 TFLOPS, MFU=0.00155909% speedup_vs_v0=1.2789486850523195
+2026-11-11 09:19:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b1_k8192 torch.float16 causal=True: 2.867288 ms, 0.00585125 TFLOPS, MFU=0.00154795% speedup_vs_v0=1.2699459467010492
+2026-11-11 09:19:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b1_k8192 torch.bfloat16 causal=False: 2.848659 ms, 0.00588951 TFLOPS, MFU=0.00155807% speedup_vs_v0=1.2780736117799738
+2026-11-11 09:19:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=-1`
+2026-11-11 09:19:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
+decode_b1_k8192 torch.bfloat16 causal=True: 2.865557 ms, 0.00585478 TFLOPS, MFU=0.00154888% speedup_vs_v0=1.2705561528035112
+PASSED; report=mha_mfu_v1_report.json
