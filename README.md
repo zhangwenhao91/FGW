@@ -1,5 +1,18 @@
 # FGW
 
+## 增大Q，观察MFU平台期
+
+```bash
+git pull --ff-only
+bash run_mha_large_q.sh
+```
+
+固定v6/BF16/B2/H8/D128/KV2048/page128/非因果，扫描Q=512/1024/2048/4096/8192/16384/32768，正反各测一次。与此前长Q测试一样预热20次、Event采样51次，warm-cache，378 TFLOPS归一化，先校验精度再计时。没有修改kernel。
+
+CPU参考按128行Q分块，避免构建完整长Q注意力矩阵；Q512先与原逐query参考交叉校验。较大Q的参考计算与NPU测试可能较慢，报告会在每个用例前后保存，可从日志判断进度。Q大于KV长度是合法的非因果矩形注意力场景，但不是普通逐token decode。
+
+上传 `mha_mfu_v6_large_q_report.json`、`mha_mfu_v6_large_q_reverse_report.json` 及对应log。结果只代表该固定B/H/D/KV、软件版本及缓存口径下的趋势，不等于设备或算子的理论MFU上限。
+
 ## 补测长Q的MFU
 
 ```bash

@@ -25,6 +25,35 @@ LONG_Q_CASES = [
     (f"q{q}_b2_h8_d128_k2048", 2, q, 8, 128, 128, 2048)
     for q in (4, 16, 32, 64, 128, 129, 256, 512)
 ]
+LARGE_Q_CASES = [
+    (f"q{q}_b2_h8_d128_k2048", 2, q, 8, 128, 128, 2048)
+    for q in (512, 1024, 2048, 4096, 8192, 16384, 32768)
+]
+
+
+def chunked_cpu_reference(q, k, v, table, lengths, page_size, causal, chunk):
+    """FP32 CPU reference with bounded score workspace, independent of TileLang."""
+    import torch
+    q, k, v, table, lengths = [x.cpu() for x in (q, k, v, table, lengths)]
+    batch, sq, heads, dim = q.shape
+    output = torch.zeros_like(q)
+    for b in range(batch):
+        length = int(lengths[b])
+        if length == 0:
+            continue
+        pos = torch.arange(length)
+        rows = table[b, pos // page_size].long() * page_size + pos % page_size
+        kk, vv = k[rows].float().transpose(0, 1), v[rows].float().transpose(0, 1)
+        for start in range(0, sq, chunk):
+            stop = min(start + chunk, sq)
+            query = q[b, start:stop].float().transpose(0, 1)
+            scores = (query @ kk.transpose(-1, -2)) * dim ** -0.5
+            if causal:
+                visible = pos[None, :] <= (torch.arange(start, stop)[:, None] + length - sq)
+                scores.masked_fill_(~visible[None, :, :], float("-inf"))
+            probabilities = scores.softmax(-1).nan_to_num(0.0)
+            output[b, start:stop] = (probabilities @ vv).transpose(0, 1).to(q.dtype)
+    return output
 
 
 def useful_flops(lengths, sq, heads, dim, causal):
@@ -35,8 +64,10 @@ def useful_flops(lengths, sq, heads, dim, causal):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite", choices=["standard", "long-q"], default="standard")
-    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in CASES + LONG_Q_CASES])
+    parser.add_argument("--suite", choices=["standard", "long-q", "large-q"], default="standard")
+    parser.add_argument("--cases", nargs="+", choices=sorted({c[0] for c in CASES + LONG_Q_CASES + LARGE_Q_CASES}))
+    parser.add_argument("--reference-chunk-size", type=int, default=0,
+                        help="Positive CPU query chunk size; zero uses original per-query reference")
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
     parser.add_argument("--reverse", action="store_true", help="Reverse case order for a repeat sweep")
@@ -54,11 +85,13 @@ def main():
     args = parser.parse_args()
     if args.output is None:
         args.output = "mha_mfu_report.json" if args.impl == "v0" else f"mha_mfu_{args.impl}_report.json"
-        if args.suite == "long-q":
-            args.output = f"mha_mfu_{args.impl}_long_q_report.json"
+        if args.suite != "standard":
+            args.output = f"mha_mfu_{args.impl}_{args.suite.replace('-', '_')}_report.json"
+    if args.reference_chunk_size < 0:
+        parser.error("reference-chunk-size must be nonnegative")
     if args.repeat < 3 or args.warmup < 1 or not math.isfinite(args.cube_peak_tflops) or args.cube_peak_tflops <= 0 or args.flush_mb <= 0:
         parser.error("repeat >= 3, warmup >= 1, and finite positive peak/flush size required")
-    suite = CASES if args.suite == "standard" else LONG_Q_CASES
+    suite = {"standard": CASES, "long-q": LONG_Q_CASES, "large-q": LARGE_Q_CASES}[args.suite]
     if args.cases and set(args.cases) - {c[0] for c in suite}:
         parser.error("Requested case is not in selected suite")
     cases = [c for c in suite if not args.cases or c[0] in args.cases]
@@ -145,7 +178,17 @@ def main():
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,
                                           "float16" if dtype == torch.float16 else "bfloat16", **extra)
                     got = kernel(*inputs).cpu()
-                    expected = reference(q, k, v, table, lengths, p, causal)
+                    if args.reference_chunk_size:
+                        expected = chunked_cpu_reference(q, k, v, table, lengths, p, causal, args.reference_chunk_size)
+                        # On modest shapes cross-check the new reference against
+                        # the established one before relying on it at large Q.
+                        if sq <= 512:
+                            established = reference(q, k, v, table, lengths, p, causal)
+                            torch.testing.assert_close(expected, established,
+                                rtol=1e-2 if dtype == torch.bfloat16 else 2e-3,
+                                atol=4e-3 if dtype == torch.bfloat16 else 2e-3)
+                    else:
+                        expected = reference(q, k, v, table, lengths, p, causal)
                     rtol, atol = (1e-2, 4e-3) if dtype == torch.bfloat16 else (2e-3, 2e-3)
                     torch.testing.assert_close(got, expected, rtol=rtol, atol=atol)
                     for _ in range(args.warmup):
