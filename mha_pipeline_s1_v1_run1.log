@@ -1,0 +1,34 @@
+2026-11-11 11:30:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:31:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+decode_noncausal round=1 full: KernelProfile(21.9us, mad=18.3%, aic_mte2=25.5%, aic_mte1=8.7%, aic_fix=9.2%, aiv_vec=41.2%, aiv_mte2=0.8%, aiv_mte3=8.6%, aic_cycles=422108, aiv_cycles=1369336)
+decode_noncausal round=1 partial: KernelProfile(19.6us, mad=17.5%, aic_mte2=24.0%, aic_mte1=8.4%, aic_fix=8.9%, aiv_vec=38.5%, aiv_mte3=8.5%, aic_cycles=440543, aiv_cycles=1347223)
+decode_noncausal round=1 merge: KernelProfile(3.6us, aiv_vec=38.3%, aiv_mte2=45.9%, aiv_mte3=3.7%, aiv_cycles=81653)
+decode_noncausal round=2 partial: KernelProfile(19.0us, mad=18.7%, aic_mte2=27.3%, aic_mte1=9.0%, aic_fix=9.5%, aiv_vec=40.3%, aiv_mte3=8.9%, aic_cycles=410733, aiv_cycles=1287749)
+decode_noncausal round=2 merge: KernelProfile(3.5us, aiv_vec=39.0%, aiv_mte2=46.8%, aiv_mte3=3.8%, aiv_cycles=80287)
+decode_noncausal round=2 full: KernelProfile(22.0us, mad=18.2%, aic_mte2=26.0%, aic_mte1=8.7%, aic_fix=9.2%, aiv_vec=41.1%, aiv_mte2=0.8%, aiv_mte3=8.6%, aic_cycles=423713, aiv_cycles=1372410)
+2026-11-11 11:31:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:31:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 11:31:10  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_causal round=1 full: KernelProfile(21.9us, mad=18.3%, aic_mte2=25.7%, aic_mte1=8.7%, aic_fix=9.2%, aiv_vec=41.2%, aiv_mte2=0.9%, aiv_mte3=8.6%, aic_cycles=422010, aiv_cycles=1368918)
+decode_causal round=1 partial: KernelProfile(19.0us, mad=18.8%, aic_mte2=27.3%, aic_mte1=9.0%, aic_fix=9.5%, aiv_vec=40.4%, aiv_mte3=8.9%, aic_cycles=408933, aiv_cycles=1283983)
+decode_causal round=1 merge: KernelProfile(3.6us, aiv_vec=39.2%, aiv_mte2=44.8%, aiv_mte3=3.9%, aiv_cycles=79912)
+decode_causal round=2 partial: KernelProfile(19.2us, mad=18.3%, aic_mte2=26.0%, aic_mte1=8.8%, aic_fix=9.3%, aiv_vec=39.7%, aiv_mte3=8.8%, aic_cycles=419756, aiv_cycles=1305612)
+decode_causal round=2 merge: KernelProfile(3.5us, aiv_vec=39.6%, aiv_mte2=45.5%, aiv_mte3=3.9%, aiv_cycles=78922)
+decode_causal round=2 full: KernelProfile(21.9us, mad=18.2%, aic_mte2=25.8%, aic_mte1=8.7%, aic_fix=9.2%, aiv_vec=41.2%, aiv_mte2=0.9%, aiv_mte3=8.6%, aic_cycles=422641, aiv_cycles=1370211)
+2026-11-11 11:31:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:31:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+query4 round=1 full: KernelProfile(52.4us, mad=26.1%, aic_mte2=35.9%, aic_mte1=13.0%, aic_fix=14.4%, aiv_vec=45.4%, aiv_mte2=3.5%, aiv_mte3=7.3%, aic_cycles=1136698, aiv_cycles=3865308)
+query4 round=1 partial: KernelProfile(40.2us, mad=26.3%, aic_mte2=36.6%, aic_mte1=13.1%, aic_fix=14.6%, aiv_vec=41.4%, aiv_mte3=8.5%, aic_cycles=1126293, aiv_cycles=3185246)
+query4 round=1 merge: KernelProfile(11.0us, aiv_vec=48.9%, aiv_mte2=46.0%, aiv_mte3=2.1%, aiv_cycles=573445)
+query4 round=2 partial: KernelProfile(42.1us, mad=24.8%, aic_mte2=35.1%, aic_mte1=12.3%, aic_fix=13.7%, aiv_vec=39.6%, aiv_mte3=8.2%, aic_cycles=1198478, aiv_cycles=3329795)
+query4 round=2 merge: KernelProfile(11.2us, aiv_vec=47.7%, aiv_mte2=44.9%, aiv_mte3=2.0%, aiv_cycles=590891)
+query4 round=2 full: KernelProfile(52.4us, mad=26.1%, aic_mte2=36.2%, aic_mte1=13.0%, aic_fix=14.4%, aiv_vec=45.3%, aiv_mte2=3.6%, aiv_mte3=7.3%, aic_cycles=1137725, aiv_cycles=3865960)
+2026-11-11 11:31:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:31:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+query128 round=1 full: KernelProfile(58.5us, mad=16.1%, aic_mte2=28.4%, aic_mte1=7.7%, aic_fix=8.2%, aiv_vec=55.6%, aiv_mte2=28.5%, aiv_mte3=2.5%, aic_cycles=238886, aiv_cycles=4218510)
+query128 round=1 partial: KernelProfile(13.1us, mad=16.4%, aic_mte2=29.0%, aic_mte1=7.8%, aic_fix=8.3%, aiv_vec=36.9%, aiv_mte3=8.2%, aic_cycles=234847, aiv_cycles=702683)
+query128 round=1 merge: KernelProfile(50.5us, aiv_vec=46.0%, aiv_mte2=50.5%, aiv_mte3=1.2%, aiv_cycles=4097816)
+query128 round=2 partial: KernelProfile(13.0us, mad=16.7%, aic_mte2=31.8%, aic_mte1=8.0%, aic_fix=8.5%, aiv_vec=37.4%, aiv_mte3=8.3%, aic_cycles=230131, aiv_cycles=693271)
+query128 round=2 merge: KernelProfile(50.9us, aiv_vec=45.6%, aiv_mte2=50.1%, aiv_mte3=1.2%, aiv_cycles=4127066)
+query128 round=2 full: KernelProfile(58.5us, mad=16.2%, aic_mte2=28.4%, aic_mte1=7.7%, aic_fix=8.2%, aiv_vec=55.6%, aiv_mte2=28.5%, aiv_mte3=2.5%, aic_cycles=238573, aiv_cycles=4216564)
+PASSED: mha_pipeline_s1_v1_run1.json
