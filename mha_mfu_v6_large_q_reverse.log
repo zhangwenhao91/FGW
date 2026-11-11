@@ -1,0 +1,20 @@
+q32768_b2_h8_d128_k2048 torch.bfloat16 causal=False: 6.025735 ms, 91.23464986 TFLOPS, MFU=24.13615076% speedup_vs_baseline=n/a
+2026-11-11 15:04:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 15:04:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+q16384_b2_h8_d128_k2048 torch.bfloat16 causal=False: 3.233881 ms, 84.99938842 TFLOPS, MFU=22.48661069% speedup_vs_baseline=n/a
+2026-11-11 15:04:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 15:04:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+q8192_b2_h8_d128_k2048 torch.bfloat16 causal=False: 1.564675 ms, 87.83866030 TFLOPS, MFU=23.23774082% speedup_vs_baseline=n/a
+2026-11-11 15:04:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 15:04:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+q4096_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.774648 ms, 88.71058311 TFLOPS, MFU=23.46840823% speedup_vs_baseline=n/a
+2026-11-11 15:04:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 15:04:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+q2048_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.415197 ms, 82.75526351 TFLOPS, MFU=21.89292685% speedup_vs_baseline=n/a
+2026-11-11 15:04:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 15:04:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+q1024_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.218398 ms, 78.66312333 TFLOPS, MFU=20.81035009% speedup_vs_baseline=n/a
+2026-11-11 15:04:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 15:04:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+q512_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.147315 ms, 58.30998101 TFLOPS, MFU=15.42592090% speedup_vs_baseline=n/a
+PASSED; report=mha_mfu_v6_large_q_reverse_report.json
