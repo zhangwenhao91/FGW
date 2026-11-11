@@ -1,0 +1,7 @@
+2026-11-11 15:53:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 15:54:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+q1_b2_h8_d128_k2048 torch.bfloat16 causal=True: 0.050568 ms, 0.33177536 TFLOPS, MFU=0.08777126% speedup_vs_baseline=n/a
+2026-11-11 15:54:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 15:54:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+decode_b1_k512 torch.bfloat16 causal=True: 0.031573 ms, 0.13284464 TFLOPS, MFU=0.03514408% speedup_vs_baseline=n/a
+PASSED; report=mha_short_q_resident_run1_causal.json
