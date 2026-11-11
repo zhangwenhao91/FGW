@@ -21,6 +21,11 @@ CASES = [
     ("query4", 2, 4, 8, 2048, False),
     ("query128", 1, 128, 2, 2048, False),
 ]
+DEFAULT_CASE_NAMES = {case[0] for case in CASES}
+CASES += [
+    ("query4096", 2, 4096, 8, 2048, False),
+    ("query32768", 2, 32768, 8, 2048, False),
+]
 
 
 def main():
@@ -33,10 +38,13 @@ def main():
     parser.add_argument("--impl", choices=["v4", "v5", "v6"], default="v4")
     parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--buffer-versions", type=int, choices=[1, 2, 3], default=2)
+    parser.add_argument("--reference-chunk-size", type=int, default=128)
     parser.add_argument("--output", default="mha_msprof_report.json")
     args = parser.parse_args()
     if min(args.rounds, args.repeat, args.warmup) < 1:
         parser.error("rounds, repeat, warmup must be positive")
+    if args.reference_chunk_size < 1:
+        parser.error("reference-chunk-size must be positive")
     report = {"status": "running", "settings": vars(args), "results": [],
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "baseline_config": {"q_tile": 128, "kv_tile": 128, "pipeline_stages": args.pipeline_stages,
@@ -60,7 +68,10 @@ def main():
         import tilelang
         import tilelang.profiler.msprof as msprof_module
         from tilelang.profiler import do_bench
-        build_kernel = importlib.import_module(f"mha_paged_decode_ascend_{args.impl}").build_kernel
+        implementation = importlib.import_module(f"mha_paged_decode_ascend_{args.impl}")
+        build_kernel = implementation.build_kernel
+        report["kernel_source_sha256"] = hashlib.sha256(pathlib.Path(implementation.__file__).read_bytes()).hexdigest()
+        from bench_mha_mfu import chunked_cpu_reference
         from mha_paged_decode_ascend_v0 import reference
         torch.npu.set_device(args.device)
         device = torch.device("npu", args.device)
@@ -79,7 +90,8 @@ def main():
         report["msprof_source_file"] = source_path.name
         report["do_bench_signature"] = str(inspect.signature(do_bench))
         for name, batch, sq, heads, length, causal in CASES:
-            if args.cases and name not in args.cases:
+            selected = set(args.cases) if args.cases else DEFAULT_CASE_NAMES
+            if name not in selected:
                 continue
             d, page, width = 128, 128, length // 128
             gen = torch.Generator().manual_seed(7)
@@ -92,7 +104,10 @@ def main():
             program = build_kernel(batch, sq, heads, d, k.shape[0], width, page, causal, "bfloat16", args.device,
                                    pipeline_stages=args.pipeline_stages, buffer_versions=args.buffer_versions)
             got = program(*inputs).cpu()
-            expected = reference(q, k, v, table, lengths, page, causal)
+            if sq > 512:
+                expected = chunked_cpu_reference(q, k, v, table, lengths, page, causal, args.reference_chunk_size)
+            else:
+                expected = reference(q, k, v, table, lengths, page, causal)
             torch.testing.assert_close(got, expected, rtol=1e-2, atol=4e-3)
             prepared = program.prepare_q(inputs[0])
             parts, lse = program.partial_kernel(prepared, *inputs[1:])
@@ -107,6 +122,14 @@ def main():
                     row = {"case": name, "stage": stage, "round": round_id+1,
                            "shape": {"B": batch, "Sq": sq, "H": heads, "D": d, "KV": length},
                            "causal": causal, "correctness": "passed", "status": "running"}
+                    tasks = batch * ((sq + 127) // 128) * heads
+                    splits = 1
+                    while splits < 16 and splits * 2 <= length // 128 and tasks * splits < 128:
+                        splits *= 2
+                    row["launch_geometry"] = {"query_tile_tasks": tasks, "splits": splits,
+                        "partial_grid": tasks * splits,
+                        "merge_work": batch * heads * ((sq + 7) // 8),
+                        "merge_grid": min(batch * heads * ((sq + 7) // 8), 32768) if args.impl == "v6" else batch * heads * ((sq + 7) // 8)}
                     report["results"].append(row)
                     save()
                     profile = do_bench(functions[stage], backend="msprof_detail", device=device,

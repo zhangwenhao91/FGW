@@ -1,5 +1,16 @@
 # FGW
 
+## Q4096/Q32768的局部计算、合并和流水计数器
+
+```bash
+git pull --ff-only
+bash run_mha_large_q_msprof.sh
+```
+
+固定v6、BF16、B2/H8/D128/KV2048/page128、非因果和默认流水2/2，分别采集full/partial/merge，每项3轮、预热10次、重复30次。CPU参考分块128行验证，不计入profile。报告记录kernel源码SHA256和实际规则推导的启动规格，Q32768使用已修复的有界merge网格。两个长Q场景的split数均为1，但当前实现仍经过partial和merge，可据结果评估这部分中间处理成本。
+
+上传 `mha_large_q_msprof_report.json`、`mha_large_q_msprof.log`、`mha_large_q_msprof_report_msprof_source.py`。该后端有缓存驱逐，dur_ns按上游profiler记录聚合口径，不能直接替代此前warm-cache Event延迟；各pipe比率可重叠，不可相加作为耗时占比。kernel没有改动。
+
 ## 增大Q，观察MFU平台期
 
 ```bash
