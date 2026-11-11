@@ -1,5 +1,19 @@
 # FGW
 
+## 使用msprof_detail采集Cube流水计数器
+
+```bash
+git pull --ff-only
+set -o pipefail
+python -u profile_mha_msprof.py 2>&1 | tee mha_msprof.log
+```
+
+覆盖单query因果/非因果、Q4、Q128四种场景，分别采集full/partial/merge，每项3轮、预热20次、重复100次。保持当前v4的两级流水和缓冲区版本不变，先看计数器再选调优候选。若需要短运行，可加 `--cases decode_noncausal --rounds 1 --repeat 30`。
+
+使用与安装版本对应的上游 `do_bench(backend="msprof_detail")`。记录AIC MAD、MTE、FIXPIPE以及AIV Vector/Scalar等字段。该后端每次调用前驱逐缓存，dur_ns是上游对profiler记录聚合后除以重复次数的结果，不是Event中位耗时；不直接将它与此前warm-cache Event读数比较，也不把各pipe占比相加。脚本额外保存本机msprof解析器源码与SHA256，方便核对聚合口径。
+
+上传 `mha_msprof_report.json`、`mha_msprof.log`、`mha_msprof_report_msprof_source.py`。若profiling不被当前环境支持，会保留原始错误，不回退Event冒充msprof结果。上游采集器会清理它自己的临时原始profile，本脚本保留其全部返回计数器。
+
 ## v4单query因果/非因果重复测量与分阶段诊断
 
 ```bash

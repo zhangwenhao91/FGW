@@ -1,0 +1,131 @@
+"""Collect upstream msprof_detail durations and pipe counters before tuning.
+
+Upstream reports aggregated per-invocation profiler records, not an Event
+median. Keep this measurement separate from previous Event timing results.
+"""
+import argparse
+import dataclasses
+import datetime
+import hashlib
+import inspect
+import json
+import pathlib
+import statistics
+import traceback
+
+
+CASES = [
+    ("decode_noncausal", 1, 1, 16, 512, False),
+    ("decode_causal", 1, 1, 16, 512, True),
+    ("query4", 2, 4, 8, 2048, False),
+    ("query128", 1, 128, 2, 2048, False),
+]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in CASES])
+    parser.add_argument("--rounds", type=int, default=3)
+    parser.add_argument("--repeat", type=int, default=100)
+    parser.add_argument("--warmup", type=int, default=20)
+    parser.add_argument("--device", type=int, default=0)
+    parser.add_argument("--output", default="mha_msprof_report.json")
+    args = parser.parse_args()
+    if min(args.rounds, args.repeat, args.warmup) < 1:
+        parser.error("rounds, repeat, warmup must be positive")
+    report = {"status": "running", "settings": vars(args), "results": [],
+              "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "baseline_config": {"q_tile": 128, "kv_tile": 128, "pipeline_stages": 2,
+                                  "streamed_buffer_versions": 2},
+              "notes": ["Upstream msprof_detail flushes cache before each invocation (256 MiB buffer).",
+                        "dur_ns is upstream profiler record aggregation per invocation, not Event elapsed median.",
+                        "Pipe fields are ratios against their own AIC/AIV total cycles; they can overlap and must not be summed as a time breakdown.",
+                        "Full includes Q layout conversion if materialized, partial and merge; isolated stages run in separate profiler sessions.",
+                        "Do not compare this cache-flushed measurement directly with earlier warm-cache Event results.",
+                        "No tuning performed yet. Use counters plus verified duration semantics to choose candidates."]}
+    path = pathlib.Path(args.output)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    def save():
+        path.write_text(json.dumps(report, indent=2, default=str) + "\n", encoding="utf-8")
+
+    save()
+    try:
+        import torch
+        import torch_npu
+        import tilelang
+        import tilelang.profiler.msprof as msprof_module
+        from tilelang.profiler import do_bench
+        from mha_paged_decode_ascend_v4 import build_kernel
+        from mha_paged_decode_ascend_v0 import reference
+        torch.npu.set_device(args.device)
+        device = torch.device("npu", args.device)
+        report["device"] = str(torch.npu.get_device_properties(args.device))
+        report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__, "tilelang": tilelang.__version__}
+        # Preserve parser provenance: upstream parsing can change between builds.
+        source = inspect.getsource(msprof_module)
+        report["msprof_source_sha256"] = hashlib.sha256(source.encode()).hexdigest()
+        source_path = path.with_name(path.stem + "_msprof_source.py")
+        source_path.write_text(source, encoding="utf-8")
+        report["msprof_source_file"] = source_path.name
+        report["do_bench_signature"] = str(inspect.signature(do_bench))
+        for name, batch, sq, heads, length, causal in CASES:
+            if args.cases and name not in args.cases:
+                continue
+            d, page, width = 128, 128, length // 128
+            gen = torch.Generator().manual_seed(7)
+            q = torch.randn(batch, sq, heads, d, generator=gen).bfloat16()
+            k = torch.randn(batch * length, heads, d, generator=gen).bfloat16()
+            v = torch.randn(batch * length, heads, d, generator=gen).bfloat16()
+            table = torch.randperm(batch * width, generator=gen).reshape(batch, width).int()
+            lengths = torch.full((batch,), length, dtype=torch.int32)
+            inputs = [x.to(device) for x in (q, k, v, table, lengths)]
+            program = build_kernel(batch, sq, heads, d, k.shape[0], width, page, causal, "bfloat16", args.device)
+            got = program(*inputs).cpu()
+            expected = reference(q, k, v, table, lengths, page, causal)
+            torch.testing.assert_close(got, expected, rtol=1e-2, atol=4e-3)
+            prepared = program.prepare_q(inputs[0])
+            parts, lse = program.partial_kernel(prepared, *inputs[1:])
+            torch.npu.synchronize()
+            functions = {"full": lambda: program(*inputs),
+                         "partial": lambda: program.partial_kernel(prepared, *inputs[1:]),
+                         "merge": lambda: program.merge_kernel(parts, lse)}
+            for round_id in range(args.rounds):
+                stages = ["full", "partial", "merge"]
+                stages = stages[round_id % 3:] + stages[:round_id % 3]
+                for stage in stages:
+                    row = {"case": name, "stage": stage, "round": round_id+1,
+                           "shape": {"B": batch, "Sq": sq, "H": heads, "D": d, "KV": length},
+                           "causal": causal, "correctness": "passed", "status": "running"}
+                    report["results"].append(row)
+                    save()
+                    profile = do_bench(functions[stage], backend="msprof_detail", device=device,
+                                       _n_warmup=args.warmup, _n_repeat=args.repeat, cache_size=256)
+                    if not dataclasses.is_dataclass(profile):
+                        raise TypeError(f"Expected KernelProfile dataclass, got {type(profile)}")
+                    row.update(status="passed", profile=dataclasses.asdict(profile),
+                               profiler_duration_us=float(profile.dur_ns) / 1000)
+                    save()
+                    print(f"{name} round={round_id+1} {stage}: {profile}", flush=True)
+        report["summary"] = []
+        for name, *_ in CASES:
+            for stage in ("full", "partial", "merge"):
+                rows = [r for r in report["results"] if r["case"] == name and r["stage"] == stage]
+                if rows:
+                    report["summary"].append({"case": name, "stage": stage,
+                        "median_round_profiler_duration_us": statistics.median(r["profiler_duration_us"] for r in rows),
+                        "round_profiler_durations_us": [r["profiler_duration_us"] for r in rows]})
+        report["status"] = "passed"
+    except Exception:
+        report.update(status="error", error=traceback.format_exc())
+        if report["results"] and report["results"][-1]["status"] == "running":
+            report["results"][-1].update(status="error", error=report["error"])
+        traceback.print_exc()
+    finally:
+        save()
+    print(f"{report['status'].upper()}: {path}", flush=True)
+    return 0 if report["status"] == "passed" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
