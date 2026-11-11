@@ -117,7 +117,7 @@ def main():
                            "page_size": p, "lengths": lengths.tolist(), "dtype": str(dtype),
                            "causal": causal, "status": "running"}
                     report["results"].append(row)
-                    row["execution_path"] = impl_module.route(dtype, d, p) if args.impl == "v3" else args.impl
+                    row["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl == "v3" else args.impl
                     save()
                     extra = {"device_index": args.device} if args.impl != "v0" else {}
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,

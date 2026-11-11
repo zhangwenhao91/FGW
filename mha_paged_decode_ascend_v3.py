@@ -15,15 +15,15 @@ from tilelang.layout import make_ascend_compact_nz_layout
 from mha_paged_decode_ascend_v2 import build_kernel as build_v2
 
 
-def route(dtype, dim, page_size):
-    return "cube_bf16_d128" if str(dtype) in ("bfloat16", "torch.bfloat16") and dim == 128 and page_size > 0 and page_size % 128 == 0 else "fallback_v2"
+def route(dtype, dim, page_size, sq=1, causal=False):
+    return "cube_bf16_d128" if str(dtype) in ("bfloat16", "torch.bfloat16") and dim == 128 and (not causal or sq == 1) and page_size > 0 and page_size % 128 == 0 else "fallback_v2"
 
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None):
     if page_size <= 0 or pool_rows <= 0 or pool_rows % page_size or width <= 0:
         raise ValueError("positive page size, whole pool pages and positive table width required")
-    if route(dtype, dim, page_size) != "cube_bf16_d128":
+    if route(dtype, dim, page_size, sq, causal) != "cube_bf16_d128":
         return build_v2(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)
     BR, BC, ROWS, VL, D = 128, 128, 64, 64, 128
     dtype, accum_dtype = "bfloat16", "float32"
@@ -150,7 +150,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     def partial(
         Q: T.Tensor((tasks, D), dtype),
         K: T.Tensor((pool_rows, heads, D), dtype),
-        V: T.Tensor((batch, width * page_size, heads, D), dtype),
+        V: T.Tensor((pool_rows, heads, D), dtype),
         Table: T.Tensor((batch, width), "int32"),
         Lengths: T.Tensor((batch,), "int32"),
         Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
@@ -192,7 +192,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             end = Lengths[b]
             if causal:
                 end = T.max(end - sq + qi + 1, 0)
-            tiles = T.ceildiv(end, BC)
+            tiles = end // BC
             per_split = T.ceildiv(tiles, splits)
             begin = split * per_split
             count = T.max(T.min(begin + per_split, tiles) - begin, 0)
@@ -204,17 +204,11 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                 logical = (begin + tile) * BC
                 physical = Table[b, logical // page_size] * page_size + logical % page_size
                 T.copy(K[physical:physical + BC, h, :], K_l1)
-                # Prepared V is in logical order, with unused cache rows zeroed.
-                # Full zero-based L1 writes avoid unsupported dynamic-column DMA.
-                T.copy(V[b, logical:logical + BC, h, :], V_l1, transpose=True)
+                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
                 T.copy(Q_l1, qa)
                 T.copy(K_l1, kb)
                 T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
                 T.dual_copy(qk, scores)
-                with T.SimtVF(threads=128):
-                    for r, j in T.Parallel(ROWS, BC):
-                        if logical + j >= end:
-                            scores[r, j] = -1.0e30
                 softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
                 T.dual_copy(probs[0:ROWS, :], P_l1)
                 T.copy(P_l1, pa)
@@ -273,33 +267,11 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     out[d] = T.cast(acc[d] / T.max(state[1], 1.0e-30), dtype)
             T.copy(out, O[task // (sq * heads), task // heads % sq, task % heads, :])
 
-    @T.prim_func
-    def prepare_v(
-        V_cache: T.Tensor((pool_rows, heads, D), dtype),
-        Table: T.Tensor((batch, width), "int32"),
-        Lengths: T.Tensor((batch,), "int32"),
-        Dense: T.Tensor((batch, width * page_size, heads, D), dtype),
-    ):
-        with T.Kernel(batch * width * heads) as program:
-            b = program // (width * heads)
-            page = program // heads % width
-            h = program % heads
-            tile_v = T.alloc_shared((page_size, D), dtype)
-            physical = Table[b, page] * page_size
-            T.copy(V_cache[physical:physical + page_size, h, :], tile_v)
-            with T.SimtVF(threads=128):
-                for j, d in T.Parallel(page_size, D):
-                    if page * page_size + j >= Lengths[b]:
-                        tile_v[j, d] = 0
-            T.copy(tile_v, Dense[b, page * page_size:(page + 1) * page_size, h, :])
-
-    prepare_kernel = tilelang.compile(prepare_v, out_idx=-1, target="ascend", execution_backend="auto")
     partial_kernel = tilelang.compile(partial, out_idx=[5, 6], target="ascend", execution_backend="auto")
     merge_kernel = tilelang.compile(merge, out_idx=-1, target="ascend", execution_backend="auto")
 
     def launch(q, k, v, table, lengths):
-        dense_v = prepare_kernel(v, table, lengths)
-        parts, lse = partial_kernel(q.view(tasks, D), k, dense_v, table, lengths)
+        parts, lse = partial_kernel(q.view(tasks, D), k, v, table, lengths)
         return merge_kernel(parts, lse)
     return launch
 
@@ -322,6 +294,10 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
     inputs = (q, k_cache, v_cache, block_table, cache_seqlens)
     if q.device.type != "npu" or any(x.device != q.device or not x.is_contiguous() for x in inputs):
         raise ValueError("contiguous inputs on the same NPU required")
+    if route(q.dtype, d, page_size, sq, is_causal) == "cube_bf16_d128":
+        lengths = cache_seqlens.cpu().tolist()
+        if any(n <= 0 or n % 128 or n > block_table.shape[1] * page_size for n in lengths):
+            raise ValueError("Full-block Cube path requires positive 128-aligned cache lengths within table capacity")
     with torch.npu.device(q.device):
         kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
                               page_size, is_causal,

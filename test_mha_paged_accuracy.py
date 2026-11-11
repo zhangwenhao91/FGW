@@ -35,6 +35,11 @@ EXTENDED = STANDARD + [
     ("cache4096", 2, 2, 2, 128, 256, 16),
     ("cache8192", 2, 2, 2, 64, 256, 32),
 ]
+CUBE = [
+    ("cube_decode512", 1, 1, 8, 128, 128, 4),
+    ("cube_decode2048", 2, 1, 4, 128, 256, 8),
+    ("cube_query4", 2, 4, 4, 128, 128, 16),
+]
 
 
 def lengths_for(case, pattern, seed):
@@ -70,25 +75,29 @@ def make_inputs(case, seed, dtype, torch):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite", choices=["quick", "standard", "extended"], default="standard")
+    parser.add_argument("--suite", choices=["quick", "standard", "extended", "cube"], default="standard")
+    parser.add_argument("--patterns", nargs="+", choices=["mixed", "full", "empty"])
+    parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
+    parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 42, 2026])
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3"], default="v0")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
-    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED],
+    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE],
                         help="Run only these named cases from the selected suite")
     args = parser.parse_args()
     if args.output is None:
         args.output = "mha_paged_accuracy_report.json" if args.impl == "v0" else f"mha_paged_accuracy_{args.impl}_report.json"
-    cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED}[args.suite]
+    cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED, "cube": CUBE}[args.suite]
     if args.cases:
         missing = set(args.cases) - {c[0] for c in cases}
         if missing:
             parser.error(f"Cases not in selected suite: {sorted(missing)}")
         cases = [c for c in cases if c[0] in args.cases]
-    patterns = ("mixed", "full", "empty")
-    total = len(cases) * len(args.seeds) * 2 * 2 * len(patterns)
+    patterns = args.patterns or ("mixed", "full", "empty")
+    causal_modes = (False, True) if args.causal == "both" else (args.causal == "causal",)
+    total = len(cases) * len(args.seeds) * len(args.dtypes) * len(causal_modes) * len(patterns)
     if args.list_only:
         print(json.dumps({"cases": cases, "seeds": args.seeds,
                           "patterns": patterns, "total_checks": total}, indent=2))
@@ -97,6 +106,7 @@ def main():
     output = pathlib.Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "suite": args.suite, "seeds": args.seeds,
+              "patterns": list(patterns), "causal_modes": list(causal_modes), "dtypes": args.dtypes,
               "selected_cases": [c[0] for c in cases], "implementation": args.impl,
               "total_checks": total, "results": [], "logical_device": args.device,
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -120,18 +130,18 @@ def main():
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,
                               "tilelang": tilelang.__version__}
         report["device_name"] = torch.npu.get_device_name(args.device)
-        for case, seed, dtype in itertools.product(cases, args.seeds, (torch.float16, torch.bfloat16)):
+        for case, seed, dtype in itertools.product(cases, args.seeds, [getattr(torch, d) for d in args.dtypes]):
             q, k_base, v_base, table = make_inputs(case, seed, dtype, torch)
             _, b, sq, h, d, p, w = case
             # Reuse one compiled specialization across changing runtime lengths/data.
-            for causal, pattern in itertools.product((False, True), patterns):
+            for causal, pattern in itertools.product(causal_modes, patterns):
                 lengths = torch.tensor(lengths_for(case, pattern, seed), dtype=torch.int32)
                 entry = {"case": case[0], "shape": {"B": b, "Sq": sq, "H": h, "D": d,
                          "page_size": p, "table_width": w, "pool_rows": k_base.shape[0]},
                          "seed": seed, "dtype": str(dtype), "causal": causal,
                          "pattern": pattern, "lengths": lengths.tolist(), "status": "running"}
                 report["results"].append(entry)
-                entry["execution_path"] = impl_module.route(dtype, d, p) if args.impl == "v3" else args.impl
+                entry["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl == "v3" else args.impl
                 save()  # Preserve active case even after a native runtime crash.
                 start = time.perf_counter()
                 try:
