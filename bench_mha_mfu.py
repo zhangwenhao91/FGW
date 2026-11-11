@@ -39,7 +39,7 @@ def main():
                         help="MFU.md 28-AIC FP16/BF16 dense Cube peak; override for another configuration")
     parser.add_argument("--cache", choices=["warm", "flush"], default="warm")
     parser.add_argument("--flush-mb", type=int, default=256)
-    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4"], default="v0")
+    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5"], default="v0")
     parser.add_argument("--baseline-report", help="Optional v0/v1 JSON report for matched-case speedup")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
@@ -61,8 +61,8 @@ def main():
             parser.error("Baseline report must have passed")
         settings = base["settings"]
         baseline_impl = settings.get("impl", "v0")
-        if baseline_impl not in ("v0", "v1", "v2", "v3"):
-            parser.error("Baseline implementation must be v0, v1, v2 or v3")
+        if baseline_impl not in ("v0", "v1", "v2", "v3", "v4"):
+            parser.error("Unsupported baseline implementation")
         for key in ("cache", "flush_mb", "cube_peak_tflops", "repeat", "warmup", "device"):
             if settings.get(key) != getattr(args, key):
                 parser.error(f"Baseline setting mismatch: {key}")
@@ -93,6 +93,8 @@ def main():
             report["execution"] = "BF16 D128 page%128=0: Cube QK/PV + SIMD softmax (query duplicated to 128 rows); other cases: v2 SIMT fallback. Inspect execution_path per result. Effective FLOPs exclude duplicated query work."
         if args.impl == "v4":
             report["execution"] = "BF16 D128 aligned KV: Cube with 128 real-query tiles and Q-tail padding. Includes head-major Q conversion, partial and merge. Multiquery causal and unsupported specifications use v2."
+        if args.impl == "v5":
+            report["execution"] = "v4 Cube partial with batched merge (up to 8 rows); includes contiguous output conversion. Unsupported paths use v2."
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__, "tilelang": tilelang.__version__}
@@ -119,7 +121,7 @@ def main():
                            "page_size": p, "lengths": lengths.tolist(), "dtype": str(dtype),
                            "causal": causal, "status": "running"}
                     report["results"].append(row)
-                    row["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4") else args.impl
+                    row["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4", "v5") else args.impl
                     save()
                     extra = {"device_index": args.device} if args.impl != "v0" else {}
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,

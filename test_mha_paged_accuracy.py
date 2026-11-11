@@ -85,7 +85,7 @@ def main():
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 42, 2026])
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4"], default="v0")
+    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5"], default="v0")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE],
@@ -145,7 +145,7 @@ def main():
                          "seed": seed, "dtype": str(dtype), "causal": causal,
                          "pattern": pattern, "lengths": lengths.tolist(), "status": "running"}
                 report["results"].append(entry)
-                entry["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4") else args.impl
+                entry["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4", "v5") else args.impl
                 save()  # Preserve active case even after a native runtime crash.
                 start = time.perf_counter()
                 try:

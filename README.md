@@ -1,5 +1,16 @@
 # FGW
 
+## v5批量合并query行
+
+新增独立v5版本，Cube局部计算保持v4默认2/2配置不变。合并每个program处理至多8个真实query，Sq小于8时使用1/2/4行，连续读取Parts和LSE，减少逐行小搬运。8整除Q tile128，合并块不会跨partial tile。内部按[B,H,Sq,D]连续存储，再转换为对外连续[B,Sq,H,D]；该输出转换包含在full和merge计时中，不能漏算。需要NPU验证尾块clamp和自动布局。
+
+```bash
+git pull --ff-only
+bash run_mha_v5.sh
+```
+
+先跑21项非因果Cube边界精度与6项单query因果精度，再重新采集v4/v5的四场景msprof，最后执行20项MFU基准比较。请上传 `mha_cube_v5_accuracy.json`、`mha_cube_v5_causal.json`、`mha_merge_v4_msprof.json`、`mha_merge_v5_msprof.json`、`mha_mfu_v4_merge_baseline.json`、`mha_mfu_v5_report.json` 和对应日志。msprof解析器源码文件可一并保留。默认实现仍为v4，没有预先假定批量合并能加速。
+
 ## 根据msprof结果对照流水候选
 
 已保留v4默认两级配置，build_kernel新增pipeline_stages和buffer_versions参数。先对比(1,1)、(2,2)、(3,3)三个组合，每个在原有四种场景校验精度再采集msprof；两次独立进程扫描反转候选顺序。计时仍按上游msprof_detail口径，包含局部计算和合并分别采样，不能将pipe比率相加或直接当作端到端时间占比。
