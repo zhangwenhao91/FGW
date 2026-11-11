@@ -96,7 +96,10 @@ def main():
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE],
                         help="Run only these named cases from the selected suite")
+    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default="auto")
     args = parser.parse_args()
+    if args.schedule_mode != "auto" and args.impl != "v7":
+        parser.error("Schedule experiments require --impl v7")
     if args.q_resident is None:
         args.q_resident = args.impl == "v7"
     if (args.q_resident or args.kv_versions is not None or args.pipeline_stages != 2) and args.impl != "v7":
@@ -121,6 +124,7 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "suite": args.suite, "seeds": args.seeds,
               "patterns": list(patterns), "causal_modes": list(causal_modes), "dtypes": args.dtypes,
+              "schedule_mode": args.schedule_mode,
               "overlap_config": {"pipeline_stages": args.pipeline_stages, "kv_versions": args.kv_versions,
                                  "q_resident": args.q_resident, "ub_versions": 2},
               "selected_cases": [c[0] for c in cases], "implementation": args.impl,
@@ -144,7 +148,7 @@ def main():
         if args.impl == "v7":
             import functools
             mha_paged_decode = functools.partial(mha_paged_decode, pipeline_stages=args.pipeline_stages,
-                                                kv_versions=args.kv_versions, q_resident=args.q_resident)
+                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode)
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,

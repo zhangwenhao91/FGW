@@ -1,5 +1,18 @@
 # FGW
 
+## 自动流水审阅后的Stage候选对照
+
+已根据实际Q4096导出审阅自动阶段、同步和生成源码，见 [审阅记录](docs/mha_auto_schedule_review.md)。默认仍auto；新增auto-offset和manual编译选项，直接输出与多split采用同一选择规则。
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_schedule_sweep
+```
+
+三组依次对比原自动调度、仅开启跨迭代offset、显式Stage加选择性缓冲策略。先做30项非因果和9项单query因果精度，成功后测Q4096/Q32768的msprof和完整调用MFU；正反顺序各一轮。编译/精度失败会保存报告并跳过性能测试，继续其他候选。
+
+上传reports/mha/latest/里 `mha_schedule_*_run*` 的JSON和log。若需要查看候选实际调度，可运行 `python fgw.py mha export-schedule --cases q4096 --schedule-mode manual` 或auto-offset；建议只上传q4096设备源码和AutoSchedule/InsertSync三项，避免重复提交所有IR。当前本机没有NPU，手工候选只完成语法和结构检查，尚未确认可编译或加速。
+
 ## 导出当前自动流水，准备手工调度对照
 
 ```bash

@@ -42,7 +42,10 @@ def main():
     parser.add_argument("--q-resident", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--reference-chunk-size", type=int, default=128)
     parser.add_argument("--output", default="mha_msprof_report.json")
+    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default="auto")
     args = parser.parse_args()
+    if args.schedule_mode != "auto" and args.impl != "v7":
+        parser.error("Schedule experiments require --impl v7")
     if args.q_resident is None:
         args.q_resident = args.impl == "v7"
     if (args.q_resident or args.kv_versions is not None) and args.impl != "v7":
@@ -51,7 +54,7 @@ def main():
         parser.error("rounds, repeat, warmup must be positive")
     if args.reference_chunk_size < 1:
         parser.error("reference-chunk-size must be positive")
-    report = {"status": "running", "settings": vars(args), "results": [],
+    report = {"status": "running", "settings": vars(args), "schedule_mode": args.schedule_mode, "results": [],
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "baseline_config": {"q_tile": 128, "kv_tile": 128, "pipeline_stages": args.pipeline_stages,
                                   "streamed_buffer_versions": args.buffer_versions,
@@ -109,7 +112,7 @@ def main():
             table = torch.randperm(batch * width, generator=gen).reshape(batch, width).int()
             lengths = torch.full((batch,), length, dtype=torch.int32)
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
-            extra = {"q_resident": args.q_resident, "kv_versions": args.kv_versions} if args.impl == "v7" else {}
+            extra = {"q_resident": args.q_resident, "kv_versions": args.kv_versions, "schedule_mode": args.schedule_mode} if args.impl == "v7" else {}
             program = build_kernel(batch, sq, heads, d, k.shape[0], width, page, causal, "bfloat16", args.device,
                                    pipeline_stages=args.pipeline_stages, buffer_versions=args.buffer_versions, **extra)
             got = program(*inputs).cpu()

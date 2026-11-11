@@ -20,13 +20,15 @@ def main():
     parser.add_argument("--cases", nargs="+", choices=list(CASES), default=list(CASES))
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output-dir", default=None)
+    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default="auto")
     args = parser.parse_args()
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
-    directory = Path(args.output_dir or f"mha_auto_schedule_{stamp}").resolve()
+    directory = Path(args.output_dir or f"mha_{args.schedule_mode}_schedule_{stamp}").resolve()
     directory.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "cases": [], "output_dir": str(directory),
               "mode": "Compilation/export only; no kernel execution or performance claim",
-              "config": {"q_resident": True, "pipeline_stages": 2, "ub_versions": 2, "kv_versions": 2}}
+              "config": {"q_resident": True, "pipeline_stages": 2, "schedule_mode": args.schedule_mode,
+                         "buffer_policy": "scores3/current1/alpha3/KV3; others2" if args.schedule_mode == "manual" else "baseline2"}}
 
     def save():
         (directory / "manifest.json").write_text(json.dumps(report, indent=2, default=str)+"\n", encoding="utf-8")
@@ -51,7 +53,7 @@ def main():
             print(f"Compiling/exporting {name} ...", flush=True)
             program = implementation.build_kernel(b, sq, h, 128, b * length, length // 128,
                 128, False, "bfloat16", args.device, q_resident=True,
-                pipeline_stages=2, buffer_versions=2, kv_versions=2, dump_ir_dir=str(dest / "passes"))
+                pipeline_stages=2, buffer_versions=2, kv_versions=2, dump_ir_dir=str(dest / "passes"), schedule_mode=args.schedule_mode)
             direct = getattr(program, "execution_mode", "") == "direct_single_split"
             kernels = {"direct": program.direct_kernel} if direct else {"partial": program.partial_kernel, "merge": program.merge_kernel}
             row["kernel_mode"] = getattr(program, "execution_mode", "unknown")

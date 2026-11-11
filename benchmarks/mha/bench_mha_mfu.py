@@ -89,7 +89,10 @@ def main():
     parser.add_argument("--baseline-report", help="Optional v0/v1 JSON report for matched-case speedup")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
+    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default="auto")
     args = parser.parse_args()
+    if args.schedule_mode != "auto" and args.impl != "v7":
+        parser.error("Schedule experiments require --impl v7")
     if args.q_resident is None:
         args.q_resident = args.impl == "v7"
     if (args.q_resident or args.kv_versions is not None or args.pipeline_stages != 2) and args.impl != "v7":
@@ -190,7 +193,7 @@ def main():
                     extra = {"device_index": args.device} if args.impl != "v0" else {}
                     if args.impl == "v7":
                         extra.update(pipeline_stages=args.pipeline_stages, kv_versions=args.kv_versions,
-                                     q_resident=args.q_resident)
+                                     q_resident=args.q_resident, schedule_mode=args.schedule_mode)
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,
                                           "float16" if dtype == torch.float16 else "bfloat16", **extra)
                     row["kernel_mode"] = getattr(kernel, "execution_mode", "legacy_or_fallback")
