@@ -1,5 +1,20 @@
 # FGW
 
+## v2 split-KV并行
+
+新增 `mha_paged_decode_ascend_v2.py`。分块阶段将每个输出的有效KV tiles分配给多个program，各自写FP32局部最大值m、权重和l、未归一化加权V。第二个kernel按统一最大值重缩放并合并，再除以合并后的l。空split完整写零权重/零累加值，完全空输出保持零。两个kernel在同一当前流按序启动，临时缓冲区每次调用独立分配。
+
+split数从1起倍增，最多16，受页表容量tiles数量约束，输出数×split达到128后停止；仅需一个split时复用v1。该规则尚未经调优，实际短缓存仍可能付出额外合并开销。仍使用FP32 SIMT，不包含Cube计算。
+
+```bash
+git pull --ff-only
+bash run_mha_v2.sh
+```
+
+依次执行v2的540项精度回归、v1的20项重新计时、v2的20项计时，报告 `speedup_vs_v1` 和MFU。计时包含分块与合并两个kernel的完整调用。任何阶段失败即停止。
+
+上传三组JSON及对应log：`mha_paged_accuracy_v2_report.json`、`mha_mfu_v1_recheck_report.json`、`mha_mfu_v2_report.json`。可先用 `python -u test_mha_paged_accuracy.py --impl v2 --suite quick --seeds 7 --output mha_v2_quick.json` 做编译冒烟检查。实际NPU编译、精度及加速仍需验证。
+
 ## v1 分块KV版本：精度回归及性能对比
 
 新增 `mha_paged_decode_ascend_v1.py`，v0保持不变。v1每次搬运16或32行K/V，每块一次SIMT VF，完成块内QK、softmax与加权V归约，再更新online softmax。tile整除页大小，不跨物理页；尾块可能加载缓存中的无效行，但计算在读取这些行前做条件判断，避免NaN传播。仍使用FP32 Vector计算，未使用Cube或split-KV。

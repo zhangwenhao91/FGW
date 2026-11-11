@@ -39,13 +39,13 @@ def main():
                         help="MFU.md 28-AIC FP16/BF16 dense Cube peak; override for another configuration")
     parser.add_argument("--cache", choices=["warm", "flush"], default="warm")
     parser.add_argument("--flush-mb", type=int, default=256)
-    parser.add_argument("--impl", choices=["v0", "v1"], default="v0")
-    parser.add_argument("--baseline-report", help="Optional v0 JSON report for matched-case speedup")
+    parser.add_argument("--impl", choices=["v0", "v1", "v2"], default="v0")
+    parser.add_argument("--baseline-report", help="Optional v0/v1 JSON report for matched-case speedup")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     args = parser.parse_args()
     if args.output is None:
-        args.output = "mha_mfu_report.json" if args.impl == "v0" else "mha_mfu_v1_report.json"
+        args.output = "mha_mfu_report.json" if args.impl == "v0" else f"mha_mfu_{args.impl}_report.json"
     if args.repeat < 3 or args.warmup < 1 or not math.isfinite(args.cube_peak_tflops) or args.cube_peak_tflops <= 0 or args.flush_mb <= 0:
         parser.error("repeat >= 3, warmup >= 1, and finite positive peak/flush size required")
     cases = [c for c in CASES if not args.cases or c[0] in args.cases]
@@ -60,8 +60,9 @@ def main():
         if base.get("status") != "passed":
             parser.error("Baseline report must have passed")
         settings = base["settings"]
-        if settings.get("impl", "v0") != "v0":
-            parser.error("Baseline implementation must be v0")
+        baseline_impl = settings.get("impl", "v0")
+        if baseline_impl not in ("v0", "v1"):
+            parser.error("Baseline implementation must be v0 or v1")
         for key in ("cache", "flush_mb", "cube_peak_tflops", "repeat", "warmup", "device"):
             if settings.get(key) != getattr(args, key):
                 parser.error(f"Baseline setting mismatch: {key}")
@@ -114,7 +115,7 @@ def main():
                            "causal": causal, "status": "running"}
                     report["results"].append(row)
                     save()
-                    extra = {"device_index": args.device} if args.impl == "v1" else {}
+                    extra = {"device_index": args.device} if args.impl != "v0" else {}
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,
                                           "float16" if dtype == torch.float16 else "bfloat16", **extra)
                     got = kernel(*inputs).cpu()
@@ -152,12 +153,13 @@ def main():
                     if previous is not None:
                         if previous["effective_flops"] != flops:
                             raise ValueError("Baseline effective FLOPs mismatch")
-                        row.update(baseline_median_ms=previous["median_ms"],
-                                   speedup_vs_v0=previous["median_ms"] / latency)
+                        row.update(baseline_median_ms=previous["median_ms"], baseline_implementation=baseline_impl,
+                                   speedup_vs_baseline=previous["median_ms"] / latency)
+                        row[f"speedup_vs_{baseline_impl}"] = previous["median_ms"] / latency
                     save()
                     print(f"{name} {dtype} causal={causal}: {latency:.6f} ms, "
                           f"{achieved:.8f} TFLOPS, MFU={row['cube_normalized_mfu_percent']:.8f}% "
-                          f"speedup_vs_v0={row.get('speedup_vs_v0', 'n/a')}", flush=True)
+                          f"speedup_vs_baseline={row.get('speedup_vs_baseline', 'n/a')}", flush=True)
         report["status"] = "passed"
     except Exception:
         report.update(status="error", error=traceback.format_exc())

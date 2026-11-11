@@ -73,14 +73,14 @@ def main():
     parser.add_argument("--suite", choices=["quick", "standard", "extended"], default="standard")
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 42, 2026])
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--impl", choices=["v0", "v1"], default="v0")
+    parser.add_argument("--impl", choices=["v0", "v1", "v2"], default="v0")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED],
                         help="Run only these named cases from the selected suite")
     args = parser.parse_args()
     if args.output is None:
-        args.output = "mha_paged_accuracy_report.json" if args.impl == "v0" else "mha_paged_accuracy_v1_report.json"
+        args.output = "mha_paged_accuracy_report.json" if args.impl == "v0" else f"mha_paged_accuracy_{args.impl}_report.json"
     cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED}[args.suite]
     if args.cases:
         missing = set(args.cases) - {c[0] for c in cases}
