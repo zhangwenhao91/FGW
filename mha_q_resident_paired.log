@@ -1,0 +1,38 @@
+2026-11-11 16:02:33  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 16:02:34  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 16:02:34  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 16:02:34  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 16:02:34  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+round=1 q16: base=66.604 us resident=65.610 us speedup=1.0152
+round=1 q32: base=71.482 us resident=70.371 us speedup=1.0158
+round=1 b1_decode_noncausal: base=31.013 us resident=30.161 us speedup=1.0282
+round=1 b1_decode_causal: base=30.276 us resident=29.566 us speedup=1.0240
+round=2 b1_decode_causal: base=30.246 us resident=29.502 us speedup=1.0252
+round=2 b1_decode_noncausal: base=30.046 us resident=29.640 us speedup=1.0137
+round=2 q32: base=70.868 us resident=69.573 us speedup=1.0186
+round=2 q16: base=66.017 us resident=64.671 us speedup=1.0208
+round=3 q16: base=65.905 us resident=64.847 us speedup=1.0163
+round=3 q32: base=71.025 us resident=69.940 us speedup=1.0155
+round=3 b1_decode_noncausal: base=30.650 us resident=29.445 us speedup=1.0409
+round=3 b1_decode_causal: base=30.228 us resident=30.030 us speedup=1.0066
+round=4 b1_decode_causal: base=30.358 us resident=29.715 us speedup=1.0216
+round=4 b1_decode_noncausal: base=30.490 us resident=29.735 us speedup=1.0254
+round=4 q32: base=71.220 us resident=69.746 us speedup=1.0211
+round=4 q16: base=66.389 us resident=64.833 us speedup=1.0240
+round=5 q16: base=66.069 us resident=64.923 us speedup=1.0177
+round=5 q32: base=71.144 us resident=69.940 us speedup=1.0172
+round=5 b1_decode_noncausal: base=30.410 us resident=29.942 us speedup=1.0156
+round=5 b1_decode_causal: base=30.222 us resident=29.745 us speedup=1.0160
+round=6 b1_decode_causal: base=30.109 us resident=29.618 us speedup=1.0166
+round=6 b1_decode_noncausal: base=29.993 us resident=29.617 us speedup=1.0127
+round=6 q32: base=71.157 us resident=69.916 us speedup=1.0177
+round=6 q16: base=66.143 us resident=65.074 us speedup=1.0164
+round=7 q16: base=66.189 us resident=64.936 us speedup=1.0193
+round=7 q32: base=71.243 us resident=69.861 us speedup=1.0198
+round=7 b1_decode_noncausal: base=30.704 us resident=29.547 us speedup=1.0392
+round=7 b1_decode_causal: base=30.035 us resident=30.022 us speedup=1.0004
+round=8 b1_decode_causal: base=30.247 us resident=29.818 us speedup=1.0144
+round=8 b1_decode_noncausal: base=30.309 us resident=30.129 us speedup=1.0060
+round=8 q32: base=71.303 us resident=69.797 us speedup=1.0216
+round=8 q16: base=65.901 us resident=64.554 us speedup=1.0209
+PASSED: mha_q_resident_paired.json
