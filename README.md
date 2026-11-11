@@ -1,5 +1,16 @@
 # FGW
 
+## 导出当前自动流水，准备手工调度对照
+
+```bash
+git pull --ff-only
+python fgw.py mha export-schedule
+```
+
+在NPU开发环境编译并导出当前v7默认配置的AscendC设备源码、host源码、输入IR及各pass IR，覆盖Q4多split、Q129尾块、Q4096和Q32768直接输出。开启编译器DumpIR，其他计算配置不变，不运行性能测试。使用唯一输出路径避免直接复用旧dump。
+
+结束后将 `reports/mha/latest/mha_auto_schedule_*.zip` 上传。压缩包内含manifest、源码哈希及调度/同步/多缓冲pass文件。失败也生成包含错误的压缩包。先审阅真实AutoSchedule、同步和缓冲安排，再据此确定手工Stage候选；不直接照搬参考PR阶段编号。普通测试不传dump_ir_dir，因此不产生这些额外文件。
+
 Ascend算子开发与验证工作区。当前包含分页MHA；新算子使用并列目录，不与MHA实验文件混放。
 
 ```text

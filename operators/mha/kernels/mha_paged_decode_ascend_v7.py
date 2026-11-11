@@ -21,7 +21,15 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None):
+    def dump_configs(name):
+        if dump_ir_dir is None:
+            return {}
+        from pathlib import Path
+        directory = Path(dump_ir_dir) / name
+        directory.mkdir(parents=True, exist_ok=True)
+        return {tilelang.PassConfigKey.TL_ENABLE_DUMP_IR: True,
+                tilelang.PassConfigKey.TL_DUMP_IR_DIR: str(directory.resolve())}
     kv_versions = buffer_versions if kv_versions is None else kv_versions
     if kv_versions not in (1, 2, 3):
         raise ValueError("K/V L1 versions must be 1, 2 or 3")
@@ -393,7 +401,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                 # query/D as the trailing two region axes for dual-copy inference.
                 T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi:qi + BR, h * D:(h + 1) * D])
 
-        direct_kernel = tilelang.compile(direct, out_idx=-1, target="ascend", execution_backend="auto")
+        direct_kernel = tilelang.compile(direct, out_idx=-1, target="ascend", execution_backend="auto",
+                                        pass_configs=dump_configs("direct"))
 
         def launch_direct(q, k, v, table, lengths):
             prepared = q.permute(0, 2, 1, 3).contiguous()
@@ -404,8 +413,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         launch_direct.prepare_q = lambda q: q.permute(0, 2, 1, 3).contiguous()
         return launch_direct
 
-    partial_kernel = tilelang.compile(partial, out_idx=[5, 6], target="ascend", execution_backend="auto")
-    merge_kernel = tilelang.compile(merge, out_idx=-1, target="ascend", execution_backend="auto")
+    partial_kernel = tilelang.compile(partial, out_idx=[5, 6], target="ascend", execution_backend="auto",
+                                     pass_configs=dump_configs("partial"))
+    merge_kernel = tilelang.compile(merge, out_idx=-1, target="ascend", execution_backend="auto",
+                                   pass_configs=dump_configs("merge"))
 
     def launch(q, k, v, table, lengths):
         # Put each head's query rows on the last two axes for the same

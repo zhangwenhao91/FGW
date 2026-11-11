@@ -16,6 +16,7 @@ COMMANDS = {
         "msprof": "benchmarks.mha.profile_mha_msprof",
         "paired": "benchmarks.mha.profile_q_resident_paired",
         "event-profile": "benchmarks.mha.profile_mha_v4",
+        "export-schedule": "tools.mha.export_schedule",
     },
 }
 
@@ -23,7 +24,7 @@ COMMANDS = {
 def main():
     parser = argparse.ArgumentParser(description=__doc__, epilog="Examples: python fgw.py env collect; python fgw.py mha bench --impl v7 --suite large-q")
     parser.add_argument("area", choices=COMMANDS)
-    parser.add_argument("command", help="env: collect/smoke; mha: accuracy/bench/msprof/paired/event-profile/run")
+    parser.add_argument("command", help="env: collect/smoke; mha: accuracy/bench/msprof/paired/event-profile/export-schedule/run")
     args = parser.parse_args(sys.argv[1:3])
     forwarded = sys.argv[3:]
     if args.area == "mha" and args.command == "run":
