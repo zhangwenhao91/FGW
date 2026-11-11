@@ -1,0 +1,9 @@
+q512_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.142274 ms, 60.37599391 TFLOPS, MFU=15.97248516% speedup_vs_baseline=n/a
+q256_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.109466 ms, 39.23562788 TFLOPS, MFU=10.37979574% speedup_vs_baseline=n/a
+q129_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.094534 ms, 22.89399383 TFLOPS, MFU=6.05661212% speedup_vs_baseline=n/a
+q128_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.090686 ms, 23.68043168 TFLOPS, MFU=6.26466446% speedup_vs_baseline=n/a
+q64_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.078718 ms, 13.64035971 TFLOPS, MFU=3.60856077% speedup_vs_baseline=n/a
+q32_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.073020 ms, 7.35238208 TFLOPS, MFU=1.94507462% speedup_vs_baseline=n/a
+q16_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.068117 ms, 3.94079973 TFLOPS, MFU=1.04253961% speedup_vs_baseline=n/a
+q4_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.067683 ms, 0.99151733 TFLOPS, MFU=0.26230617% speedup_vs_baseline=n/a
+PASSED; report=mha_mfu_v6_long_q_reverse_report.json
