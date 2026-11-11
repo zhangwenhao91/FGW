@@ -1,3 +1,8 @@
 __pycache__/
-tilelang_ascend_smoke*.json
-ascend_env_report*.txt
+*.py[cod]
+*.o
+*.so
+*.tmp
+extra-info/
+**/extra-info/
+.pytest_cache/
