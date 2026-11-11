@@ -155,7 +155,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         Lengths: T.Tensor((batch,), "int32"),
         Zero: T.Tensor((D,), dtype),
         Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
-        LSE: T.Tensor((tasks, splits, BR), accum_dtype),
+        LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
     ):
         with T.Kernel(tasks * splits) as bx:
             task = bx // splits
@@ -238,12 +238,15 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     else:
                         lse[r] = -1.0e30
             T.dual_copy(output, Parts[task, split, :, :])
-            T.dual_copy(lse, LSE[task, split, :])
+            # Integer indices in a multidimensional BufferRegion retain rank.
+            # Flatten LSE so UB[ROWS] -> GM[BR] is an actual 1-D 1:2 copy.
+            lse_offset = (task * splits + split) * BR
+            T.dual_copy(lse, LSE[lse_offset:lse_offset + BR])
 
     @T.prim_func
     def merge(
         Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
-        LSE: T.Tensor((tasks, splits, BR), accum_dtype),
+        LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
         O: T.Tensor((batch, sq, heads, D), dtype),
     ):
         with T.Kernel(tasks) as task:
@@ -260,7 +263,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     state[1] = 0
             for split in T.serial(splits):
                 T.copy(Parts[task, split, 0, :], part)
-                T.copy(LSE[task, split, 0:8], score)
+                lse_offset = (task * splits + split) * BR
+                T.copy(LSE[lse_offset:lse_offset + 8], score)
                 with T.SimtVF(threads=128):
                     for d in T.Parallel(D):
                         peak = T.max(state[0], score[0])
