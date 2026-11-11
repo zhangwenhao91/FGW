@@ -1,0 +1,32 @@
+2026-11-11 11:53:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 11:53:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+decode_noncausal round=1 full: KernelProfile(22.2us, mad=17.9%, aic_mte2=25.6%, aic_mte1=8.6%, aic_fix=9.1%, aiv_vec=40.7%, aiv_mte2=0.8%, aiv_mte3=8.5%, aic_cycles=431674, aiv_cycles=1387552)
+decode_noncausal round=1 partial: KernelProfile(20.5us, mad=16.3%, aic_mte2=23.5%, aic_mte1=7.8%, aic_fix=8.3%, aiv_vec=36.8%, aiv_mte3=8.2%, aic_cycles=473459, aiv_cycles=1412152)
+decode_noncausal round=1 merge: KernelProfile(3.6us, aiv_vec=37.8%, aiv_mte2=46.4%, aiv_mte3=3.7%, aiv_cycles=80884)
+decode_noncausal round=2 partial: KernelProfile(19.1us, mad=18.7%, aic_mte2=27.3%, aic_mte1=9.0%, aic_fix=9.5%, aiv_vec=40.2%, aiv_mte3=8.9%, aic_cycles=411473, aiv_cycles=1288078)
+decode_noncausal round=2 merge: KernelProfile(3.5us, aiv_vec=38.6%, aiv_mte2=47.5%, aiv_mte3=3.8%, aiv_cycles=79194)
+decode_noncausal round=2 full: KernelProfile(22.1us, mad=18.0%, aic_mte2=25.8%, aic_mte1=8.6%, aic_fix=9.1%, aiv_vec=40.8%, aiv_mte2=0.8%, aiv_mte3=8.5%, aic_cycles=429110, aiv_cycles=1382360)
+2026-11-11 11:54:03  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_causal round=1 full: KernelProfile(22.1us, mad=18.0%, aic_mte2=25.9%, aic_mte1=8.6%, aic_fix=9.1%, aiv_vec=40.8%, aiv_mte2=0.9%, aiv_mte3=8.5%, aic_cycles=428546, aiv_cycles=1381216)
+decode_causal round=1 partial: KernelProfile(19.0us, mad=18.8%, aic_mte2=27.3%, aic_mte1=9.0%, aic_fix=9.5%, aiv_vec=40.3%, aiv_mte3=8.9%, aic_cycles=410217, aiv_cycles=1285585)
+decode_causal round=1 merge: KernelProfile(3.5us, aiv_vec=38.6%, aiv_mte2=45.3%, aiv_mte3=3.9%, aiv_cycles=79263)
+decode_causal round=2 partial: KernelProfile(19.3us, mad=18.2%, aic_mte2=25.7%, aic_mte1=8.7%, aic_fix=9.2%, aiv_vec=39.6%, aiv_mte3=8.8%, aic_cycles=422677, aiv_cycles=1310457)
+decode_causal round=2 merge: KernelProfile(3.4us, aiv_vec=39.3%, aiv_mte2=46.1%, aiv_mte3=3.9%, aiv_cycles=77820)
+decode_causal round=2 full: KernelProfile(22.2us, mad=17.9%, aic_mte2=25.7%, aic_mte1=8.6%, aic_fix=9.1%, aiv_vec=40.8%, aiv_mte2=0.9%, aiv_mte3=8.5%, aic_cycles=430044, aiv_cycles=1384235)
+2026-11-11 11:54:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 11:54:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+query4 round=1 full: KernelProfile(50.1us, mad=25.4%, aic_mte2=29.6%, aic_mte1=14.4%, aic_fix=14.2%, aiv_vec=41.6%, aiv_mte2=1.9%, aiv_mte3=7.6%, aic_cycles=1169391, aiv_cycles=3600325)
+query4 round=1 partial: KernelProfile(41.1us, mad=25.6%, aic_mte2=30.3%, aic_mte1=14.5%, aic_fix=14.3%, aiv_vec=40.7%, aiv_mte3=8.3%, aic_cycles=1159047, aiv_cycles=3255454)
+query4 round=1 merge: KernelProfile(6.9us, aiv_vec=43.8%, aiv_mte2=49.3%, aiv_mte3=2.0%, aiv_cycles=168232)
+query4 round=2 partial: KernelProfile(42.9us, mad=24.2%, aic_mte2=28.6%, aic_mte1=13.8%, aic_fix=13.5%, aiv_vec=39.1%, aiv_mte3=8.0%, aic_cycles=1226348, aiv_cycles=3390119)
+query4 round=2 merge: KernelProfile(7.0us, aiv_vec=43.2%, aiv_mte2=48.7%, aiv_mte3=2.0%, aiv_cycles=170342)
+query4 round=2 full: KernelProfile(50.1us, mad=25.3%, aic_mte2=29.7%, aic_mte1=14.4%, aic_fix=14.2%, aiv_vec=41.5%, aiv_mte2=2.0%, aiv_mte3=7.6%, aic_cycles=1170767, aiv_cycles=3604409)
+2026-11-11 11:54:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 11:54:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+query128 round=1 full: KernelProfile(28.9us, mad=16.3%, aic_mte2=27.1%, aic_mte1=7.8%, aic_fix=8.2%, aiv_vec=54.0%, aiv_mte2=10.4%, aiv_mte3=4.3%, aic_cycles=237232, aiv_cycles=1573856)
+query128 round=1 partial: KernelProfile(13.0us, mad=16.5%, aic_mte2=28.5%, aic_mte1=7.9%, aic_fix=8.4%, aiv_vec=37.0%, aiv_mte3=8.2%, aic_cycles=233173, aiv_cycles=698554)
+query128 round=1 merge: KernelProfile(15.4us, aiv_vec=52.0%, aiv_mte2=43.6%, aiv_mte3=1.2%, aiv_cycles=777735)
+query128 round=2 partial: KernelProfile(12.9us, mad=16.8%, aic_mte2=30.4%, aic_mte1=8.0%, aic_fix=8.5%, aiv_vec=37.5%, aiv_mte3=8.4%, aic_cycles=228743, aiv_cycles=689737)
+query128 round=2 merge: KernelProfile(15.6us, aiv_vec=51.7%, aiv_mte2=43.4%, aiv_mte3=1.2%, aiv_cycles=782619)
+query128 round=2 full: KernelProfile(28.9us, mad=16.2%, aic_mte2=27.3%, aic_mte1=7.7%, aic_fix=8.2%, aiv_vec=54.0%, aiv_mte2=10.3%, aiv_mte3=4.3%, aic_cycles=237720, aiv_cycles=1575857)
+PASSED: mha_merge_v6_msprof.json
