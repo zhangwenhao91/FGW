@@ -1,0 +1,3 @@
+q4096_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.598087 ms, 114.89879444 TFLOPS, MFU=30.39650647% speedup_vs_baseline=n/a
+q32768_b2_h8_d128_k2048 torch.bfloat16 causal=False: 4.727371 ms, 116.29207625 TFLOPS, MFU=30.76509954% speedup_vs_baseline=n/a
+PASSED; report=mha_overlap_base_run2_mfu.json

@@ -1,0 +1,9 @@
+query4096 round=1 full: KernelProfile(580.5us, mad=39.6%, aic_mte2=34.8%, aic_mte1=21.2%, aic_fix=24.1%, aiv_vec=41.5%, aiv_mte2=1.9%, aiv_mte3=6.5%, aic_cycles=23122600, aiv_cycles=50932186)
+query4096 round=1 direct: KernelProfile(572.2us, mad=39.2%, aic_mte2=34.8%, aic_mte1=21.2%, aic_fix=23.8%, aiv_vec=42.1%, aiv_mte3=6.1%, aic_cycles=23359721, aiv_cycles=50209229)
+query4096 round=2 direct: KernelProfile(571.9us, mad=39.2%, aic_mte2=34.8%, aic_mte1=21.2%, aic_fix=23.8%, aiv_vec=42.1%, aiv_mte3=6.1%, aic_cycles=23364989, aiv_cycles=50219245)
+query4096 round=2 full: KernelProfile(580.3us, mad=39.6%, aic_mte2=34.7%, aic_mte1=21.2%, aic_fix=24.1%, aiv_vec=41.5%, aiv_mte2=1.9%, aiv_mte3=6.4%, aic_cycles=23121975, aiv_cycles=50926824)
+query32768 round=1 full: KernelProfile(4546.9us, mad=39.4%, aic_mte2=33.6%, aic_mte1=21.2%, aic_fix=23.9%, aiv_vec=41.0%, aiv_mte2=2.6%, aiv_mte3=7.8%, aic_cycles=186124681, aiv_cycles=412425517)
+query32768 round=1 direct: KernelProfile(4411.7us, mad=39.4%, aic_mte2=33.6%, aic_mte1=21.3%, aic_fix=23.9%, aiv_vec=42.3%, aiv_mte3=6.1%, aic_cycles=186130180, aiv_cycles=400139019)
+query32768 round=2 direct: KernelProfile(4411.6us, mad=39.4%, aic_mte2=33.6%, aic_mte1=21.3%, aic_fix=23.9%, aiv_vec=42.3%, aiv_mte3=6.1%, aic_cycles=186135819, aiv_cycles=400148976)
+query32768 round=2 full: KernelProfile(4547.6us, mad=39.4%, aic_mte2=33.6%, aic_mte1=21.2%, aic_fix=23.9%, aiv_vec=41.0%, aiv_mte2=2.6%, aiv_mte3=7.8%, aic_cycles=186165737, aiv_cycles=412512216)
+PASSED: mha_overlap_prefetch_run2_msprof.json

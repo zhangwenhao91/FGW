@@ -1,0 +1,7 @@
+[1/6] cube_decode512 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[2/6] cube_decode512 seed=42 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[3/6] cube_decode512 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[4/6] cube_direct_q1 seed=7 torch.bfloat16 causal=True full: passed max_error=0.00390625
+[5/6] cube_direct_q1 seed=42 torch.bfloat16 causal=True full: passed max_error=0.001953125
+[6/6] cube_direct_q1 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.00390625
+PASSED: 6/6 passed; report=mha_overlap_resident_run2_causal.json

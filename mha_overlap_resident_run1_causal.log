@@ -1,0 +1,11 @@
+2026-11-11 15:39:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 15:39:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+[1/6] cube_decode512 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[2/6] cube_decode512 seed=42 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[3/6] cube_decode512 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+2026-11-11 15:39:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 15:39:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+[4/6] cube_direct_q1 seed=7 torch.bfloat16 causal=True full: passed max_error=0.00390625
+[5/6] cube_direct_q1 seed=42 torch.bfloat16 causal=True full: passed max_error=0.001953125
+[6/6] cube_direct_q1 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.00390625
+PASSED: 6/6 passed; report=mha_overlap_resident_run1_causal.json

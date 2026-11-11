@@ -1,0 +1,400 @@
+{
+  "status": "passed",
+  "settings": {
+    "cases": [
+      "query4096",
+      "query32768"
+    ],
+    "rounds": 2,
+    "repeat": 30,
+    "warmup": 10,
+    "device": 0,
+    "impl": "v7",
+    "pipeline_stages": 2,
+    "buffer_versions": 2,
+    "kv_versions": null,
+    "q_resident": true,
+    "reference_chunk_size": 128,
+    "output": "mha_overlap_resident_run2_msprof.json"
+  },
+  "results": [
+    {
+      "case": "query4096",
+      "stage": "full",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 573768.6666666667,
+        "aic_total_cycles": 22808841,
+        "aic_mad": 0.40174716206006045,
+        "aic_scalar": 0.04597464076533842,
+        "aic_mte1": 0.16868665977962619,
+        "aic_mte2": 0.3119225668508881,
+        "aic_mte3": 4.489524339420627e-05,
+        "aic_fixpipe": 0.24420605056214154,
+        "aiv_total_cycles": 50308467,
+        "aiv_vec": 0.4204594765684861,
+        "aiv_scalar": 0.026109654869829895,
+        "aiv_mte2": 0.018992357566075535,
+        "aiv_mte3": 0.06529495662426597
+      },
+      "profiler_duration_us": 573.7686666666667
+    },
+    {
+      "case": "query4096",
+      "stage": "direct",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 565902.4666666667,
+        "aic_total_cycles": 23086875,
+        "aic_mad": 0.39690639058536814,
+        "aic_scalar": 0.04596445848807841,
+        "aic_mte1": 0.168369308675219,
+        "aic_mte2": 0.31444590092747265,
+        "aic_mte3": 4.435451646481178e-05,
+        "aic_fixpipe": 0.24126639231034366,
+        "aiv_total_cycles": 49661462,
+        "aiv_vec": 0.42593820633634877,
+        "aiv_scalar": 0.022407028572381023,
+        "aiv_mte2": 0.00016495787465358025,
+        "aiv_mte3": 0.061781246576360686
+      },
+      "profiler_duration_us": 565.9024666666667
+    },
+    {
+      "case": "query4096",
+      "stage": "direct",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 565677.4666666667,
+        "aic_total_cycles": 23085005,
+        "aic_mad": 0.3969386236316466,
+        "aic_scalar": 0.045851091621606374,
+        "aic_mte1": 0.16837598412023683,
+        "aic_mte2": 0.3145920915816024,
+        "aic_mte3": 4.435811852619396e-05,
+        "aic_fixpipe": 0.241285985723232,
+        "aiv_total_cycles": 49657695,
+        "aiv_vec": 0.4259671777178383,
+        "aiv_scalar": 0.022321109478641556,
+        "aiv_mte2": 0.0001649704069736986,
+        "aiv_mte3": 0.06174902710010566
+      },
+      "profiler_duration_us": 565.6774666666666
+    },
+    {
+      "case": "query4096",
+      "stage": "full",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 573612.6666666667,
+        "aic_total_cycles": 22807904,
+        "aic_mad": 0.4017630313722273,
+        "aic_scalar": 0.04602025520898056,
+        "aic_mte1": 0.16872034403740138,
+        "aic_mte2": 0.3115356542010269,
+        "aic_mte3": 4.48970448587631e-05,
+        "aic_fixpipe": 0.24421599795449658,
+        "aiv_total_cycles": 50300151,
+        "aiv_vec": 0.42052634758864454,
+        "aiv_scalar": 0.025940240666294963,
+        "aiv_mte2": 0.0189708087742835,
+        "aiv_mte3": 0.06535633078624628
+      },
+      "profiler_duration_us": 573.6126666666668
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 4500846.433333334,
+        "aic_total_cycles": 184036568,
+        "aic_mad": 0.3983256013423223,
+        "aic_scalar": 0.04238810824733623,
+        "aic_mte1": 0.16910041933134606,
+        "aic_mte2": 0.3054548131674917,
+        "aic_mte3": 4.4513000153123694e-05,
+        "aic_fixpipe": 0.24212756924132034,
+        "aiv_total_cycles": 408241686,
+        "aiv_vec": 0.4145174240004278,
+        "aiv_scalar": 0.02047632065864907,
+        "aiv_mte2": 0.026415639936283927,
+        "aiv_mte3": 0.07856683263584696
+      },
+      "profiler_duration_us": 4500.846433333333
+    },
+    {
+      "case": "query32768",
+      "stage": "direct",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 4364621.633333334,
+        "aic_total_cycles": 183980910,
+        "aic_mad": 0.3984453473071685,
+        "aic_scalar": 0.04240855877591664,
+        "aic_mte1": 0.16918335889877334,
+        "aic_mte2": 0.30515488690150877,
+        "aic_mte3": 4.452647954593961e-05,
+        "aic_fixpipe": 0.2422016570632058,
+        "aiv_total_cycles": 395834588,
+        "aiv_vec": 0.4275102629813189,
+        "aiv_scalar": 0.019966504693598515,
+        "aiv_mte2": 0.0001655644923760734,
+        "aiv_mte3": 0.06177394381950033
+      },
+      "profiler_duration_us": 4364.621633333334
+    },
+    {
+      "case": "query32768",
+      "stage": "direct",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 4365392.066666666,
+        "aic_total_cycles": 184011049,
+        "aic_mad": 0.3983802103230151,
+        "aic_scalar": 0.042509203868835096,
+        "aic_mte1": 0.16915610378929144,
+        "aic_mte2": 0.3049060149483395,
+        "aic_mte3": 4.451918963899689e-05,
+        "aic_fixpipe": 0.24216191828230443,
+        "aiv_total_cycles": 395894884,
+        "aiv_vec": 0.4274452698142428,
+        "aiv_scalar": 0.020069770079027435,
+        "aiv_mte2": 0.00016553928790201533,
+        "aiv_mte3": 0.06176707072858642
+      },
+      "profiler_duration_us": 4365.392066666666
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 4501419.533333334,
+        "aic_total_cycles": 184093019,
+        "aic_mad": 0.39820335766057097,
+        "aic_scalar": 0.04266220853555155,
+        "aic_mte1": 0.169043892823201,
+        "aic_mte2": 0.3054558975526993,
+        "aic_mte3": 4.449936310468445e-05,
+        "aic_fixpipe": 0.24205357233312658,
+        "aiv_total_cycles": 408347538,
+        "aiv_vec": 0.4144096590189301,
+        "aiv_scalar": 0.020789679628538518,
+        "aiv_mte2": 0.026400424993188253,
+        "aiv_mte3": 0.07857707754865821
+      },
+      "profiler_duration_us": 4501.419533333335
+    }
+  ],
+  "started_utc": "2026-11-11T15:44:30.780236+00:00",
+  "baseline_config": {
+    "q_tile": 128,
+    "kv_tile": 128,
+    "pipeline_stages": 2,
+    "streamed_buffer_versions": 2,
+    "kv_l1_versions": 2,
+    "q_resident_l0a": true
+  },
+  "notes": [
+    "Upstream msprof_detail flushes cache before each invocation (256 MiB buffer).",
+    "dur_ns is upstream profiler record aggregation per invocation, not Event elapsed median.",
+    "Pipe fields are ratios against their own AIC/AIV total cycles; they can overlap and must not be summed as a time breakdown.",
+    "Full includes Q layout conversion if materialized, partial and merge; isolated stages run in separate profiler sessions.",
+    "Do not compare this cache-flushed measurement directly with earlier warm-cache Event results.",
+    "Candidate parameters are recorded; defaults preserve the measured baseline."
+  ],
+  "kernel_source_sha256": "1914b23ebb4eed5ae944419ab0deb09b8dd6cb0e2ef4ff1c36af95bc8c6b28ea",
+  "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=0008d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+  "implementation": "v7",
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "msprof_source_sha256": "e322b8e09d2e1e3565093bcd6e332316426a4a596375db131d04096a3feef7f9",
+  "msprof_source_file": "mha_overlap_resident_run2_msprof_msprof_source.py",
+  "do_bench_signature": "(fn: 'Callable', warmup: 'float' = 25, rep: 'float' = 100, _n_warmup: 'int' = 0, _n_repeat: 'int' = 0, quantiles: 'list[float] | None' = None, fast_flush: 'bool' = True, backend: \"Literal['event', 'cupti', 'cudagraph', 'wall', 'msprof', 'msprof_detail']\" = 'event', return_mode: \"Literal['min', 'max', 'mean', 'median']\" = 'mean', device: 'int | torch.device | None' = None, cache_size: 'int' = 256, early_stop_baseline: 'float | None' = None) -> 'float | list[float]'",
+  "summary": [
+    {
+      "case": "query4096",
+      "stage": "full",
+      "median_round_profiler_duration_us": 573.6906666666667,
+      "round_profiler_durations_us": [
+        573.7686666666667,
+        573.6126666666668
+      ]
+    },
+    {
+      "case": "query4096",
+      "stage": "direct",
+      "median_round_profiler_duration_us": 565.7899666666667,
+      "round_profiler_durations_us": [
+        565.9024666666667,
+        565.6774666666666
+      ]
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "median_round_profiler_duration_us": 4501.132983333334,
+      "round_profiler_durations_us": [
+        4500.846433333333,
+        4501.419533333335
+      ]
+    },
+    {
+      "case": "query32768",
+      "stage": "direct",
+      "median_round_profiler_duration_us": 4365.00685,
+      "round_profiler_durations_us": [
+        4364.621633333334,
+        4365.392066666666
+      ]
+    }
+  ]
+}

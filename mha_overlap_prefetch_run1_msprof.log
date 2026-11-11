@@ -1,0 +1,13 @@
+2026-11-11 15:41:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 15:41:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+query4096 round=1 full: KernelProfile(580.3us, mad=39.6%, aic_mte2=35.2%, aic_mte1=21.2%, aic_fix=24.1%, aiv_vec=41.5%, aiv_mte2=1.9%, aiv_mte3=6.5%, aic_cycles=23110806, aiv_cycles=50908675)
+query4096 round=1 direct: KernelProfile(571.9us, mad=39.2%, aic_mte2=34.9%, aic_mte1=21.2%, aic_fix=23.8%, aiv_vec=42.1%, aiv_mte3=6.1%, aic_cycles=23363910, aiv_cycles=50215305)
+query4096 round=2 direct: KernelProfile(571.8us, mad=39.2%, aic_mte2=35.0%, aic_mte1=21.2%, aic_fix=23.8%, aiv_vec=42.1%, aiv_mte3=6.1%, aic_cycles=23367619, aiv_cycles=50222195)
+query4096 round=2 full: KernelProfile(580.2us, mad=39.6%, aic_mte2=35.2%, aic_mte1=21.2%, aic_fix=24.1%, aiv_vec=41.5%, aiv_mte2=1.9%, aiv_mte3=6.5%, aic_cycles=23116218, aiv_cycles=50921136)
+2026-11-11 15:41:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 15:41:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+query32768 round=1 full: KernelProfile(4549.6us, mad=39.4%, aic_mte2=33.6%, aic_mte1=21.2%, aic_fix=23.9%, aiv_vec=41.0%, aiv_mte2=2.7%, aiv_mte3=7.9%, aic_cycles=186211685, aiv_cycles=412729306)
+query32768 round=1 direct: KernelProfile(4410.6us, mad=39.4%, aic_mte2=33.5%, aic_mte1=21.2%, aic_fix=23.9%, aiv_vec=42.3%, aiv_mte3=6.1%, aic_cycles=186139922, aiv_cycles=400145651)
+query32768 round=2 direct: KernelProfile(4411.2us, mad=39.4%, aic_mte2=33.5%, aic_mte1=21.2%, aic_fix=23.9%, aiv_vec=42.3%, aiv_mte3=6.1%, aic_cycles=186139764, aiv_cycles=400145579)
+query32768 round=2 full: KernelProfile(4550.4us, mad=39.4%, aic_mte2=33.6%, aic_mte1=21.2%, aic_fix=23.9%, aiv_vec=41.0%, aiv_mte2=2.7%, aiv_mte3=7.9%, aic_cycles=186245941, aiv_cycles=412789756)
+PASSED: mha_overlap_prefetch_run1_msprof.json
