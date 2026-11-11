@@ -1,245 +1,118 @@
 [1/12] page256 seed=7 torch.float16 causal=False mixed: passed max_error=3.0517578125e-05
 [2/12] page256 seed=7 torch.float16 causal=False full: passed max_error=3.0517578125e-05
 [3/12] page256 seed=7 torch.float16 causal=False empty: passed max_error=0.0
-2026-11-11 10:27:20  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 10:36:13  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
 [4/12] page256 seed=7 torch.float16 causal=True mixed: passed max_error=3.0517578125e-05
 [5/12] page256 seed=7 torch.float16 causal=True full: passed max_error=3.0517578125e-05
 [6/12] page256 seed=7 torch.float16 causal=True empty: passed max_error=0.0
-2026-11-11 10:27:20  [TileLang:tilelang.language.eager.builder:CRITICAL] (builder.py:1787): Failed to build prim_func from partial
-args={'Q': Q, 'K': K, 'V': V, 'Table': Table, 'Lengths': Lengths, 'Zero': Zero, 'Parts': Parts, 'LSE': LSE}
-source=def make_closure(BC, BR, D, ROWS, accum_dtype, accumulate_output, causal, clear_O_ub, dtype, heads, init_m_l, page_size, softmax, splits, sq, tasks):
-
-    def partial(__tb):
-        __tb_fl = '/home/z30086261/FGW/mha_paged_decode_ascend_v3.py'
-        __tb_fn = 'partial'
-        __tb.set_fileline(__tb_fl, 150, __tb_fn)
-
-        def partial(Q, K, V, Table, Lengths, Zero, Parts, LSE, **__kwargs):
-            __tb.set_fileline(__tb_fl, 151, __tb_fn)
-            Q = __tb.arg('Q', Q)
-            __tb.set_fileline(__tb_fl, 152, __tb_fn)
-            K = __tb.arg('K', K)
-            __tb.set_fileline(__tb_fl, 153, __tb_fn)
-            V = __tb.arg('V', V)
-            __tb.set_fileline(__tb_fl, 154, __tb_fn)
-            Table = __tb.arg('Table', Table)
-            __tb.set_fileline(__tb_fl, 155, __tb_fn)
-            Lengths = __tb.arg('Lengths', Lengths)
-            __tb.set_fileline(__tb_fl, 156, __tb_fn)
-            Zero = __tb.arg('Zero', Zero)
-            __tb.set_fileline(__tb_fl, 157, __tb_fn)
-            Parts = __tb.arg('Parts', Parts)
-            __tb.set_fileline(__tb_fl, 158, __tb_fn)
-            LSE = __tb.arg('LSE', LSE)
-            __tb.set_fileline(__tb_fl, 160, __tb_fn)
-            if __tb.skip_kernel_ctx():
-                __tb.set_fileline(__tb_fl, 160, __tb_fn)
-                return
-            __tb.set_fileline(__tb_fl, 160, __tb_fn)
-            with __tb.ctx_with(__tb.resolve_call(__tb.rval('T', T).Kernel)(__tb.rval('tasks', tasks) * __tb.rval('splits', splits))) as bx:
-                __tb.set_fileline(__tb_fl, 161, __tb_fn)
-                task = __tb.bind('task', __tb.rval('bx', bx) // __tb.rval('splits', splits))
-                __tb.set_fileline(__tb_fl, 162, __tb_fn)
-                split = __tb.bind('split', __tb.rval('bx', bx) % __tb.rval('splits', splits))
-                __tb.set_fileline(__tb_fl, 163, __tb_fn)
-                b = __tb.bind('b', __tb.rval('task', task) // (__tb.rval('sq', sq) * __tb.rval('heads', heads)))
-                __tb.set_fileline(__tb_fl, 164, __tb_fn)
-                qi = __tb.bind('qi', __tb.rval('task', task) // __tb.rval('heads', heads) % __tb.rval('sq', sq))
-                __tb.set_fileline(__tb_fl, 165, __tb_fn)
-                h = __tb.bind('h', __tb.rval('task', task) % __tb.rval('heads', heads))
-                __tb.set_fileline(__tb_fl, 166, __tb_fn)
-                Q_l1 = __tb.bind('Q_l1', __tb.resolve_call(__tb.rval('T', T).alloc_l1)((__tb.rval('BR', BR), __tb.rval('D', D)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 167, __tb_fn)
-                K_l1 = __tb.bind('K_l1', __tb.resolve_call(__tb.rval('T', T).alloc_l1)((__tb.rval('BC', BC), __tb.rval('D', D)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 168, __tb_fn)
-                V_l1 = __tb.bind('V_l1', __tb.resolve_call(__tb.rval('T', T).alloc_l1)((__tb.rval('D', D), __tb.rval('BC', BC)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 169, __tb_fn)
-                P_l1 = __tb.bind('P_l1', __tb.resolve_call(__tb.rval('T', T).alloc_l1)((__tb.rval('BR', BR), __tb.rval('BC', BC)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 170, __tb_fn)
-                qa = __tb.bind('qa', __tb.resolve_call(__tb.rval('T', T).alloc_l0a)((__tb.rval('BR', BR), __tb.rval('D', D)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 171, __tb_fn)
-                kb = __tb.bind('kb', __tb.resolve_call(__tb.rval('T', T).alloc_l0b)((__tb.rval('BC', BC), __tb.rval('D', D)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 172, __tb_fn)
-                pa = __tb.bind('pa', __tb.resolve_call(__tb.rval('T', T).alloc_l0a)((__tb.rval('BR', BR), __tb.rval('BC', BC)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 173, __tb_fn)
-                vb = __tb.bind('vb', __tb.resolve_call(__tb.rval('T', T).alloc_l0b)((__tb.rval('D', D), __tb.rval('BC', BC)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 174, __tb_fn)
-                qk = __tb.bind('qk', __tb.resolve_call(__tb.rval('T', T).alloc_l0c)((__tb.rval('BR', BR), __tb.rval('BC', BC)), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 175, __tb_fn)
-                pv = __tb.bind('pv', __tb.resolve_call(__tb.rval('T', T).alloc_l0c)((__tb.rval('BR', BR), __tb.rval('D', D)), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 176, __tb_fn)
-                scores = __tb.bind('scores', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS), __tb.rval('BC', BC)), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 177, __tb_fn)
-                probs = __tb.bind('probs', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS) + 1, __tb.rval('BC', BC)), __tb.rval('dtype', dtype)))
-                __tb.set_fileline(__tb_fl, 178, __tb_fn)
-                __tb.eval(__tb.resolve_call(__tb.rval('T', T).annotate_layout)({__tb.rval('probs', probs): __tb.resolve_call(__tb.rval('make_ascend_compact_nz_layout', make_ascend_compact_nz_layout))(__tb.rval('probs', probs))}))
-                __tb.set_fileline(__tb_fl, 179, __tb_fn)
-                current = __tb.bind('current', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS), __tb.rval('D', D)), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 180, __tb_fn)
-                output = __tb.bind('output', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS), __tb.rval('D', D)), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 181, __tb_fn)
-                maximum = __tb.bind('maximum', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS),), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 182, __tb_fn)
-                total = __tb.bind('total', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS),), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 183, __tb_fn)
-                alpha = __tb.bind('alpha', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS),), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 184, __tb_fn)
-                old_max = __tb.bind('old_max', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS),), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 185, __tb_fn)
-                row_sum = __tb.bind('row_sum', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS),), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 186, __tb_fn)
-                lse = __tb.bind('lse', __tb.resolve_call(__tb.rval('T', T).alloc_shared)((__tb.rval('ROWS', ROWS),), __tb.rval('accum_dtype', accum_dtype)))
-                __tb.set_fileline(__tb_fl, 189, __tb_fn)
-                for __0 in __tb.ctx_for(__tb.iter_call(__tb.resolve_call(__tb.rval('T', T).serial), __tb.rval('BR', BR))):
-                    __tb.set_fileline(__tb_fl, 189, __tb_fn)
-                    row = __tb.bind('row', __0, loop_target=True)
-                    __tb.set_fileline(__tb_fl, 190, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('Q', Q)[__tb.rval('task', task), :], __tb.rval('Q_l1', Q_l1)[__tb.rval('row', row), :]))
-                __tb.set_fileline(__tb_fl, 191, __tb_fn)
-                __tb.eval(__tb.resolve_call(__tb.rval('init_m_l', init_m_l))(__tb.rval('maximum', maximum), __tb.rval('total', total)))
-                __tb.set_fileline(__tb_fl, 192, __tb_fn)
-                __tb.eval(__tb.resolve_call(__tb.rval('clear_O_ub', clear_O_ub))(__tb.rval('output', output)))
-                __tb.set_fileline(__tb_fl, 193, __tb_fn)
-                end = __tb.bind('end', __tb.rval('Lengths', Lengths)[__tb.rval('b', b)])
-                __tb.set_fileline(__tb_fl, 194, __tb_fn)
-                for __1 in __tb.ctx_if(__tb.rval('causal', causal)):
-                    __tb.set_fileline(__tb_fl, 194, __tb_fn)
-                    for _ in __tb.ctx_then(__1):
-                        __tb.set_fileline(__tb_fl, 195, __tb_fn)
-                        end = __tb.bind('end', __tb.resolve_call(__tb.rval('T', T).max)(__tb.rval('end', end) - __tb.rval('sq', sq) + __tb.rval('qi', qi) + 1, 0))
-                __tb.set_fileline(__tb_fl, 196, __tb_fn)
-                tiles = __tb.bind('tiles', __tb.resolve_call(__tb.rval('T', T).ceildiv)(__tb.rval('end', end), __tb.rval('BC', BC)))
-                __tb.set_fileline(__tb_fl, 197, __tb_fn)
-                per_split = __tb.bind('per_split', __tb.resolve_call(__tb.rval('T', T).ceildiv)(__tb.rval('tiles', tiles), __tb.rval('splits', splits)))
-                __tb.set_fileline(__tb_fl, 198, __tb_fn)
-                begin = __tb.bind('begin', __tb.rval('split', split) * __tb.rval('per_split', per_split))
-                __tb.set_fileline(__tb_fl, 199, __tb_fn)
-                count = __tb.bind('count', __tb.resolve_call(__tb.rval('T', T).max)(__tb.resolve_call(__tb.rval('T', T).min)(__tb.rval('begin', begin) + __tb.rval('per_split', per_split), __tb.rval('tiles', tiles)) - __tb.rval('begin', begin), 0))
-                __tb.set_fileline(__tb_fl, 202, __tb_fn)
-                __tb.eval(__tb.resolve_call(__tb.rval('T', T).annotate_buffer_versions)({__tb.rval('K_l1', K_l1): 2, __tb.rval('V_l1', V_l1): 2, __tb.rval('qk', qk): 2, __tb.rval('pv', pv): 2, __tb.rval('scores', scores): 2, __tb.rval('probs', probs): 2, __tb.rval('current', current): 2, __tb.rval('alpha', alpha): 2}))
-                __tb.set_fileline(__tb_fl, 204, __tb_fn)
-                for __9 in __tb.ctx_for(__tb.iter_call(__tb.resolve_call(__tb.rval('T', T).Pipelined), __tb.rval('count', count), num_stages=2)):
-                    __tb.set_fileline(__tb_fl, 204, __tb_fn)
-                    tile = __tb.bind('tile', __9, loop_target=True)
-                    __tb.set_fileline(__tb_fl, 205, __tb_fn)
-                    logical = __tb.bind('logical', (__tb.rval('begin', begin) + __tb.rval('tile', tile)) * __tb.rval('BC', BC))
-                    __tb.set_fileline(__tb_fl, 206, __tb_fn)
-                    physical = __tb.bind('physical', __tb.rval('Table', Table)[__tb.rval('b', b), __tb.rval('logical', logical) // __tb.rval('page_size', page_size)] * __tb.rval('page_size', page_size) + __tb.rval('logical', logical) % __tb.rval('page_size', page_size))
-                    __tb.set_fileline(__tb_fl, 207, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('K', K)[__tb.rval('physical', physical):__tb.rval('physical', physical) + __tb.rval('BC', BC), __tb.rval('h', h), :], __tb.rval('K_l1', K_l1)))
-                    __tb.set_fileline(__tb_fl, 209, __tb_fn)
-                    for __4 in __tb.ctx_if(__tb.rval('logical', logical) + __tb.rval('BC', BC) <= __tb.rval('end', end)):
-                        __tb.set_fileline(__tb_fl, 209, __tb_fn)
-                        for _ in __tb.ctx_then(__4):
-                            __tb.set_fileline(__tb_fl, 210, __tb_fn)
-                            __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('V', V)[__tb.rval('physical', physical):__tb.rval('physical', physical) + __tb.rval('BC', BC), __tb.rval('h', h), :], __tb.rval('V_l1', V_l1), transpose=True))
-                        __tb.set_fileline(__tb_fl, 209, __tb_fn)
-                        for _ in __tb.ctx_else(__4):
-                            __tb.set_fileline(__tb_fl, 212, __tb_fn)
-                            for __3 in __tb.ctx_for(__tb.iter_call(__tb.resolve_call(__tb.rval('T', T).serial), __tb.rval('BC', BC))):
-                                __tb.set_fileline(__tb_fl, 212, __tb_fn)
-                                j = __tb.bind('j', __3, loop_target=True)
-                                __tb.set_fileline(__tb_fl, 213, __tb_fn)
-                                for __2 in __tb.ctx_if(__tb.rval('logical', logical) + __tb.rval('j', j) < __tb.rval('end', end)):
-                                    __tb.set_fileline(__tb_fl, 213, __tb_fn)
-                                    for _ in __tb.ctx_then(__2):
-                                        __tb.set_fileline(__tb_fl, 214, __tb_fn)
-                                        __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('V', V)[__tb.rval('physical', physical) + __tb.rval('j', j), __tb.rval('h', h), :], __tb.rval('V_l1', V_l1)[:, __tb.rval('j', j)]))
-                                    __tb.set_fileline(__tb_fl, 213, __tb_fn)
-                                    for _ in __tb.ctx_else(__2):
-                                        __tb.set_fileline(__tb_fl, 216, __tb_fn)
-                                        __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('Zero', Zero), __tb.rval('V_l1', V_l1)[:, __tb.rval('j', j)]))
-                    __tb.set_fileline(__tb_fl, 217, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('Q_l1', Q_l1), __tb.rval('qa', qa)))
-                    __tb.set_fileline(__tb_fl, 218, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('K_l1', K_l1), __tb.rval('kb', kb)))
-                    __tb.set_fileline(__tb_fl, 219, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).gemm)(__tb.rval('qa', qa), __tb.rval('kb', kb), __tb.rval('qk', qk), transpose_B=True, clear_accum=True))
-                    __tb.set_fileline(__tb_fl, 220, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).dual_copy)(__tb.rval('qk', qk), __tb.rval('scores', scores)))
-                    __tb.set_fileline(__tb_fl, 221, __tb_fn)
-                    with __tb.ctx_with(__tb.resolve_call(__tb.rval('T', T).SimtVF)(threads=128)):
-                        __tb.set_fileline(__tb_fl, 222, __tb_fn)
-                        for __6 in __tb.ctx_for(__tb.iter_call(__tb.resolve_call(__tb.rval('T', T).Parallel), __tb.rval('ROWS', ROWS), __tb.rval('BC', BC))):
-                            __tb.set_fileline(__tb_fl, 222, __tb_fn)
-                            __7, __8 = __tb.unwrap_value(__6)
-                            __tb.set_fileline(__tb_fl, 222, __tb_fn)
-                            __7, __8 = (__tb.bind('_', __7), __tb.bind('_', __8))
-                            __tb.set_fileline(__tb_fl, 222, __tb_fn)
-                            r, j = (__tb.bind('r', __7, loop_target=True), __tb.bind('j', __8, loop_target=True))
-                            __tb.set_fileline(__tb_fl, 223, __tb_fn)
-                            for __5 in __tb.ctx_if(__tb.rval('logical', logical) + __tb.rval('j', j) >= __tb.rval('end', end)):
-                                __tb.set_fileline(__tb_fl, 223, __tb_fn)
-                                for _ in __tb.ctx_then(__5):
-                                    __tb.set_fileline(__tb_fl, 224, __tb_fn)
-                                    __tb.assign_slice(__tb.rval('scores', scores), (__tb.rval('r', r), __tb.rval('j', j)), -1e+30)
-                    __tb.set_fileline(__tb_fl, 225, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('softmax', softmax))(__tb.rval('scores', scores), __tb.rval('probs', probs), __tb.rval('maximum', maximum), __tb.rval('total', total), __tb.rval('alpha', alpha), __tb.rval('old_max', old_max), __tb.rval('row_sum', row_sum)))
-                    __tb.set_fileline(__tb_fl, 226, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).dual_copy)(__tb.rval('probs', probs)[0:__tb.rval('ROWS', ROWS), :], __tb.rval('P_l1', P_l1)))
-                    __tb.set_fileline(__tb_fl, 227, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('P_l1', P_l1), __tb.rval('pa', pa)))
-                    __tb.set_fileline(__tb_fl, 228, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).copy)(__tb.rval('V_l1', V_l1), __tb.rval('vb', vb)))
-                    __tb.set_fileline(__tb_fl, 229, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).gemm)(__tb.rval('pa', pa), __tb.rval('vb', vb), __tb.rval('pv', pv), transpose_B=True, clear_accum=True))
-                    __tb.set_fileline(__tb_fl, 230, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('T', T).dual_copy)(__tb.rval('pv', pv), __tb.rval('current', current)))
-                    __tb.set_fileline(__tb_fl, 231, __tb_fn)
-                    __tb.eval(__tb.resolve_call(__tb.rval('accumulate_output', accumulate_output))(__tb.rval('current', current), __tb.rval('output', output), __tb.rval('alpha', alpha)))
-                __tb.set_fileline(__tb_fl, 232, __tb_fn)
-                with __tb.ctx_with(__tb.resolve_call(__tb.rval('T', T).SimtVF)(threads=128)):
-                    __tb.set_fileline(__tb_fl, 233, __tb_fn)
-                    for __10 in __tb.ctx_for(__tb.iter_call(__tb.resolve_call(__tb.rval('T', T).Parallel), __tb.rval('ROWS', ROWS), __tb.rval('D', D))):
-                        __tb.set_fileline(__tb_fl, 233, __tb_fn)
-                        __11, __12 = __tb.unwrap_value(__10)
-                        __tb.set_fileline(__tb_fl, 233, __tb_fn)
-                        __11, __12 = (__tb.bind('_', __11), __tb.bind('_', __12))
-                        __tb.set_fileline(__tb_fl, 233, __tb_fn)
-                        r, d = (__tb.bind('r', __11, loop_target=True), __tb.bind('d', __12, loop_target=True))
-                        __tb.set_fileline(__tb_fl, 234, __tb_fn)
-                        __tb.assign_slice(__tb.rval('output', output), (__tb.rval('r', r), __tb.rval('d', d)), __tb.rval('output', output)[__tb.rval('r', r), __tb.rval('d', d)] / __tb.resolve_call(__tb.rval('T', T).max)(__tb.rval('total', total)[__tb.rval('r', r)], 1e-30))
-                    __tb.set_fileline(__tb_fl, 235, __tb_fn)
-                    for __14 in __tb.ctx_for(__tb.iter_call(__tb.resolve_call(__tb.rval('T', T).Parallel), __tb.rval('ROWS', ROWS))):
-                        __tb.set_fileline(__tb_fl, 235, __tb_fn)
-                        r = __tb.bind('r', __14, loop_target=True)
-                        __tb.set_fileline(__tb_fl, 236, __tb_fn)
-                        for __13 in __tb.ctx_if(__tb.rval('total', total)[__tb.rval('r', r)] > 0):
-                            __tb.set_fileline(__tb_fl, 236, __tb_fn)
-                            for _ in __tb.ctx_then(__13):
-                                __tb.set_fileline(__tb_fl, 237, __tb_fn)
-                                __tb.assign_slice(__tb.rval('lse', lse), __tb.rval('r', r), __tb.resolve_call(__tb.rval('T', T).log2)(__tb.resolve_call(__tb.rval('T', T).max)(__tb.rval('total', total)[__tb.rval('r', r)], 1e-30)) * 0.6931471805599453 + __tb.rval('maximum', maximum)[__tb.rval('r', r)])
-                            __tb.set_fileline(__tb_fl, 236, __tb_fn)
-                            for _ in __tb.ctx_else(__13):
-                                __tb.set_fileline(__tb_fl, 239, __tb_fn)
-                                __tb.assign_slice(__tb.rval('lse', lse), __tb.rval('r', r), -1e+30)
-                __tb.set_fileline(__tb_fl, 240, __tb_fn)
-                __tb.eval(__tb.resolve_call(__tb.rval('T', T).dual_copy)(__tb.rval('output', output), __tb.rval('Parts', Parts)[__tb.rval('task', task), __tb.rval('split', split), :, :]))
-                __tb.set_fileline(__tb_fl, 241, __tb_fn)
-                __tb.eval(__tb.resolve_call(__tb.rval('T', T).dual_copy)(__tb.rval('lse', lse), __tb.rval('LSE', LSE)[__tb.rval('task', task), __tb.rval('split', split), :]))
-        return partial
-    return partial
+2026-11-11 10:36:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[6, 7]`
 [7/12] page256 seed=7 torch.bfloat16 causal=False mixed: error max_error=n/a
 Traceback (most recent call last):
   File "/home/z30086261/FGW/test_mha_paged_accuracy.py", line 146, in main
     got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 308, in mha_paged_decode
+  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 312, in mha_paged_decode
     kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 149, in build_kernel
-    @T.prim_func
-     ^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1790, in prim_func
-    return impl(func) if func is not None else impl
-           ^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1788, in impl
-    raise e
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1781, in impl
-    ir_gen.gen(builder)(**annot)
-  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 241, in partial
-    T.dual_copy(lse, LSE[task, split, :])
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/language/copy_op.py", line 120, in dual_copy
-    raise ValueError("dual_copy requires source and destination regions that are both one-dimensional or both have rank at least two")
-ValueError: dual_copy requires source and destination regions that are both one-dimensional or both have rank at least two
+  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 283, in build_kernel
+    partial_kernel = tilelang.compile(partial, out_idx=[6, 7], target="ascend", execution_backend="auto")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 166, in compile
+    return cached(
+           ^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/__init__.py", line 91, in cached
+    return cache.cached(
+           ^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/kernel_cache.py", line 427, in cached
+    kernel = JITKernel(
+             ^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 140, in __init__
+    adapter = self._compile_and_create_adapter(func, out_idx)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 280, in _compile_and_create_adapter
+    self.artifact = self._compile_artifact(tilelang_func, pass_configs, compile_metadata)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 321, in _compile_artifact
+    artifact = lower_with_context(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 165, in lower_with_context
+    return _lower_with_context_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 184, in _lower_with_context_impl
+    host_mod, device_mod, params, target, target_host = lower_to_host_device_ir(
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 136, in lower_to_host_device_ir
+    mod = context.lower(mod)
+          ^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py", line 214, in lower
+    return self.module.lower(mod, self.target)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py", line 115, in lower
+    return self.get_pipeline(target).lower(mod, target)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/pass_pipeline/pipeline.py", line 31, in lower
+    return self._lower(mod, target)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/pipeline.py", line 101, in AscendPassPipelineBody
+    mod = ascend_transform.AscendInsertOOBPadding()(mod)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/ir/transform.py", line 171, in __call__
+    return _ffi_transform_api.RunPass(self, mod)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule) const
+  File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
+  File "<unknown>", line 0, in tvm::tirx::transform::PrimFuncPassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#4}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::ForNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::ForNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#3}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::IfThenElseNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#4}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::ForNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::ForNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#3}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::IfThenElseNode const*)
+  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#10}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tl::ascend::ClampDMACopyTail(tvm::tl::AscendCopyNode const&, tvm::arith::Analyzer*)
+  File "/home/z30086261/Q4/third_party/tilelang-950/src/ascend/op/ascend_mte_plan.h", line 261, in tvm::tl::StridedLayout tvm::tl::NormalizeMTE2DLayout(const tvm::tirx::Buffer&, const tvm::ffi::Array<tvm::Range>&, tvm::arith::Analyzer*, const string&)
+tvm.error.InternalError: Check failed: range.size() >= 2U (1 vs. 2) : Ascend GM->L1 OOB handling requires at least a 2D region, got buffer Zero shape (128,) ranges (I.Range(0, 128),)
 ERROR: 6/12 passed; report=mha_cube_v3_smoke.json
