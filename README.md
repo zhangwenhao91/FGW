@@ -1,5 +1,16 @@
 # FGW
 
+## Q驻留候选的短Q性能确认
+
+```bash
+git pull --ff-only
+bash run_mha_short_q_resident.sh
+```
+
+对比当前v7默认base和仅开启q_resident的候选，保持两级流水及缓冲区版本。固定BF16/D128、B2/H8/KV2048，扫描Q1/4/16/32/64/128，并加入原B1/H16/KV512单query用例。7项非因果，另2项单query因果，每项先校验CPU参考精度，再warm-cache Event预热20次、采样51次。两轮反转候选与形状顺序，共36项计时结果；多query因果不在此次Cube测试范围。
+
+上传 `mha_short_q_*_run*_noncausal.json`、`mha_short_q_*_run*_causal.json` 和对应log。默认配置仍未修改，待短Q结果确认后决定是否统一启用Q驻留。
+
 ## v7 Cube搬运交叠候选扫描
 
 保持同一v7计算/合并实现和原默认值，新增编译参数q_resident与kv_versions。对比base（原2/2）、resident（Q在KV循环外搬到L0A）、prefetch（三级流水、K/V L1三版本、其余缓冲区两版本）、combined（两者组合）。Q驻留会延长L0A生命周期，需要实际编译检查，不预先假定可行或加速。

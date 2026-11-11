@@ -29,6 +29,10 @@ LARGE_Q_CASES = [
     (f"q{q}_b2_h8_d128_k2048", 2, q, 8, 128, 128, 2048)
     for q in (512, 1024, 2048, 4096, 8192, 16384, 32768)
 ]
+SHORT_Q_CASES = [
+    (f"q{q}_b2_h8_d128_k2048", 2, q, 8, 128, 128, 2048)
+    for q in (1, 4, 16, 32, 64, 128)
+] + [("decode_b1_k512", 1, 1, 16, 128, 128, 512)]
 
 
 def chunked_cpu_reference(q, k, v, table, lengths, page_size, causal, chunk):
@@ -64,8 +68,8 @@ def useful_flops(lengths, sq, heads, dim, causal):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite", choices=["standard", "long-q", "large-q"], default="standard")
-    parser.add_argument("--cases", nargs="+", choices=sorted({c[0] for c in CASES + LONG_Q_CASES + LARGE_Q_CASES}))
+    parser.add_argument("--suite", choices=["standard", "long-q", "large-q", "short-q"], default="standard")
+    parser.add_argument("--cases", nargs="+", choices=sorted({c[0] for c in CASES + LONG_Q_CASES + LARGE_Q_CASES + SHORT_Q_CASES}))
     parser.add_argument("--reference-chunk-size", type=int, default=0,
                         help="Positive CPU query chunk size; zero uses original per-query reference")
     parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
@@ -96,7 +100,7 @@ def main():
         parser.error("reference-chunk-size must be nonnegative")
     if args.repeat < 3 or args.warmup < 1 or not math.isfinite(args.cube_peak_tflops) or args.cube_peak_tflops <= 0 or args.flush_mb <= 0:
         parser.error("repeat >= 3, warmup >= 1, and finite positive peak/flush size required")
-    suite = {"standard": CASES, "long-q": LONG_Q_CASES, "large-q": LARGE_Q_CASES}[args.suite]
+    suite = {"standard": CASES, "long-q": LONG_Q_CASES, "large-q": LARGE_Q_CASES, "short-q": SHORT_Q_CASES}[args.suite]
     if args.cases and set(args.cases) - {c[0] for c in suite}:
         parser.error("Requested case is not in selected suite")
     cases = [c for c in suite if not args.cases or c[0] in args.cases]
