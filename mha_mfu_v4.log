@@ -1,0 +1,40 @@
+decode_b1_k512 torch.float16 causal=False: 0.091672 ms, 0.04575338 TFLOPS, MFU=0.01210407% speedup_vs_baseline=0.9743323476382655
+2026-11-11 11:05:04  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_b1_k512 torch.float16 causal=True: 0.090946 ms, 0.04611862 TFLOPS, MFU=0.01220069% speedup_vs_baseline=0.9314648306054979
+2026-11-11 11:05:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:05:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 11:05:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 11:05:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+decode_b1_k512 torch.bfloat16 causal=False: 0.085089 ms, 0.04929314 TFLOPS, MFU=0.01304051% speedup_vs_baseline=0.7460071632891588
+2026-11-11 11:05:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:05:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 11:05:18  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_b1_k512 torch.bfloat16 causal=True: 0.045088 ms, 0.09302484 TFLOPS, MFU=0.02460975% speedup_vs_baseline=1.4995563989676135
+decode_b2_k2048 torch.float16 causal=False: 0.286887 ms, 0.02924011 TFLOPS, MFU=0.00773548% speedup_vs_baseline=0.987583949438675
+2026-11-11 11:05:18  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_b2_k2048 torch.float16 causal=True: 0.287719 ms, 0.02915556 TFLOPS, MFU=0.00771311% speedup_vs_baseline=0.9897433751442888
+decode_b2_k2048 torch.bfloat16 causal=False: 0.286864 ms, 0.02924246 TFLOPS, MFU=0.00773610% speedup_vs_baseline=0.9904832540115333
+2026-11-11 11:05:18  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_b2_k2048 torch.bfloat16 causal=True: 0.287618 ms, 0.02916580 TFLOPS, MFU=0.00771582% speedup_vs_baseline=0.9904769098792139
+spec_b2_q4_k2048 torch.float16 causal=False: 1.133376 ms, 0.05921147 TFLOPS, MFU=0.01566441% speedup_vs_baseline=0.9987682287369049
+2026-11-11 11:05:18  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+spec_b2_q4_k2048 torch.float16 causal=True: 1.319002 ms, 0.05084125 TFLOPS, MFU=0.01345007% speedup_vs_baseline=0.9969916646715635
+2026-11-11 11:05:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:05:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 11:05:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 11:05:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+spec_b2_q4_k2048 torch.bfloat16 causal=False: 0.068235 ms, 0.98349618 TFLOPS, MFU=0.26018417% speedup_vs_baseline=2.0395104050982127
+spec_b2_q4_k2048 torch.bfloat16 causal=True: 1.318373 ms, 0.05086551 TFLOPS, MFU=0.01345648% speedup_vs_baseline=0.9983434777238444
+decode_b8_k2048 torch.float16 causal=False: 1.097413 ms, 0.03057594 TFLOPS, MFU=0.00808887% speedup_vs_baseline=1.001766066857873
+2026-11-11 11:05:29  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_b8_k2048 torch.float16 causal=True: 1.088097 ms, 0.03083772 TFLOPS, MFU=0.00815813% speedup_vs_baseline=0.9979937812917038
+decode_b8_k2048 torch.bfloat16 causal=False: 1.098113 ms, 0.03055645 TFLOPS, MFU=0.00808372% speedup_vs_baseline=0.9994682813775051
+2026-11-11 11:05:29  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_b8_k2048 torch.bfloat16 causal=True: 1.086287 ms, 0.03088910 TFLOPS, MFU=0.00817172% speedup_vs_baseline=0.9997283931541467
+decode_b1_k8192 torch.float16 causal=False: 0.557217 ms, 0.03010894 TFLOPS, MFU=0.00796533% speedup_vs_baseline=0.998625348316049
+2026-11-11 11:05:30  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_b1_k8192 torch.float16 causal=True: 0.554391 ms, 0.03026242 TFLOPS, MFU=0.00800593% speedup_vs_baseline=0.9991558022254912
+decode_b1_k8192 torch.bfloat16 causal=False: 0.556211 ms, 0.03016340 TFLOPS, MFU=0.00797974% speedup_vs_baseline=1.0001042685598036
+2026-11-11 11:05:30  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+decode_b1_k8192 torch.bfloat16 causal=True: 0.554231 ms, 0.03027116 TFLOPS, MFU=0.00800824% speedup_vs_baseline=0.9991195309585369
+PASSED; report=mha_mfu_v4_report.json

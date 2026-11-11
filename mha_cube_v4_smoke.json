@@ -1,0 +1,90 @@
+{
+  "status": "passed",
+  "suite": "cube",
+  "seeds": [
+    7
+  ],
+  "patterns": [
+    "full"
+  ],
+  "causal_modes": [
+    false
+  ],
+  "dtypes": [
+    "bfloat16"
+  ],
+  "selected_cases": [
+    "cube_query4",
+    "cube_q129"
+  ],
+  "implementation": "v4",
+  "total_checks": 2,
+  "results": [
+    {
+      "case": "cube_query4",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 4,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 16,
+        "pool_rows": 4224
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        2048,
+        2048
+      ],
+      "status": "passed",
+      "execution_path": "cube_bf16_d128",
+      "max_abs_error": 0.0009765625,
+      "mean_abs_error": 4.341441672295332e-05,
+      "max_tolerance_ratio": 0.1816200464963913,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 9.970077355857939
+    },
+    {
+      "case": "cube_q129",
+      "shape": {
+        "B": 1,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_bf16_d128",
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00015883617743384093,
+      "max_tolerance_ratio": 0.3946329951286316,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 9.206797924125567
+    }
+  ],
+  "logical_device": 0,
+  "started_utc": "2026-11-11T11:03:20.951734+00:00",
+  "note": "Timing includes launch/copies/checks and is not a kernel benchmark.",
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "device_name": "Ascend950PR_9579",
+  "passed": 2,
+  "failed_or_incomplete": 0
+}

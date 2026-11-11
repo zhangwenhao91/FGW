@@ -1,0 +1,11 @@
+2026-11-11 11:03:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:03:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 11:03:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 11:03:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+[1/2] cube_query4 seed=7 torch.bfloat16 causal=False full: passed max_error=0.0009765625
+2026-11-11 11:03:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 11:03:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 11:03:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 11:03:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+[2/2] cube_q129 seed=7 torch.bfloat16 causal=False full: passed max_error=0.00390625
+PASSED: 2/2 passed; report=mha_cube_v4_smoke.json
