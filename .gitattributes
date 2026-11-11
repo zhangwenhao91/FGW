@@ -1,1 +1,2 @@
 *.sh text eol=lf
+third_party/tilelang_pr3896/*.py text eol=lf

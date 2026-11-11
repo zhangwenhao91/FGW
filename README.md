@@ -1,5 +1,16 @@
 # FGW
 
+## v7 与 PR3896 长短 Q MFU 对照
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_v7_pr3896_mfu
+```
+
+重测v7 B2/H8长短Q，并另做B1/H1同输入对照（参考PR原FP32输出及BF16输出）。
+参考源码固定版本原样保存，不增加batch/head适配kernel。计时范围和差异见
+[基准说明](docs/mha_v7_pr3896_mfu.md)。优先上传 `reports/mha/latest/mha_v7_pr3896_mfu_summary.json` 与同前缀 `.log`。
+
 ## 当前默认调度：manual
 
 v7 的长短 Q 统一使用 manual：启用跨迭代 offset、显式 Stage 和配套缓冲策略。

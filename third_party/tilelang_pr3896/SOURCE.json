@@ -1,0 +1,15 @@
+{
+  "pr": "https://github.com/tile-ai/tilelang/pull/3896",
+  "commit": "49a51226eb4068d5c0bf205cee886d2a7dcf0b05",
+  "files": {
+    "core.py": {
+      "url": "https://raw.githubusercontent.com/tile-ai/tilelang/49a51226eb4068d5c0bf205cee886d2a7dcf0b05/examples/ascend/flash_attention/core.py",
+      "sha256": "af62ca2b640831181329efd764913b46696f414b72bbc3022a8e927acd680cfb"
+    },
+    "example_mha.py": {
+      "url": "https://raw.githubusercontent.com/tile-ai/tilelang/49a51226eb4068d5c0bf205cee886d2a7dcf0b05/examples/ascend/flash_attention/example_mha.py",
+      "sha256": "330c03d62594945d189ceb7cd99592cfd1de79249653564b2d4c9aae5fa91348"
+    }
+  },
+  "license": "../licenses/TILELANG_LICENSE"
+}
