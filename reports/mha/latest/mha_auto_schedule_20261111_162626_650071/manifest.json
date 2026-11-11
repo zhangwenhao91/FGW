@@ -1,0 +1,158 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "case": "q4_split",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "status": "passed",
+      "kernels": [
+        {
+          "name": "partial",
+          "optional_export_errors": {},
+          "device_source_sha256": "687bbe74ab663a7c0a4ae2dfe9cb2e77587cb1900854303652fe2060aa221941"
+        },
+        {
+          "name": "merge",
+          "optional_export_errors": {},
+          "device_source_sha256": "39620f80d2933156e2a7f5c02192b827ddf34a18e30382d38bd4ca8a616075dd"
+        }
+      ],
+      "kernel_mode": "split_and_merge",
+      "pass_dump_count": 188,
+      "schedule_related_pass_files": [
+        "passes/merge/032_tl.MaterializeMultiBuffer.py",
+        "passes/merge/026_tl.AnnotateMultiBufferEligible.py",
+        "passes/merge/076_tl.AscendThreadSync.py",
+        "passes/merge/027_tl.EstimateLatency.py",
+        "passes/merge/033_tl.LowerScheduledTIR.py",
+        "passes/merge/075_tl.AscendThreadSync.py",
+        "passes/merge/028_tl.AutoSchedule.py",
+        "passes/merge/029_tl.PrepareMultiBuffer.py",
+        "passes/merge/031_tl.InsertSync.py",
+        "passes/partial/080_tl.AscendThreadSync.py",
+        "passes/partial/079_tl.AscendThreadSync.py",
+        "passes/partial/032_tl.MaterializeMultiBuffer.py",
+        "passes/partial/026_tl.AnnotateMultiBufferEligible.py",
+        "passes/partial/027_tl.EstimateLatency.py",
+        "passes/partial/033_tl.LowerScheduledTIR.py",
+        "passes/partial/028_tl.AutoSchedule.py",
+        "passes/partial/029_tl.PrepareMultiBuffer.py",
+        "passes/partial/031_tl.InsertSync.py"
+      ]
+    },
+    {
+      "case": "q129_tail",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 64,
+        "D": 128,
+        "KV": 256
+      },
+      "status": "passed",
+      "kernels": [
+        {
+          "name": "direct",
+          "optional_export_errors": {},
+          "device_source_sha256": "132551c5693d3b623ac474e80a3134dd58fd6c58b9fbf8a09f13dacf9585c109"
+        }
+      ],
+      "kernel_mode": "direct_single_split",
+      "pass_dump_count": 96,
+      "schedule_related_pass_files": [
+        "passes/direct/080_tl.AscendThreadSync.py",
+        "passes/direct/079_tl.AscendThreadSync.py",
+        "passes/direct/032_tl.MaterializeMultiBuffer.py",
+        "passes/direct/026_tl.AnnotateMultiBufferEligible.py",
+        "passes/direct/027_tl.EstimateLatency.py",
+        "passes/direct/033_tl.LowerScheduledTIR.py",
+        "passes/direct/028_tl.AutoSchedule.py",
+        "passes/direct/029_tl.PrepareMultiBuffer.py",
+        "passes/direct/031_tl.InsertSync.py"
+      ]
+    },
+    {
+      "case": "q4096",
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "status": "passed",
+      "kernels": [
+        {
+          "name": "direct",
+          "optional_export_errors": {},
+          "device_source_sha256": "a7207dde527f62fdb76dcaa14218efaf6adb86742e6ea9ebc09ea1808f8c6f34"
+        }
+      ],
+      "kernel_mode": "direct_single_split",
+      "pass_dump_count": 96,
+      "schedule_related_pass_files": [
+        "passes/direct/080_tl.AscendThreadSync.py",
+        "passes/direct/079_tl.AscendThreadSync.py",
+        "passes/direct/032_tl.MaterializeMultiBuffer.py",
+        "passes/direct/026_tl.AnnotateMultiBufferEligible.py",
+        "passes/direct/027_tl.EstimateLatency.py",
+        "passes/direct/033_tl.LowerScheduledTIR.py",
+        "passes/direct/028_tl.AutoSchedule.py",
+        "passes/direct/029_tl.PrepareMultiBuffer.py",
+        "passes/direct/031_tl.InsertSync.py"
+      ]
+    },
+    {
+      "case": "q32768",
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "status": "passed",
+      "kernels": [
+        {
+          "name": "direct",
+          "optional_export_errors": {},
+          "device_source_sha256": "24085f9ab8b5c5efb3287c719e59de00d7d8bd88098a13855a3c699221636722"
+        }
+      ],
+      "kernel_mode": "direct_single_split",
+      "pass_dump_count": 96,
+      "schedule_related_pass_files": [
+        "passes/direct/080_tl.AscendThreadSync.py",
+        "passes/direct/079_tl.AscendThreadSync.py",
+        "passes/direct/032_tl.MaterializeMultiBuffer.py",
+        "passes/direct/026_tl.AnnotateMultiBufferEligible.py",
+        "passes/direct/027_tl.EstimateLatency.py",
+        "passes/direct/033_tl.LowerScheduledTIR.py",
+        "passes/direct/028_tl.AutoSchedule.py",
+        "passes/direct/029_tl.PrepareMultiBuffer.py",
+        "passes/direct/031_tl.InsertSync.py"
+      ]
+    }
+  ],
+  "output_dir": "/home/z30086261/FGW/reports/mha/latest/mha_auto_schedule_20261111_162626_650071",
+  "mode": "Compilation/export only; no kernel execution or performance claim",
+  "config": {
+    "q_resident": true,
+    "pipeline_stages": 2,
+    "ub_versions": 2,
+    "kv_versions": 2
+  },
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=0008d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+  "kernel_source_sha256": "c5afd545355928b971e5a78d2889d917a0e88c7830263a0f94853210a33b2ef0"
+}
