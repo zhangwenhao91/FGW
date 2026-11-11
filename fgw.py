@@ -15,6 +15,7 @@ COMMANDS = {
         "bench": "benchmarks.mha.bench_mha_mfu",
         "msprof": "benchmarks.mha.profile_mha_msprof",
         "paired": "benchmarks.mha.profile_q_resident_paired",
+        "schedule-paired": "benchmarks.mha.profile_schedule_short_q",
         "event-profile": "benchmarks.mha.profile_mha_v4",
         "export-schedule": "tools.mha.export_schedule",
     },

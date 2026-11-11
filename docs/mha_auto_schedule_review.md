@@ -22,3 +22,17 @@
 手工内存策略：K/V L1三版本、scores三版本、alpha三版本；current只在同阶段生产/消费，候选设为一版本；probs、qk/pv两版本。用减少current版本补偿scores额外UB占用。真实容量、WAR依赖及调度可行性由编译器检查，失败候选不解除内存限制强行运行。
 
 默认仍auto。只有编译、30项非因果及9项单query因果精度通过，才采集长Q的Event和msprof。两个计时口径分别比较；手工候选同时改变阶段和必要缓冲策略，auto-offset用于帮助区分启用offset本身的收益。
+
+
+## 短 Q 交替计时
+
+运行 `python fgw.py mha run run_mha_schedule_short_q`。输出为
+`reports/mha/latest/mha_schedule_short_q_paired.json` 和同名 `.log`。
+
+比较 auto、auto-offset、manual，同一进程使用相同输入，全部编译及 CPU 参考精度检查完成后再计时。
+固定 BF16、D128、page128、Q resident、stages2；缓冲区配置遵循各调度候选。
+覆盖 B2/H8 的 Q16、32、127、129（KV2048），B1/H16/Q1/KV512 的因果及非因果，
+B1/H8/Q1/KV8192，以及 B2/H64/Q1/KV2048 的 split=1 直写路径。
+每项 8 轮，每轮预热各30次、各61次完整调用 Event 测量，轮换并反转调度顺序，轮间反转形状顺序。
+报告保留原始样本、每轮中位数、对 auto 的速度比、获胜轮数及执行路径；采用 warm cache，不扣除计时开销。
+本脚本不修改默认调度。短 Q 主要比较延迟，不以其 MFU 判断 Cube 算力上限。
