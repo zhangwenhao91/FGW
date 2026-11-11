@@ -1,7 +1,7 @@
 """Measure current paged-MHA prototype using warmed NPU event samples.
 
 MFU.md policy: count useful QK+PV FLOPs only; normalize to input-dtype
-dense Cube peak. The current kernel executes FP32 SIMT, NOT Cube MMA.
+dense Cube peak. Per-result execution_path distinguishes Cube and SIMT.
 """
 import argparse
 import datetime
@@ -21,6 +21,10 @@ CASES = [
     ("decode_b8_k2048", 8, 1, 8, 64, 128, 2048),
     ("decode_b1_k8192", 1, 1, 8, 64, 256, 8192),
 ]
+LONG_Q_CASES = [
+    (f"q{q}_b2_h8_d128_k2048", 2, q, 8, 128, 128, 2048)
+    for q in (4, 16, 32, 64, 128, 129, 256, 512)
+]
 
 
 def useful_flops(lengths, sq, heads, dim, causal):
@@ -31,7 +35,11 @@ def useful_flops(lengths, sq, heads, dim, causal):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in CASES])
+    parser.add_argument("--suite", choices=["standard", "long-q"], default="standard")
+    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in CASES + LONG_Q_CASES])
+    parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
+    parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
+    parser.add_argument("--reverse", action="store_true", help="Reverse case order for a repeat sweep")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--repeat", type=int, default=31)
@@ -46,9 +54,17 @@ def main():
     args = parser.parse_args()
     if args.output is None:
         args.output = "mha_mfu_report.json" if args.impl == "v0" else f"mha_mfu_{args.impl}_report.json"
+        if args.suite == "long-q":
+            args.output = f"mha_mfu_{args.impl}_long_q_report.json"
     if args.repeat < 3 or args.warmup < 1 or not math.isfinite(args.cube_peak_tflops) or args.cube_peak_tflops <= 0 or args.flush_mb <= 0:
         parser.error("repeat >= 3, warmup >= 1, and finite positive peak/flush size required")
-    cases = [c for c in CASES if not args.cases or c[0] in args.cases]
+    suite = CASES if args.suite == "standard" else LONG_Q_CASES
+    if args.cases and set(args.cases) - {c[0] for c in suite}:
+        parser.error("Requested case is not in selected suite")
+    cases = [c for c in suite if not args.cases or c[0] in args.cases]
+    if args.reverse:
+        cases.reverse()
+    causal_modes = (False, True) if args.causal == "both" else (args.causal == "causal",)
     if args.list_only:
         print(json.dumps(cases, indent=2))
         return 0
@@ -113,12 +129,12 @@ def main():
             generator = torch.Generator().manual_seed(7)
             table = torch.randperm(b * width, generator=generator).reshape(b, width).to(torch.int32)
             lengths = torch.full((b,), length, dtype=torch.int32)
-            for dtype in (torch.float16, torch.bfloat16):
+            for dtype in [getattr(torch, name) for name in args.dtypes]:
                 q = torch.randn(b, sq, h, d, generator=generator).to(dtype)
                 k = torch.randn(b * width * p, h, d, generator=generator).to(dtype)
                 v = torch.randn(b * width * p, h, d, generator=generator).to(dtype)
                 inputs = [x.to(device) for x in (q, k, v, table, lengths)]
-                for causal in (False, True):
+                for causal in causal_modes:
                     row = {"case": name, "B": b, "Sq": sq, "H": h, "D": d,
                            "page_size": p, "lengths": lengths.tolist(), "dtype": str(dtype),
                            "causal": causal, "status": "running"}

@@ -1,5 +1,16 @@
 # FGW
 
+## 补测长Q的MFU
+
+```bash
+git pull --ff-only
+bash run_mha_long_q.sh
+```
+
+固定v6、BF16、B2/H8/D128/KV2048、page128及非因果，扫描Q=4/16/32/64/128/129/256/512。包含Q4对照和Q129尾块，全部走Cube路径。每项先校验CPU参考精度，再预热20次、NPU Event测51次取中位数；保持warm-cache和378 TFLOPS峰值口径，完整调用包括Q布局准备、Cube局部计算及合并。正向/反向各测一次，不修改kernel。
+
+上传 `mha_mfu_v6_long_q_report.json`、`mha_mfu_v6_long_q_reverse_report.json` 和对应log。按实际有效Q计算FLOPs，不将补齐行计入有用计算；较长Q的CPU参考验证可能稍慢。
+
 ## v6：直接输出及按行计算合并权重
 
 v6保持v5统一的批量合并算法，输出直接写入最终连续[B,Sq,H,D]张量的各head区域，去掉额外permute/contiguous。每个split先按query行计算peak、旧结果缩放及新权重，再广播给D维累加；行状态在累加后更新。Cube局部计算与默认2/2配置不变，没有按长短Q选择历史版本。
