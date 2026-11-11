@@ -1,0 +1,218 @@
+{
+  "status": "error",
+  "suite": "extended",
+  "seeds": [
+    7
+  ],
+  "selected_cases": [
+    "page256"
+  ],
+  "implementation": "v3",
+  "total_checks": 12,
+  "results": [
+    {
+      "case": "page256",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 4,
+        "D": 128,
+        "page_size": 256,
+        "table_width": 4,
+        "pool_rows": 2304
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        1023,
+        1024
+      ],
+      "status": "passed",
+      "execution_path": "fallback_v2",
+      "max_abs_error": 3.0517578125e-05,
+      "mean_abs_error": 4.1851308196783066e-08,
+      "max_tolerance_ratio": 0.014771047979593277,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.07603870308957994
+    },
+    {
+      "case": "page256",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 4,
+        "D": 128,
+        "page_size": 256,
+        "table_width": 4,
+        "pool_rows": 2304
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        1024,
+        1024
+      ],
+      "status": "passed",
+      "execution_path": "fallback_v2",
+      "max_abs_error": 3.0517578125e-05,
+      "mean_abs_error": 2.3777829483151436e-08,
+      "max_tolerance_ratio": 0.014771047979593277,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.014830013969913125
+    },
+    {
+      "case": "page256",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 4,
+        "D": 128,
+        "page_size": 256,
+        "table_width": 4,
+        "pool_rows": 2304
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "fallback_v2",
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.001581462100148201
+    },
+    {
+      "case": "page256",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 4,
+        "D": 128,
+        "page_size": 256,
+        "table_width": 4,
+        "pool_rows": 2304
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        1023,
+        1024
+      ],
+      "status": "passed",
+      "execution_path": "fallback_v2",
+      "max_abs_error": 3.0517578125e-05,
+      "mean_abs_error": 5.657784640789032e-08,
+      "max_tolerance_ratio": 0.014771047979593277,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.03516645799390972
+    },
+    {
+      "case": "page256",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 4,
+        "D": 128,
+        "page_size": 256,
+        "table_width": 4,
+        "pool_rows": 2304
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        1024,
+        1024
+      ],
+      "status": "passed",
+      "execution_path": "fallback_v2",
+      "max_abs_error": 3.0517578125e-05,
+      "mean_abs_error": 3.873719833791256e-08,
+      "max_tolerance_ratio": 0.014771047979593277,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0027483028825372458
+    },
+    {
+      "case": "page256",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 4,
+        "D": 128,
+        "page_size": 256,
+        "table_width": 4,
+        "pool_rows": 2304
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "fallback_v2",
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0016482220962643623
+    },
+    {
+      "case": "page256",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 4,
+        "D": 128,
+        "page_size": 256,
+        "table_width": 4,
+        "pool_rows": 2304
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        1023,
+        1024
+      ],
+      "status": "error",
+      "execution_path": "cube_bf16_d128",
+      "error": "Traceback (most recent call last):\n  File \"/home/z30086261/FGW/test_mha_paged_accuracy.py\", line 146, in main\n    got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/mha_paged_decode_ascend_v3.py\", line 308, in mha_paged_decode\n    kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/mha_paged_decode_ascend_v3.py\", line 149, in build_kernel\n    @T.prim_func\n     ^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py\", line 1790, in prim_func\n    return impl(func) if func is not None else impl\n           ^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py\", line 1788, in impl\n    raise e\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py\", line 1781, in impl\n    ir_gen.gen(builder)(**annot)\n  File \"/home/z30086261/FGW/mha_paged_decode_ascend_v3.py\", line 241, in partial\n    T.dual_copy(lse, LSE[task, split, :])\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/language/copy_op.py\", line 120, in dual_copy\n    raise ValueError(\"dual_copy requires source and destination regions that are both one-dimensional or both have rank at least two\")\nValueError: dual_copy requires source and destination regions that are both one-dimensional or both have rank at least two\n",
+      "wall_seconds": 0.04249223507940769
+    }
+  ],
+  "logical_device": 0,
+  "started_utc": "2026-11-11T10:27:17.497607+00:00",
+  "note": "Timing includes launch/copies/checks and is not a kernel benchmark.",
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "device_name": "Ascend950PR_9579",
+  "error": "Traceback (most recent call last):\n  File \"/home/z30086261/FGW/test_mha_paged_accuracy.py\", line 146, in main\n    got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/mha_paged_decode_ascend_v3.py\", line 308, in mha_paged_decode\n    kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/mha_paged_decode_ascend_v3.py\", line 149, in build_kernel\n    @T.prim_func\n     ^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py\", line 1790, in prim_func\n    return impl(func) if func is not None else impl\n           ^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py\", line 1788, in impl\n    raise e\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py\", line 1781, in impl\n    ir_gen.gen(builder)(**annot)\n  File \"/home/z30086261/FGW/mha_paged_decode_ascend_v3.py\", line 241, in partial\n    T.dual_copy(lse, LSE[task, split, :])\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/language/copy_op.py\", line 120, in dual_copy\n    raise ValueError(\"dual_copy requires source and destination regions that are both one-dimensional or both have rank at least two\")\nValueError: dual_copy requires source and destination regions that are both one-dimensional or both have rank at least two\n",
+  "passed": 6,
+  "failed_or_incomplete": 1
+}
