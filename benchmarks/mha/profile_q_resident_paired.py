@@ -28,6 +28,7 @@ def main():
         parser.error("rounds>=2, pairs>=3, warmup>=1 required")
     report = {"status": "running", "settings": vars(args), "results": [],
               "time_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "schedule_mode": "auto",
               "policy": "Same process/input/current stream; both variants compiled and warmed before timing; per-pair AB/BA alternation; warm cache; no automatic default change.",
               "timing": "Full-call NPU Event microseconds including stream-visible launch gaps and allocation effects; no baseline overhead subtraction."}
     path = pathlib.Path(args.output)
@@ -61,7 +62,7 @@ def main():
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
             programs = {label: implementation.build_kernel(b, sq, h, 128, k.shape[0], width,
                 128, causal, "bfloat16", args.device, pipeline_stages=2, buffer_versions=2,
-                q_resident=resident, kv_versions=2)
+                q_resident=resident, kv_versions=2, schedule_mode="auto")
                 for label, resident in (("base", False), ("resident", True))}
             expected = reference(q, k, v, table, lengths, 128, causal)
             for p in programs.values():

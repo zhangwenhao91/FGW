@@ -1,8 +1,22 @@
 # FGW
 
-## 自动流水审阅后的Stage候选对照
+## 当前默认调度：manual
 
-已根据实际Q4096导出审阅自动阶段、同步和生成源码，见 [审阅记录](docs/mha_auto_schedule_review.md)。默认仍auto；新增auto-offset和manual编译选项，直接输出与多split采用同一选择规则。
+v7 的长短 Q 统一使用 manual：启用跨迭代 offset、显式 Stage 和配套缓冲策略。
+单 split 直写与多 split 合并使用同一调度选择，不按 Q 长度切换。
+公开 API、精度、基准、msprof 和源码导出入口均采用这一默认值。
+对照原调度可显式传 `--schedule-mode auto` 或 API 参数 `schedule_mode="auto"`。
+历史实现 v0～v6 不受此默认值影响。
+
+目标 NPU 已完成三种调度各两轮的30项非因果及9项单query因果检查，全部通过；
+manual 长 Q MFU 约55%，Q4096/Q32768相对auto提速约1.74/1.71倍。
+短 Q 的8轮交替计时精度通过，六个场景8/8轮提速；B1/Q1/KV512两项约持平，
+manual 各轮中位耗时的中位数分别增加约0.19和0.02微秒。保留auto入口供复现。
+计时口径及配置见 [审阅记录](docs/mha_auto_schedule_review.md)。
+
+## 自动流水审阅后的Stage候选对照（历史实验）
+
+已根据实际Q4096导出审阅自动阶段、同步和生成源码，见 [审阅记录](docs/mha_auto_schedule_review.md)。实验最初默认auto；对比auto-offset和manual编译选项，直接输出与多split采用同一选择规则。
 
 ```bash
 git pull --ff-only
@@ -11,16 +25,16 @@ python fgw.py mha run run_mha_schedule_sweep
 
 三组依次对比原自动调度、仅开启跨迭代offset、显式Stage加选择性缓冲策略。先做30项非因果和9项单query因果精度，成功后测Q4096/Q32768的msprof和完整调用MFU；正反顺序各一轮。编译/精度失败会保存报告并跳过性能测试，继续其他候选。
 
-上传reports/mha/latest/里 `mha_schedule_*_run*` 的JSON和log。若需要查看候选实际调度，可运行 `python fgw.py mha export-schedule --cases q4096 --schedule-mode manual` 或auto-offset；建议只上传q4096设备源码和AutoSchedule/InsertSync三项，避免重复提交所有IR。当前本机没有NPU，手工候选只完成语法和结构检查，尚未确认可编译或加速。
+上传reports/mha/latest/里 `mha_schedule_*_run*` 的JSON和log。若需要查看候选实际调度，可运行 `python fgw.py mha export-schedule --cases q4096 --schedule-mode manual` 或auto-offset；建议只上传q4096设备源码和AutoSchedule/InsertSync三项，避免重复提交所有IR。目标NPU已完成精度及长短Q性能验证，结果见上文；本地仅进行静态及CLI检查。
 
-## 导出当前自动流水，准备手工调度对照
+## 导出原自动流水（复现实验）
 
 ```bash
 git pull --ff-only
-python fgw.py mha export-schedule
+python fgw.py mha export-schedule --schedule-mode auto
 ```
 
-在NPU开发环境编译并导出当前v7默认配置的AscendC设备源码、host源码、输入IR及各pass IR，覆盖Q4多split、Q129尾块、Q4096和Q32768直接输出。开启编译器DumpIR，其他计算配置不变，不运行性能测试。使用唯一输出路径避免直接复用旧dump。
+在NPU开发环境编译并导出v7原auto配置的AscendC设备源码、host源码、输入IR及各pass IR，覆盖Q4多split、Q129尾块、Q4096和Q32768直接输出。开启编译器DumpIR，其他计算配置不变，不运行性能测试。使用唯一输出路径避免直接复用旧dump。
 
 结束后将 `reports/mha/latest/mha_auto_schedule_*.zip` 上传。压缩包内含manifest、源码哈希及调度/同步/多缓冲pass文件。失败也生成包含错误的压缩包。先审阅真实AutoSchedule、同步和缓冲安排，再据此确定手工Stage候选；不直接照搬参考PR阶段编号。普通测试不传dump_ir_dir，因此不产生这些额外文件。
 
@@ -53,7 +67,7 @@ python fgw.py env smoke
 
 ## 当前MHA
 
-当前版本：**v7，默认Q驻留L0A、两级流水**。单split直接输出，多split批量合并；长短Q使用同一套实现。Cube范围为BF16/D128、页与KV有效长度128对齐；支持Q尾块。多query因果和其他既有规格仍走原回退路径。
+当前版本：**v7，默认manual调度、Q驻留L0A、两级流水**。单split直接输出，多split批量合并；长短Q使用同一套实现。Cube范围为BF16/D128、页与KV有效长度128对齐；支持Q尾块。多query因果和其他既有规格仍走原回退路径。
 
 ```python
 from operators.mha.current import mha_paged_decode

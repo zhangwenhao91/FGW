@@ -96,8 +96,11 @@ def main():
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE],
                         help="Run only these named cases from the selected suite")
-    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default="auto")
+    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default=None,
+                        help="Default: manual for v7, auto for historical implementations")
     args = parser.parse_args()
+    if args.schedule_mode is None:
+        args.schedule_mode = "manual" if args.impl == "v7" else "auto"
     if args.schedule_mode != "auto" and args.impl != "v7":
         parser.error("Schedule experiments require --impl v7")
     if args.q_resident is None:

@@ -20,7 +20,7 @@ def main():
     parser.add_argument("--cases", nargs="+", choices=list(CASES), default=list(CASES))
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output-dir", default=None)
-    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default="auto")
+    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default="manual")
     args = parser.parse_args()
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
     directory = Path(args.output_dir or f"mha_{args.schedule_mode}_schedule_{stamp}").resolve()

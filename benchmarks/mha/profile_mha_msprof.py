@@ -42,8 +42,11 @@ def main():
     parser.add_argument("--q-resident", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--reference-chunk-size", type=int, default=128)
     parser.add_argument("--output", default="mha_msprof_report.json")
-    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default="auto")
+    parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default=None,
+                        help="Default: manual for v7, auto for historical implementations")
     args = parser.parse_args()
+    if args.schedule_mode is None:
+        args.schedule_mode = "manual" if args.impl == "v7" else "auto"
     if args.schedule_mode != "auto" and args.impl != "v7":
         parser.error("Schedule experiments require --impl v7")
     if args.q_resident is None:
