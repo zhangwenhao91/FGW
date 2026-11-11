@@ -1,0 +1,4 @@
+2026-11-11 12:52:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 12:52:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+q32768_b2_h8_d128_k2048 torch.bfloat16 causal=False: 6.023051 ms, 91.27530773 TFLOPS, MFU=24.14690681% speedup_vs_baseline=n/a
+PASSED; report=mha_q32768_retry.json
