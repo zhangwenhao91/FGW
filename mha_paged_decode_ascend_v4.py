@@ -20,7 +20,10 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 
 
 @lru_cache(maxsize=128)
-def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None):
+def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
+                 pipeline_stages=2, buffer_versions=2):
+    if pipeline_stages not in (1, 2, 3) or buffer_versions not in (1, 2, 3):
+        raise ValueError("Experimental pipeline stages and buffer versions must be 1, 2 or 3")
     if page_size <= 0 or pool_rows <= 0 or pool_rows % page_size or width <= 0:
         raise ValueError("positive page size, whole pool pages and positive table width required")
     if route(dtype, dim, page_size, sq, causal) != "cube_bf16_d128":
@@ -199,9 +202,11 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             count = T.max(T.min(begin + per_split, tiles) - begin, 0)
             # Keep automatic stage assignment. Multi-version only the streamed
             # operands/results; online row statistics remain loop-carried state.
-            T.annotate_buffer_versions({K_l1: 2, V_l1: 2, qk: 2, pv: 2,
-                                       scores: 2, probs: 2, current: 2, alpha: 2})
-            for tile in T.Pipelined(count, num_stages=2):
+            T.annotate_buffer_versions({K_l1: buffer_versions, V_l1: buffer_versions,
+                                       qk: buffer_versions, pv: buffer_versions,
+                                       scores: buffer_versions, probs: buffer_versions,
+                                       current: buffer_versions, alpha: buffer_versions})
+            for tile in T.Pipelined(count, num_stages=pipeline_stages):
                 logical = (begin + tile) * BC
                 physical = Table[b, logical // page_size] * page_size + logical % page_size
                 T.copy(K[physical:physical + BC, h, :], K_l1)

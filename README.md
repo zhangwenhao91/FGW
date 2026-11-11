@@ -1,5 +1,18 @@
 # FGW
 
+## 根据msprof结果对照流水候选
+
+已保留v4默认两级配置，build_kernel新增pipeline_stages和buffer_versions参数。先对比(1,1)、(2,2)、(3,3)三个组合，每个在原有四种场景校验精度再采集msprof；两次独立进程扫描反转候选顺序。计时仍按上游msprof_detail口径，包含局部计算和合并分别采样，不能将pipe比率相加或直接当作端到端时间占比。
+
+```bash
+git pull --ff-only
+bash run_mha_pipeline_sweep.sh
+```
+
+上传六组 `mha_pipeline_s*_v*_run*.json` 和对应log。失败候选会保留错误并继续其他组合；全部通过后脚本才返回0。每份报告另有同名前缀的msprof解析器源码。默认配置不自动替换，等对比结果后选取候选，并针对新候选扩大Q尾块精度覆盖。
+
+本轮msprof已显示Q128下merge聚合时长显著高于partial；流水扫描只影响partial，因此也可能不足以改善该场景，合并优化仍需单独评估。
+
 ## 使用msprof_detail采集Cube流水计数器
 
 ```bash

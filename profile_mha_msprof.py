@@ -29,20 +29,22 @@ def main():
     parser.add_argument("--repeat", type=int, default=100)
     parser.add_argument("--warmup", type=int, default=20)
     parser.add_argument("--device", type=int, default=0)
+    parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
+    parser.add_argument("--buffer-versions", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--output", default="mha_msprof_report.json")
     args = parser.parse_args()
     if min(args.rounds, args.repeat, args.warmup) < 1:
         parser.error("rounds, repeat, warmup must be positive")
     report = {"status": "running", "settings": vars(args), "results": [],
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-              "baseline_config": {"q_tile": 128, "kv_tile": 128, "pipeline_stages": 2,
-                                  "streamed_buffer_versions": 2},
+              "baseline_config": {"q_tile": 128, "kv_tile": 128, "pipeline_stages": args.pipeline_stages,
+                                  "streamed_buffer_versions": args.buffer_versions},
               "notes": ["Upstream msprof_detail flushes cache before each invocation (256 MiB buffer).",
                         "dur_ns is upstream profiler record aggregation per invocation, not Event elapsed median.",
                         "Pipe fields are ratios against their own AIC/AIV total cycles; they can overlap and must not be summed as a time breakdown.",
                         "Full includes Q layout conversion if materialized, partial and merge; isolated stages run in separate profiler sessions.",
                         "Do not compare this cache-flushed measurement directly with earlier warm-cache Event results.",
-                        "No tuning performed yet. Use counters plus verified duration semantics to choose candidates."]}
+                        "Candidate parameters are recorded; defaults preserve the measured baseline."]}
     path = pathlib.Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -80,7 +82,8 @@ def main():
             table = torch.randperm(batch * width, generator=gen).reshape(batch, width).int()
             lengths = torch.full((batch,), length, dtype=torch.int32)
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
-            program = build_kernel(batch, sq, heads, d, k.shape[0], width, page, causal, "bfloat16", args.device)
+            program = build_kernel(batch, sq, heads, d, k.shape[0], width, page, causal, "bfloat16", args.device,
+                                   pipeline_stages=args.pipeline_stages, buffer_versions=args.buffer_versions)
             got = program(*inputs).cpu()
             expected = reference(q, k, v, table, lengths, page, causal)
             torch.testing.assert_close(got, expected, rtol=1e-2, atol=4e-3)
