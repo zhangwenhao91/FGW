@@ -1,0 +1,793 @@
+{
+  "status": "passed",
+  "settings": {
+    "cases": [
+      "query4096",
+      "query32768"
+    ],
+    "rounds": 3,
+    "repeat": 30,
+    "warmup": 10,
+    "device": 0,
+    "impl": "v6",
+    "pipeline_stages": 2,
+    "buffer_versions": 2,
+    "reference_chunk_size": 128,
+    "output": "mha_large_q_msprof_report.json"
+  },
+  "results": [
+    {
+      "case": "query4096",
+      "stage": "full",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 806401.8666666667,
+        "aic_total_cycles": 23047910,
+        "aic_mad": 0.3975752142507698,
+        "aic_scalar": 0.04286087439523738,
+        "aic_mte1": 0.20884237477377338,
+        "aic_mte2": 0.3089442511284362,
+        "aic_mte3": 4.442925789247022e-05,
+        "aic_fixpipe": 0.2416750359632676,
+        "aiv_total_cycles": 66420231,
+        "aiv_vec": 0.47947098354893897,
+        "aiv_scalar": 0.056205282564116346,
+        "aiv_mte2": 0.04403596433106702,
+        "aiv_mte3": 0.08158937576112356
+      },
+      "profiler_duration_us": 806.4018666666667
+    },
+    {
+      "case": "query4096",
+      "stage": "partial",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 573347.2,
+        "aic_total_cycles": 23284937,
+        "aic_mad": 0.39352766049798105,
+        "aic_scalar": 0.041622211426234366,
+        "aic_mte1": 0.20717322128675988,
+        "aic_mte2": 0.31500810138287344,
+        "aic_mte3": 4.397694144247427e-05,
+        "aic_fixpipe": 0.23921257297633883,
+        "aiv_total_cycles": 50328873,
+        "aiv_vec": 0.42007026223048805,
+        "aiv_scalar": 0.025809769348781545,
+        "aiv_mte2": 0.00016276943383448757,
+        "aiv_mte3": 0.06672856857379347
+      },
+      "profiler_duration_us": 573.3471999999999
+    },
+    {
+      "case": "query4096",
+      "stage": "merge",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 258866.16666666666,
+        "aic_total_cycles": 0,
+        "aic_mad": 0.0,
+        "aic_scalar": 0.0,
+        "aic_mte1": 0.0,
+        "aic_mte2": 0.0,
+        "aic_mte3": 0.0,
+        "aic_fixpipe": 0.0,
+        "aiv_total_cycles": 18759505,
+        "aiv_vec": 0.5649494093890068,
+        "aiv_scalar": 0.10216353662895994,
+        "aiv_mte2": 0.30217017571775184,
+        "aiv_mte3": 0.09851676947007634
+      },
+      "profiler_duration_us": 258.86616666666663
+    },
+    {
+      "case": "query4096",
+      "stage": "partial",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 573332.2,
+        "aic_total_cycles": 23278257,
+        "aic_mad": 0.3936406520683722,
+        "aic_scalar": 0.041502724978163326,
+        "aic_mte1": 0.20716344207792078,
+        "aic_mte2": 0.3138915392680148,
+        "aic_mte3": 4.398956831517821e-05,
+        "aic_fixpipe": 0.23928125971618155,
+        "aiv_total_cycles": 50315159,
+        "aiv_vec": 0.42018435743497806,
+        "aiv_scalar": 0.02586905213745613,
+        "aiv_mte2": 0.00016281382414107097,
+        "aiv_mte3": 0.06668641876332901
+      },
+      "profiler_duration_us": 573.3322
+    },
+    {
+      "case": "query4096",
+      "stage": "merge",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 261681.0,
+        "aic_total_cycles": 0,
+        "aic_mad": 0.0,
+        "aic_scalar": 0.0,
+        "aic_mte1": 0.0,
+        "aic_mte2": 0.0,
+        "aic_mte3": 0.0,
+        "aic_fixpipe": 0.0,
+        "aiv_total_cycles": 19039475,
+        "aiv_vec": 0.5569410527971334,
+        "aiv_scalar": 0.11495683006042148,
+        "aiv_mte2": 0.2998786372828891,
+        "aiv_mte3": 0.09712336006314445
+      },
+      "profiler_duration_us": 261.681
+    },
+    {
+      "case": "query4096",
+      "stage": "full",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 805207.4,
+        "aic_total_cycles": 23045554,
+        "aic_mad": 0.39761591394209633,
+        "aic_scalar": 0.04284179632924801,
+        "aic_mte1": 0.20885712051508543,
+        "aic_mte2": 0.30889788877787033,
+        "aic_mte3": 4.443380610628556e-05,
+        "aic_fixpipe": 0.24170003154750147,
+        "aiv_total_cycles": 66319747,
+        "aiv_vec": 0.48009523351533223,
+        "aiv_scalar": 0.05534521510383811,
+        "aiv_mte2": 0.04358722109355242,
+        "aiv_mte3": 0.08166496998106863
+      },
+      "profiler_duration_us": 805.2074
+    },
+    {
+      "case": "query4096",
+      "stage": "merge",
+      "round": 3,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 262723.8333333333,
+        "aic_total_cycles": 0,
+        "aic_mad": 0.0,
+        "aic_scalar": 0.0,
+        "aic_mte1": 0.0,
+        "aic_mte2": 0.0,
+        "aic_mte3": 0.0,
+        "aic_fixpipe": 0.0,
+        "aiv_total_cycles": 19066550,
+        "aiv_vec": 0.5561772698774069,
+        "aiv_scalar": 0.11632146494532808,
+        "aiv_mte2": 0.29939622640987457,
+        "aiv_mte3": 0.09698536463255833
+      },
+      "profiler_duration_us": 262.7238333333333
+    },
+    {
+      "case": "query4096",
+      "stage": "full",
+      "round": 3,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 805768.9,
+        "aic_total_cycles": 23049402,
+        "aic_mad": 0.39755318597272477,
+        "aic_scalar": 0.04292130773482641,
+        "aic_mte1": 0.20882002182962517,
+        "aic_mte2": 0.3087788361338361,
+        "aic_mte3": 4.442639366314348e-05,
+        "aic_fixpipe": 0.24165590353119107,
+        "aiv_total_cycles": 66402768,
+        "aiv_vec": 0.47949782504250543,
+        "aiv_scalar": 0.05623231880842557,
+        "aiv_mte2": 0.04377067962891166,
+        "aiv_mte3": 0.08156587794420692
+      },
+      "profiler_duration_us": 805.7689
+    },
+    {
+      "case": "query4096",
+      "stage": "partial",
+      "round": 3,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 8192
+      },
+      "profile": {
+        "dur_ns": 573909.8333333334,
+        "aic_total_cycles": 23311494,
+        "aic_mad": 0.3930804410331183,
+        "aic_scalar": 0.042265367197027205,
+        "aic_mte1": 0.20693440995147755,
+        "aic_mte2": 0.3139021901152083,
+        "aic_mte3": 4.392689360875009e-05,
+        "aic_fixpipe": 0.23893977539780478,
+        "aiv_total_cycles": 50381396,
+        "aiv_vec": 0.4196298357776191,
+        "aiv_scalar": 0.02595903503571039,
+        "aiv_mte2": 0.00016259990112357835,
+        "aiv_mte3": 0.0666060994295366
+      },
+      "profiler_duration_us": 573.9098333333334
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 6137445.233333333,
+        "aic_total_cycles": 186011544,
+        "aic_mad": 0.3940952760057708,
+        "aic_scalar": 0.039525884385692815,
+        "aic_mte1": 0.20753268345258077,
+        "aic_mte2": 0.3062594788560933,
+        "aic_mte3": 4.4040313990032175e-05,
+        "aic_fixpipe": 0.23955693787245774,
+        "aiv_total_cycles": 538720759,
+        "aiv_vec": 0.4697198019021895,
+        "aiv_scalar": 0.0369097214380613,
+        "aiv_mte2": 0.10776453103585278,
+        "aiv_mte3": 0.09157306783133062
+      },
+      "profiler_duration_us": 6137.445233333334
+    },
+    {
+      "case": "query32768",
+      "stage": "partial",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 4429226.333333333,
+        "aic_total_cycles": 185810486,
+        "aic_mad": 0.39452131410701063,
+        "aic_scalar": 0.03926782299227239,
+        "aic_mte1": 0.2077119040766622,
+        "aic_mte2": 0.3057017291231964,
+        "aic_mte3": 4.4087932851832395e-05,
+        "aic_fixpipe": 0.2398159390992643,
+        "aiv_total_cycles": 401763210,
+        "aiv_vec": 0.4210050736094992,
+        "aiv_scalar": 0.023836937358582652,
+        "aiv_mte2": 0.00016312096279366621,
+        "aiv_mte3": 0.06666400406739591
+      },
+      "profiler_duration_us": 4429.226333333333
+    },
+    {
+      "case": "query32768",
+      "stage": "merge",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 1550075.3,
+        "aic_total_cycles": 0,
+        "aic_mad": 0.0,
+        "aic_scalar": 0.0,
+        "aic_mte1": 0.0,
+        "aic_mte2": 0.0,
+        "aic_mte3": 0.0,
+        "aic_fixpipe": 0.0,
+        "aiv_total_cycles": 122861281,
+        "aiv_vec": 0.6817144637429089,
+        "aiv_scalar": 0.08287753022136156,
+        "aiv_mte2": 0.3737333943634893,
+        "aiv_mte3": 0.1200090810892933
+      },
+      "profiler_duration_us": 1550.0753
+    },
+    {
+      "case": "query32768",
+      "stage": "partial",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 4434450.633333334,
+        "aic_total_cycles": 186094280,
+        "aic_mad": 0.39391979330751387,
+        "aic_scalar": 0.04048021845458124,
+        "aic_mte1": 0.20739235219606666,
+        "aic_mte2": 0.30439385554183773,
+        "aic_mte3": 4.4020757163897846e-05,
+        "aic_fixpipe": 0.23945086667708412,
+        "aiv_total_cycles": 402327589,
+        "aiv_vec": 0.4204149361632487,
+        "aiv_scalar": 0.025944251862427457,
+        "aiv_mte2": 0.00016289232352422663,
+        "aiv_mte3": 0.06654930855549064
+      },
+      "profiler_duration_us": 4434.450633333334
+    },
+    {
+      "case": "query32768",
+      "stage": "merge",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 1547009.7,
+        "aic_total_cycles": 0,
+        "aic_mad": 0.0,
+        "aic_scalar": 0.0,
+        "aic_mte1": 0.0,
+        "aic_mte2": 0.0,
+        "aic_mte3": 0.0,
+        "aic_fixpipe": 0.0,
+        "aiv_total_cycles": 122495291,
+        "aiv_vec": 0.6837407579432332,
+        "aiv_scalar": 0.0760275970197056,
+        "aiv_mte2": 0.3748706386321946,
+        "aiv_mte3": 0.12036177676096052
+      },
+      "profiler_duration_us": 1547.0097
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 6138100.166666667,
+        "aic_total_cycles": 186004303,
+        "aic_mad": 0.394110311944238,
+        "aic_scalar": 0.03947655705794421,
+        "aic_mte1": 0.2075382244039403,
+        "aic_mte2": 0.3063110326482245,
+        "aic_mte3": 4.404201907669518e-05,
+        "aic_fixpipe": 0.23956644599127744,
+        "aiv_total_cycles": 538764695,
+        "aiv_vec": 0.4696716045167299,
+        "aiv_scalar": 0.0368423900059148,
+        "aiv_mte2": 0.10775630286151085,
+        "aiv_mte3": 0.0916321624021788
+      },
+      "profiler_duration_us": 6138.100166666667
+    },
+    {
+      "case": "query32768",
+      "stage": "merge",
+      "round": 3,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 1551635.0333333334,
+        "aic_total_cycles": 0,
+        "aic_mad": 0.0,
+        "aic_scalar": 0.0,
+        "aic_mte1": 0.0,
+        "aic_mte2": 0.0,
+        "aic_mte3": 0.0,
+        "aic_fixpipe": 0.0,
+        "aiv_total_cycles": 122818027,
+        "aiv_vec": 0.6819440011580038,
+        "aiv_scalar": 0.07860061940861157,
+        "aiv_mte2": 0.37374501239147073,
+        "aiv_mte3": 0.12003722293835176
+      },
+      "profiler_duration_us": 1551.6350333333335
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "round": 3,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 6139289.733333333,
+        "aic_total_cycles": 186037031,
+        "aic_mad": 0.39404099549846505,
+        "aic_scalar": 0.03960172899610894,
+        "aic_mte1": 0.207508348058126,
+        "aic_mte2": 0.3062976013749174,
+        "aic_mte3": 4.4034271277744536e-05,
+        "aic_fixpipe": 0.23952427869497486,
+        "aiv_total_cycles": 539044904,
+        "aiv_vec": 0.46943971557470393,
+        "aiv_scalar": 0.037345942136285545,
+        "aiv_mte2": 0.10771993558186088,
+        "aiv_mte3": 0.0915200807242726
+      },
+      "profiler_duration_us": 6139.289733333333
+    },
+    {
+      "case": "query32768",
+      "stage": "partial",
+      "round": 3,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 32768
+      },
+      "profile": {
+        "dur_ns": 4433586.833333333,
+        "aic_total_cycles": 186033118,
+        "aic_mad": 0.39404930453299164,
+        "aic_scalar": 0.04020579364730181,
+        "aic_mte1": 0.20746174647473206,
+        "aic_mte2": 0.30488877102930295,
+        "aic_mte3": 4.4035235462143565e-05,
+        "aic_fixpipe": 0.2395296632963299,
+        "aiv_total_cycles": 402204453,
+        "aiv_vec": 0.4205438241648732,
+        "aiv_scalar": 0.025694100759411444,
+        "aiv_mte2": 0.0001629422093046322,
+        "aiv_mte3": 0.06657307048671363
+      },
+      "profiler_duration_us": 4433.586833333333
+    }
+  ],
+  "started_utc": "2026-11-11T15:13:19.433010+00:00",
+  "baseline_config": {
+    "q_tile": 128,
+    "kv_tile": 128,
+    "pipeline_stages": 2,
+    "streamed_buffer_versions": 2
+  },
+  "notes": [
+    "Upstream msprof_detail flushes cache before each invocation (256 MiB buffer).",
+    "dur_ns is upstream profiler record aggregation per invocation, not Event elapsed median.",
+    "Pipe fields are ratios against their own AIC/AIV total cycles; they can overlap and must not be summed as a time breakdown.",
+    "Full includes Q layout conversion if materialized, partial and merge; isolated stages run in separate profiler sessions.",
+    "Do not compare this cache-flushed measurement directly with earlier warm-cache Event results.",
+    "Candidate parameters are recorded; defaults preserve the measured baseline.",
+    "v6 merge writes final output directly and precomputes row weights"
+  ],
+  "kernel_source_sha256": "bc1674a53b4dbe0690711a199c210a07fa824713d1788f2b87098493d1d25d01",
+  "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=0008d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+  "implementation": "v6",
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "msprof_source_sha256": "e322b8e09d2e1e3565093bcd6e332316426a4a596375db131d04096a3feef7f9",
+  "msprof_source_file": "mha_large_q_msprof_report_msprof_source.py",
+  "do_bench_signature": "(fn: 'Callable', warmup: 'float' = 25, rep: 'float' = 100, _n_warmup: 'int' = 0, _n_repeat: 'int' = 0, quantiles: 'list[float] | None' = None, fast_flush: 'bool' = True, backend: \"Literal['event', 'cupti', 'cudagraph', 'wall', 'msprof', 'msprof_detail']\" = 'event', return_mode: \"Literal['min', 'max', 'mean', 'median']\" = 'mean', device: 'int | torch.device | None' = None, cache_size: 'int' = 256, early_stop_baseline: 'float | None' = None) -> 'float | list[float]'",
+  "summary": [
+    {
+      "case": "query4096",
+      "stage": "full",
+      "median_round_profiler_duration_us": 805.7689,
+      "round_profiler_durations_us": [
+        806.4018666666667,
+        805.2074,
+        805.7689
+      ]
+    },
+    {
+      "case": "query4096",
+      "stage": "partial",
+      "median_round_profiler_duration_us": 573.3471999999999,
+      "round_profiler_durations_us": [
+        573.3471999999999,
+        573.3322,
+        573.9098333333334
+      ]
+    },
+    {
+      "case": "query4096",
+      "stage": "merge",
+      "median_round_profiler_duration_us": 261.681,
+      "round_profiler_durations_us": [
+        258.86616666666663,
+        261.681,
+        262.7238333333333
+      ]
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "median_round_profiler_duration_us": 6138.100166666667,
+      "round_profiler_durations_us": [
+        6137.445233333334,
+        6138.100166666667,
+        6139.289733333333
+      ]
+    },
+    {
+      "case": "query32768",
+      "stage": "partial",
+      "median_round_profiler_duration_us": 4433.586833333333,
+      "round_profiler_durations_us": [
+        4429.226333333333,
+        4434.450633333334,
+        4433.586833333333
+      ]
+    },
+    {
+      "case": "query32768",
+      "stage": "merge",
+      "median_round_profiler_duration_us": 1550.0753,
+      "round_profiler_durations_us": [
+        1550.0753,
+        1547.0097,
+        1551.6350333333335
+      ]
+    }
+  ]
+}
