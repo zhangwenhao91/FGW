@@ -39,10 +39,12 @@ def main():
     parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--buffer-versions", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--kv-versions", type=int, choices=[1, 2, 3], default=None)
-    parser.add_argument("--q-resident", action="store_true")
+    parser.add_argument("--q-resident", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--reference-chunk-size", type=int, default=128)
     parser.add_argument("--output", default="mha_msprof_report.json")
     args = parser.parse_args()
+    if args.q_resident is None:
+        args.q_resident = args.impl == "v7"
     if (args.q_resident or args.kv_versions is not None) and args.impl != "v7":
         parser.error("Overlap candidates currently require --impl v7")
     if min(args.rounds, args.repeat, args.warmup) < 1:

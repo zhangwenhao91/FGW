@@ -88,7 +88,7 @@ def main():
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--kv-versions", type=int, choices=[1, 2, 3], default=None)
-    parser.add_argument("--q-resident", action="store_true")
+    parser.add_argument("--q-resident", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 42, 2026])
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7"], default="v0")
@@ -97,6 +97,8 @@ def main():
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE],
                         help="Run only these named cases from the selected suite")
     args = parser.parse_args()
+    if args.q_resident is None:
+        args.q_resident = args.impl == "v7"
     if (args.q_resident or args.kv_versions is not None or args.pipeline_stages != 2) and args.impl != "v7":
         parser.error("Overlap candidates require --impl v7")
     if args.output is None:

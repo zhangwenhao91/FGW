@@ -5,7 +5,7 @@ for sweep in 1 2; do
   reverse=()
   if [ "$sweep" = 1 ]; then candidates="base resident"; else candidates="resident base"; reverse=(--reverse); fi
   for candidate in $candidates; do
-    flags=()
+    flags=(--no-q-resident)
     if [ "$candidate" = resident ]; then flags=(--q-resident); fi
     name="mha_short_q_${candidate}_run${sweep}"
     python -u bench_mha_mfu.py --impl v7 --suite short-q --dtypes bfloat16 --causal noncausal \

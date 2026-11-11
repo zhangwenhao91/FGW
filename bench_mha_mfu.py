@@ -74,7 +74,7 @@ def main():
                         help="Positive CPU query chunk size; zero uses original per-query reference")
     parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--kv-versions", type=int, choices=[1, 2, 3], default=None)
-    parser.add_argument("--q-resident", action="store_true")
+    parser.add_argument("--q-resident", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
     parser.add_argument("--reverse", action="store_true", help="Reverse case order for a repeat sweep")
@@ -90,6 +90,8 @@ def main():
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     args = parser.parse_args()
+    if args.q_resident is None:
+        args.q_resident = args.impl == "v7"
     if (args.q_resident or args.kv_versions is not None or args.pipeline_stages != 2) and args.impl != "v7":
         parser.error("Overlap candidates require --impl v7")
     if args.output is None:

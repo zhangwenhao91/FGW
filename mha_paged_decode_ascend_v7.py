@@ -21,7 +21,7 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=False, kv_versions=None):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None):
     kv_versions = buffer_versions if kv_versions is None else kv_versions
     if kv_versions not in (1, 2, 3):
         raise ValueError("K/V L1 versions must be 1, 2 or 3")
@@ -422,7 +422,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
                      page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
-                     q_resident=False, kv_versions=None):
+                     q_resident=True, kv_versions=None):
     """Same public tensor contract as v0; metadata values must be valid."""
     if q.ndim != 4 or k_cache.ndim != 3:
         raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")

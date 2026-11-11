@@ -5,10 +5,10 @@ failed=0
 for sweep in 1 2; do
   if [ "$sweep" = 1 ]; then candidates="base resident prefetch combined"; else candidates="combined prefetch resident base"; fi
   for candidate in $candidates; do
-    flags=()
+    flags=(--no-q-resident)
     case "$candidate" in
       resident) flags=(--q-resident) ;;
-      prefetch) flags=(--pipeline-stages 3 --kv-versions 3) ;;
+      prefetch) flags=(--no-q-resident --pipeline-stages 3 --kv-versions 3) ;;
       combined) flags=(--q-resident --pipeline-stages 3 --kv-versions 3) ;;
     esac
     name="mha_overlap_${candidate}_run${sweep}"
