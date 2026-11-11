@@ -1,5 +1,19 @@
 # FGW
 
+## v4单query因果/非因果重复测量与分阶段诊断
+
+```bash
+git pull --ff-only
+set -o pipefail
+python -u profile_mha_v4.py 2>&1 | tee mha_v4_profile.log
+```
+
+在之前成功的NPU环境运行。固定同一组BF16输入 B1/Sq1/H16/D128/KV512，分别编译因果和非因果版本，先对照CPU参考并检查两版本输出一致。默认6轮，每阶段预热20次、采样51次，交替因果/非因果顺序，并轮换阶段顺序。
+
+报告包含完整调用、局部Cube计算、split合并、Q布局转换的NPU Event原始样本与每轮中位数。Sq=1时布局转换可能是零拷贝视图，另记录是否共享存储、CPU转换调用耗时和空Event开销，不把空Event时间当作实际数据搬运。独立阶段计时不可直接相加，完整调用仍以full项为准。
+
+本次仅暴露v4已编译的partial/merge函数供计时，没有更改其计算逻辑。请上传 `mha_v4_profile_report.json` 和 `mha_v4_profile.log`，完成后再判断差异来自哪个阶段。
+
 ## v4：真实Q分块及Q尾块，KV仍128对齐
 
 `mha_paged_decode_ascend_v4.py`将每请求、每head的真实query按128行分块，去掉v3的同一query复制。Q输入先转换到连续的[B,H,Sq,D]布局，让GM→L1尾块补齐沿最后两个轴工作；该转换的开销包含在完整计时中。最后一个Q块用参考PR的自动clamp/zero-pad路径，merge仅输出真实query行。

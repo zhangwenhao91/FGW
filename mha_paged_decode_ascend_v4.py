@@ -282,6 +282,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         q_head_major = q.permute(0, 2, 1, 3).contiguous()
         parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
         return merge_kernel(parts, lse)
+    # Expose the exact compiled callables for isolated profiling; launch unchanged.
+    launch.partial_kernel = partial_kernel
+    launch.merge_kernel = merge_kernel
+    launch.prepare_q = lambda q: q.permute(0, 2, 1, 3).contiguous()
     return launch
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
