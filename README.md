@@ -1,5 +1,17 @@
 # FGW
 
+## 默认配置选择前的短Q成对交替测量
+
+```bash
+git pull --ff-only
+set -o pipefail
+python -u profile_q_resident_paired.py 2>&1 | tee mha_q_resident_paired.log
+```
+
+覆盖Q16/Q32（B2/H8/KV2048）和B1单query因果/非因果（H16/KV512），固定BF16/D128。所有候选在同一进程先完成编译与CPU参考检查，再运行8轮；每轮每场景预热30对、测61对，逐对反转base/resident顺序，轮间反转场景顺序。保存原始Event样本、每轮耗时及加速比和胜出轮数，不自动修改默认配置。
+
+上传 `mha_q_resident_paired.json` 和 `mha_q_resident_paired.log`。结合此前长Q结果，确认无稳定短Q回退后再统一更改默认值。
+
 ## Q驻留候选的短Q性能确认
 
 ```bash
