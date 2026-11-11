@@ -85,7 +85,7 @@ def main():
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 42, 2026])
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5"], default="v0")
+    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5", "v6"], default="v0")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE],
@@ -145,7 +145,7 @@ def main():
                          "seed": seed, "dtype": str(dtype), "causal": causal,
                          "pattern": pattern, "lengths": lengths.tolist(), "status": "running"}
                 report["results"].append(entry)
-                entry["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4", "v5") else args.impl
+                entry["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4", "v5", "v6") else args.impl
                 save()  # Preserve active case even after a native runtime crash.
                 start = time.perf_counter()
                 try:
@@ -160,6 +160,7 @@ def main():
                     got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()
                     expected = reference(q, k, v, table, lengths, p, causal)
                     assert got.shape == q.shape and got.dtype == dtype
+                    assert got.is_contiguous(), "Output must have contiguous B,Sq,H,D layout"
                     assert torch.isfinite(got).all(), "Non-finite output"
                     # Keep the original v0 tolerances; do not loosen them for long caches.
                     rtol, atol = (1e-2, 4e-3) if dtype == torch.bfloat16 else (2e-3, 2e-3)

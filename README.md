@@ -1,5 +1,18 @@
 # FGW
 
+## v6：直接输出及按行计算合并权重
+
+v6保持v5统一的批量合并算法，输出直接写入最终连续[B,Sq,H,D]张量的各head区域，去掉额外permute/contiguous。每个split先按query行计算peak、旧结果缩放及新权重，再广播给D维累加；行状态在累加后更新。Cube局部计算与默认2/2配置不变，没有按长短Q选择历史版本。
+
+```bash
+git pull --ff-only
+bash run_mha_v6.sh
+```
+
+依次检查21项非因果（含Q尾块）及6项单query因果精度，再重测v5/v6的msprof与20项MFU。精度检查新增输出连续性断言。直接跨head步长的UB→GM写出与Q尾块裁剪仍需NPU编译/精度验证。
+
+上传 `mha_cube_v6_accuracy.json`、`mha_cube_v6_causal.json`、`mha_merge_v5_recheck.json`、`mha_merge_v6_msprof.json`、`mha_mfu_v5_recheck.json`、`mha_mfu_v6_report.json` 及对应log。v5只是测量基线，v6内部没有长短Q版本分流；BF16/D128/整块KV支持范围仍保持不变，其他规格的已有v2回退未扩展。
+
 ## v5批量合并query行
 
 新增独立v5版本，Cube局部计算保持v4默认2/2配置不变。合并每个program处理至多8个真实query，Sq小于8时使用1/2/4行，连续读取Parts和LSE，减少逐行小搬运。8整除Q tile128，合并块不会跨partial tile。内部按[B,H,Sq,D]连续存储，再转换为对外连续[B,Sq,H,D]；该输出转换包含在full和merge计时中，不能漏算。需要NPU验证尾块clamp和自动布局。

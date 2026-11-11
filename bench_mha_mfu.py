@@ -39,7 +39,7 @@ def main():
                         help="MFU.md 28-AIC FP16/BF16 dense Cube peak; override for another configuration")
     parser.add_argument("--cache", choices=["warm", "flush"], default="warm")
     parser.add_argument("--flush-mb", type=int, default=256)
-    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5"], default="v0")
+    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5", "v6"], default="v0")
     parser.add_argument("--baseline-report", help="Optional v0/v1 JSON report for matched-case speedup")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
@@ -61,7 +61,7 @@ def main():
             parser.error("Baseline report must have passed")
         settings = base["settings"]
         baseline_impl = settings.get("impl", "v0")
-        if baseline_impl not in ("v0", "v1", "v2", "v3", "v4"):
+        if baseline_impl not in ("v0", "v1", "v2", "v3", "v4", "v5"):
             parser.error("Unsupported baseline implementation")
         for key in ("cache", "flush_mb", "cube_peak_tflops", "repeat", "warmup", "device"):
             if settings.get(key) != getattr(args, key):
@@ -99,6 +99,8 @@ def main():
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__, "tilelang": tilelang.__version__}
         report["device_name"] = torch.npu.get_device_name(args.device)
+        if args.impl == "v6":
+            report["execution"] = "v5 batched merge with per-row weights and direct contiguous B,Sq,H,D output; no output layout conversion. Unsupported paths use v2."
         props = torch.npu.get_device_properties(args.device)
         report["device_properties"] = str(props)
         core_count = getattr(props, "cube_core_num", None)
@@ -121,7 +123,7 @@ def main():
                            "page_size": p, "lengths": lengths.tolist(), "dtype": str(dtype),
                            "causal": causal, "status": "running"}
                     report["results"].append(row)
-                    row["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4", "v5") else args.impl
+                    row["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4", "v5", "v6") else args.impl
                     save()
                     extra = {"device_index": args.device} if args.impl != "v0" else {}
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,

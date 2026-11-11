@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--repeat", type=int, default=100)
     parser.add_argument("--warmup", type=int, default=20)
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--impl", choices=["v4", "v5"], default="v4")
+    parser.add_argument("--impl", choices=["v4", "v5", "v6"], default="v4")
     parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--buffer-versions", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--output", default="mha_msprof_report.json")
@@ -68,6 +68,8 @@ def main():
         report["implementation"] = args.impl
         if args.impl == "v5":
             report["notes"].append("v5 merge includes head-major to contiguous B,Sq,H,D output conversion")
+        if args.impl == "v6":
+            report["notes"].append("v6 merge writes final output directly and precomputes row weights")
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__, "tilelang": tilelang.__version__}
         # Preserve parser provenance: upstream parsing can change between builds.
         source = inspect.getsource(msprof_module)
