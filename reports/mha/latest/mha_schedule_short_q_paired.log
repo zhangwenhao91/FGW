@@ -1,0 +1,134 @@
+Preparing q16: B=2 Q=16 H=8 KV=2048 causal=False
+2026-11-11 17:41:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:41:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:41:34  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 17:41:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:41:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:41:39  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing q32: B=2 Q=32 H=8 KV=2048 causal=False
+2026-11-11 17:41:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:41:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:41:46  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 17:41:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:41:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:41:51  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1_decode_noncausal: B=1 Q=1 H=16 KV=512 causal=False
+2026-11-11 17:41:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:41:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:41:58  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 17:41:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:02  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1_decode_causal: B=1 Q=1 H=16 KV=512 causal=True
+2026-11-11 17:42:03  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 17:42:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:07  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 17:42:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:12  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing q1_long_kv: B=1 Q=1 H=8 KV=8192 causal=False
+2026-11-11 17:42:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 17:42:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-11 17:42:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 17:42:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:32  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing q127: B=2 Q=127 H=8 KV=2048 causal=False
+2026-11-11 17:42:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 17:42:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-11 17:42:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:48  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 17:42:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:42:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:42:54  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing q129: B=2 Q=129 H=8 KV=2048 causal=False
+2026-11-11 17:42:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:43:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:43:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-11 17:43:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-11 17:43:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:43:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:43:09  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 17:43:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-11 17:43:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-11 17:43:13  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing direct_q1: B=2 Q=1 H=64 KV=2048 causal=False
+2026-11-11 17:43:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 17:43:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-11 17:43:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 17:43:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-11 17:43:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 17:43:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+round=1 q16: medians_us={'auto': 65.53299725055695, 'auto-offset': 60.95099821686745, 'manual': 60.92900037765503} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0751751270321523, 'manual': 1.075563308840865}
+round=1 q32: medians_us={'auto': 69.57399845123291, 'auto-offset': 64.36199694871902, 'manual': 64.80299681425095} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0809794871135927, 'manual': 1.0736231636116675}
+round=1 b1_decode_noncausal: medians_us={'auto': 30.146999284625053, 'auto-offset': 30.22499941289425, 'manual': 30.327999964356422} speedup_vs_auto={'auto': 1.0, 'auto-offset': 0.9974193505447706, 'manual': 0.994031895280134}
+round=1 b1_decode_causal: medians_us={'auto': 30.153000727295876, 'auto-offset': 30.177999287843704, 'manual': 30.13700060546398} speedup_vs_auto={'auto': 1.0, 'auto-offset': 0.999171629626292, 'manual': 1.0005309128815225}
+round=1 q1_long_kv: medians_us={'auto': 68.231001496315, 'auto-offset': 57.71299824118614, 'manual': 55.46100065112114} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1822466961632019, 'manual': 1.2302519012508246}
+round=1 q127: medians_us={'auto': 85.69999784231186, 'auto-offset': 80.82400262355804, 'manual': 81.31799846887589} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0603285541482523, 'manual': 1.0538872015537024}
+round=1 q129: medians_us={'auto': 90.43499827384949, 'auto-offset': 79.62200045585632, 'manual': 77.04699784517288} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1358041465434927, 'manual': 1.1737640765131432}
+round=1 direct_q1: medians_us={'auto': 157.41799771785736, 'auto-offset': 109.24399644136429, 'manual': 95.02299875020981} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.4409761895002626, 'manual': 1.6566304977563107}
+round=2 direct_q1: medians_us={'auto': 157.37900137901306, 'auto-offset': 109.19299721717834, 'manual': 95.06399929523468} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.4412920735749715, 'manual': 1.6555057913169668}
+round=2 q129: medians_us={'auto': 92.27000176906586, 'auto-offset': 81.57099783420563, 'manual': 79.18199896812439} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1311618616779229, 'manual': 1.1652901287098119}
+round=2 q127: medians_us={'auto': 87.7939984202385, 'auto-offset': 82.96500146389008, 'manual': 83.68699997663498} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0582052295684006, 'manual': 1.049075704049018}
+round=2 q1_long_kv: medians_us={'auto': 68.82499903440475, 'auto-offset': 58.03399905562401, 'manual': 56.08399957418442} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1859427258913842, 'manual': 1.2271770836059461}
+round=2 b1_decode_causal: medians_us={'auto': 31.576000154018402, 'auto-offset': 31.784001737833023, 'manual': 31.582001596689224} speedup_vs_auto={'auto': 1.0, 'auto-offset': 0.993455777358361, 'manual': 0.9998099726943384}
+round=2 b1_decode_noncausal: medians_us={'auto': 31.984999775886536, 'auto-offset': 31.810998916625977, 'manual': 31.902000308036804} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0054698332396477, 'manual': 1.00260170105474}
+round=2 q32: medians_us={'auto': 72.78300076723099, 'auto-offset': 67.21799820661545, 'manual': 67.77899712324142} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.082790364323403, 'manual': 1.07382823376526}
+round=2 q16: medians_us={'auto': 67.02499836683273, 'auto-offset': 62.61199712753296, 'manual': 62.66400218009949} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0704817198261705, 'manual': 1.0695933236788726}
+round=3 q16: medians_us={'auto': 66.85999780893326, 'auto-offset': 62.376998364925385, 'manual': 62.62499839067459} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0718694320265443, 'manual': 1.0676247429475272}
+round=3 q32: medians_us={'auto': 71.9669982790947, 'auto-offset': 67.17400252819061, 'manual': 67.5240010023117} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.071351945254306, 'manual': 1.0657987857773843}
+round=3 b1_decode_noncausal: medians_us={'auto': 30.067000538110733, 'auto-offset': 30.035000294446945, 'manual': 30.31099960207939} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0010654317745988, 'manual': 0.9919501478944324}
+round=3 b1_decode_causal: medians_us={'auto': 30.016999691724777, 'auto-offset': 29.90799956023693, 'manual': 30.047999694943428} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0036445142801447, 'manual': 0.9989683172413015}
+round=3 q1_long_kv: medians_us={'auto': 68.43899935483932, 'auto-offset': 57.68600106239319, 'manual': 55.442001670598984} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1864056806575254, 'manual': 1.2344251162045017}
+round=3 q127: medians_us={'auto': 87.92100101709366, 'auto-offset': 83.37900042533875, 'manual': 83.82999897003174} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.054474154986087, 'manual': 1.0488011701935533}
+round=3 q129: medians_us={'auto': 91.71800315380096, 'auto-offset': 80.80899715423584, 'manual': 78.26100289821625} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.134997418403098, 'manual': 1.1719502658697905}
+round=3 direct_q1: medians_us={'auto': 157.12900459766388, 'auto-offset': 109.08199846744537, 'manual': 94.9539989233017} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.4404668671756846, 'manual': 1.6547908079635858}
+round=4 direct_q1: medians_us={'auto': 157.07899630069733, 'auto-offset': 109.07500237226486, 'manual': 94.65699642896652} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.4401007828044634, 'manual': 1.6594546861475175}
+round=4 q129: medians_us={'auto': 91.8710008263588, 'auto-offset': 81.27599954605103, 'manual': 78.58499884605408} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1303583018293688, 'manual': 1.1690653709409813}
+round=4 q127: medians_us={'auto': 86.85000240802765, 'auto-offset': 82.676000893116, 'manual': 82.94299989938736} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0504862532031252, 'manual': 1.0471046684274696}
+round=4 q1_long_kv: medians_us={'auto': 68.4489980340004, 'auto-offset': 57.555001229047775, 'manual': 55.640000849962234} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1892797597483928, 'manual': 1.2302120235148568}
+round=4 b1_decode_causal: medians_us={'auto': 30.195999890565872, 'auto-offset': 30.31899966299534, 'manual': 30.331000685691833} speedup_vs_auto={'auto': 1.0, 'auto-offset': 0.9959431454270706, 'manual': 0.9955490820588176}
+round=4 b1_decode_noncausal: medians_us={'auto': 30.156999826431274, 'auto-offset': 30.268000438809395, 'manual': 30.350999906659126} speedup_vs_auto={'auto': 1.0, 'auto-offset': 0.996332740492636, 'manual': 0.9936081156856619}
+round=4 q32: medians_us={'auto': 70.05099952220917, 'auto-offset': 65.3889998793602, 'manual': 65.68200141191483} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0712963900877845, 'manual': 1.0665174327270392}
+round=4 q16: medians_us={'auto': 64.62100148200989, 'auto-offset': 60.00500172376633, 'manual': 60.33900007605553} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0769269165176156, 'manual': 1.0709657336143625}
+round=5 q16: medians_us={'auto': 64.61799889802933, 'auto-offset': 60.22199988365173, 'manual': 60.17899885773659} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0729965630977154, 'manual': 1.0737632749721635}
+round=5 q32: medians_us={'auto': 69.9089989066124, 'auto-offset': 65.04300236701965, 'manual': 65.7230019569397} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0748119914904184, 'manual': 1.063691505637787}
+round=5 b1_decode_noncausal: medians_us={'auto': 30.09600006043911, 'auto-offset': 30.079999938607216, 'manual': 30.14400042593479} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.000531918944965, 'manual': 0.9984076312096126}
+round=5 b1_decode_causal: medians_us={'auto': 30.08599951863289, 'auto-offset': 30.13099916279316, 'manual': 30.0929993391037} speedup_vs_auto={'auto': 1.0, 'auto-offset': 0.9985065332909425, 'manual': 0.9997673937253003}
+round=5 q1_long_kv: medians_us={'auto': 68.32599639892578, 'auto-offset': 57.721998542547226, 'manual': 55.68400025367737} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1837080857233708, 'manual': 1.2270310338275947}
+round=5 q127: medians_us={'auto': 86.71200275421143, 'auto-offset': 81.93299919366837, 'manual': 82.35199749469757} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0583281901990031, 'manual': 1.0529435276878936}
+round=5 q129: medians_us={'auto': 91.54099971055984, 'auto-offset': 80.85700124502182, 'manual': 78.33199948072433} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1321344880595088, 'manual': 1.1686284062375547}
+round=5 direct_q1: medians_us={'auto': 156.9799929857254, 'auto-offset': 109.14000123739243, 'manual': 94.85000371932983} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.4383360015204263, 'manual': 1.655034125778678}
+round=6 direct_q1: medians_us={'auto': 157.02499449253082, 'auto-offset': 109.05300080776215, 'manual': 94.8989987373352} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.4398961360938005, 'manual': 1.654653859174533}
+round=6 q129: medians_us={'auto': 91.72099828720093, 'auto-offset': 80.88099956512451, 'manual': 78.26200127601624} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.134024044959387, 'manual': 1.171973586053814}
+round=6 q127: medians_us={'auto': 86.5740031003952, 'auto-offset': 81.96499943733215, 'manual': 82.39500224590302} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0562313633221818, 'manual': 1.050719106020778}
+round=6 q1_long_kv: medians_us={'auto': 68.340003490448, 'auto-offset': 57.739999145269394, 'manual': 55.75200170278549} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1835816505384735, 'manual': 1.2257856472090325}
+round=6 b1_decode_causal: medians_us={'auto': 30.314000323414803, 'auto-offset': 30.115000903606415, 'manual': 30.31899966299534} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0066079831923418, 'manual': 0.999835108689729}
+round=6 b1_decode_noncausal: medians_us={'auto': 30.213000252842903, 'auto-offset': 30.249999836087227, 'manual': 30.316000804305077} speedup_vs_auto={'auto': 1.0, 'auto-offset': 0.9987768732745518, 'manual': 0.9966024360492975}
+round=6 q32: medians_us={'auto': 70.01099735498428, 'auto-offset': 65.30500203371048, 'manual': 65.48099964857101} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0720617896749252, 'manual': 1.0691803382771377}
+round=6 q16: medians_us={'auto': 64.92400169372559, 'auto-offset': 60.21200120449066, 'manual': 60.38200110197067} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.078256832441628, 'manual': 1.0752211008059267}
+round=7 q16: medians_us={'auto': 64.62900340557098, 'auto-offset': 60.23700162768364, 'manual': 60.40500104427338} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.072912025154135, 'manual': 1.0699280239760556}
+round=7 q32: medians_us={'auto': 69.62499767541885, 'auto-offset': 64.7210031747818, 'manual': 65.4740035533905} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0757712992704025, 'manual': 1.063399118684463}
+round=7 b1_decode_noncausal: medians_us={'auto': 29.918000102043152, 'auto-offset': 29.797999188303947, 'manual': 29.95700016617775} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0040271466879664, 'manual': 0.9986981318583885}
+round=7 b1_decode_causal: medians_us={'auto': 29.66899983584881, 'auto-offset': 29.781000688672066, 'manual': 30.08599951863289} speedup_vs_auto={'auto': 1.0, 'auto-offset': 0.9962391843714687, 'manual': 0.9861397430879495}
+round=7 q1_long_kv: medians_us={'auto': 68.2779997587204, 'auto-offset': 57.5300008058548, 'manual': 55.803000926971436} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1868242447820683, 'manual': 1.2235542645470772}
+round=7 q127: medians_us={'auto': 86.6909995675087, 'auto-offset': 81.92700147628784, 'manual': 82.19499886035919} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0581493037139862, 'manual': 1.054699200310079}
+round=7 q129: medians_us={'auto': 91.28999710083008, 'auto-offset': 80.56999742984772, 'manual': 78.19300144910812} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.133052004628848, 'manual': 1.1674957529318801}
+round=7 direct_q1: medians_us={'auto': 156.95400536060333, 'auto-offset': 108.91400277614594, 'manual': 94.81500089168549} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.441081967056113, 'manual': 1.6553710265731478}
+round=8 direct_q1: medians_us={'auto': 156.8949967622757, 'auto-offset': 108.85799676179886, 'manual': 94.7439968585968} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.4412813153781485, 'manual': 1.6559887904712085}
+round=8 q129: medians_us={'auto': 91.81299805641174, 'auto-offset': 81.04600012302399, 'manual': 78.28500121831894} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1328504542734246, 'manual': 1.172804453312408}
+round=8 q127: medians_us={'auto': 87.86100149154663, 'auto-offset': 82.79400318861008, 'manual': 83.06299895048141} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0612000641084307, 'manual': 1.0577634157409315}
+round=8 q1_long_kv: medians_us={'auto': 68.37400048971176, 'auto-offset': 57.73000046610832, 'manual': 55.61299994587898} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.1843755402332317, 'manual': 1.2294607475995079}
+round=8 b1_decode_causal: medians_us={'auto': 30.03999963402748, 'auto-offset': 29.999999329447746, 'manual': 30.146999284625053} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0013333435157936, 'manual': 0.9964507362876364}
+round=8 b1_decode_noncausal: medians_us={'auto': 30.101999640464783, 'auto-offset': 29.997000470757484, 'manual': 30.240999534726143} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.00350032230088, 'manual': 0.9954035945769006}
+round=8 q32: medians_us={'auto': 69.83300298452377, 'auto-offset': 65.25100022554398, 'manual': 65.44200330972672} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0702211880759196, 'manual': 1.067097574229431}
+round=8 q16: medians_us={'auto': 64.74599987268448, 'auto-offset': 60.19299849867821, 'manual': 60.3800006210804} speedup_vs_auto={'auto': 1.0, 'auto-offset': 1.0756400493008544, 'manual': 1.0723086983553256}
+PASSED: mha_schedule_short_q_paired.json
