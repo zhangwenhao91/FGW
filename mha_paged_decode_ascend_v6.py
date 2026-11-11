@@ -238,6 +238,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
     merge_rows = min(8, tilelang.next_power_of_2(sq))
     merge_groups = (sq + merge_rows - 1) // merge_rows
+    merge_work = batch * heads * merge_groups
+    # Keep the grid bounded; large Q uses several work items per program.
+    # Workloads below this cap retain their original grid and one iteration.
+    merge_grid = min(merge_work, 32768)
 
     @T.prim_func
     def merge(
@@ -245,50 +249,53 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
         O: T.Tensor((batch, sq, heads, D), dtype),
     ):
-        with T.Kernel(batch * heads * merge_groups) as program:
-            b = program // (heads * merge_groups)
-            h = program // merge_groups % heads
-            qi = program % merge_groups * merge_rows
-            group_task = (b * q_tiles + qi // BR) * heads + h
-            row = qi % BR
-            part = T.alloc_shared((merge_rows, D), accum_dtype)
-            score = T.alloc_shared((merge_rows,), accum_dtype)
-            maximum = T.alloc_shared((merge_rows,), accum_dtype)
-            total = T.alloc_shared((merge_rows,), accum_dtype)
-            peak_rows = T.alloc_shared((merge_rows,), accum_dtype)
-            old_weights = T.alloc_shared((merge_rows,), accum_dtype)
-            new_weights = T.alloc_shared((merge_rows,), accum_dtype)
-            acc = T.alloc_shared((merge_rows, D), accum_dtype)
-            out = T.alloc_shared((merge_rows, D), dtype)
-            with T.SimtVF(threads=128):
-                for r, d in T.Parallel(merge_rows, D):
-                    acc[r, d] = 0
-                for r in T.Parallel(merge_rows):
-                    maximum[r] = -1.0e30
-                    total[r] = 0
-            for split in T.serial(splits):
-                # merge_rows divides BR, so no chunk crosses a partial Q tile.
-                T.copy(Parts[group_task, split, row:row + merge_rows, :], part)
-                offset = (group_task * splits + split) * BR + row
-                T.copy(LSE[offset:offset + merge_rows], score)
-                with T.SimtVF(threads=128):
-                    # Compute transcendental expressions per row before their
-                    # broadcast across D; keep old maximum unchanged until used.
-                    for r in T.Parallel(merge_rows):
-                        peak_rows[r] = T.max(maximum[r], score[r])
-                        old_weights[r] = T.exp(maximum[r] - peak_rows[r])
-                        new_weights[r] = T.if_then_else(
-                            score[r] > -1.0e29, T.exp(score[r] - peak_rows[r]), 0)
-                    for r, d in T.Parallel(merge_rows, D):
-                        acc[r, d] = acc[r, d] * old_weights[r] + part[r, d] * new_weights[r]
-                    for r in T.Parallel(merge_rows):
-                        total[r] = total[r] * old_weights[r] + new_weights[r]
-                        maximum[r] = peak_rows[r]
-            with T.SimtVF(threads=128):
-                for r, d in T.Parallel(merge_rows, D):
-                    out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
-            # UB->GM uses the same tail-clamping convention as the reference.
-            T.copy(out, O[b, qi:qi + merge_rows, h, :])
+        with T.Kernel(merge_grid) as core:
+            for work in T.serial(T.ceildiv(merge_work, merge_grid)):
+                program = work * merge_grid + core
+                if program < merge_work:
+                    b = program // (heads * merge_groups)
+                    h = program // merge_groups % heads
+                    qi = program % merge_groups * merge_rows
+                    group_task = (b * q_tiles + qi // BR) * heads + h
+                    row = qi % BR
+                    part = T.alloc_shared((merge_rows, D), accum_dtype)
+                    score = T.alloc_shared((merge_rows,), accum_dtype)
+                    maximum = T.alloc_shared((merge_rows,), accum_dtype)
+                    total = T.alloc_shared((merge_rows,), accum_dtype)
+                    peak_rows = T.alloc_shared((merge_rows,), accum_dtype)
+                    old_weights = T.alloc_shared((merge_rows,), accum_dtype)
+                    new_weights = T.alloc_shared((merge_rows,), accum_dtype)
+                    acc = T.alloc_shared((merge_rows, D), accum_dtype)
+                    out = T.alloc_shared((merge_rows, D), dtype)
+                    with T.SimtVF(threads=128):
+                        for r, d in T.Parallel(merge_rows, D):
+                            acc[r, d] = 0
+                        for r in T.Parallel(merge_rows):
+                            maximum[r] = -1.0e30
+                            total[r] = 0
+                    for split in T.serial(splits):
+                        # merge_rows divides BR, so no chunk crosses a partial Q tile.
+                        T.copy(Parts[group_task, split, row:row + merge_rows, :], part)
+                        offset = (group_task * splits + split) * BR + row
+                        T.copy(LSE[offset:offset + merge_rows], score)
+                        with T.SimtVF(threads=128):
+                            # Compute transcendental expressions per row before their
+                            # broadcast across D; keep old maximum unchanged until used.
+                            for r in T.Parallel(merge_rows):
+                                peak_rows[r] = T.max(maximum[r], score[r])
+                                old_weights[r] = T.exp(maximum[r] - peak_rows[r])
+                                new_weights[r] = T.if_then_else(
+                                    score[r] > -1.0e29, T.exp(score[r] - peak_rows[r]), 0)
+                            for r, d in T.Parallel(merge_rows, D):
+                                acc[r, d] = acc[r, d] * old_weights[r] + part[r, d] * new_weights[r]
+                            for r in T.Parallel(merge_rows):
+                                total[r] = total[r] * old_weights[r] + new_weights[r]
+                                maximum[r] = peak_rows[r]
+                    with T.SimtVF(threads=128):
+                        for r, d in T.Parallel(merge_rows, D):
+                            out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
+                    # UB->GM uses the same tail-clamping convention as the reference.
+                    T.copy(out, O[b, qi:qi + merge_rows, h, :])
 
     partial_kernel = tilelang.compile(partial, out_idx=[5, 6], target="ascend", execution_backend="auto")
     merge_kernel = tilelang.compile(merge, out_idx=-1, target="ascend", execution_backend="auto")
