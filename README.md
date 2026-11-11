@@ -1,5 +1,22 @@
 # FGW
 
+## v3 Cube QK/PV实验路径
+
+参考tile-ai/tilelang的Ascend FlashAttention core，在安装版本对应的固定提交a7cb753d上复用SIMD softmax/NZ打包宏（上游许可证保存在 `TILELANG_LICENSE`）。新增 `mha_paged_decode_ascend_v3.py`，BF16、D=128、页大小为128的倍数时使用Cube QK与PV、SIMD softmax、NZ权重打包、两级自动流水及split-KV合并。其他规格明确回退v2，每条结果记录 `execution_path`。
+
+这是Cube链路验证版本：每个query复制为128行，以保持已有64行/AIV的SIMD打包布局，只有首行结果参与输出；大量冗余计算可能使它比v2慢，不能据此宣称优化成功。MFU分子只计模型有效计算量，不把重复行计为有用计算。分页尾块清零无效V；分数掩码、空split和空缓存均有处理，仍需NPU验证。
+
+```bash
+git pull --ff-only
+bash run_mha_v3.sh
+```
+
+脚本先做含Cube路径的12项编译/精度冒烟检查，再跑540项回归、v2的20项重测、v3的20项比较。当前540项中仅36项真正走Cube，504项回退v2；20项性能用例中4项走Cube，其余16项回退v2。quick精度集不含Cube规格，因此不能用quick通过代表Cube通过。
+
+请上传 `mha_cube_v3_smoke.json`、`mha_paged_accuracy_v3_report.json`、`mha_mfu_v2_recheck_report.json`、`mha_mfu_v3_report.json` 和对应日志。如果冒烟阶段失败，脚本会停止，上传其日志即可。
+
+打通后再针对decode缩小/组合Q tile，进一步减少重复计算。现有v0/v1/v2实现均保留。
+
 ## v2 split-KV并行
 
 新增 `mha_paged_decode_ascend_v2.py`。分块阶段将每个输出的有效KV tiles分配给多个program，各自写FP32局部最大值m、权重和l、未归一化加权V。第二个kernel按统一最大值重缩放并合并，再除以合并后的l。空split完整写零权重/零累加值，完全空输出保持零。两个kernel在同一当前流按序启动，临时缓冲区每次调用独立分配。

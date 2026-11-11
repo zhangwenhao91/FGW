@@ -73,7 +73,7 @@ def main():
     parser.add_argument("--suite", choices=["quick", "standard", "extended"], default="standard")
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 42, 2026])
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--impl", choices=["v0", "v1", "v2"], default="v0")
+    parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3"], default="v0")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED],
@@ -113,7 +113,8 @@ def main():
         import torch_npu
         import tilelang
         from mha_paged_decode_ascend_v0 import reference
-        mha_paged_decode = importlib.import_module(f"mha_paged_decode_ascend_{args.impl}").mha_paged_decode
+        impl_module = importlib.import_module(f"mha_paged_decode_ascend_{args.impl}")
+        mha_paged_decode = impl_module.mha_paged_decode
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,
@@ -130,6 +131,7 @@ def main():
                          "seed": seed, "dtype": str(dtype), "causal": causal,
                          "pattern": pattern, "lengths": lengths.tolist(), "status": "running"}
                 report["results"].append(entry)
+                entry["execution_path"] = impl_module.route(dtype, d, p) if args.impl == "v3" else args.impl
                 save()  # Preserve active case even after a native runtime crash.
                 start = time.perf_counter()
                 try:
