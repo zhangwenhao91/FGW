@@ -35,7 +35,7 @@ def main():
     parser.add_argument("--repeat", type=int, default=100)
     parser.add_argument("--warmup", type=int, default=20)
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--impl", choices=["v4", "v5", "v6"], default="v4")
+    parser.add_argument("--impl", choices=["v4", "v5", "v6", "v7"], default="v4")
     parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--buffer-versions", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--reference-chunk-size", type=int, default=128)
@@ -110,18 +110,25 @@ def main():
                 expected = reference(q, k, v, table, lengths, page, causal)
             torch.testing.assert_close(got, expected, rtol=1e-2, atol=4e-3)
             prepared = program.prepare_q(inputs[0])
-            parts, lse = program.partial_kernel(prepared, *inputs[1:])
-            torch.npu.synchronize()
-            functions = {"full": lambda: program(*inputs),
-                         "partial": lambda: program.partial_kernel(prepared, *inputs[1:]),
-                         "merge": lambda: program.merge_kernel(parts, lse)}
+            direct_mode = getattr(program, "execution_mode", "split_and_merge") == "direct_single_split"
+            if direct_mode:
+                functions = {"full": lambda: program(*inputs),
+                             "direct": lambda: program.direct_kernel(prepared, *inputs[1:])}
+            else:
+                parts, lse = program.partial_kernel(prepared, *inputs[1:])
+                torch.npu.synchronize()
+                functions = {"full": lambda: program(*inputs),
+                             "partial": lambda: program.partial_kernel(prepared, *inputs[1:]),
+                             "merge": lambda: program.merge_kernel(parts, lse)}
             for round_id in range(args.rounds):
-                stages = ["full", "partial", "merge"]
-                stages = stages[round_id % 3:] + stages[:round_id % 3]
+                stages = list(functions)
+                offset = round_id % len(stages)
+                stages = stages[offset:] + stages[:offset]
                 for stage in stages:
                     row = {"case": name, "stage": stage, "round": round_id+1,
                            "shape": {"B": batch, "Sq": sq, "H": heads, "D": d, "KV": length},
                            "causal": causal, "correctness": "passed", "status": "running"}
+                    row["kernel_mode"] = "direct_single_split" if direct_mode else "split_and_merge"
                     tasks = batch * ((sq + 127) // 128) * heads
                     splits = 1
                     while splits < 16 and splits * 2 <= length // 128 and tasks * splits < 128:
@@ -129,7 +136,7 @@ def main():
                     row["launch_geometry"] = {"query_tile_tasks": tasks, "splits": splits,
                         "partial_grid": tasks * splits,
                         "merge_work": batch * heads * ((sq + 7) // 8),
-                        "merge_grid": min(batch * heads * ((sq + 7) // 8), 32768) if args.impl == "v6" else batch * heads * ((sq + 7) // 8)}
+                        "merge_grid": 0 if direct_mode else min(batch * heads * ((sq + 7) // 8), 32768) if args.impl in ("v6", "v7") else batch * heads * ((sq + 7) // 8)}
                     report["results"].append(row)
                     save()
                     profile = do_bench(functions[stage], backend="msprof_detail", device=device,
@@ -142,7 +149,7 @@ def main():
                     print(f"{name} round={round_id+1} {stage}: {profile}", flush=True)
         report["summary"] = []
         for name, *_ in CASES:
-            for stage in ("full", "partial", "merge"):
+            for stage in ("full", "partial", "merge", "direct"):
                 rows = [r for r in report["results"] if r["case"] == name and r["stage"] == stage]
                 if rows:
                     report["summary"].append({"case": name, "stage": stage,

@@ -1,5 +1,18 @@
 # FGW
 
+## v7：单split直接归一化、转换并输出
+
+Cube路径在编译期split=1时，直接在原计算kernel内归一化并转BF16，写最终连续[B,Q,H,D]，不生成Partial/LSE、不编译或启动merge。输出采用[B,Q,H*D]的等价视图，保留Q轴边界以正确处理Q尾块。类型转换复用FP32输出UB，沿用参考实现的顺序SIMD转换形式。split>1保留v6的批量合并，不按长短Q切换历史版本。支持范围仍为BF16/D128/整块KV，其他规格保持原回退。
+
+```bash
+git pull --ff-only
+bash run_mha_v7.sh
+```
+
+先跑2项直接输出冒烟，覆盖单Q和Q129尾块；再跑30项非因果及9项单query因果精度（包含直接与多split两条路径）。随后采集Q4096/Q32768的msprof并进行长Q正反向MFU扫描。新报告用 `kernel_mode` 标记直接输出或split合并；msprof的单split记录full/direct，不再有虚构的merge时间。
+
+请上传上述脚本生成的v7 JSON与对应log，尤其 `mha_v7_direct_smoke.json`、`mha_cube_v7_accuracy.json`、`mha_cube_v7_causal.json`、`mha_v7_large_q_msprof.json`、`mha_mfu_v7_large_q_report.json` 和 `mha_mfu_v7_large_q_reverse_report.json`。任一步失败停止。NPU编译、精度与实际收益尚待验证。
+
 ## Q4096/Q32768的局部计算、合并和流水计数器
 
 ```bash
