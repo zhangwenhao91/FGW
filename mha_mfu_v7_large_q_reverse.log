@@ -1,0 +1,8 @@
+q32768_b2_h8_d128_k2048 torch.bfloat16 causal=False: 4.722341 ms, 116.41594854 TFLOPS, MFU=30.79786998% speedup_vs_baseline=n/a
+q16384_b2_h8_d128_k2048 torch.bfloat16 causal=False: 2.391589 ms, 114.93526497 TFLOPS, MFU=30.40615475% speedup_vs_baseline=n/a
+q8192_b2_h8_d128_k2048 torch.bfloat16 causal=False: 1.156541 ms, 118.83621478 TFLOPS, MFU=31.43815206% speedup_vs_baseline=n/a
+q4096_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.602220 ms, 114.11025351 TFLOPS, MFU=30.18789775% speedup_vs_baseline=n/a
+q2048_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.325068 ms, 105.70015716 TFLOPS, MFU=27.96300454% speedup_vs_baseline=n/a
+q1024_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.174314 ms, 98.55702054 TFLOPS, MFU=26.07328586% speedup_vs_baseline=n/a
+q512_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.144403 ms, 59.48584758 TFLOPS, MFU=15.73699671% speedup_vs_baseline=n/a
+PASSED; report=mha_mfu_v7_large_q_reverse_report.json

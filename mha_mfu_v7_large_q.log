@@ -1,0 +1,16 @@
+q512_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.144778 ms, 59.33176789 TFLOPS, MFU=15.69623489% speedup_vs_baseline=n/a
+2026-11-11 15:25:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 15:25:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+q1024_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.171389 ms, 100.23904289 TFLOPS, MFU=26.51826531% speedup_vs_baseline=n/a
+2026-11-11 15:25:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 15:25:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+q2048_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.323021 ms, 106.36998503 TFLOPS, MFU=28.14020768% speedup_vs_baseline=n/a
+q4096_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.598061 ms, 114.90378715 TFLOPS, MFU=30.39782729% speedup_vs_baseline=n/a
+2026-11-11 15:25:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 15:25:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+q8192_b2_h8_d128_k2048 torch.bfloat16 causal=False: 1.151136 ms, 119.39418854 TFLOPS, MFU=31.58576416% speedup_vs_baseline=n/a
+2026-11-11 15:25:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 15:25:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+q16384_b2_h8_d128_k2048 torch.bfloat16 causal=False: 2.382965 ms, 115.35121028 TFLOPS, MFU=30.51619320% speedup_vs_baseline=n/a
+q32768_b2_h8_d128_k2048 torch.bfloat16 causal=False: 4.722604 ms, 116.40947185 TFLOPS, MFU=30.79615657% speedup_vs_baseline=n/a
+PASSED; report=mha_mfu_v7_large_q_report.json

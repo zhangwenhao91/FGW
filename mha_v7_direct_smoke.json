@@ -1,0 +1,91 @@
+{
+  "status": "passed",
+  "suite": "cube",
+  "seeds": [
+    7
+  ],
+  "patterns": [
+    "full"
+  ],
+  "causal_modes": [
+    false
+  ],
+  "dtypes": [
+    "bfloat16"
+  ],
+  "selected_cases": [
+    "cube_direct_q1",
+    "cube_direct_q129"
+  ],
+  "implementation": "v7",
+  "total_checks": 2,
+  "results": [
+    {
+      "case": "cube_direct_q1",
+      "shape": {
+        "B": 2,
+        "Sq": 1,
+        "H": 64,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        256,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_bf16_d128",
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00013228540774434805,
+      "max_tolerance_ratio": 0.33738192915916443,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 6.517491708043963
+    },
+    {
+      "case": "cube_direct_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 64,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        256,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_bf16_d128",
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00013492799189407378,
+      "max_tolerance_ratio": 0.4321520924568176,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 6.879077524878085
+    }
+  ],
+  "logical_device": 0,
+  "started_utc": "2026-11-11T15:23:44.597382+00:00",
+  "note": "Timing includes launch/copies/checks and is not a kernel benchmark.",
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "device_name": "Ascend950PR_9579",
+  "passed": 2,
+  "failed_or_incomplete": 0
+}
