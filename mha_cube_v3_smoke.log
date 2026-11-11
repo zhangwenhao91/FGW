@@ -1,20 +1,23 @@
 [1/12] page256 seed=7 torch.float16 causal=False mixed: passed max_error=3.0517578125e-05
 [2/12] page256 seed=7 torch.float16 causal=False full: passed max_error=3.0517578125e-05
 [3/12] page256 seed=7 torch.float16 causal=False empty: passed max_error=0.0
-2026-11-11 10:36:13  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-11 10:39:08  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
 [4/12] page256 seed=7 torch.float16 causal=True mixed: passed max_error=3.0517578125e-05
 [5/12] page256 seed=7 torch.float16 causal=True full: passed max_error=3.0517578125e-05
 [6/12] page256 seed=7 torch.float16 causal=True empty: passed max_error=0.0
-2026-11-11 10:36:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[6, 7]`
+2026-11-11 10:39:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[6, 7]`
+[10:39:09] /home/z30086261/Q4/third_party/tilelang-950/3rdparty/tvm/src/tirx/script/printer/expr.cc:75: Warning: Didn't find variable definition for: j
+[10:39:09] /home/z30086261/Q4/third_party/tilelang-950/3rdparty/tvm/src/relax/script/printer/./../../../script/printer/utils.h:53: Warning: TVMScript printer falls back to the basic address printer with the error:
+Variable is not defined in the environment: j
 [7/12] page256 seed=7 torch.bfloat16 causal=False mixed: error max_error=n/a
 Traceback (most recent call last):
   File "/home/z30086261/FGW/test_mha_paged_accuracy.py", line 146, in main
     got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 312, in mha_paged_decode
+  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 315, in mha_paged_decode
     kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 283, in build_kernel
+  File "/home/z30086261/FGW/mha_paged_decode_ascend_v3.py", line 286, in build_kernel
     partial_kernel = tilelang.compile(partial, out_idx=[6, 7], target="ascend", execution_backend="auto")
                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 166, in compile
@@ -112,7 +115,6 @@ Traceback (most recent call last):
   File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
   File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
   File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#10}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::ClampDMACopyTail(tvm::tl::AscendCopyNode const&, tvm::arith::Analyzer*)
-  File "/home/z30086261/Q4/third_party/tilelang-950/src/ascend/op/ascend_mte_plan.h", line 261, in tvm::tl::StridedLayout tvm::tl::NormalizeMTE2DLayout(const tvm::tirx::Buffer&, const tvm::ffi::Array<tvm::Range>&, tvm::arith::Analyzer*, const string&)
-tvm.error.InternalError: Check failed: range.size() >= 2U (1 vs. 2) : Ascend GM->L1 OOB handling requires at least a 2D region, got buffer Zero shape (128,) ranges (I.Range(0, 128),)
+  File "/home/z30086261/Q4/third_party/tilelang-950/src/ascend/op/oob_padding.cc", line 287, in tvm::ffi::Optional<tvm::tirx::Stmt> tvm::tl::ascend::MakeL1ColPadding(const tvm::tl::AscendCopyNode&, const tvm::tl::AscendFractalLayoutInfo&, tvm::arith::Analyzer*, const tvm::PrimExpr&)
+tvm.error.InternalError: Check failed: (analyzer->CanProveEqual(dst_row_min, I(0)) && analyzer->CanProveEqual(dst_col_min, I(0)) && analyzer->CanProveEqual(dst_rows, layout.rows)) is false: Ascend GM->L1 col padding requires a zero-based destination region covering the full row axis; got destination ranges (I.Range(0, 128), ir.Range(0x55d93ffd3d10))
 ERROR: 6/12 passed; report=mha_cube_v3_smoke.json
