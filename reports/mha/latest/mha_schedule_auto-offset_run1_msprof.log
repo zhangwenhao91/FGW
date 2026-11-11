@@ -1,0 +1,13 @@
+2026-11-11 17:28:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 17:28:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+query4096 round=1 full: KernelProfile(382.2us, mad=65.9%, aic_mte2=61.7%, aic_mte1=31.1%, aic_fix=46.0%, aiv_vec=63.4%, aiv_mte2=2.9%, aiv_mte3=25.5%, aic_cycles=14319260, aiv_cycles=33328989)
+query4096 round=1 direct: KernelProfile(374.4us, mad=64.7%, aic_mte2=61.8%, aic_mte1=30.8%, aic_fix=45.2%, aiv_vec=64.7%, aiv_mte3=25.3%, aic_cycles=14586192, aiv_cycles=32660814)
+query4096 round=2 direct: KernelProfile(374.8us, mad=64.7%, aic_mte2=61.8%, aic_mte1=30.7%, aic_fix=45.2%, aiv_vec=64.7%, aiv_mte3=25.3%, aic_cycles=14590331, aiv_cycles=32668232)
+query4096 round=2 full: KernelProfile(382.5us, mad=65.8%, aic_mte2=61.7%, aic_mte1=31.0%, aic_fix=46.0%, aiv_vec=63.4%, aiv_mte2=2.9%, aiv_mte3=25.5%, aic_cycles=14323919, aiv_cycles=33331835)
+2026-11-11 17:28:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 17:29:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+query32768 round=1 full: KernelProfile(3030.9us, mad=65.0%, aic_mte2=59.3%, aic_mte1=30.9%, aic_fix=45.4%, aiv_vec=62.0%, aiv_mte2=4.0%, aiv_mte3=26.7%, aic_cycles=116196845, aiv_cycles=272803658)
+query32768 round=1 direct: KernelProfile(2886.3us, mad=65.1%, aic_mte2=59.3%, aic_mte1=31.0%, aic_fix=45.5%, aiv_vec=65.1%, aiv_mte3=25.1%, aic_cycles=115945793, aiv_cycles=259785303)
+query32768 round=2 direct: KernelProfile(2887.0us, mad=65.1%, aic_mte2=59.3%, aic_mte1=31.0%, aic_fix=45.4%, aiv_vec=65.1%, aiv_mte3=25.1%, aic_cycles=115973920, aiv_cycles=259841561)
+query32768 round=2 full: KernelProfile(3032.4us, mad=65.0%, aic_mte2=59.3%, aic_mte1=30.9%, aic_fix=45.3%, aiv_vec=61.9%, aiv_mte2=4.0%, aiv_mte3=26.7%, aic_cycles=116257450, aiv_cycles=272926573)
+PASSED: mha_schedule_auto-offset_run1_msprof.json

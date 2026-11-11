@@ -1,0 +1,9 @@
+query4096 round=1 full: KernelProfile(382.8us, mad=65.9%, aic_mte2=61.5%, aic_mte1=31.0%, aic_fix=46.1%, aiv_vec=63.5%, aiv_mte2=2.9%, aiv_mte3=25.6%, aic_cycles=14308304, aiv_cycles=33308459)
+query4096 round=1 direct: KernelProfile(374.4us, mad=64.8%, aic_mte2=61.8%, aic_mte1=30.8%, aic_fix=45.2%, aiv_vec=64.8%, aiv_mte3=25.4%, aic_cycles=14570752, aiv_cycles=32631327)
+query4096 round=2 direct: KernelProfile(374.4us, mad=64.8%, aic_mte2=61.8%, aic_mte1=30.8%, aic_fix=45.2%, aiv_vec=64.8%, aiv_mte3=25.4%, aic_cycles=14575118, aiv_cycles=32639237)
+query4096 round=2 full: KernelProfile(382.2us, mad=65.9%, aic_mte2=61.5%, aic_mte1=31.0%, aic_fix=46.0%, aiv_vec=63.5%, aiv_mte2=2.9%, aiv_mte3=25.6%, aic_cycles=14307651, aiv_cycles=33303781)
+query32768 round=1 full: KernelProfile(3029.1us, mad=65.0%, aic_mte2=59.4%, aic_mte1=30.9%, aic_fix=45.4%, aiv_vec=62.0%, aiv_mte2=4.0%, aiv_mte3=26.6%, aic_cycles=116215604, aiv_cycles=272678068)
+query32768 round=1 direct: KernelProfile(2888.5us, mad=65.1%, aic_mte2=59.4%, aic_mte1=31.0%, aic_fix=45.5%, aiv_vec=65.1%, aiv_mte3=25.0%, aic_cycles=116004069, aiv_cycles=259916664)
+query32768 round=2 direct: KernelProfile(2888.7us, mad=65.1%, aic_mte2=59.4%, aic_mte1=31.0%, aic_fix=45.5%, aiv_vec=65.0%, aiv_mte3=25.0%, aic_cycles=116021897, aiv_cycles=259953112)
+query32768 round=2 full: KernelProfile(3030.7us, mad=65.0%, aic_mte2=59.4%, aic_mte1=30.9%, aic_fix=45.4%, aiv_vec=62.0%, aiv_mte2=4.0%, aiv_mte3=26.6%, aic_cycles=116275036, aiv_cycles=272778947)
+PASSED: mha_schedule_auto-offset_run2_msprof.json

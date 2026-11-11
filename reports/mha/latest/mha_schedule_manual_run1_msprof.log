@@ -1,0 +1,13 @@
+2026-11-11 17:30:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 17:30:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+query4096 round=1 full: KernelProfile(330.4us, mad=75.4%, aic_mte2=62.5%, aic_mte1=39.3%, aic_fix=64.7%, aiv_vec=71.5%, aiv_mte2=3.3%, aiv_mte3=37.7%, aic_cycles=12159187, aiv_cycles=28697461)
+query4096 round=1 direct: KernelProfile(322.5us, mad=73.8%, aic_mte2=63.4%, aic_mte1=38.7%, aic_fix=63.3%, aiv_vec=73.2%, aiv_mte3=37.8%, aic_cycles=12428982, aiv_cycles=28032536)
+query4096 round=2 direct: KernelProfile(322.7us, mad=73.7%, aic_mte2=63.3%, aic_mte1=38.7%, aic_fix=63.3%, aiv_vec=73.2%, aiv_mte3=37.7%, aic_cycles=12433750, aiv_cycles=28043174)
+query4096 round=2 full: KernelProfile(330.5us, mad=75.4%, aic_mte2=62.7%, aic_mte1=39.3%, aic_fix=64.7%, aiv_vec=71.5%, aiv_mte2=3.3%, aiv_mte3=37.6%, aic_cycles=12161126, aiv_cycles=28691138)
+2026-11-11 17:30:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-11 17:30:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+query32768 round=1 full: KernelProfile(2626.7us, mad=74.0%, aic_mte2=60.7%, aic_mte1=38.7%, aic_fix=63.5%, aiv_vec=69.6%, aiv_mte2=4.6%, aiv_mte3=39.4%, aic_cycles=99003863, aiv_cycles=235835787)
+query32768 round=1 direct: KernelProfile(2483.8us, mad=74.2%, aic_mte2=60.7%, aic_mte1=38.8%, aic_fix=63.6%, aiv_vec=73.6%, aiv_mte3=38.2%, aic_cycles=98753580, aiv_cycles=222908892)
+query32768 round=2 direct: KernelProfile(2484.4us, mad=74.2%, aic_mte2=60.7%, aic_mte1=38.8%, aic_fix=63.6%, aiv_vec=73.6%, aiv_mte3=38.2%, aic_cycles=98772360, aiv_cycles=222945054)
+query32768 round=2 full: KernelProfile(2627.9us, mad=74.0%, aic_mte2=60.7%, aic_mte1=38.7%, aic_fix=63.4%, aiv_vec=69.6%, aiv_mte2=4.6%, aiv_mte3=39.4%, aic_cycles=99041782, aiv_cycles=235912632)
+PASSED: mha_schedule_manual_run1_msprof.json

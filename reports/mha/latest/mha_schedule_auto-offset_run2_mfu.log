@@ -1,0 +1,3 @@
+q4096_b2_h8_d128_k2048 torch.bfloat16 causal=False: 0.382536 ms, 179.64185803 TFLOPS, MFU=47.52430107% speedup_vs_baseline=n/a
+q32768_b2_h8_d128_k2048 torch.bfloat16 causal=False: 3.067342 ms, 179.22872839 TFLOPS, MFU=47.41500751% speedup_vs_baseline=n/a
+PASSED; report=mha_schedule_auto-offset_run2_mfu.json

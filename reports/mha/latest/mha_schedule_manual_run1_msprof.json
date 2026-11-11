@@ -1,0 +1,402 @@
+{
+  "status": "passed",
+  "settings": {
+    "cases": [
+      "query4096",
+      "query32768"
+    ],
+    "rounds": 2,
+    "repeat": 30,
+    "warmup": 10,
+    "device": 0,
+    "impl": "v7",
+    "pipeline_stages": 2,
+    "buffer_versions": 2,
+    "kv_versions": null,
+    "q_resident": true,
+    "reference_chunk_size": 128,
+    "output": "mha_schedule_manual_run1_msprof.json",
+    "schedule_mode": "manual"
+  },
+  "schedule_mode": "manual",
+  "results": [
+    {
+      "case": "query4096",
+      "stage": "full",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 330446.0,
+        "aic_total_cycles": 12159187,
+        "aic_mad": 0.7540959755021944,
+        "aic_scalar": 0.20486738115318553,
+        "aic_mte1": 0.39294269650294483,
+        "aic_mte2": 0.625498017801637,
+        "aic_mte3": 8.421685081596963e-05,
+        "aic_fixpipe": 0.6468960033084817,
+        "aiv_total_cycles": 28697461,
+        "aiv_vec": 0.7152180116907849,
+        "aiv_scalar": 0.07203343838052159,
+        "aiv_mte2": 0.03327032122038695,
+        "aiv_mte3": 0.3767206431950238
+      },
+      "profiler_duration_us": 330.446
+    },
+    {
+      "case": "query4096",
+      "stage": "direct",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 322462.3333333333,
+        "aic_total_cycles": 12428982,
+        "aic_mad": 0.7378004588342951,
+        "aic_scalar": 0.20089903542843832,
+        "aic_mte1": 0.3872061180413037,
+        "aic_mte2": 0.6336574065309443,
+        "aic_mte3": 8.238881321126033e-05,
+        "aic_fixpipe": 0.6330776122732669,
+        "aiv_total_cycles": 28032536,
+        "aiv_vec": 0.7321869262759029,
+        "aiv_scalar": 0.06641464171446464,
+        "aiv_mte2": 0.00030077901671459487,
+        "aiv_mte3": 0.3775822536952763
+      },
+      "profiler_duration_us": 322.46233333333333
+    },
+    {
+      "case": "query4096",
+      "stage": "direct",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 322672.5,
+        "aic_total_cycles": 12433750,
+        "aic_mad": 0.7374882379443435,
+        "aic_scalar": 0.2013836361839851,
+        "aic_mte1": 0.3869396276390874,
+        "aic_mte2": 0.6334744600027588,
+        "aic_mte3": 8.23570910322661e-05,
+        "aic_fixpipe": 0.6327941023420343,
+        "aiv_total_cycles": 28043174,
+        "aiv_vec": 0.7319016024570477,
+        "aiv_scalar": 0.06688602505990551,
+        "aiv_mte2": 0.0003008594267048297,
+        "aiv_mte3": 0.3774218098728843
+      },
+      "profiler_duration_us": 322.6725
+    },
+    {
+      "case": "query4096",
+      "stage": "full",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 4096,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 512,
+        "splits": 1,
+        "partial_grid": 512,
+        "merge_work": 8192,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 330474.7,
+        "aic_total_cycles": 12161126,
+        "aic_mad": 0.7540082348248771,
+        "aic_scalar": 0.2049946406299045,
+        "aic_mte1": 0.39311593755408814,
+        "aic_mte2": 0.626584354937787,
+        "aic_mte3": 8.420320404103532e-05,
+        "aic_fixpipe": 0.6468166375406006,
+        "aiv_total_cycles": 28691138,
+        "aiv_vec": 0.7153889197042762,
+        "aiv_scalar": 0.07208170191429726,
+        "aiv_mte2": 0.033096538411757075,
+        "aiv_mte3": 0.37648068858672645
+      },
+      "profiler_duration_us": 330.4747
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 2626677.4666666663,
+        "aic_total_cycles": 99003863,
+        "aic_mad": 0.740393591996866,
+        "aic_scalar": 0.19657258031478356,
+        "aic_mte1": 0.38703492408641343,
+        "aic_mte2": 0.607129019848949,
+        "aic_mte3": 8.274451908958972e-05,
+        "aic_fixpipe": 0.6345205648142015,
+        "aiv_total_cycles": 235835787,
+        "aiv_vec": 0.6959798574656337,
+        "aiv_scalar": 0.0614976959685637,
+        "aiv_mte2": 0.04649503811515869,
+        "aiv_mte3": 0.3940841333849615
+      },
+      "profiler_duration_us": 2626.6774666666665
+    },
+    {
+      "case": "query32768",
+      "stage": "direct",
+      "round": 1,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 2483792.3,
+        "aic_total_cycles": 98753580,
+        "aic_mad": 0.7422080312145525,
+        "aic_scalar": 0.1970483230287492,
+        "aic_mte1": 0.38812212826544695,
+        "aic_mte2": 0.6071684473540899,
+        "aic_mte3": 8.295429011749518e-05,
+        "aic_fixpipe": 0.6364426624143955,
+        "aiv_total_cycles": 222908892,
+        "aiv_vec": 0.7363539977323809,
+        "aiv_scalar": 0.06306425342525739,
+        "aiv_mte2": 0.00030376796997798816,
+        "aiv_mte3": 0.3816664539459069
+      },
+      "profiler_duration_us": 2483.7922999999996
+    },
+    {
+      "case": "query32768",
+      "stage": "direct",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 2484354.3,
+        "aic_total_cycles": 98772360,
+        "aic_mad": 0.7420759220531444,
+        "aic_scalar": 0.1971733810786888,
+        "aic_mte1": 0.3880428094423728,
+        "aic_mte2": 0.6071110797436828,
+        "aic_mte3": 8.293849623887096e-05,
+        "aic_fixpipe": 0.6363172577885549,
+        "aiv_total_cycles": 222945054,
+        "aiv_vec": 0.7362333078951023,
+        "aiv_scalar": 0.06324090970101177,
+        "aiv_mte2": 0.00030371921058814245,
+        "aiv_mte3": 0.3816174054355031
+      },
+      "profiler_duration_us": 2484.3543
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "round": 2,
+      "shape": {
+        "B": 2,
+        "Sq": 32768,
+        "H": 8,
+        "D": 128,
+        "KV": 2048
+      },
+      "causal": false,
+      "correctness": "passed",
+      "status": "passed",
+      "kernel_mode": "direct_single_split",
+      "launch_geometry": {
+        "query_tile_tasks": 4096,
+        "splits": 1,
+        "partial_grid": 4096,
+        "merge_work": 65536,
+        "merge_grid": 0
+      },
+      "profile": {
+        "dur_ns": 2627928.2666666666,
+        "aic_total_cycles": 99041782,
+        "aic_mad": 0.7401096531088653,
+        "aic_scalar": 0.1968989573757341,
+        "aic_mte1": 0.3869104797454266,
+        "aic_mte2": 0.606899797715073,
+        "aic_mte3": 8.271286269032615e-05,
+        "aic_fixpipe": 0.6342916462206866,
+        "aiv_total_cycles": 235912632,
+        "aiv_vec": 0.6957574193079097,
+        "aiv_scalar": 0.06202979727940758,
+        "aiv_mte2": 0.046428442888075405,
+        "aiv_mte3": 0.3939323172101874
+      },
+      "profiler_duration_us": 2627.928266666667
+    }
+  ],
+  "started_utc": "2026-11-11T17:30:25.330956+00:00",
+  "baseline_config": {
+    "q_tile": 128,
+    "kv_tile": 128,
+    "pipeline_stages": 2,
+    "streamed_buffer_versions": 2,
+    "kv_l1_versions": 2,
+    "q_resident_l0a": true
+  },
+  "notes": [
+    "Upstream msprof_detail flushes cache before each invocation (256 MiB buffer).",
+    "dur_ns is upstream profiler record aggregation per invocation, not Event elapsed median.",
+    "Pipe fields are ratios against their own AIC/AIV total cycles; they can overlap and must not be summed as a time breakdown.",
+    "Full includes Q layout conversion if materialized, partial and merge; isolated stages run in separate profiler sessions.",
+    "Do not compare this cache-flushed measurement directly with earlier warm-cache Event results.",
+    "Candidate parameters are recorded; defaults preserve the measured baseline."
+  ],
+  "kernel_source_sha256": "4d043e863d7fa0e3a9e9f61566de74cb848bba03af003b7ffedae6a1d076c844",
+  "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=0008d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+  "implementation": "v7",
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "msprof_source_sha256": "e322b8e09d2e1e3565093bcd6e332316426a4a596375db131d04096a3feef7f9",
+  "msprof_source_file": "mha_schedule_manual_run1_msprof_msprof_source.py",
+  "do_bench_signature": "(fn: 'Callable', warmup: 'float' = 25, rep: 'float' = 100, _n_warmup: 'int' = 0, _n_repeat: 'int' = 0, quantiles: 'list[float] | None' = None, fast_flush: 'bool' = True, backend: \"Literal['event', 'cupti', 'cudagraph', 'wall', 'msprof', 'msprof_detail']\" = 'event', return_mode: \"Literal['min', 'max', 'mean', 'median']\" = 'mean', device: 'int | torch.device | None' = None, cache_size: 'int' = 256, early_stop_baseline: 'float | None' = None) -> 'float | list[float]'",
+  "summary": [
+    {
+      "case": "query4096",
+      "stage": "full",
+      "median_round_profiler_duration_us": 330.46035,
+      "round_profiler_durations_us": [
+        330.446,
+        330.4747
+      ]
+    },
+    {
+      "case": "query4096",
+      "stage": "direct",
+      "median_round_profiler_duration_us": 322.56741666666665,
+      "round_profiler_durations_us": [
+        322.46233333333333,
+        322.6725
+      ]
+    },
+    {
+      "case": "query32768",
+      "stage": "full",
+      "median_round_profiler_duration_us": 2627.302866666667,
+      "round_profiler_durations_us": [
+        2626.6774666666665,
+        2627.928266666667
+      ]
+    },
+    {
+      "case": "query32768",
+      "stage": "direct",
+      "median_round_profiler_duration_us": 2484.0733,
+      "round_profiler_durations_us": [
+        2483.7922999999996,
+        2484.3543
+      ]
+    }
+  ]
+}

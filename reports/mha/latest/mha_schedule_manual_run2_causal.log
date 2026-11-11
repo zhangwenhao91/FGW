@@ -1,0 +1,10 @@
+[1/9] cube_decode512 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[2/9] cube_decode512 seed=42 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[3/9] cube_decode512 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[4/9] cube_decode2048 seed=7 torch.bfloat16 causal=True full: passed max_error=0.00048828125
+[5/9] cube_decode2048 seed=42 torch.bfloat16 causal=True full: passed max_error=0.00048828125
+[6/9] cube_decode2048 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.00048828125
+[7/9] cube_direct_q1 seed=7 torch.bfloat16 causal=True full: passed max_error=0.00390625
+[8/9] cube_direct_q1 seed=42 torch.bfloat16 causal=True full: passed max_error=0.001953125
+[9/9] cube_direct_q1 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.00390625
+PASSED: 9/9 passed; report=mha_schedule_manual_run2_causal.json
