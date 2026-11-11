@@ -2,6 +2,8 @@
 
 ## v3 Cube QK/PV实验路径
 
+当前修订为避免GM→L1动态列补齐的编译限制，增加Vector预处理kernel：按页表生成每请求逻辑顺序的V，将有效长度外的行清零。Cube阶段只搬完整二维V块。完整计时包括V预处理、局部注意力、split合并三个kernel及其临时张量开销；该预处理会增加内存占用和数据搬运，仍属于Cube链路验证版本。
+
 参考tile-ai/tilelang的Ascend FlashAttention core，在安装版本对应的固定提交a7cb753d上复用SIMD softmax/NZ打包宏（上游许可证保存在 `TILELANG_LICENSE`）。新增 `mha_paged_decode_ascend_v3.py`，BF16、D=128、页大小为128的倍数时使用Cube QK与PV、SIMD softmax、NZ权重打包、两级自动流水及split-KV合并。其他规格明确回退v2，每条结果记录 `execution_path`。
 
 这是Cube链路验证版本：每个query复制为128行，以保持已有64行/AIV的SIMD打包布局，只有首行结果参与输出；大量冗余计算可能使它比v2慢，不能据此宣称优化成功。MFU分子只计模型有效计算量，不把重复行计为有用计算。分页尾块清零无效V；分数掩码、空split和空缓存均有处理，仍需NPU验证。

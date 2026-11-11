@@ -150,15 +150,13 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     def partial(
         Q: T.Tensor((tasks, D), dtype),
         K: T.Tensor((pool_rows, heads, D), dtype),
-        V: T.Tensor((pool_rows, heads, D), dtype),
+        V: T.Tensor((batch, width * page_size, heads, D), dtype),
         Table: T.Tensor((batch, width), "int32"),
         Lengths: T.Tensor((batch,), "int32"),
-        Zero: T.Tensor((1, D), dtype),
         Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
         LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
     ):
         with T.Kernel(tasks * splits) as bx:
-            V_rows = T.reshape(V, (pool_rows * heads, D))
             task = bx // splits
             split = bx % splits
             b = task // (sq * heads)
@@ -206,17 +204,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                 logical = (begin + tile) * BC
                 physical = Table[b, logical // page_size] * page_size + logical % page_size
                 T.copy(K[physical:physical + BC, h, :], K_l1)
-                # Do not feed NaN padding into Cube PV, even at zero weight.
-                if logical + BC <= end:
-                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
-                else:
-                    for j in T.serial(BC):
-                        if logical + j < end:
-                            source_row = (physical + j) * heads + h
-                            T.copy(V_rows[source_row:source_row + 1, 0:D],
-                                   V_l1[0:D, j:j + 1], transpose=True)
-                        else:
-                            T.copy(Zero[0:1, 0:D], V_l1[0:D, j:j + 1], transpose=True)
+                # Prepared V is in logical order, with unused cache rows zeroed.
+                # Full zero-based L1 writes avoid unsupported dynamic-column DMA.
+                T.copy(V[b, logical:logical + BC, h, :], V_l1, transpose=True)
                 T.copy(Q_l1, qa)
                 T.copy(K_l1, kb)
                 T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
@@ -283,12 +273,33 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     out[d] = T.cast(acc[d] / T.max(state[1], 1.0e-30), dtype)
             T.copy(out, O[task // (sq * heads), task // heads % sq, task % heads, :])
 
-    partial_kernel = tilelang.compile(partial, out_idx=[6, 7], target="ascend", execution_backend="auto")
+    @T.prim_func
+    def prepare_v(
+        V_cache: T.Tensor((pool_rows, heads, D), dtype),
+        Table: T.Tensor((batch, width), "int32"),
+        Lengths: T.Tensor((batch,), "int32"),
+        Dense: T.Tensor((batch, width * page_size, heads, D), dtype),
+    ):
+        with T.Kernel(batch * width * heads) as program:
+            b = program // (width * heads)
+            page = program // heads % width
+            h = program % heads
+            tile_v = T.alloc_shared((page_size, D), dtype)
+            physical = Table[b, page] * page_size
+            T.copy(V_cache[physical:physical + page_size, h, :], tile_v)
+            with T.SimtVF(threads=128):
+                for j, d in T.Parallel(page_size, D):
+                    if page * page_size + j >= Lengths[b]:
+                        tile_v[j, d] = 0
+            T.copy(tile_v, Dense[b, page * page_size:(page + 1) * page_size, h, :])
+
+    prepare_kernel = tilelang.compile(prepare_v, out_idx=-1, target="ascend", execution_backend="auto")
+    partial_kernel = tilelang.compile(partial, out_idx=[5, 6], target="ascend", execution_backend="auto")
     merge_kernel = tilelang.compile(merge, out_idx=-1, target="ascend", execution_backend="auto")
-    zeros = torch.zeros((1, D), device=torch.device("npu", device_index), dtype=torch.bfloat16)
 
     def launch(q, k, v, table, lengths):
-        parts, lse = partial_kernel(q.view(tasks, D), k, v, table, lengths, zeros)
+        dense_v = prepare_kernel(v, table, lengths)
+        parts, lse = partial_kernel(q.view(tasks, D), k, dense_v, table, lengths)
         return merge_kernel(parts, lse)
     return launch
 
