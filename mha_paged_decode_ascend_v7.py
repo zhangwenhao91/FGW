@@ -21,7 +21,10 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2):
+                 pipeline_stages=2, buffer_versions=2, q_resident=False, kv_versions=None):
+    kv_versions = buffer_versions if kv_versions is None else kv_versions
+    if kv_versions not in (1, 2, 3):
+        raise ValueError("K/V L1 versions must be 1, 2 or 3")
     if pipeline_stages not in (1, 2, 3) or buffer_versions not in (1, 2, 3):
         raise ValueError("Experimental pipeline stages and buffer versions must be 1, 2 or 3")
     if page_size <= 0 or pool_rows <= 0 or pool_rows % page_size or width <= 0:
@@ -202,16 +205,19 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             count = T.max(T.min(begin + per_split, tiles) - begin, 0)
             # Keep automatic stage assignment. Multi-version only the streamed
             # operands/results; online row statistics remain loop-carried state.
-            T.annotate_buffer_versions({K_l1: buffer_versions, V_l1: buffer_versions,
+            T.annotate_buffer_versions({K_l1: kv_versions, V_l1: kv_versions,
                                        qk: buffer_versions, pv: buffer_versions,
                                        scores: buffer_versions, probs: buffer_versions,
                                        current: buffer_versions, alpha: buffer_versions})
+            if q_resident:
+                T.copy(Q_l1, qa)
             for tile in T.Pipelined(count, num_stages=pipeline_stages):
                 logical = (begin + tile) * BC
                 physical = Table[b, logical // page_size] * page_size + logical % page_size
                 T.copy(K[physical:physical + BC, h, :], K_l1)
                 T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
-                T.copy(Q_l1, qa)
+                if not q_resident:
+                    T.copy(Q_l1, qa)
                 T.copy(K_l1, kb)
                 T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
                 T.dual_copy(qk, scores)
@@ -347,16 +353,19 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                 count = T.max(T.min(begin + per_split, tiles) - begin, 0)
                 # Keep automatic stage assignment. Multi-version only the streamed
                 # operands/results; online row statistics remain loop-carried state.
-                T.annotate_buffer_versions({K_l1: buffer_versions, V_l1: buffer_versions,
+                T.annotate_buffer_versions({K_l1: kv_versions, V_l1: kv_versions,
                                            qk: buffer_versions, pv: buffer_versions,
                                            scores: buffer_versions, probs: buffer_versions,
                                            current: buffer_versions, alpha: buffer_versions})
+                if q_resident:
+                    T.copy(Q_l1, qa)
                 for tile in T.Pipelined(count, num_stages=pipeline_stages):
                     logical = (begin + tile) * BC
                     physical = Table[b, logical // page_size] * page_size + logical % page_size
                     T.copy(K[physical:physical + BC, h, :], K_l1)
                     T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
-                    T.copy(Q_l1, qa)
+                    if not q_resident:
+                        T.copy(Q_l1, qa)
                     T.copy(K_l1, kb)
                     T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
                     T.dual_copy(qk, scores)
@@ -412,7 +421,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     return launch
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
-                     page_size, is_causal=False):
+                     page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
+                     q_resident=False, kv_versions=None):
     """Same public tensor contract as v0; metadata values must be valid."""
     if q.ndim != 4 or k_cache.ndim != 3:
         raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")
@@ -437,5 +447,6 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
     with torch.npu.device(q.device):
         kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
                               page_size, is_causal,
-                              "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index)
+                              "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index, pipeline_stages=pipeline_stages, buffer_versions=buffer_versions,
+                              q_resident=q_resident, kv_versions=kv_versions)
         return kernel(*inputs)

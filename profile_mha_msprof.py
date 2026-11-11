@@ -38,9 +38,13 @@ def main():
     parser.add_argument("--impl", choices=["v4", "v5", "v6", "v7"], default="v4")
     parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
     parser.add_argument("--buffer-versions", type=int, choices=[1, 2, 3], default=2)
+    parser.add_argument("--kv-versions", type=int, choices=[1, 2, 3], default=None)
+    parser.add_argument("--q-resident", action="store_true")
     parser.add_argument("--reference-chunk-size", type=int, default=128)
     parser.add_argument("--output", default="mha_msprof_report.json")
     args = parser.parse_args()
+    if (args.q_resident or args.kv_versions is not None) and args.impl != "v7":
+        parser.error("Overlap candidates currently require --impl v7")
     if min(args.rounds, args.repeat, args.warmup) < 1:
         parser.error("rounds, repeat, warmup must be positive")
     if args.reference_chunk_size < 1:
@@ -48,7 +52,9 @@ def main():
     report = {"status": "running", "settings": vars(args), "results": [],
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "baseline_config": {"q_tile": 128, "kv_tile": 128, "pipeline_stages": args.pipeline_stages,
-                                  "streamed_buffer_versions": args.buffer_versions},
+                                  "streamed_buffer_versions": args.buffer_versions,
+                                  "kv_l1_versions": args.kv_versions if args.kv_versions is not None else args.buffer_versions,
+                                  "q_resident_l0a": args.q_resident},
               "notes": ["Upstream msprof_detail flushes cache before each invocation (256 MiB buffer).",
                         "dur_ns is upstream profiler record aggregation per invocation, not Event elapsed median.",
                         "Pipe fields are ratios against their own AIC/AIV total cycles; they can overlap and must not be summed as a time breakdown.",
@@ -101,8 +107,9 @@ def main():
             table = torch.randperm(batch * width, generator=gen).reshape(batch, width).int()
             lengths = torch.full((batch,), length, dtype=torch.int32)
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
+            extra = {"q_resident": args.q_resident, "kv_versions": args.kv_versions} if args.impl == "v7" else {}
             program = build_kernel(batch, sq, heads, d, k.shape[0], width, page, causal, "bfloat16", args.device,
-                                   pipeline_stages=args.pipeline_stages, buffer_versions=args.buffer_versions)
+                                   pipeline_stages=args.pipeline_stages, buffer_versions=args.buffer_versions, **extra)
             got = program(*inputs).cpu()
             if sq > 512:
                 expected = chunked_cpu_reference(q, k, v, table, lengths, page, causal, args.reference_chunk_size)

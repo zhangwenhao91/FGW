@@ -68,6 +68,9 @@ def main():
     parser.add_argument("--cases", nargs="+", choices=sorted({c[0] for c in CASES + LONG_Q_CASES + LARGE_Q_CASES}))
     parser.add_argument("--reference-chunk-size", type=int, default=0,
                         help="Positive CPU query chunk size; zero uses original per-query reference")
+    parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
+    parser.add_argument("--kv-versions", type=int, choices=[1, 2, 3], default=None)
+    parser.add_argument("--q-resident", action="store_true")
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
     parser.add_argument("--reverse", action="store_true", help="Reverse case order for a repeat sweep")
@@ -83,6 +86,8 @@ def main():
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
     args = parser.parse_args()
+    if (args.q_resident or args.kv_versions is not None or args.pipeline_stages != 2) and args.impl != "v7":
+        parser.error("Overlap candidates require --impl v7")
     if args.output is None:
         args.output = "mha_mfu_report.json" if args.impl == "v0" else f"mha_mfu_{args.impl}_report.json"
         if args.suite != "standard":
@@ -177,6 +182,9 @@ def main():
                     row["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4", "v5", "v6", "v7") else args.impl
                     save()
                     extra = {"device_index": args.device} if args.impl != "v0" else {}
+                    if args.impl == "v7":
+                        extra.update(pipeline_stages=args.pipeline_stages, kv_versions=args.kv_versions,
+                                     q_resident=args.q_resident)
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,
                                           "float16" if dtype == torch.float16 else "bfloat16", **extra)
                     row["kernel_mode"] = getattr(kernel, "execution_mode", "legacy_or_fallback")

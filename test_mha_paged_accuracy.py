@@ -86,6 +86,9 @@ def main():
     parser.add_argument("--patterns", nargs="+", choices=["mixed", "full", "empty"])
     parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
+    parser.add_argument("--pipeline-stages", type=int, choices=[1, 2, 3], default=2)
+    parser.add_argument("--kv-versions", type=int, choices=[1, 2, 3], default=None)
+    parser.add_argument("--q-resident", action="store_true")
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 42, 2026])
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7"], default="v0")
@@ -94,6 +97,8 @@ def main():
     parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE],
                         help="Run only these named cases from the selected suite")
     args = parser.parse_args()
+    if (args.q_resident or args.kv_versions is not None or args.pipeline_stages != 2) and args.impl != "v7":
+        parser.error("Overlap candidates require --impl v7")
     if args.output is None:
         args.output = "mha_paged_accuracy_report.json" if args.impl == "v0" else f"mha_paged_accuracy_{args.impl}_report.json"
     cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED, "cube": CUBE}[args.suite]
@@ -114,6 +119,8 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "suite": args.suite, "seeds": args.seeds,
               "patterns": list(patterns), "causal_modes": list(causal_modes), "dtypes": args.dtypes,
+              "overlap_config": {"pipeline_stages": args.pipeline_stages, "kv_versions": args.kv_versions,
+                                 "q_resident": args.q_resident, "ub_versions": 2},
               "selected_cases": [c[0] for c in cases], "implementation": args.impl,
               "total_checks": total, "results": [], "logical_device": args.device,
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -132,6 +139,10 @@ def main():
         from mha_paged_decode_ascend_v0 import reference
         impl_module = importlib.import_module(f"mha_paged_decode_ascend_{args.impl}")
         mha_paged_decode = impl_module.mha_paged_decode
+        if args.impl == "v7":
+            import functools
+            mha_paged_decode = functools.partial(mha_paged_decode, pipeline_stages=args.pipeline_stages,
+                                                kv_versions=args.kv_versions, q_resident=args.q_resident)
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,

@@ -1,5 +1,18 @@
 # FGW
 
+## v7 Cube搬运交叠候选扫描
+
+保持同一v7计算/合并实现和原默认值，新增编译参数q_resident与kv_versions。对比base（原2/2）、resident（Q在KV循环外搬到L0A）、prefetch（三级流水、K/V L1三版本、其余缓冲区两版本）、combined（两者组合）。Q驻留会延长L0A生命周期，需要实际编译检查，不预先假定可行或加速。
+
+```bash
+git pull --ff-only
+bash run_mha_overlap_sweep.sh
+```
+
+每个候选先做30项非因果Cube精度（含Q尾块及单/多split）与6项单query因果精度，再测Q4096/Q32768的msprof及warm-cache Event MFU。两轮反转候选顺序，每份报告独立进程运行。失败时保存报告日志并继续下一候选，不会自动选取配置或改变默认值。
+
+请上传 `mha_overlap_*_run*_accuracy.json`、`*_causal.json`、`*_msprof.json`、`*_mfu.json` 和对应log（均以mha_overlap开头）。精度/编译失败后没有对应性能报告是预期行为；实际错误以日志为准。msprof与Event两种缓存/计时口径继续分开比较。
+
 ## v7：单split直接归一化、转换并输出
 
 Cube路径在编译期split=1时，直接在原计算kernel内归一化并转BF16，写最终连续[B,Q,H,D]，不生成Partial/LSE、不编译或启动merge。输出采用[B,Q,H*D]的等价视图，保留Q轴边界以正确处理Q尾块。类型转换复用FP32输出UB，沿用参考实现的顺序SIMD转换形式。split>1保留v6的批量合并，不按长短Q切换历史版本。支持范围仍为BF16/D128/整块KV，其他规格保持原回退。
