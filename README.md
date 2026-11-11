@@ -1,5 +1,20 @@
 # FGW
 
+## v4：真实Q分块及Q尾块，KV仍128对齐
+
+`mha_paged_decode_ascend_v4.py`将每请求、每head的真实query按128行分块，去掉v3的同一query复制。Q输入先转换到连续的[B,H,Sq,D]布局，让GM→L1尾块补齐沿最后两个轴工作；该转换的开销包含在完整计时中。最后一个Q块用参考PR的自动clamp/zero-pad路径，merge仅输出真实query行。
+
+仍仅BF16/D128/128对齐页和KV长度走Cube；不支持KV尾块。多query因果暂回退v2，单query因果支持。保留v3以便对比。
+
+```bash
+git pull --ff-only
+bash run_mha_v4.sh
+```
+
+先用Sq=4和129做2项冒烟，再对Sq=1/4/127/128/129/257做21项非因果回归和6项单query因果回归，均走Cube，包含3个随机种子。随后重新测v3并跑v4的20项性能比较（其中3项Cube、17项回退）。上传 `mha_cube_v4_smoke.json`、`mha_cube_v4_accuracy.json`、`mha_cube_v4_causal.json`、`mha_mfu_v3_recheck_report.json`、`mha_mfu_v4_report.json` 及对应日志。
+
+这是独立Q尾块实验，不能视作全形状540项覆盖；NPU编译与精度仍需验证。
+
 ## 当前v3仅验证完整KV块
 
 按最新约定，v3 Cube路径仅接受正数且128对齐的有效KV长度，已去掉尾块分支及V预处理，K/V直接按页表进行完整二维GM→L1搬运。BF16/D128、页大小128对齐的范围不变。多query因果模式会使各行可见长度出现非128对齐，因此暂回退v2；单query因果与非因果都可走Cube。直接调用build_kernel所得程序时，调用方也必须保证长度满足约束。
