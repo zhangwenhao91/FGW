@@ -1,5 +1,15 @@
 # FGW
 
+## 常驻28短Q控制组复测
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_persistent28_short
+```
+
+17个同grid控制组、2个长Q参照组，同进程12轮AB/BA交替计时，比较生成源码哈希。
+默认调度暂不切换。[说明及上传文件](docs/mha_persistent28_short.md)。
+
 ## 28-program常驻调度实验
 
 ```bash

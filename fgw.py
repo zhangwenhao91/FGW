@@ -16,6 +16,7 @@ COMMANDS = {
         "msprof": "benchmarks.mha.profile_mha_msprof",
         "paired": "benchmarks.mha.profile_q_resident_paired",
         "schedule-paired": "benchmarks.mha.profile_schedule_short_q",
+        "persistent-paired": "benchmarks.mha.profile_persistent_short_paired",
         "compare-pr-mfu": "benchmarks.mha.bench_v7_pr3896_mfu",
         "compare-ascendc": "benchmarks.mha.bench_v7_ascendc",
         "compare-msprof": "benchmarks.mha.profile_v7_ascendc_msprof",
