@@ -1,0 +1,1029 @@
+{
+  "status": "passed",
+  "settings": {
+    "q_lengths": [
+      1,
+      129,
+      4096
+    ],
+    "fia_api": "v2",
+    "split_comparison": false,
+    "bh": [
+      "2x8",
+      "1x1"
+    ],
+    "compare_persistent": true,
+    "compare_legacy": false,
+    "kv": 2048,
+    "rounds": 1,
+    "repeat": 11,
+    "warmup": 5,
+    "device": 0,
+    "peak_tflops": 378.0,
+    "list_only": false,
+    "output": "mha_persistent28_smoke.json"
+  },
+  "started_utc": "2026-11-12T16:17:43.623935+00:00",
+  "baseline": "Installed CANN FusedInferAttentionScore AscendC kernels via torch_npu; not a source build of current ops-transformer master",
+  "speedup_policy": "speedup_v7_over_ascendc = AscendC median latency / v7 median latency, paired by case and round; >1 means v7 faster",
+  "sources": [
+    "https://gitcode.com/cann/ops-transformer/tree/master/attention/fused_infer_attention_score",
+    "https://github.com/Ascend/op-plugin/blob/master/op_plugin/config/op_plugin_functions.yaml"
+  ],
+  "flops_policy": "4*B*H*Q*KV*128, noncausal useful QK+PV only; no padding/softmax FLOPs",
+  "timing": "Full native callable, warm-cache NPU Event median; one call per sample. Excludes compile, H2D, CPU reference, metadata/list preparation and zero-copy K/V view creation. Includes output allocation and stream-visible launch gaps. v7 includes Q conversion and merge; FIA uses original paged storage without gather, same BSND Q/O.",
+  "v7_variant_policy": "v7_manual_bf16=guarded current default; v7_legacy_bf16=old automatic strategy; v7_split1_bf16=explicit split1",
+  "comparison": "All cases match B/H/Q/KV, values, page table and per-request lengths. BF16 Q/K/V/O, D128, page128, noncausal, scale=128**-0.5, seed7. v7 manual/stages2/Q resident. FIA inner_precise=0, sparse_mode=0, no mask, no quantization. No source installation or environment modification.",
+  "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=cc08d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "cost_model_sha256": "036497d1b0a389396d5482d49a3af664c117955b1b810ae6524a36acf67fc8d9",
+  "cost_model_weights": [
+    0.6832090220301325,
+    1.1964970998229219,
+    4.3367013795716725,
+    0.1038025835315521,
+    0.015520174210146887,
+    0.0653446344626205
+  ],
+  "v7_sha256": "ffdd1c568612b072c4012bfe7b6ef95bf582c41816d2160292b0e7768bc75085",
+  "api_probe": {
+    "v2": {
+      "python_name": "npu_fused_infer_attention_score_v2",
+      "available": true,
+      "schemas": "{'': npu::npu_fused_infer_attention_score_v2(Tensor query, Tensor key, Tensor value, *, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_qlen=None, SymInt[]? actual_seq_kvlen=None, Tensor? block_table=None, Tensor? dequant_scale_query=None, Tensor? dequant_scale_key=None, Tensor? dequant_offset_key=None, Tensor? dequant_scale_value=None, Tensor? dequant_offset_value=None, Tensor? dequant_scale_key_rope=None, Tensor? quant_scale_out=None, Tensor? quant_offset_out=None, Tensor? quant_scale_p=None, Tensor? learnable_sink=None, int num_query_heads=1, int num_key_value_heads=0, float softmax_scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int sparse_mode=0, int block_size=0, int query_quant_mode=0, int key_quant_mode=0, int value_quant_mode=0, int inner_precise=0, bool return_softmax_lse=False, int? query_dtype=None, int? key_dtype=None, int? value_dtype=None, int? query_rope_dtype=None, int? key_rope_dtype=None, int? key_shared_prefix_dtype=None, int? value_shared_prefix_dtype=None, int? dequant_scale_query_dtype=None, int? dequant_scale_key_dtype=None, int? dequant_scale_value_dtype=None, int? dequant_scale_key_rope_dtype=None, int? out_dtype=None) -> (Tensor, Tensor), 'out': npu::npu_fused_infer_attention_score_v2.out(Tensor query, Tensor key, Tensor value, *, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_qlen=None, SymInt[]? actual_seq_kvlen=None, Tensor? block_table=None, Tensor? dequant_scale_query=None, Tensor? dequant_scale_key=None, Tensor? dequant_offset_key=None, Tensor? dequant_scale_value=None, Tensor? dequant_offset_value=None, Tensor? dequant_scale_key_rope=None, Tensor? quant_scale_out=None, Tensor? quant_offset_out=None, Tensor? quant_scale_p=None, Tensor? learnable_sink=None, int num_query_heads=1, int num_key_value_heads=0, float softmax_scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int sparse_mode=0, int block_size=0, int query_quant_mode=0, int key_quant_mode=0, int value_quant_mode=0, int inner_precise=0, bool return_softmax_lse=False, int? query_dtype=None, int? key_dtype=None, int? value_dtype=None, int? query_rope_dtype=None, int? key_rope_dtype=None, int? key_shared_prefix_dtype=None, int? value_shared_prefix_dtype=None, int? dequant_scale_query_dtype=None, int? dequant_scale_key_dtype=None, int? dequant_scale_value_dtype=None, int? dequant_scale_key_rope_dtype=None, int? out_dtype=None, Tensor? workspace=None, Tensor[] out) -> (Tensor, Tensor)}"
+    },
+    "v1": {
+      "python_name": "npu_fused_infer_attention_score",
+      "available": true,
+      "schemas": "{'': npu::npu_fused_infer_attention_score(Tensor query, Tensor key, Tensor value, *, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_lengths=None, SymInt[]? actual_seq_lengths_kv=None, Tensor? dequant_scale1=None, Tensor? quant_scale1=None, Tensor? dequant_scale2=None, Tensor? quant_scale2=None, Tensor? quant_offset2=None, Tensor? antiquant_scale=None, Tensor? antiquant_offset=None, Tensor? key_antiquant_scale=None, Tensor? key_antiquant_offset=None, Tensor? value_antiquant_scale=None, Tensor? value_antiquant_offset=None, Tensor? block_table=None, Tensor? query_padding_size=None, Tensor? kv_padding_size=None, Tensor? key_shared_prefix=None, Tensor? value_shared_prefix=None, SymInt[]? actual_shared_prefix_len=None, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? key_rope_antiquant_scale=None, int num_heads=1, float scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int num_key_value_heads=0, int sparse_mode=0, int inner_precise=0, int block_size=0, int antiquant_mode=0, int key_antiquant_mode=0, int value_antiquant_mode=0, bool softmax_lse_flag=False) -> (Tensor, Tensor), 'out': npu::npu_fused_infer_attention_score.out(Tensor query, Tensor key, Tensor value, *, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_lengths=None, SymInt[]? actual_seq_lengths_kv=None, Tensor? dequant_scale1=None, Tensor? quant_scale1=None, Tensor? dequant_scale2=None, Tensor? quant_scale2=None, Tensor? quant_offset2=None, Tensor? antiquant_scale=None, Tensor? antiquant_offset=None, Tensor? key_antiquant_scale=None, Tensor? key_antiquant_offset=None, Tensor? value_antiquant_scale=None, Tensor? value_antiquant_offset=None, Tensor? block_table=None, Tensor? query_padding_size=None, Tensor? kv_padding_size=None, Tensor? key_shared_prefix=None, Tensor? value_shared_prefix=None, SymInt[]? actual_shared_prefix_len=None, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? key_rope_antiquant_scale=None, int num_heads=1, float scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int num_key_value_heads=0, int sparse_mode=0, int inner_precise=0, int block_size=0, int antiquant_mode=0, int key_antiquant_mode=0, int value_antiquant_mode=0, bool softmax_lse_flag=False, Tensor? workspace=None, Tensor[] out) -> (Tensor, Tensor)}"
+    }
+  },
+  "selected_apis": [
+    "v2"
+  ],
+  "cann_environment": {
+    "ASCEND_HOME_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+    "ASCEND_TOOLKIT_HOME": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+    "ASCEND_OPP_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp",
+    "ASCEND_RT_VISIBLE_DEVICES": null
+  },
+  "comparisons": [
+    {
+      "track": "batch2_head8",
+      "B": 2,
+      "H": 8,
+      "Q": 1,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_manual_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 16,
+        "compute_grid": 16,
+        "compute_work": 16,
+        "persistent_programs": null
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 23.57799932360649,
+      "ascendc_median_us": 38.474999368190765,
+      "speedup_v7_over_ascendc": 1.631817816266933,
+      "v7_latency_change_percent": -38.718649224723265
+    },
+    {
+      "track": "batch2_head8",
+      "B": 2,
+      "H": 8,
+      "Q": 1,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_persistent28_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 16,
+        "compute_grid": 16,
+        "compute_work": 16,
+        "persistent_programs": 28
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 23.87700043618679,
+      "ascendc_median_us": 38.474999368190765,
+      "speedup_v7_over_ascendc": 1.611383283717664,
+      "v7_latency_change_percent": -37.9415183150669
+    },
+    {
+      "track": "batch2_head8",
+      "B": 2,
+      "H": 8,
+      "Q": 129,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_manual_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 32,
+        "compute_work": 32,
+        "persistent_programs": null
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 60.026999562978745,
+      "ascendc_median_us": 71.1819976568222,
+      "speedup_v7_over_ascendc": 1.1858330113958124,
+      "v7_latency_change_percent": -15.671094463551272
+    },
+    {
+      "track": "batch2_head8",
+      "B": 2,
+      "H": 8,
+      "Q": 129,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_persistent28_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 28,
+        "compute_work": 32,
+        "persistent_programs": 28
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 58.37700143456459,
+      "ascendc_median_us": 71.1819976568222,
+      "speedup_v7_over_ascendc": 1.2193500164034783,
+      "v7_latency_change_percent": -17.989093652572365
+    },
+    {
+      "track": "batch2_head8",
+      "B": 2,
+      "H": 8,
+      "Q": 4096,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_manual_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 512,
+        "compute_grid": 512,
+        "compute_work": 512,
+        "persistent_programs": null
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 334.2680037021637,
+      "ascendc_median_us": 260.0730061531067,
+      "speedup_v7_over_ascendc": 0.778037392968172,
+      "v7_latency_change_percent": 28.52852691116199
+    },
+    {
+      "track": "batch2_head8",
+      "B": 2,
+      "H": 8,
+      "Q": 4096,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_persistent28_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 512,
+        "compute_grid": 28,
+        "compute_work": 512,
+        "persistent_programs": 28
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 289.17598724365234,
+      "ascendc_median_us": 260.0730061531067,
+      "speedup_v7_over_ascendc": 0.899358928907108,
+      "v7_latency_change_percent": 11.190312105444944
+    },
+    {
+      "track": "batch1_head1",
+      "B": 1,
+      "H": 1,
+      "Q": 1,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_manual_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 8,
+        "query_tile_tasks": 1,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": null
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 33.789001405239105,
+      "ascendc_median_us": 42.63899847865105,
+      "speedup_v7_over_ascendc": 1.2619194621134828,
+      "v7_latency_change_percent": -20.75564011627302
+    },
+    {
+      "track": "batch1_head1",
+      "B": 1,
+      "H": 1,
+      "Q": 1,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_persistent28_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 8,
+        "query_tile_tasks": 1,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": 28
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 34.61899980902672,
+      "ascendc_median_us": 42.63899847865105,
+      "speedup_v7_over_ascendc": 1.2316646556476527,
+      "v7_latency_change_percent": -18.809069058317274
+    },
+    {
+      "track": "batch1_head1",
+      "B": 1,
+      "H": 1,
+      "Q": 129,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_manual_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 4,
+        "query_tile_tasks": 2,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": null
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 33.03899988532066,
+      "ascendc_median_us": 46.08500003814697,
+      "speedup_v7_over_ascendc": 1.3948666787163462,
+      "v7_latency_change_percent": -28.308560577253882
+    },
+    {
+      "track": "batch1_head1",
+      "B": 1,
+      "H": 1,
+      "Q": 129,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_persistent28_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 4,
+        "query_tile_tasks": 2,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": 28
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 33.25999900698662,
+      "ascendc_median_us": 46.08500003814697,
+      "speedup_v7_over_ascendc": 1.3855983588113254,
+      "v7_latency_change_percent": -27.829013823466266
+    },
+    {
+      "track": "batch1_head1",
+      "B": 1,
+      "H": 1,
+      "Q": 4096,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_manual_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 32,
+        "compute_work": 32,
+        "persistent_programs": null
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 45.4769991338253,
+      "ascendc_median_us": 73.31199944019318,
+      "speedup_v7_over_ascendc": 1.61206765698101,
+      "v7_latency_change_percent": -37.967864086254046
+    },
+    {
+      "track": "batch1_head1",
+      "B": 1,
+      "H": 1,
+      "Q": 4096,
+      "KV": 2048,
+      "round": 1,
+      "candidate": "v7_persistent28_bf16",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 28,
+        "compute_work": 32,
+        "persistent_programs": 28
+      },
+      "baseline": "ascendc_fia_v2",
+      "v7_median_us": 43.46900060772896,
+      "ascendc_median_us": 73.31199944019318,
+      "speedup_v7_over_ascendc": 1.6865351955471002,
+      "v7_latency_change_percent": -40.706840708675095
+    }
+  ],
+  "persistent_comparisons": [
+    {
+      "track": "batch2_head8",
+      "Q": 1,
+      "KV": 2048,
+      "round": 1,
+      "normal_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 16,
+        "compute_grid": 16,
+        "compute_work": 16,
+        "persistent_programs": null
+      },
+      "persistent_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 16,
+        "compute_grid": 16,
+        "compute_work": 16,
+        "persistent_programs": 28
+      },
+      "normal_median_us": 23.57799932360649,
+      "persistent_median_us": 23.87700043618679,
+      "speedup_persistent_over_normal": 0.9874774424291944
+    },
+    {
+      "track": "batch2_head8",
+      "Q": 129,
+      "KV": 2048,
+      "round": 1,
+      "normal_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 32,
+        "compute_work": 32,
+        "persistent_programs": null
+      },
+      "persistent_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 28,
+        "compute_work": 32,
+        "persistent_programs": 28
+      },
+      "normal_median_us": 60.026999562978745,
+      "persistent_median_us": 58.37700143456459,
+      "speedup_persistent_over_normal": 1.0282645234915613
+    },
+    {
+      "track": "batch2_head8",
+      "Q": 4096,
+      "KV": 2048,
+      "round": 1,
+      "normal_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 512,
+        "compute_grid": 512,
+        "compute_work": 512,
+        "persistent_programs": null
+      },
+      "persistent_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 512,
+        "compute_grid": 28,
+        "compute_work": 512,
+        "persistent_programs": 28
+      },
+      "normal_median_us": 334.2680037021637,
+      "persistent_median_us": 289.17598724365234,
+      "speedup_persistent_over_normal": 1.1559327829683104
+    },
+    {
+      "track": "batch1_head1",
+      "Q": 1,
+      "KV": 2048,
+      "round": 1,
+      "normal_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 8,
+        "query_tile_tasks": 1,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": null
+      },
+      "persistent_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 8,
+        "query_tile_tasks": 1,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": 28
+      },
+      "normal_median_us": 33.789001405239105,
+      "persistent_median_us": 34.61899980902672,
+      "speedup_persistent_over_normal": 0.9760247722820925
+    },
+    {
+      "track": "batch1_head1",
+      "Q": 129,
+      "KV": 2048,
+      "round": 1,
+      "normal_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 4,
+        "query_tile_tasks": 2,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": null
+      },
+      "persistent_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 4,
+        "query_tile_tasks": 2,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": 28
+      },
+      "normal_median_us": 33.03899988532066,
+      "persistent_median_us": 33.25999900698662,
+      "speedup_persistent_over_normal": 0.9933554080497858
+    },
+    {
+      "track": "batch1_head1",
+      "Q": 4096,
+      "KV": 2048,
+      "round": 1,
+      "normal_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 32,
+        "compute_work": 32,
+        "persistent_programs": null
+      },
+      "persistent_geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 28,
+        "compute_work": 32,
+        "persistent_programs": 28
+      },
+      "normal_median_us": 45.4769991338253,
+      "persistent_median_us": 43.46900060772896,
+      "speedup_persistent_over_normal": 1.0461938047349382
+    }
+  ],
+  "persistent_generated_source": "mha_persistent28_smoke_persistent_device.cpp",
+  "results": [
+    {
+      "track": "batch2_head8",
+      "variant": "v7_manual_bf16",
+      "B": 2,
+      "H": 8,
+      "Q": 1,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.00048828125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "direct_single_split",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 16,
+        "compute_grid": 16,
+        "compute_work": 16,
+        "persistent_programs": null
+      },
+      "median_us": 23.57799932360649,
+      "effective_flops": 16777216,
+      "effective_tflops": 0.7115623242554981,
+      "mfu_percent": 0.18824400112579318
+    },
+    {
+      "track": "batch2_head8",
+      "variant": "ascendc_fia_v2",
+      "B": 2,
+      "H": 8,
+      "Q": 1,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.00048828125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "installed_cann_fused_infer_paged",
+      "geometry": null,
+      "median_us": 38.474999368190765,
+      "effective_flops": 16777216,
+      "effective_tflops": 0.4360550039117239,
+      "mfu_percent": 0.1153584666433132
+    },
+    {
+      "track": "batch2_head8",
+      "variant": "v7_persistent28_bf16",
+      "B": 2,
+      "H": 8,
+      "Q": 1,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.00048828125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "direct_single_split",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 16,
+        "compute_grid": 16,
+        "compute_work": 16,
+        "persistent_programs": 28
+      },
+      "median_us": 23.87700043618679,
+      "effective_flops": 16777216,
+      "effective_tflops": 0.7026517440847925,
+      "mfu_percent": 0.18588670478433664
+    },
+    {
+      "track": "batch2_head8",
+      "variant": "v7_manual_bf16",
+      "B": 2,
+      "H": 8,
+      "Q": 129,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.0009765625,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "direct_single_split",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 32,
+        "compute_work": 32,
+        "persistent_programs": null
+      },
+      "median_us": 60.026999562978745,
+      "effective_flops": 2164260864,
+      "effective_tflops": 36.05479000710862,
+      "mfu_percent": 9.538304234684821
+    },
+    {
+      "track": "batch2_head8",
+      "variant": "ascendc_fia_v2",
+      "B": 2,
+      "H": 8,
+      "Q": 129,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.0009765625,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "installed_cann_fused_infer_paged",
+      "geometry": null,
+      "median_us": 71.1819976568222,
+      "effective_flops": 2164260864,
+      "effective_tflops": 30.40460980645959,
+      "mfu_percent": 8.043547567846453
+    },
+    {
+      "track": "batch2_head8",
+      "variant": "v7_persistent28_bf16",
+      "B": 2,
+      "H": 8,
+      "Q": 129,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.0009765625,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "direct_single_split",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 28,
+        "compute_work": 32,
+        "persistent_programs": 28
+      },
+      "median_us": 58.37700143456459,
+      "effective_flops": 2164260864,
+      "effective_tflops": 37.07386146624786,
+      "mfu_percent": 9.80789985879573
+    },
+    {
+      "track": "batch2_head8",
+      "variant": "v7_manual_bf16",
+      "B": 2,
+      "H": 8,
+      "Q": 4096,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.001953125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "direct_single_split",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 512,
+        "compute_grid": 512,
+        "compute_work": 512,
+        "persistent_programs": null
+      },
+      "median_us": 334.2680037021637,
+      "effective_flops": 68719476736,
+      "effective_tflops": 205.58197606382265,
+      "mfu_percent": 54.38676615445044
+    },
+    {
+      "track": "batch2_head8",
+      "variant": "ascendc_fia_v2",
+      "B": 2,
+      "H": 8,
+      "Q": 4096,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.001953125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "installed_cann_fused_infer_paged",
+      "geometry": null,
+      "median_us": 260.0730061531067,
+      "effective_flops": 68719476736,
+      "effective_tflops": 264.23148542968886,
+      "mfu_percent": 69.90250937293357
+    },
+    {
+      "track": "batch2_head8",
+      "variant": "v7_persistent28_bf16",
+      "B": 2,
+      "H": 8,
+      "Q": 4096,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.001953125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "direct_single_split",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 512,
+        "compute_grid": 28,
+        "compute_work": 512,
+        "persistent_programs": 28
+      },
+      "median_us": 289.17598724365234,
+      "effective_flops": 68719476736,
+      "effective_tflops": 237.63894571957908,
+      "mfu_percent": 62.867445957560605
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "v7_manual_bf16",
+      "B": 1,
+      "H": 1,
+      "Q": 1,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.00048828125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "split_and_merge",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 8,
+        "query_tile_tasks": 1,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": null
+      },
+      "median_us": 33.789001405239105,
+      "effective_flops": 1048576,
+      "effective_tflops": 0.031033056805206866,
+      "mfu_percent": 0.008209803387620864
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "ascendc_fia_v2",
+      "B": 1,
+      "H": 1,
+      "Q": 1,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.00048828125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "installed_cann_fused_infer_paged",
+      "geometry": null,
+      "median_us": 42.63899847865105,
+      "effective_flops": 1048576,
+      "effective_tflops": 0.024591947217639562,
+      "mfu_percent": 0.0065058061422326886
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "v7_persistent28_bf16",
+      "B": 1,
+      "H": 1,
+      "Q": 1,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.00048828125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "split_and_merge",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 8,
+        "query_tile_tasks": 1,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": 28
+      },
+      "median_us": 34.61899980902672,
+      "effective_flops": 1048576,
+      "effective_tflops": 0.030289032201519274,
+      "mfu_percent": 0.008012971481883405
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "v7_manual_bf16",
+      "B": 1,
+      "H": 1,
+      "Q": 129,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.0009765625,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "split_and_merge",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 4,
+        "query_tile_tasks": 2,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": null
+      },
+      "median_us": 33.03899988532066,
+      "effective_flops": 135266304,
+      "effective_tflops": 4.09414039376232,
+      "mfu_percent": 1.083105924275746
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "ascendc_fia_v2",
+      "B": 1,
+      "H": 1,
+      "Q": 129,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.00048828125,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "installed_cann_fused_infer_paged",
+      "geometry": null,
+      "median_us": 46.08500003814697,
+      "effective_flops": 135266304,
+      "effective_tflops": 2.9351481802762933,
+      "mfu_percent": 0.7764942275863209
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "v7_persistent28_bf16",
+      "B": 1,
+      "H": 1,
+      "Q": 129,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.0009765625,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "split_and_merge",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 4,
+        "query_tile_tasks": 2,
+        "compute_grid": 8,
+        "compute_work": 8,
+        "persistent_programs": 28
+      },
+      "median_us": 33.25999900698662,
+      "effective_flops": 135266304,
+      "effective_tflops": 4.066936501458881,
+      "mfu_percent": 1.0759091273700743
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "v7_manual_bf16",
+      "B": 1,
+      "H": 1,
+      "Q": 4096,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.0009765625,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "direct_single_split",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 32,
+        "compute_work": 32,
+        "persistent_programs": null
+      },
+      "median_us": 45.4769991338253,
+      "effective_flops": 4294967296,
+      "effective_tflops": 94.44262765362302,
+      "mfu_percent": 24.9848221305881
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "ascendc_fia_v2",
+      "B": 1,
+      "H": 1,
+      "Q": 4096,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.0009765625,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "installed_cann_fused_infer_paged",
+      "geometry": null,
+      "median_us": 73.31199944019318,
+      "effective_flops": 4294967296,
+      "effective_tflops": 58.584779146608454,
+      "mfu_percent": 15.498618821854087
+    },
+    {
+      "track": "batch1_head1",
+      "variant": "v7_persistent28_bf16",
+      "B": 1,
+      "H": 1,
+      "Q": 4096,
+      "KV": 2048,
+      "D": 128,
+      "round": 1,
+      "status": "passed",
+      "correctness": "passed",
+      "accuracy": {
+        "max_abs_error": 0.0009765625,
+        "rtol": 0.01,
+        "atol": 0.004
+      },
+      "input_dtype": "bfloat16",
+      "output_dtype": "bfloat16",
+      "kernel_mode": "direct_single_split",
+      "geometry": {
+        "split_policy": "cost_model",
+        "num_splits": 1,
+        "query_tile_tasks": 32,
+        "compute_grid": 28,
+        "compute_work": 32,
+        "persistent_programs": 28
+      },
+      "median_us": 43.46900060772896,
+      "effective_flops": 4294967296,
+      "effective_tflops": 98.80529195410897,
+      "mfu_percent": 26.13896612542565
+    }
+  ]
+}
