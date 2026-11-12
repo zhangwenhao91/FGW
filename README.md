@@ -1,5 +1,15 @@
 # FGW
 
+## 通用 Cube / v2 Vector 性能对照
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_cube_vector
+```
+
+21 个形状 × FP16/BF16，先精度再 6 轮交替计时。
+[范围、计时口径及上传文件](docs/mha_cube_vector.md)。
+
 ## 通用 Cube 功能扩展候选
 
 ```bash
