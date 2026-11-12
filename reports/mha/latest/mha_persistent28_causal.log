@@ -1,0 +1,41 @@
+2026-11-12 16:16:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:17:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 16:17:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+[1/9] cube_decode512 seed=7 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[2/9] cube_decode512 seed=42 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+[3/9] cube_decode512 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.0009765625
+2026-11-12 16:17:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:17:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 16:17:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+[4/9] cube_decode2048 seed=7 torch.bfloat16 causal=True full: passed max_error=0.00048828125
+[5/9] cube_decode2048 seed=42 torch.bfloat16 causal=True full: passed max_error=0.00048828125
+[6/9] cube_decode2048 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.00048828125
+2026-11-12 16:17:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:17:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:17:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:17:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:17:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:17:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:17:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:17:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:17:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+[7/9] cube_direct_q1 seed=7 torch.bfloat16 causal=True full: passed max_error=0.00390625
+[8/9] cube_direct_q1 seed=42 torch.bfloat16 causal=True full: passed max_error=0.001953125
+[9/9] cube_direct_q1 seed=2026 torch.bfloat16 causal=True full: passed max_error=0.00390625
+PASSED: 9/9 passed; report=mha_persistent28_causal.json

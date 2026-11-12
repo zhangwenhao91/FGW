@@ -1,0 +1,46 @@
+EVENT round=1 v7_full: 333.165 us
+EVENT round=1 v7_direct: 325.546 us
+EVENT round=1 ascendc_full: 259.358 us
+EVENT round=1 v7_persistent_full: 289.214 us
+EVENT round=1 v7_persistent_direct: 278.426 us
+EVENT round=2 v7_full: 336.646 us
+EVENT round=2 v7_direct: 326.851 us
+EVENT round=2 ascendc_full: 260.748 us
+EVENT round=2 v7_persistent_full: 289.306 us
+EVENT round=2 v7_persistent_direct: 279.285 us
+EVENT round=3 v7_full: 363.376 us
+EVENT round=3 v7_direct: 351.938 us
+EVENT round=3 ascendc_full: 273.531 us
+EVENT round=3 v7_persistent_full: 306.024 us
+EVENT round=3 v7_persistent_direct: 296.352 us
+MSPROF round=1 v7_full starting
+MSPROF round=1 v7_full: KernelProfile(330.7us, mad=75.4%, aic_mte2=61.6%, aic_mte1=39.1%, aic_fix=64.7%, aiv_vec=71.6%, aiv_mte2=3.3%, aiv_mte3=37.8%, aic_cycles=12162114, aiv_cycles=28708731)
+MSPROF round=1 v7_direct starting
+MSPROF round=1 v7_direct: KernelProfile(322.3us, mad=73.8%, aic_mte2=62.4%, aic_mte1=38.6%, aic_fix=63.3%, aiv_vec=73.4%, aiv_mte3=37.9%, aic_cycles=12419555, aiv_cycles=28016155)
+MSPROF round=1 ascendc_full starting
+MSPROF round=1 ascendc_full: KernelProfile(226.9us, mad=87.2%, aic_mte2=84.8%, aic_mte1=55.4%, aic_fix=84.9%, aiv_vec=84.5%, aiv_mte2=1.1%, aiv_mte3=50.5%, aic_cycles=10123540, aiv_cycles=20855888)
+MSPROF round=1 v7_persistent_full starting
+MSPROF round=1 v7_persistent_full: KernelProfile(282.7us, mad=77.5%, aic_mte2=65.5%, aic_mte1=40.3%, aic_fix=71.7%, aiv_vec=82.2%, aiv_mte2=3.8%, aiv_mte3=44.6%, aic_cycles=11811085, aiv_cycles=24995554)
+MSPROF round=1 v7_persistent_direct starting
+MSPROF round=1 v7_persistent_direct: KernelProfile(269.5us, mad=77.2%, aic_mte2=66.3%, aic_mte1=40.1%, aic_fix=71.5%, aiv_vec=85.9%, aiv_mte3=45.9%, aic_cycles=11861901, aiv_cycles=23897246)
+MSPROF round=2 v7_direct starting
+MSPROF round=2 v7_direct: KernelProfile(322.4us, mad=73.8%, aic_mte2=62.4%, aic_mte1=38.6%, aic_fix=63.3%, aiv_vec=73.4%, aiv_mte3=37.9%, aic_cycles=12418416, aiv_cycles=28014537)
+MSPROF round=2 ascendc_full starting
+MSPROF round=2 ascendc_full: KernelProfile(228.7us, mad=87.1%, aic_mte2=84.7%, aic_mte1=55.4%, aic_fix=84.9%, aiv_vec=84.3%, aiv_mte2=1.1%, aiv_mte3=50.3%, aic_cycles=10126057, aiv_cycles=20918755)
+MSPROF round=2 v7_persistent_full starting
+MSPROF round=2 v7_persistent_full: KernelProfile(283.1us, mad=77.5%, aic_mte2=65.5%, aic_mte1=40.3%, aic_fix=71.7%, aiv_vec=82.1%, aiv_mte2=3.8%, aiv_mte3=44.6%, aic_cycles=11813594, aiv_cycles=25012352)
+MSPROF round=2 v7_persistent_direct starting
+MSPROF round=2 v7_persistent_direct: KernelProfile(269.7us, mad=77.2%, aic_mte2=66.3%, aic_mte1=40.1%, aic_fix=71.5%, aiv_vec=85.9%, aiv_mte3=45.9%, aic_cycles=11861717, aiv_cycles=23896875)
+MSPROF round=2 v7_full starting
+MSPROF round=2 v7_full: KernelProfile(330.6us, mad=75.4%, aic_mte2=61.6%, aic_mte1=39.1%, aic_fix=64.7%, aiv_vec=71.6%, aiv_mte2=3.3%, aiv_mte3=37.8%, aic_cycles=12160875, aiv_cycles=28698438)
+MSPROF round=3 ascendc_full starting
+MSPROF round=3 ascendc_full: KernelProfile(227.0us, mad=87.2%, aic_mte2=84.8%, aic_mte1=55.3%, aic_fix=84.9%, aiv_vec=84.5%, aiv_mte2=1.1%, aiv_mte3=50.5%, aic_cycles=10124787, aiv_cycles=20861240)
+MSPROF round=3 v7_persistent_full starting
+MSPROF round=3 v7_persistent_full: KernelProfile(282.8us, mad=77.5%, aic_mte2=65.6%, aic_mte1=40.3%, aic_fix=71.7%, aiv_vec=82.2%, aiv_mte2=3.8%, aiv_mte3=44.6%, aic_cycles=11812612, aiv_cycles=24998251)
+MSPROF round=3 v7_persistent_direct starting
+MSPROF round=3 v7_persistent_direct: KernelProfile(269.8us, mad=77.1%, aic_mte2=66.1%, aic_mte1=40.1%, aic_fix=71.5%, aiv_vec=85.9%, aiv_mte3=45.9%, aic_cycles=11867268, aiv_cycles=23907956)
+MSPROF round=3 v7_full starting
+MSPROF round=3 v7_full: KernelProfile(330.5us, mad=75.4%, aic_mte2=61.6%, aic_mte1=39.1%, aic_fix=64.7%, aiv_vec=71.7%, aiv_mte2=3.3%, aiv_mte3=37.8%, aic_cycles=12155508, aiv_cycles=28688523)
+MSPROF round=3 v7_direct starting
+MSPROF round=3 v7_direct: KernelProfile(322.5us, mad=73.8%, aic_mte2=62.4%, aic_mte1=38.5%, aic_fix=63.3%, aiv_vec=73.4%, aiv_mte3=37.9%, aic_cycles=12421659, aiv_cycles=28021021)
+passed: mha_persistent28_msprof.json

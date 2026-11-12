@@ -1,0 +1,728 @@
+FIA API availability={'v2': True, 'v1': True}; selected=['v2']
+Preparing batch2_head8 B=2 H=8 Q=1 KV=8192
+2026-11-12 16:21:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:06] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:21:09  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=1 v7_manual_bf16 round=1: 60.920 us MFU=0.2914%
+batch2_head8 Q=1 ascendc_fia_v2 round=1: 65.799 us MFU=0.2698%
+batch2_head8 Q=1 v7_persistent28_bf16 round=1: 60.774 us MFU=0.2921%
+COMPARE batch2_head8 Q=1 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0801x
+COMPARE batch2_head8 Q=1 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0827x
+batch2_head8 Q=1 v7_persistent28_bf16 round=2: 60.303 us MFU=0.2944%
+batch2_head8 Q=1 ascendc_fia_v2 round=2: 65.808 us MFU=0.2698%
+batch2_head8 Q=1 v7_manual_bf16 round=2: 60.349 us MFU=0.2942%
+COMPARE batch2_head8 Q=1 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0905x
+COMPARE batch2_head8 Q=1 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0913x
+batch2_head8 Q=1 v7_manual_bf16 round=3: 60.448 us MFU=0.2937%
+batch2_head8 Q=1 ascendc_fia_v2 round=3: 65.723 us MFU=0.2701%
+batch2_head8 Q=1 v7_persistent28_bf16 round=3: 60.223 us MFU=0.2948%
+COMPARE batch2_head8 Q=1 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0873x
+COMPARE batch2_head8 Q=1 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0913x
+batch2_head8 Q=1 v7_persistent28_bf16 round=4: 60.134 us MFU=0.2952%
+batch2_head8 Q=1 ascendc_fia_v2 round=4: 65.860 us MFU=0.2696%
+batch2_head8 Q=1 v7_manual_bf16 round=4: 60.436 us MFU=0.2938%
+COMPARE batch2_head8 Q=1 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0897x
+COMPARE batch2_head8 Q=1 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0952x
+Preparing batch2_head8 B=2 H=8 Q=16 KV=8192
+2026-11-12 16:21:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:21:14  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=16 v7_manual_bf16 round=1: 72.876 us MFU=3.8978%
+batch2_head8 Q=16 ascendc_fia_v2 round=1: 65.766 us MFU=4.3192%
+batch2_head8 Q=16 v7_persistent28_bf16 round=1: 72.884 us MFU=3.8974%
+COMPARE batch2_head8 Q=16 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9024x
+COMPARE batch2_head8 Q=16 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9023x
+batch2_head8 Q=16 v7_persistent28_bf16 round=2: 72.848 us MFU=3.8993%
+batch2_head8 Q=16 ascendc_fia_v2 round=2: 65.459 us MFU=4.3395%
+batch2_head8 Q=16 v7_manual_bf16 round=2: 72.299 us MFU=3.9289%
+COMPARE batch2_head8 Q=16 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9054x
+COMPARE batch2_head8 Q=16 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.8986x
+batch2_head8 Q=16 v7_manual_bf16 round=3: 72.323 us MFU=3.9276%
+batch2_head8 Q=16 ascendc_fia_v2 round=3: 65.296 us MFU=4.3503%
+batch2_head8 Q=16 v7_persistent28_bf16 round=3: 72.392 us MFU=3.9239%
+COMPARE batch2_head8 Q=16 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9028x
+COMPARE batch2_head8 Q=16 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9020x
+batch2_head8 Q=16 v7_persistent28_bf16 round=4: 72.023 us MFU=3.9440%
+batch2_head8 Q=16 ascendc_fia_v2 round=4: 65.146 us MFU=4.3603%
+batch2_head8 Q=16 v7_manual_bf16 round=4: 71.551 us MFU=3.9700%
+COMPARE batch2_head8 Q=16 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9105x
+COMPARE batch2_head8 Q=16 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9045x
+Preparing batch2_head8 B=2 H=8 Q=128 KV=8192
+2026-11-12 16:21:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:21:18  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=128 v7_manual_bf16 round=1: 72.660 us MFU=31.2754%
+batch2_head8 Q=128 ascendc_fia_v2 round=1: 81.636 us MFU=27.8366%
+batch2_head8 Q=128 v7_persistent28_bf16 round=1: 72.327 us MFU=31.4194%
+COMPARE batch2_head8 Q=128 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1235x
+COMPARE batch2_head8 Q=128 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.1287x
+batch2_head8 Q=128 v7_persistent28_bf16 round=2: 72.224 us MFU=31.4642%
+batch2_head8 Q=128 ascendc_fia_v2 round=2: 81.444 us MFU=27.9022%
+batch2_head8 Q=128 v7_manual_bf16 round=2: 72.233 us MFU=31.4603%
+COMPARE batch2_head8 Q=128 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1275x
+COMPARE batch2_head8 Q=128 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.1277x
+batch2_head8 Q=128 v7_manual_bf16 round=3: 72.400 us MFU=31.3877%
+batch2_head8 Q=128 ascendc_fia_v2 round=3: 81.374 us MFU=27.9262%
+batch2_head8 Q=128 v7_persistent28_bf16 round=3: 72.202 us MFU=31.4738%
+COMPARE batch2_head8 Q=128 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1240x
+COMPARE batch2_head8 Q=128 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.1270x
+batch2_head8 Q=128 v7_persistent28_bf16 round=4: 76.297 us MFU=29.7845%
+batch2_head8 Q=128 ascendc_fia_v2 round=4: 89.145 us MFU=25.4918%
+batch2_head8 Q=128 v7_manual_bf16 round=4: 76.782 us MFU=29.5964%
+COMPARE batch2_head8 Q=128 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1610x
+COMPARE batch2_head8 Q=128 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.1684x
+Preparing batch2_head8 B=2 H=8 Q=129 KV=8192
+2026-11-12 16:21:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:20] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:20] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:20] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:20] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:20] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:20] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:20] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:21:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=129 v7_manual_bf16 round=1: 121.272 us MFU=18.8850%
+batch2_head8 Q=129 ascendc_fia_v2 round=1: 125.828 us MFU=18.2012%
+batch2_head8 Q=129 v7_persistent28_bf16 round=1: 119.683 us MFU=19.1357%
+COMPARE batch2_head8 Q=129 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0376x
+COMPARE batch2_head8 Q=129 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0513x
+batch2_head8 Q=129 v7_persistent28_bf16 round=2: 119.826 us MFU=19.1129%
+batch2_head8 Q=129 ascendc_fia_v2 round=2: 125.633 us MFU=18.2295%
+batch2_head8 Q=129 v7_manual_bf16 round=2: 120.880 us MFU=18.9463%
+COMPARE batch2_head8 Q=129 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0393x
+COMPARE batch2_head8 Q=129 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0485x
+batch2_head8 Q=129 v7_manual_bf16 round=3: 120.712 us MFU=18.9726%
+batch2_head8 Q=129 ascendc_fia_v2 round=3: 125.011 us MFU=18.3202%
+batch2_head8 Q=129 v7_persistent28_bf16 round=3: 119.465 us MFU=19.1707%
+COMPARE batch2_head8 Q=129 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0356x
+COMPARE batch2_head8 Q=129 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0464x
+batch2_head8 Q=129 v7_persistent28_bf16 round=4: 119.210 us MFU=19.2117%
+batch2_head8 Q=129 ascendc_fia_v2 round=4: 125.242 us MFU=18.2864%
+batch2_head8 Q=129 v7_manual_bf16 round=4: 120.457 us MFU=19.0128%
+COMPARE batch2_head8 Q=129 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0397x
+COMPARE batch2_head8 Q=129 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0506x
+Preparing batch2_head8 B=2 H=8 Q=512 KV=8192
+2026-11-12 16:21:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:31] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:31] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:31] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:31] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:31] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:31] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:31] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:21:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=512 v7_manual_bf16 round=1: 170.235 us MFU=53.3961%
+batch2_head8 Q=512 ascendc_fia_v2 round=1: 160.543 us MFU=56.6196%
+batch2_head8 Q=512 v7_persistent28_bf16 round=1: 165.835 us MFU=54.8128%
+COMPARE batch2_head8 Q=512 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9431x
+COMPARE batch2_head8 Q=512 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9681x
+batch2_head8 Q=512 v7_persistent28_bf16 round=2: 165.494 us MFU=54.9257%
+batch2_head8 Q=512 ascendc_fia_v2 round=2: 159.911 us MFU=56.8434%
+batch2_head8 Q=512 v7_manual_bf16 round=2: 170.107 us MFU=53.4362%
+COMPARE batch2_head8 Q=512 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9401x
+COMPARE batch2_head8 Q=512 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9663x
+batch2_head8 Q=512 v7_manual_bf16 round=3: 170.134 us MFU=53.4278%
+batch2_head8 Q=512 ascendc_fia_v2 round=3: 160.225 us MFU=56.7320%
+batch2_head8 Q=512 v7_persistent28_bf16 round=3: 165.832 us MFU=54.8138%
+COMPARE batch2_head8 Q=512 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9418x
+COMPARE batch2_head8 Q=512 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9662x
+batch2_head8 Q=512 v7_persistent28_bf16 round=4: 165.638 us MFU=54.8780%
+batch2_head8 Q=512 ascendc_fia_v2 round=4: 159.868 us MFU=56.8586%
+batch2_head8 Q=512 v7_manual_bf16 round=4: 170.434 us MFU=53.3337%
+COMPARE batch2_head8 Q=512 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9380x
+COMPARE batch2_head8 Q=512 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9652x
+Preparing batch2_head8 B=2 H=8 Q=1024 KV=8192
+2026-11-12 16:21:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:41] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:41] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:41] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:41] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:41] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:41] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:41] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:21:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=1024 v7_manual_bf16 round=1: 271.464 us MFU=66.9693%
+batch2_head8 Q=1024 ascendc_fia_v2 round=1: 252.563 us MFU=71.9811%
+batch2_head8 Q=1024 v7_persistent28_bf16 round=1: 261.756 us MFU=69.4531%
+COMPARE batch2_head8 Q=1024 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9304x
+COMPARE batch2_head8 Q=1024 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9649x
+batch2_head8 Q=1024 v7_persistent28_bf16 round=2: 264.609 us MFU=68.7042%
+batch2_head8 Q=1024 ascendc_fia_v2 round=2: 254.242 us MFU=71.5057%
+batch2_head8 Q=1024 v7_manual_bf16 round=2: 274.879 us MFU=66.1373%
+COMPARE batch2_head8 Q=1024 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9249x
+COMPARE batch2_head8 Q=1024 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9608x
+batch2_head8 Q=1024 v7_manual_bf16 round=3: 270.970 us MFU=67.0914%
+batch2_head8 Q=1024 ascendc_fia_v2 round=3: 252.696 us MFU=71.9432%
+batch2_head8 Q=1024 v7_persistent28_bf16 round=3: 261.399 us MFU=69.5479%
+COMPARE batch2_head8 Q=1024 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9326x
+COMPARE batch2_head8 Q=1024 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9667x
+batch2_head8 Q=1024 v7_persistent28_bf16 round=4: 267.331 us MFU=68.0047%
+batch2_head8 Q=1024 ascendc_fia_v2 round=4: 258.260 us MFU=70.3932%
+batch2_head8 Q=1024 v7_manual_bf16 round=4: 277.631 us MFU=65.4817%
+COMPARE batch2_head8 Q=1024 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9302x
+COMPARE batch2_head8 Q=1024 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9661x
+Preparing batch2_head8 B=2 H=8 Q=4096 KV=8192
+2026-11-12 16:21:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:21:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:21:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:21:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:21:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:21:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:21:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:21:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:21:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:21:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:22:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=4096 v7_manual_bf16 round=1: 1061.653 us MFU=68.4960%
+batch2_head8 Q=4096 ascendc_fia_v2 round=1: 892.164 us MFU=81.5086%
+batch2_head8 Q=4096 v7_persistent28_bf16 round=1: 988.707 us MFU=73.5496%
+COMPARE batch2_head8 Q=4096 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8404x
+COMPARE batch2_head8 Q=4096 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9024x
+batch2_head8 Q=4096 v7_persistent28_bf16 round=2: 1107.568 us MFU=65.6565%
+batch2_head8 Q=4096 ascendc_fia_v2 round=2: 1004.871 us MFU=72.3665%
+batch2_head8 Q=4096 v7_manual_bf16 round=2: 1177.079 us MFU=61.7792%
+COMPARE batch2_head8 Q=4096 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8537x
+COMPARE batch2_head8 Q=4096 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9073x
+batch2_head8 Q=4096 v7_manual_bf16 round=3: 1173.771 us MFU=61.9533%
+batch2_head8 Q=4096 ascendc_fia_v2 round=3: 987.352 us MFU=73.6506%
+batch2_head8 Q=4096 v7_persistent28_bf16 round=3: 1114.502 us MFU=65.2480%
+COMPARE batch2_head8 Q=4096 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8412x
+COMPARE batch2_head8 Q=4096 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.8859x
+batch2_head8 Q=4096 v7_persistent28_bf16 round=4: 1101.085 us MFU=66.0431%
+batch2_head8 Q=4096 ascendc_fia_v2 round=4: 991.023 us MFU=73.3777%
+batch2_head8 Q=4096 v7_manual_bf16 round=4: 1166.997 us MFU=62.3130%
+COMPARE batch2_head8 Q=4096 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8492x
+COMPARE batch2_head8 Q=4096 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9000x
+Preparing batch2_head8 B=2 H=8 Q=8192 KV=8192
+2026-11-12 16:22:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:22:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:22:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:22:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:22:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:22:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:22:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:22:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:22:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:22:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:22:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:22:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:22:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:22:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:22:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:22:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:22:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:22:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=8192 v7_manual_bf16 round=1: 2305.721 us MFU=63.0770%
+batch2_head8 Q=8192 ascendc_fia_v2 round=1: 1945.231 us MFU=74.7665%
+batch2_head8 Q=8192 v7_persistent28_bf16 round=1: 2183.311 us MFU=66.6135%
+COMPARE batch2_head8 Q=8192 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8437x
+COMPARE batch2_head8 Q=8192 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.8910x
+batch2_head8 Q=8192 v7_persistent28_bf16 round=2: 2199.560 us MFU=66.1214%
+batch2_head8 Q=8192 ascendc_fia_v2 round=2: 1978.022 us MFU=73.5270%
+batch2_head8 Q=8192 v7_manual_bf16 round=2: 2318.063 us MFU=62.7412%
+COMPARE batch2_head8 Q=8192 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8533x
+COMPARE batch2_head8 Q=8192 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.8993x
+batch2_head8 Q=8192 v7_manual_bf16 round=3: 2313.514 us MFU=62.8646%
+batch2_head8 Q=8192 ascendc_fia_v2 round=3: 1971.979 us MFU=73.7523%
+batch2_head8 Q=8192 v7_persistent28_bf16 round=3: 2200.725 us MFU=66.0864%
+COMPARE batch2_head8 Q=8192 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8524x
+COMPARE batch2_head8 Q=8192 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.8961x
+batch2_head8 Q=8192 v7_persistent28_bf16 round=4: 2229.654 us MFU=65.2290%
+batch2_head8 Q=8192 ascendc_fia_v2 round=4: 1993.538 us MFU=72.9547%
+batch2_head8 Q=8192 v7_manual_bf16 round=4: 2357.519 us MFU=61.6911%
+COMPARE batch2_head8 Q=8192 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8456x
+COMPARE batch2_head8 Q=8192 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.8941x
+Preparing batch2_head8 B=2 H=8 Q=16384 KV=8192
+2026-11-12 16:22:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:22:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:22:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:22:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:22:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:22:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:22:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:22:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:22:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:22:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:22:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:22:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:22:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:22:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:22:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:22:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:22:26] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:22:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=16384 v7_manual_bf16 round=1: 4624.262 us MFU=62.9022%
+batch2_head8 Q=16384 ascendc_fia_v2 round=1: 3992.696 us MFU=72.8520%
+batch2_head8 Q=16384 v7_persistent28_bf16 round=1: 4429.442 us MFU=65.6688%
+COMPARE batch2_head8 Q=16384 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8634x
+COMPARE batch2_head8 Q=16384 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9014x
+batch2_head8 Q=16384 v7_persistent28_bf16 round=2: 4434.643 us MFU=65.5918%
+batch2_head8 Q=16384 ascendc_fia_v2 round=2: 3959.578 us MFU=73.4614%
+batch2_head8 Q=16384 v7_manual_bf16 round=2: 4730.581 us MFU=61.4885%
+COMPARE batch2_head8 Q=16384 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8370x
+COMPARE batch2_head8 Q=16384 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.8929x
+batch2_head8 Q=16384 v7_manual_bf16 round=3: 4654.333 us MFU=62.4958%
+batch2_head8 Q=16384 ascendc_fia_v2 round=3: 4013.753 us MFU=72.4699%
+batch2_head8 Q=16384 v7_persistent28_bf16 round=3: 4422.237 us MFU=65.7758%
+COMPARE batch2_head8 Q=16384 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8624x
+COMPARE batch2_head8 Q=16384 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9076x
+batch2_head8 Q=16384 v7_persistent28_bf16 round=4: 4422.694 us MFU=65.7690%
+batch2_head8 Q=16384 ascendc_fia_v2 round=4: 3942.830 us MFU=73.7734%
+batch2_head8 Q=16384 v7_manual_bf16 round=4: 4725.668 us MFU=61.5524%
+COMPARE batch2_head8 Q=16384 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8343x
+COMPARE batch2_head8 Q=16384 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.8915x
+Preparing batch2_head8 B=2 H=8 Q=32768 KV=8192
+2026-11-12 16:22:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:22:42] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:22:42] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:22:42] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:22:42] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:22:42] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:22:42] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:22:42] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:22:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:22:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:22:47] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:22:47] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:22:47] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:22:47] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:22:47] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:22:47] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:22:47] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:22:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=32768 v7_manual_bf16 round=1: 9233.150 us MFU=63.0069%
+batch2_head8 Q=32768 ascendc_fia_v2 round=1: 8034.132 us MFU=72.4101%
+batch2_head8 Q=32768 v7_persistent28_bf16 round=1: 8803.100 us MFU=66.0849%
+COMPARE batch2_head8 Q=32768 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8701x
+COMPARE batch2_head8 Q=32768 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9126x
+batch2_head8 Q=32768 v7_persistent28_bf16 round=2: 8895.276 us MFU=65.4001%
+batch2_head8 Q=32768 ascendc_fia_v2 round=2: 8009.476 us MFU=72.6330%
+batch2_head8 Q=32768 v7_manual_bf16 round=2: 9243.189 us MFU=62.9385%
+COMPARE batch2_head8 Q=32768 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8665x
+COMPARE batch2_head8 Q=32768 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9004x
+batch2_head8 Q=32768 v7_manual_bf16 round=3: 9269.762 us MFU=62.7580%
+batch2_head8 Q=32768 ascendc_fia_v2 round=3: 8141.647 us MFU=71.4539%
+batch2_head8 Q=32768 v7_persistent28_bf16 round=3: 9027.506 us MFU=64.4422%
+COMPARE batch2_head8 Q=32768 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8783x
+COMPARE batch2_head8 Q=32768 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9019x
+batch2_head8 Q=32768 v7_persistent28_bf16 round=4: 8924.825 us MFU=65.1836%
+batch2_head8 Q=32768 ascendc_fia_v2 round=4: 8063.444 us MFU=72.1469%
+batch2_head8 Q=32768 v7_manual_bf16 round=4: 9184.818 us MFU=63.3385%
+COMPARE batch2_head8 Q=32768 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8779x
+COMPARE batch2_head8 Q=32768 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9035x
+Preparing batch1_head1 B=1 H=1 Q=1 KV=8192
+2026-11-12 16:22:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:23:05] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 16:23:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 16:23:10  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 16:23:10  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=1 v7_manual_bf16 round=1: 33.852 us MFU=0.0328%
+batch1_head1 Q=1 ascendc_fia_v2 round=1: 45.090 us MFU=0.0246%
+batch1_head1 Q=1 v7_persistent28_bf16 round=1: 33.898 us MFU=0.0327%
+COMPARE batch1_head1 Q=1 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3320x
+COMPARE batch1_head1 Q=1 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.3302x
+batch1_head1 Q=1 v7_persistent28_bf16 round=2: 33.196 us MFU=0.0334%
+batch1_head1 Q=1 ascendc_fia_v2 round=2: 45.117 us MFU=0.0246%
+batch1_head1 Q=1 v7_manual_bf16 round=2: 33.404 us MFU=0.0332%
+COMPARE batch1_head1 Q=1 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3506x
+COMPARE batch1_head1 Q=1 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.3591x
+batch1_head1 Q=1 v7_manual_bf16 round=3: 33.125 us MFU=0.0335%
+batch1_head1 Q=1 ascendc_fia_v2 round=3: 44.768 us MFU=0.0248%
+batch1_head1 Q=1 v7_persistent28_bf16 round=3: 33.363 us MFU=0.0333%
+COMPARE batch1_head1 Q=1 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3515x
+COMPARE batch1_head1 Q=1 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.3418x
+batch1_head1 Q=1 v7_persistent28_bf16 round=4: 33.139 us MFU=0.0335%
+batch1_head1 Q=1 ascendc_fia_v2 round=4: 44.811 us MFU=0.0248%
+batch1_head1 Q=1 v7_manual_bf16 round=4: 33.209 us MFU=0.0334%
+COMPARE batch1_head1 Q=1 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3494x
+COMPARE batch1_head1 Q=1 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.3522x
+Preparing batch1_head1 B=1 H=1 Q=16 KV=8192
+2026-11-12 16:23:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:23:16] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 16:23:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 16:23:21  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 16:23:21  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=16 v7_manual_bf16 round=1: 33.431 us MFU=0.5311%
+batch1_head1 Q=16 ascendc_fia_v2 round=1: 43.955 us MFU=0.4039%
+batch1_head1 Q=16 v7_persistent28_bf16 round=1: 33.912 us MFU=0.5235%
+COMPARE batch1_head1 Q=16 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3148x
+COMPARE batch1_head1 Q=16 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.2961x
+batch1_head1 Q=16 v7_persistent28_bf16 round=2: 32.625 us MFU=0.5442%
+batch1_head1 Q=16 ascendc_fia_v2 round=2: 43.834 us MFU=0.4050%
+batch1_head1 Q=16 v7_manual_bf16 round=2: 32.630 us MFU=0.5441%
+COMPARE batch1_head1 Q=16 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3434x
+COMPARE batch1_head1 Q=16 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.3436x
+batch1_head1 Q=16 v7_manual_bf16 round=3: 32.524 us MFU=0.5459%
+batch1_head1 Q=16 ascendc_fia_v2 round=3: 43.834 us MFU=0.4050%
+batch1_head1 Q=16 v7_persistent28_bf16 round=3: 32.589 us MFU=0.5448%
+COMPARE batch1_head1 Q=16 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3477x
+COMPARE batch1_head1 Q=16 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.3451x
+batch1_head1 Q=16 v7_persistent28_bf16 round=4: 31.936 us MFU=0.5559%
+batch1_head1 Q=16 ascendc_fia_v2 round=4: 44.260 us MFU=0.4011%
+batch1_head1 Q=16 v7_manual_bf16 round=4: 32.211 us MFU=0.5512%
+COMPARE batch1_head1 Q=16 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3741x
+COMPARE batch1_head1 Q=16 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.3859x
+Preparing batch1_head1 B=1 H=1 Q=128 KV=8192
+2026-11-12 16:23:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:23:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 16:23:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 16:23:29  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 16:23:29  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=128 v7_manual_bf16 round=1: 38.706 us MFU=3.6694%
+batch1_head1 Q=128 ascendc_fia_v2 round=1: 59.835 us MFU=2.3737%
+batch1_head1 Q=128 v7_persistent28_bf16 round=1: 38.611 us MFU=3.6785%
+COMPARE batch1_head1 Q=128 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.5459x
+COMPARE batch1_head1 Q=128 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.5497x
+batch1_head1 Q=128 v7_persistent28_bf16 round=2: 36.428 us MFU=3.8989%
+batch1_head1 Q=128 ascendc_fia_v2 round=2: 55.984 us MFU=2.5370%
+batch1_head1 Q=128 v7_manual_bf16 round=2: 36.633 us MFU=3.8771%
+COMPARE batch1_head1 Q=128 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.5282x
+COMPARE batch1_head1 Q=128 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.5368x
+batch1_head1 Q=128 v7_manual_bf16 round=3: 36.411 us MFU=3.9007%
+batch1_head1 Q=128 ascendc_fia_v2 round=3: 55.977 us MFU=2.5373%
+batch1_head1 Q=128 v7_persistent28_bf16 round=3: 36.282 us MFU=3.9146%
+COMPARE batch1_head1 Q=128 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.5374x
+COMPARE batch1_head1 Q=128 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.5428x
+batch1_head1 Q=128 v7_persistent28_bf16 round=4: 36.267 us MFU=3.9162%
+batch1_head1 Q=128 ascendc_fia_v2 round=4: 55.740 us MFU=2.5481%
+batch1_head1 Q=128 v7_manual_bf16 round=4: 36.394 us MFU=3.9025%
+COMPARE batch1_head1 Q=128 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.5316x
+COMPARE batch1_head1 Q=128 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.5369x
+Preparing batch1_head1 B=1 H=1 Q=129 KV=8192
+2026-11-12 16:23:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:23:35] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 16:23:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 16:23:39  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 16:23:39  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=129 v7_manual_bf16 round=1: 33.614 us MFU=4.2583%
+batch1_head1 Q=129 ascendc_fia_v2 round=1: 48.427 us MFU=2.9558%
+batch1_head1 Q=129 v7_persistent28_bf16 round=1: 33.668 us MFU=4.2515%
+COMPARE batch1_head1 Q=129 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4407x
+COMPARE batch1_head1 Q=129 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.4384x
+batch1_head1 Q=129 v7_persistent28_bf16 round=2: 32.805 us MFU=4.3633%
+batch1_head1 Q=129 ascendc_fia_v2 round=2: 48.260 us MFU=2.9660%
+batch1_head1 Q=129 v7_manual_bf16 round=2: 33.323 us MFU=4.2955%
+COMPARE batch1_head1 Q=129 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4482x
+COMPARE batch1_head1 Q=129 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.4711x
+batch1_head1 Q=129 v7_manual_bf16 round=3: 32.373 us MFU=4.4216%
+batch1_head1 Q=129 ascendc_fia_v2 round=3: 47.792 us MFU=2.9950%
+batch1_head1 Q=129 v7_persistent28_bf16 round=3: 32.864 us MFU=4.3555%
+COMPARE batch1_head1 Q=129 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4763x
+COMPARE batch1_head1 Q=129 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.4542x
+batch1_head1 Q=129 v7_persistent28_bf16 round=4: 32.061 us MFU=4.4646%
+batch1_head1 Q=129 ascendc_fia_v2 round=4: 47.803 us MFU=2.9944%
+batch1_head1 Q=129 v7_manual_bf16 round=4: 32.226 us MFU=4.4417%
+COMPARE batch1_head1 Q=129 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4834x
+COMPARE batch1_head1 Q=129 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.4910x
+Preparing batch1_head1 B=1 H=1 Q=512 KV=8192
+2026-11-12 16:23:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:23:44] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 16:23:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 16:23:48  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 16:23:48  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=512 v7_manual_bf16 round=1: 35.652 us MFU=15.9351%
+batch1_head1 Q=512 ascendc_fia_v2 round=1: 51.438 us MFU=11.0447%
+batch1_head1 Q=512 v7_persistent28_bf16 round=1: 35.387 us MFU=16.0544%
+COMPARE batch1_head1 Q=512 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4428x
+COMPARE batch1_head1 Q=512 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.4536x
+batch1_head1 Q=512 v7_persistent28_bf16 round=2: 35.210 us MFU=16.1351%
+batch1_head1 Q=512 ascendc_fia_v2 round=2: 51.061 us MFU=11.1262%
+batch1_head1 Q=512 v7_manual_bf16 round=2: 35.399 us MFU=16.0490%
+COMPARE batch1_head1 Q=512 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4424x
+COMPARE batch1_head1 Q=512 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.4502x
+batch1_head1 Q=512 v7_manual_bf16 round=3: 35.603 us MFU=15.9570%
+batch1_head1 Q=512 ascendc_fia_v2 round=3: 51.584 us MFU=11.0134%
+batch1_head1 Q=512 v7_persistent28_bf16 round=3: 35.343 us MFU=16.0744%
+COMPARE batch1_head1 Q=512 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4489x
+COMPARE batch1_head1 Q=512 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.4595x
+batch1_head1 Q=512 v7_persistent28_bf16 round=4: 35.085 us MFU=16.1926%
+batch1_head1 Q=512 ascendc_fia_v2 round=4: 51.375 us MFU=11.0582%
+batch1_head1 Q=512 v7_manual_bf16 round=4: 34.960 us MFU=16.2505%
+COMPARE batch1_head1 Q=512 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4695x
+COMPARE batch1_head1 Q=512 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.4643x
+Preparing batch1_head1 B=1 H=1 Q=1024 KV=8192
+2026-11-12 16:23:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:23:52] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 16:23:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 16:23:56  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 16:23:56  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=1024 v7_manual_bf16 round=1: 46.462 us MFU=24.4551%
+batch1_head1 Q=1024 ascendc_fia_v2 round=1: 57.978 us MFU=19.5977%
+batch1_head1 Q=1024 v7_persistent28_bf16 round=1: 46.524 us MFU=24.4226%
+COMPARE batch1_head1 Q=1024 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2479x
+COMPARE batch1_head1 Q=1024 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.2462x
+batch1_head1 Q=1024 v7_persistent28_bf16 round=2: 45.592 us MFU=24.9218%
+batch1_head1 Q=1024 ascendc_fia_v2 round=2: 57.918 us MFU=19.6180%
+batch1_head1 Q=1024 v7_manual_bf16 round=2: 45.886 us MFU=24.7621%
+COMPARE batch1_head1 Q=1024 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2622x
+COMPARE batch1_head1 Q=1024 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.2704x
+batch1_head1 Q=1024 v7_manual_bf16 round=3: 45.877 us MFU=24.7670%
+batch1_head1 Q=1024 ascendc_fia_v2 round=3: 57.687 us MFU=19.6965%
+batch1_head1 Q=1024 v7_persistent28_bf16 round=3: 45.803 us MFU=24.8070%
+COMPARE batch1_head1 Q=1024 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2574x
+COMPARE batch1_head1 Q=1024 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.2595x
+batch1_head1 Q=1024 v7_persistent28_bf16 round=4: 45.468 us MFU=24.9898%
+batch1_head1 Q=1024 ascendc_fia_v2 round=4: 57.502 us MFU=19.7599%
+batch1_head1 Q=1024 v7_manual_bf16 round=4: 45.678 us MFU=24.8749%
+COMPARE batch1_head1 Q=1024 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2589x
+COMPARE batch1_head1 Q=1024 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.2647x
+Preparing batch1_head1 B=1 H=1 Q=4096 KV=8192
+2026-11-12 16:23:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:23:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:23:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:23:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:23:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:23:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:23:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:23:57] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:24:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:24:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:24:02] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:24:02] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:24:02] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:24:02] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:24:02] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:24:02] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:24:02] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:24:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=4096 v7_manual_bf16 round=1: 110.002 us MFU=41.3169%
+batch1_head1 Q=4096 ascendc_fia_v2 round=1: 102.479 us MFU=44.3500%
+batch1_head1 Q=4096 v7_persistent28_bf16 round=1: 108.349 us MFU=41.9472%
+COMPARE batch1_head1 Q=4096 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9316x
+COMPARE batch1_head1 Q=4096 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9458x
+batch1_head1 Q=4096 v7_persistent28_bf16 round=2: 107.812 us MFU=42.1561%
+batch1_head1 Q=4096 ascendc_fia_v2 round=2: 99.389 us MFU=45.7288%
+batch1_head1 Q=4096 v7_manual_bf16 round=2: 109.530 us MFU=41.4949%
+COMPARE batch1_head1 Q=4096 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9074x
+COMPARE batch1_head1 Q=4096 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9219x
+batch1_head1 Q=4096 v7_manual_bf16 round=3: 108.651 us MFU=41.8306%
+batch1_head1 Q=4096 ascendc_fia_v2 round=3: 97.759 us MFU=46.4913%
+batch1_head1 Q=4096 v7_persistent28_bf16 round=3: 107.282 us MFU=42.3644%
+COMPARE batch1_head1 Q=4096 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8998x
+COMPARE batch1_head1 Q=4096 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9112x
+batch1_head1 Q=4096 v7_persistent28_bf16 round=4: 106.912 us MFU=42.5110%
+batch1_head1 Q=4096 ascendc_fia_v2 round=4: 97.217 us MFU=46.7505%
+batch1_head1 Q=4096 v7_manual_bf16 round=4: 108.485 us MFU=41.8946%
+COMPARE batch1_head1 Q=4096 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8961x
+COMPARE batch1_head1 Q=4096 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9093x
+Preparing batch1_head1 B=1 H=1 Q=8192 KV=8192
+2026-11-12 16:24:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:24:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:24:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:24:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:24:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:24:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:24:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:24:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:24:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:24:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:24:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:24:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:24:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:24:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:24:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:24:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:24:10] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:24:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=8192 v7_manual_bf16 round=1: 158.580 us MFU=57.3205%
+batch1_head1 Q=8192 ascendc_fia_v2 round=1: 150.963 us MFU=60.2126%
+batch1_head1 Q=8192 v7_persistent28_bf16 round=1: 154.832 us MFU=58.7080%
+COMPARE batch1_head1 Q=8192 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9520x
+COMPARE batch1_head1 Q=8192 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9750x
+batch1_head1 Q=8192 v7_persistent28_bf16 round=2: 154.432 us MFU=58.8601%
+batch1_head1 Q=8192 ascendc_fia_v2 round=2: 149.746 us MFU=60.7020%
+batch1_head1 Q=8192 v7_manual_bf16 round=2: 158.269 us MFU=57.4331%
+COMPARE batch1_head1 Q=8192 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9461x
+COMPARE batch1_head1 Q=8192 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9697x
+batch1_head1 Q=8192 v7_manual_bf16 round=3: 158.332 us MFU=57.4102%
+batch1_head1 Q=8192 ascendc_fia_v2 round=3: 149.955 us MFU=60.6174%
+batch1_head1 Q=8192 v7_persistent28_bf16 round=3: 154.298 us MFU=58.9112%
+COMPARE batch1_head1 Q=8192 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9471x
+COMPARE batch1_head1 Q=8192 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9719x
+batch1_head1 Q=8192 v7_persistent28_bf16 round=4: 154.269 us MFU=58.9223%
+batch1_head1 Q=8192 ascendc_fia_v2 round=4: 149.981 us MFU=60.6069%
+batch1_head1 Q=8192 v7_manual_bf16 round=4: 157.816 us MFU=57.5980%
+COMPARE batch1_head1 Q=8192 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9504x
+COMPARE batch1_head1 Q=8192 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9722x
+Preparing batch1_head1 B=1 H=1 Q=16384 KV=8192
+2026-11-12 16:24:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:24:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:24:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:24:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:24:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:24:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:24:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:24:15] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:24:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:24:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:24:18] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:24:18] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:24:18] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:24:18] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:24:18] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:24:18] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:24:18] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:24:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=16384 v7_manual_bf16 round=1: 257.562 us MFU=70.5840%
+batch1_head1 Q=16384 ascendc_fia_v2 round=1: 254.267 us MFU=71.4987%
+batch1_head1 Q=16384 v7_persistent28_bf16 round=1: 248.250 us MFU=73.2316%
+COMPARE batch1_head1 Q=16384 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9872x
+COMPARE batch1_head1 Q=16384 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0242x
+batch1_head1 Q=16384 v7_persistent28_bf16 round=2: 249.522 us MFU=72.8583%
+batch1_head1 Q=16384 ascendc_fia_v2 round=2: 254.902 us MFU=71.3206%
+batch1_head1 Q=16384 v7_manual_bf16 round=2: 259.033 us MFU=70.1832%
+COMPARE batch1_head1 Q=16384 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9841x
+COMPARE batch1_head1 Q=16384 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0216x
+batch1_head1 Q=16384 v7_manual_bf16 round=3: 257.361 us MFU=70.6391%
+batch1_head1 Q=16384 ascendc_fia_v2 round=3: 253.926 us MFU=71.5947%
+batch1_head1 Q=16384 v7_persistent28_bf16 round=3: 248.051 us MFU=73.2904%
+COMPARE batch1_head1 Q=16384 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9867x
+COMPARE batch1_head1 Q=16384 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0237x
+batch1_head1 Q=16384 v7_persistent28_bf16 round=4: 248.502 us MFU=73.1574%
+batch1_head1 Q=16384 ascendc_fia_v2 round=4: 254.341 us MFU=71.4779%
+batch1_head1 Q=16384 v7_manual_bf16 round=4: 258.170 us MFU=70.4178%
+COMPARE batch1_head1 Q=16384 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9852x
+COMPARE batch1_head1 Q=16384 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=1.0235x
+Preparing batch1_head1 B=1 H=1 Q=32768 KV=8192
+2026-11-12 16:24:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:24:23] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:24:23] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:24:23] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:24:23] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:24:23] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:24:23] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:24:23] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:24:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 16:24:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:24:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:24:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:24:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:24:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:24:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:24:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:24:25] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 16:24:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=32768 v7_manual_bf16 round=1: 510.415 us MFU=71.2352%
+batch1_head1 Q=32768 ascendc_fia_v2 round=1: 472.752 us MFU=76.9103%
+batch1_head1 Q=32768 v7_persistent28_bf16 round=1: 484.523 us MFU=75.0419%
+COMPARE batch1_head1 Q=32768 KV=8192 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9262x
+COMPARE batch1_head1 Q=32768 KV=8192 round=1 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9757x
+batch1_head1 Q=32768 v7_persistent28_bf16 round=2: 496.073 us MFU=73.2947%
+batch1_head1 Q=32768 ascendc_fia_v2 round=2: 477.854 us MFU=76.0892%
+batch1_head1 Q=32768 v7_manual_bf16 round=2: 516.575 us MFU=70.3857%
+COMPARE batch1_head1 Q=32768 KV=8192 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9250x
+COMPARE batch1_head1 Q=32768 KV=8192 round=2 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9633x
+batch1_head1 Q=32768 v7_manual_bf16 round=3: 585.756 us MFU=62.0728%
+batch1_head1 Q=32768 ascendc_fia_v2 round=3: 531.895 us MFU=68.3584%
+batch1_head1 Q=32768 v7_persistent28_bf16 round=3: 545.272 us MFU=66.6814%
+COMPARE batch1_head1 Q=32768 KV=8192 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9080x
+COMPARE batch1_head1 Q=32768 KV=8192 round=3 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9755x
+batch1_head1 Q=32768 v7_persistent28_bf16 round=4: 545.257 us MFU=66.6833%
+batch1_head1 Q=32768 ascendc_fia_v2 round=4: 525.312 us MFU=69.2151%
+batch1_head1 Q=32768 v7_manual_bf16 round=4: 576.597 us MFU=63.0588%
+COMPARE batch1_head1 Q=32768 KV=8192 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9111x
+COMPARE batch1_head1 Q=32768 KV=8192 round=4 v7_persistent28_bf16 / ascendc_fia_v2: V7 speedup=0.9634x
+passed: mha_persistent28_kv8192.json; compact report: mha_persistent28_kv8192_summary.json
