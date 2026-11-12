@@ -1,0 +1,399 @@
+FIA API availability={'v2': True, 'v1': True}; selected=['v2']
+Preparing batch2_head8 B=2 H=8 Q=1 KV=32768
+2026-11-12 10:39:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:39:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:39:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:39:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=1 v7_manual_bf16 round=1: 203.828 us MFU=0.3484%
+batch2_head8 Q=1 v7_split1_bf16 round=1: 202.603 us MFU=0.3505%
+batch2_head8 Q=1 ascendc_fia_v2 round=1: 203.791 us MFU=0.3485%
+COMPARE batch2_head8 Q=1 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9998x
+COMPARE batch2_head8 Q=1 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0059x
+batch2_head8 Q=1 ascendc_fia_v2 round=2: 194.958 us MFU=0.3643%
+batch2_head8 Q=1 v7_split1_bf16 round=2: 202.690 us MFU=0.3504%
+batch2_head8 Q=1 v7_manual_bf16 round=2: 192.735 us MFU=0.3685%
+COMPARE batch2_head8 Q=1 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0115x
+COMPARE batch2_head8 Q=1 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9619x
+batch2_head8 Q=1 v7_manual_bf16 round=3: 198.549 us MFU=0.3577%
+batch2_head8 Q=1 v7_split1_bf16 round=3: 202.458 us MFU=0.3508%
+batch2_head8 Q=1 ascendc_fia_v2 round=3: 202.560 us MFU=0.3506%
+COMPARE batch2_head8 Q=1 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0202x
+COMPARE batch2_head8 Q=1 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0005x
+batch2_head8 Q=1 ascendc_fia_v2 round=4: 195.214 us MFU=0.3638%
+batch2_head8 Q=1 v7_split1_bf16 round=4: 202.803 us MFU=0.3502%
+batch2_head8 Q=1 v7_manual_bf16 round=4: 193.017 us MFU=0.3679%
+COMPARE batch2_head8 Q=1 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0114x
+COMPARE batch2_head8 Q=1 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9626x
+Preparing batch2_head8 B=2 H=8 Q=16 KV=32768
+2026-11-12 10:39:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:39:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:39:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:39:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=16 v7_manual_bf16 round=1: 222.504 us MFU=5.1066%
+batch2_head8 Q=16 v7_split1_bf16 round=1: 221.650 us MFU=5.1263%
+batch2_head8 Q=16 ascendc_fia_v2 round=1: 211.192 us MFU=5.3801%
+COMPARE batch2_head8 Q=16 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9492x
+COMPARE batch2_head8 Q=16 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9528x
+batch2_head8 Q=16 ascendc_fia_v2 round=2: 202.246 us MFU=5.6181%
+batch2_head8 Q=16 v7_split1_bf16 round=2: 222.980 us MFU=5.0957%
+batch2_head8 Q=16 v7_manual_bf16 round=2: 215.196 us MFU=5.2800%
+COMPARE batch2_head8 Q=16 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9398x
+COMPARE batch2_head8 Q=16 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9070x
+batch2_head8 Q=16 v7_manual_bf16 round=3: 221.668 us MFU=5.1258%
+batch2_head8 Q=16 v7_split1_bf16 round=3: 221.893 us MFU=5.1206%
+batch2_head8 Q=16 ascendc_fia_v2 round=3: 211.533 us MFU=5.3714%
+COMPARE batch2_head8 Q=16 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9543x
+COMPARE batch2_head8 Q=16 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9533x
+batch2_head8 Q=16 ascendc_fia_v2 round=4: 200.109 us MFU=5.6781%
+batch2_head8 Q=16 v7_split1_bf16 round=4: 219.517 us MFU=5.1761%
+batch2_head8 Q=16 v7_manual_bf16 round=4: 211.073 us MFU=5.3831%
+COMPARE batch2_head8 Q=16 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9481x
+COMPARE batch2_head8 Q=16 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9116x
+Preparing batch2_head8 B=2 H=8 Q=128 KV=32768
+2026-11-12 10:39:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:39:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:39:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:39:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=128 v7_manual_bf16 round=1: 243.722 us MFU=37.2961%
+batch2_head8 Q=128 v7_split1_bf16 round=1: 214.384 us MFU=42.4000%
+batch2_head8 Q=128 ascendc_fia_v2 round=1: 208.007 us MFU=43.6999%
+COMPARE batch2_head8 Q=128 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8535x
+COMPARE batch2_head8 Q=128 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9703x
+batch2_head8 Q=128 ascendc_fia_v2 round=2: 208.131 us MFU=43.6738%
+batch2_head8 Q=128 v7_split1_bf16 round=2: 214.869 us MFU=42.3043%
+batch2_head8 Q=128 v7_manual_bf16 round=2: 234.853 us MFU=38.7045%
+COMPARE batch2_head8 Q=128 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8862x
+COMPARE batch2_head8 Q=128 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9686x
+batch2_head8 Q=128 v7_manual_bf16 round=3: 244.082 us MFU=37.2411%
+batch2_head8 Q=128 v7_split1_bf16 round=3: 214.283 us MFU=42.4200%
+batch2_head8 Q=128 ascendc_fia_v2 round=3: 207.191 us MFU=43.8720%
+COMPARE batch2_head8 Q=128 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8489x
+COMPARE batch2_head8 Q=128 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9669x
+batch2_head8 Q=128 ascendc_fia_v2 round=4: 206.744 us MFU=43.9668%
+batch2_head8 Q=128 v7_split1_bf16 round=4: 214.809 us MFU=42.3161%
+batch2_head8 Q=128 v7_manual_bf16 round=4: 235.809 us MFU=38.5476%
+COMPARE batch2_head8 Q=128 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8767x
+COMPARE batch2_head8 Q=128 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9625x
+Preparing batch2_head8 B=2 H=8 Q=129 KV=32768
+2026-11-12 10:39:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:39:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:39:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:40:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=129 v7_manual_bf16 round=1: 414.343 us MFU=22.1094%
+batch2_head8 Q=129 v7_split1_bf16 round=1: 397.302 us MFU=23.0578%
+batch2_head8 Q=129 ascendc_fia_v2 round=1: 373.146 us MFU=24.5504%
+COMPARE batch2_head8 Q=129 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9006x
+COMPARE batch2_head8 Q=129 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9392x
+batch2_head8 Q=129 ascendc_fia_v2 round=2: 372.257 us MFU=24.6091%
+batch2_head8 Q=129 v7_split1_bf16 round=2: 396.658 us MFU=23.0952%
+batch2_head8 Q=129 v7_manual_bf16 round=2: 413.562 us MFU=22.1512%
+COMPARE batch2_head8 Q=129 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9001x
+COMPARE batch2_head8 Q=129 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9385x
+batch2_head8 Q=129 v7_manual_bf16 round=3: 413.960 us MFU=22.1299%
+batch2_head8 Q=129 v7_split1_bf16 round=3: 397.024 us MFU=23.0739%
+batch2_head8 Q=129 ascendc_fia_v2 round=3: 372.257 us MFU=24.6091%
+COMPARE batch2_head8 Q=129 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8993x
+COMPARE batch2_head8 Q=129 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9376x
+batch2_head8 Q=129 ascendc_fia_v2 round=4: 373.331 us MFU=24.5383%
+batch2_head8 Q=129 v7_split1_bf16 round=4: 396.548 us MFU=23.1016%
+batch2_head8 Q=129 v7_manual_bf16 round=4: 414.261 us MFU=22.1138%
+COMPARE batch2_head8 Q=129 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9012x
+COMPARE batch2_head8 Q=129 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9415x
+Preparing batch2_head8 B=2 H=8 Q=512 KV=32768
+2026-11-12 10:40:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:40:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:40:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:40:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=512 v7_manual_bf16 round=1: 790.517 us MFU=45.9946%
+batch2_head8 Q=512 v7_split1_bf16 round=1: 662.144 us MFU=54.9118%
+batch2_head8 Q=512 ascendc_fia_v2 round=1: 604.309 us MFU=60.1671%
+COMPARE batch2_head8 Q=512 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7644x
+COMPARE batch2_head8 Q=512 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9127x
+batch2_head8 Q=512 ascendc_fia_v2 round=2: 727.272 us MFU=49.9944%
+batch2_head8 Q=512 v7_split1_bf16 round=2: 775.872 us MFU=46.8628%
+batch2_head8 Q=512 v7_manual_bf16 round=2: 836.712 us MFU=43.4552%
+COMPARE batch2_head8 Q=512 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8692x
+COMPARE batch2_head8 Q=512 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9374x
+batch2_head8 Q=512 v7_manual_bf16 round=3: 847.598 us MFU=42.8971%
+batch2_head8 Q=512 v7_split1_bf16 round=3: 761.825 us MFU=47.7269%
+batch2_head8 Q=512 ascendc_fia_v2 round=3: 721.725 us MFU=50.3786%
+COMPARE batch2_head8 Q=512 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8515x
+COMPARE batch2_head8 Q=512 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9474x
+batch2_head8 Q=512 ascendc_fia_v2 round=4: 747.603 us MFU=48.6348%
+batch2_head8 Q=512 v7_split1_bf16 round=4: 826.912 us MFU=43.9702%
+batch2_head8 Q=512 v7_manual_bf16 round=4: 840.149 us MFU=43.2775%
+COMPARE batch2_head8 Q=512 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8898x
+COMPARE batch2_head8 Q=512 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9041x
+Preparing batch2_head8 B=2 H=8 Q=1024 KV=32768
+2026-11-12 10:40:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:40:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 10:40:16  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=1024 v7_manual_bf16 round=1: 1226.674 us MFU=59.2815%
+batch2_head8 Q=1024 v7_split1_bf16 round=1: 1206.412 us MFU=60.2771%
+batch2_head8 Q=1024 ascendc_fia_v2 round=1: 1130.974 us MFU=64.2977%
+COMPARE batch2_head8 Q=1024 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9220x
+COMPARE batch2_head8 Q=1024 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9375x
+batch2_head8 Q=1024 ascendc_fia_v2 round=2: 1243.711 us MFU=58.4694%
+batch2_head8 Q=1024 v7_split1_bf16 round=2: 1293.091 us MFU=56.2366%
+batch2_head8 Q=1024 v7_manual_bf16 round=2: 1306.333 us MFU=55.6665%
+COMPARE batch2_head8 Q=1024 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9521x
+COMPARE batch2_head8 Q=1024 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9618x
+batch2_head8 Q=1024 v7_manual_bf16 round=3: 1274.619 us MFU=57.0516%
+batch2_head8 Q=1024 v7_split1_bf16 round=3: 1328.144 us MFU=54.7524%
+batch2_head8 Q=1024 ascendc_fia_v2 round=3: 1205.083 us MFU=60.3436%
+COMPARE batch2_head8 Q=1024 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9454x
+COMPARE batch2_head8 Q=1024 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9073x
+batch2_head8 Q=1024 ascendc_fia_v2 round=4: 1308.175 us MFU=55.5881%
+batch2_head8 Q=1024 v7_split1_bf16 round=4: 1337.211 us MFU=54.3811%
+batch2_head8 Q=1024 v7_manual_bf16 round=4: 1355.430 us MFU=53.6501%
+COMPARE batch2_head8 Q=1024 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9651x
+COMPARE batch2_head8 Q=1024 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9783x
+Preparing batch2_head8 B=2 H=8 Q=4096 KV=32768
+2026-11-12 10:40:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:40:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 10:40:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=4096 v7_manual_bf16 round=1: 5685.102 us MFU=51.1646%
+batch2_head8 Q=4096 v7_split1_bf16 round=1: 5619.336 us MFU=51.7634%
+batch2_head8 Q=4096 ascendc_fia_v2 round=1: 5358.480 us MFU=54.2833%
+COMPARE batch2_head8 Q=4096 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9425x
+COMPARE batch2_head8 Q=4096 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9536x
+batch2_head8 Q=4096 ascendc_fia_v2 round=2: 4804.576 us MFU=60.5415%
+batch2_head8 Q=4096 v7_split1_bf16 round=2: 5727.758 us MFU=50.7836%
+batch2_head8 Q=4096 v7_manual_bf16 round=2: 5195.218 us MFU=55.9892%
+COMPARE batch2_head8 Q=4096 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9248x
+COMPARE batch2_head8 Q=4096 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8388x
+batch2_head8 Q=4096 v7_manual_bf16 round=3: 5431.277 us MFU=53.5557%
+batch2_head8 Q=4096 v7_split1_bf16 round=3: 5282.523 us MFU=55.0639%
+batch2_head8 Q=4096 ascendc_fia_v2 round=3: 4992.306 us MFU=58.2649%
+COMPARE batch2_head8 Q=4096 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9192x
+COMPARE batch2_head8 Q=4096 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9451x
+batch2_head8 Q=4096 ascendc_fia_v2 round=4: 5213.529 us MFU=55.7926%
+batch2_head8 Q=4096 v7_split1_bf16 round=4: 5924.768 us MFU=49.0949%
+batch2_head8 Q=4096 v7_manual_bf16 round=4: 5617.591 us MFU=51.7795%
+COMPARE batch2_head8 Q=4096 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9281x
+COMPARE batch2_head8 Q=4096 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8800x
+Preparing batch2_head8 B=2 H=8 Q=8192 KV=32768
+2026-11-12 10:40:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:40:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 10:40:42  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=8192 v7_manual_bf16 round=1: 10996.063 us MFU=52.9055%
+batch2_head8 Q=8192 v7_split1_bf16 round=1: 11040.448 us MFU=52.6928%
+batch2_head8 Q=8192 ascendc_fia_v2 round=1: 9123.784 us MFU=63.7622%
+COMPARE batch2_head8 Q=8192 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8297x
+COMPARE batch2_head8 Q=8192 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8264x
+batch2_head8 Q=8192 ascendc_fia_v2 round=2: 9200.066 us MFU=63.2335%
+batch2_head8 Q=8192 v7_split1_bf16 round=2: 11673.201 us MFU=49.8366%
+batch2_head8 Q=8192 v7_manual_bf16 round=2: 10884.737 us MFU=53.4466%
+COMPARE batch2_head8 Q=8192 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8452x
+COMPARE batch2_head8 Q=8192 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7881x
+batch2_head8 Q=8192 v7_manual_bf16 round=3: 11246.282 us MFU=51.7284%
+batch2_head8 Q=8192 v7_split1_bf16 round=3: 10883.739 us MFU=53.4515%
+batch2_head8 Q=8192 ascendc_fia_v2 round=3: 9351.318 us MFU=62.2107%
+COMPARE batch2_head8 Q=8192 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8315x
+COMPARE batch2_head8 Q=8192 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8592x
+batch2_head8 Q=8192 ascendc_fia_v2 round=4: 9261.217 us MFU=62.8160%
+batch2_head8 Q=8192 v7_split1_bf16 round=4: 11604.670 us MFU=50.1309%
+batch2_head8 Q=8192 v7_manual_bf16 round=4: 11262.491 us MFU=51.6540%
+COMPARE batch2_head8 Q=8192 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8223x
+COMPARE batch2_head8 Q=8192 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7981x
+Preparing batch1_head1 B=1 H=1 Q=1 KV=32768
+2026-11-12 10:40:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:40:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:40:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:40:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=1 v7_manual_bf16 round=1: 32.505 us MFU=0.1365%
+batch1_head1 Q=1 v7_split1_bf16 round=1: 185.900 us MFU=0.0239%
+batch1_head1 Q=1 ascendc_fia_v2 round=1: 40.877 us MFU=0.1086%
+COMPARE batch1_head1 Q=1 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2576x
+COMPARE batch1_head1 Q=1 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2199x
+batch1_head1 Q=1 ascendc_fia_v2 round=2: 40.383 us MFU=0.1099%
+batch1_head1 Q=1 v7_split1_bf16 round=2: 185.838 us MFU=0.0239%
+batch1_head1 Q=1 v7_manual_bf16 round=2: 32.137 us MFU=0.1381%
+COMPARE batch1_head1 Q=1 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2566x
+COMPARE batch1_head1 Q=1 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2173x
+batch1_head1 Q=1 v7_manual_bf16 round=3: 32.359 us MFU=0.1372%
+batch1_head1 Q=1 v7_split1_bf16 round=3: 185.823 us MFU=0.0239%
+batch1_head1 Q=1 ascendc_fia_v2 round=3: 40.785 us MFU=0.1088%
+COMPARE batch1_head1 Q=1 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2604x
+COMPARE batch1_head1 Q=1 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2195x
+batch1_head1 Q=1 ascendc_fia_v2 round=4: 40.702 us MFU=0.1090%
+batch1_head1 Q=1 v7_split1_bf16 round=4: 185.990 us MFU=0.0239%
+batch1_head1 Q=1 v7_manual_bf16 round=4: 32.144 us MFU=0.1381%
+COMPARE batch1_head1 Q=1 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2662x
+COMPARE batch1_head1 Q=1 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2188x
+Preparing batch1_head1 B=1 H=1 Q=16 KV=32768
+2026-11-12 10:40:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:41:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:41:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:41:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=16 v7_manual_bf16 round=1: 41.212 us MFU=1.7232%
+batch1_head1 Q=16 v7_split1_bf16 round=1: 191.063 us MFU=0.3717%
+batch1_head1 Q=16 ascendc_fia_v2 round=1: 49.565 us MFU=1.4328%
+COMPARE batch1_head1 Q=16 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2027x
+COMPARE batch1_head1 Q=16 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2594x
+batch1_head1 Q=16 ascendc_fia_v2 round=2: 49.316 us MFU=1.4400%
+batch1_head1 Q=16 v7_split1_bf16 round=2: 190.848 us MFU=0.3721%
+batch1_head1 Q=16 v7_manual_bf16 round=2: 41.060 us MFU=1.7295%
+COMPARE batch1_head1 Q=16 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2011x
+COMPARE batch1_head1 Q=16 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2584x
+batch1_head1 Q=16 v7_manual_bf16 round=3: 41.219 us MFU=1.7229%
+batch1_head1 Q=16 v7_split1_bf16 round=3: 190.991 us MFU=0.3718%
+batch1_head1 Q=16 ascendc_fia_v2 round=3: 49.537 us MFU=1.4336%
+COMPARE batch1_head1 Q=16 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2018x
+COMPARE batch1_head1 Q=16 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2594x
+batch1_head1 Q=16 ascendc_fia_v2 round=4: 49.675 us MFU=1.4296%
+batch1_head1 Q=16 v7_split1_bf16 round=4: 190.514 us MFU=0.3728%
+batch1_head1 Q=16 v7_manual_bf16 round=4: 40.866 us MFU=1.7377%
+COMPARE batch1_head1 Q=16 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2156x
+COMPARE batch1_head1 Q=16 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2607x
+Preparing batch1_head1 B=1 H=1 Q=128 KV=32768
+2026-11-12 10:41:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:41:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:41:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:41:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=128 v7_manual_bf16 round=1: 36.963 us MFU=15.3699%
+batch1_head1 Q=128 v7_split1_bf16 round=1: 186.455 us MFU=3.0469%
+batch1_head1 Q=128 ascendc_fia_v2 round=1: 45.516 us MFU=12.4817%
+COMPARE batch1_head1 Q=128 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2314x
+COMPARE batch1_head1 Q=128 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2441x
+batch1_head1 Q=128 ascendc_fia_v2 round=2: 46.075 us MFU=12.3303%
+batch1_head1 Q=128 v7_split1_bf16 round=2: 186.631 us MFU=3.0441%
+batch1_head1 Q=128 v7_manual_bf16 round=2: 37.045 us MFU=15.3359%
+COMPARE batch1_head1 Q=128 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2438x
+COMPARE batch1_head1 Q=128 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2469x
+batch1_head1 Q=128 v7_manual_bf16 round=3: 36.870 us MFU=15.4087%
+batch1_head1 Q=128 v7_split1_bf16 round=3: 186.387 us MFU=3.0481%
+batch1_head1 Q=128 ascendc_fia_v2 round=3: 45.424 us MFU=12.5070%
+COMPARE batch1_head1 Q=128 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2320x
+COMPARE batch1_head1 Q=128 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2437x
+batch1_head1 Q=128 ascendc_fia_v2 round=4: 46.111 us MFU=12.3206%
+batch1_head1 Q=128 v7_split1_bf16 round=4: 186.597 us MFU=3.0446%
+batch1_head1 Q=128 v7_manual_bf16 round=4: 36.977 us MFU=15.3641%
+COMPARE batch1_head1 Q=128 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2470x
+COMPARE batch1_head1 Q=128 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.2471x
+Preparing batch1_head1 B=1 H=1 Q=129 KV=32768
+2026-11-12 10:41:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:41:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:41:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:41:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=129 v7_manual_bf16 round=1: 58.964 us MFU=9.7103%
+batch1_head1 Q=129 v7_split1_bf16 round=1: 191.320 us MFU=2.9927%
+batch1_head1 Q=129 ascendc_fia_v2 round=1: 63.876 us MFU=8.9636%
+COMPARE batch1_head1 Q=129 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0833x
+COMPARE batch1_head1 Q=129 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.3339x
+batch1_head1 Q=129 ascendc_fia_v2 round=2: 62.945 us MFU=9.0961%
+batch1_head1 Q=129 v7_split1_bf16 round=2: 190.795 us MFU=3.0009%
+batch1_head1 Q=129 v7_manual_bf16 round=2: 58.611 us MFU=9.7687%
+COMPARE batch1_head1 Q=129 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0739x
+COMPARE batch1_head1 Q=129 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.3299x
+batch1_head1 Q=129 v7_manual_bf16 round=3: 58.620 us MFU=9.7672%
+batch1_head1 Q=129 v7_split1_bf16 round=3: 191.023 us MFU=2.9973%
+batch1_head1 Q=129 ascendc_fia_v2 round=3: 64.202 us MFU=8.9180%
+COMPARE batch1_head1 Q=129 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0952x
+COMPARE batch1_head1 Q=129 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.3361x
+batch1_head1 Q=129 ascendc_fia_v2 round=4: 64.314 us MFU=8.9025%
+batch1_head1 Q=129 v7_split1_bf16 round=4: 191.181 us MFU=2.9948%
+batch1_head1 Q=129 v7_manual_bf16 round=4: 58.754 us MFU=9.7450%
+COMPARE batch1_head1 Q=129 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0946x
+COMPARE batch1_head1 Q=129 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.3364x
+Preparing batch1_head1 B=1 H=1 Q=512 KV=32768
+2026-11-12 10:41:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:41:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:41:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:41:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=512 v7_manual_bf16 round=1: 446.840 us MFU=5.0856%
+batch1_head1 Q=512 v7_split1_bf16 round=1: 537.836 us MFU=4.2252%
+batch1_head1 Q=512 ascendc_fia_v2 round=1: 263.176 us MFU=8.6348%
+COMPARE batch1_head1 Q=512 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.5890x
+COMPARE batch1_head1 Q=512 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.4893x
+batch1_head1 Q=512 ascendc_fia_v2 round=2: 71.880 us MFU=31.6148%
+batch1_head1 Q=512 v7_split1_bf16 round=2: 191.614 us MFU=11.8596%
+batch1_head1 Q=512 v7_manual_bf16 round=2: 83.697 us MFU=27.1511%
+COMPARE batch1_head1 Q=512 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8588x
+COMPARE batch1_head1 Q=512 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.3751x
+batch1_head1 Q=512 v7_manual_bf16 round=3: 83.184 us MFU=27.3186%
+batch1_head1 Q=512 v7_split1_bf16 round=3: 191.283 us MFU=11.8801%
+batch1_head1 Q=512 ascendc_fia_v2 round=3: 69.782 us MFU=32.5653%
+COMPARE batch1_head1 Q=512 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8389x
+COMPARE batch1_head1 Q=512 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.3648x
+batch1_head1 Q=512 ascendc_fia_v2 round=4: 70.240 us MFU=32.3529%
+batch1_head1 Q=512 v7_split1_bf16 round=4: 191.196 us MFU=11.8855%
+batch1_head1 Q=512 v7_manual_bf16 round=4: 83.192 us MFU=27.3160%
+COMPARE batch1_head1 Q=512 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8443x
+COMPARE batch1_head1 Q=512 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.3674x
+Preparing batch1_head1 B=1 H=1 Q=1024 KV=32768
+2026-11-12 10:41:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:41:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:41:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:41:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=1024 v7_manual_bf16 round=1: 127.742 us MFU=35.5790%
+batch1_head1 Q=1024 v7_split1_bf16 round=1: 192.028 us MFU=23.6681%
+batch1_head1 Q=1024 ascendc_fia_v2 round=1: 95.266 us MFU=47.7079%
+COMPARE batch1_head1 Q=1024 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7458x
+COMPARE batch1_head1 Q=1024 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.4961x
+batch1_head1 Q=1024 ascendc_fia_v2 round=2: 95.412 us MFU=47.6349%
+batch1_head1 Q=1024 v7_split1_bf16 round=2: 191.570 us MFU=23.7247%
+batch1_head1 Q=1024 v7_manual_bf16 round=2: 127.412 us MFU=35.6712%
+COMPARE batch1_head1 Q=1024 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7488x
+COMPARE batch1_head1 Q=1024 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.4981x
+batch1_head1 Q=1024 v7_manual_bf16 round=3: 127.388 us MFU=35.6779%
+batch1_head1 Q=1024 v7_split1_bf16 round=3: 191.669 us MFU=23.7124%
+batch1_head1 Q=1024 ascendc_fia_v2 round=3: 95.216 us MFU=47.7329%
+COMPARE batch1_head1 Q=1024 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7474x
+COMPARE batch1_head1 Q=1024 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.4968x
+batch1_head1 Q=1024 ascendc_fia_v2 round=4: 95.187 us MFU=47.7475%
+batch1_head1 Q=1024 v7_split1_bf16 round=4: 191.444 us MFU=23.7403%
+batch1_head1 Q=1024 v7_manual_bf16 round=4: 127.430 us MFU=35.6662%
+COMPARE batch1_head1 Q=1024 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7470x
+COMPARE batch1_head1 Q=1024 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.4972x
+Preparing batch1_head1 B=1 H=1 Q=4096 KV=32768
+2026-11-12 10:41:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:41:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:41:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:41:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=4096 v7_manual_bf16 round=1: 287.244 us MFU=63.2903%
+batch1_head1 Q=4096 v7_split1_bf16 round=1: 366.522 us MFU=49.6007%
+batch1_head1 Q=4096 ascendc_fia_v2 round=1: 245.802 us MFU=73.9610%
+COMPARE batch1_head1 Q=4096 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8557x
+COMPARE batch1_head1 Q=4096 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6706x
+batch1_head1 Q=4096 ascendc_fia_v2 round=2: 246.401 us MFU=73.7812%
+batch1_head1 Q=4096 v7_split1_bf16 round=2: 366.788 us MFU=49.5648%
+batch1_head1 Q=4096 v7_manual_bf16 round=2: 287.530 us MFU=63.2273%
+COMPARE batch1_head1 Q=4096 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8570x
+COMPARE batch1_head1 Q=4096 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6718x
+batch1_head1 Q=4096 v7_manual_bf16 round=3: 286.973 us MFU=63.3501%
+batch1_head1 Q=4096 v7_split1_bf16 round=3: 366.457 us MFU=49.6095%
+batch1_head1 Q=4096 ascendc_fia_v2 round=3: 245.417 us MFU=74.0770%
+COMPARE batch1_head1 Q=4096 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8552x
+COMPARE batch1_head1 Q=4096 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6697x
+batch1_head1 Q=4096 ascendc_fia_v2 round=4: 245.084 us MFU=74.1777%
+batch1_head1 Q=4096 v7_split1_bf16 round=4: 366.550 us MFU=49.5969%
+batch1_head1 Q=4096 v7_manual_bf16 round=4: 287.091 us MFU=63.3240%
+COMPARE batch1_head1 Q=4096 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8537x
+COMPARE batch1_head1 Q=4096 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6686x
+Preparing batch1_head1 B=1 H=1 Q=8192 KV=32768
+2026-11-12 10:41:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 10:41:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 10:41:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:41:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=8192 v7_manual_bf16 round=1: 517.741 us MFU=70.2272%
+batch1_head1 Q=8192 v7_split1_bf16 round=1: 551.863 us MFU=65.8850%
+batch1_head1 Q=8192 ascendc_fia_v2 round=1: 459.850 us MFU=79.0682%
+COMPARE batch1_head1 Q=8192 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8882x
+COMPARE batch1_head1 Q=8192 KV=32768 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8333x
+batch1_head1 Q=8192 ascendc_fia_v2 round=2: 485.691 us MFU=74.8614%
+batch1_head1 Q=8192 v7_split1_bf16 round=2: 584.919 us MFU=62.1616%
+batch1_head1 Q=8192 v7_manual_bf16 round=2: 547.759 us MFU=66.3787%
+COMPARE batch1_head1 Q=8192 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8867x
+COMPARE batch1_head1 Q=8192 KV=32768 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8304x
+batch1_head1 Q=8192 v7_manual_bf16 round=3: 575.013 us MFU=63.2325%
+batch1_head1 Q=8192 v7_split1_bf16 round=3: 614.648 us MFU=59.1550%
+batch1_head1 Q=8192 ascendc_fia_v2 round=3: 508.849 us MFU=71.4544%
+COMPARE batch1_head1 Q=8192 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8849x
+COMPARE batch1_head1 Q=8192 KV=32768 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8279x
+batch1_head1 Q=8192 ascendc_fia_v2 round=4: 502.577 us MFU=72.3461%
+batch1_head1 Q=8192 v7_split1_bf16 round=4: 609.977 us MFU=59.6080%
+batch1_head1 Q=8192 v7_manual_bf16 round=4: 567.228 us MFU=64.1003%
+COMPARE batch1_head1 Q=8192 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8860x
+COMPARE batch1_head1 Q=8192 KV=32768 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8239x
+passed: mha_v7_split1_ascendc_kv32768.json; compact report: mha_v7_split1_ascendc_kv32768_summary.json

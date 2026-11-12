@@ -1,0 +1,682 @@
+FIA API availability={'v2': True, 'v1': True}; selected=['v2']
+Preparing batch2_head8 B=2 H=8 Q=1 KV=2048
+batch2_head8 Q=1 v7_manual_bf16 round=1: 47.632 us MFU=0.0932%
+batch2_head8 Q=1 v7_split1_bf16 round=1: 27.701 us MFU=0.1602%
+batch2_head8 Q=1 ascendc_fia_v2 round=1: 44.086 us MFU=0.1007%
+COMPARE batch2_head8 Q=1 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9256x
+COMPARE batch2_head8 Q=1 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5915x
+batch2_head8 Q=1 ascendc_fia_v2 round=2: 43.830 us MFU=0.1013%
+batch2_head8 Q=1 v7_split1_bf16 round=2: 27.096 us MFU=0.1638%
+batch2_head8 Q=1 v7_manual_bf16 round=2: 47.084 us MFU=0.0943%
+COMPARE batch2_head8 Q=1 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9309x
+COMPARE batch2_head8 Q=1 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6176x
+batch2_head8 Q=1 v7_manual_bf16 round=3: 47.415 us MFU=0.0936%
+batch2_head8 Q=1 v7_split1_bf16 round=3: 27.278 us MFU=0.1627%
+batch2_head8 Q=1 ascendc_fia_v2 round=3: 43.836 us MFU=0.1013%
+COMPARE batch2_head8 Q=1 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9245x
+COMPARE batch2_head8 Q=1 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6070x
+batch2_head8 Q=1 ascendc_fia_v2 round=4: 44.075 us MFU=0.1007%
+batch2_head8 Q=1 v7_split1_bf16 round=4: 27.097 us MFU=0.1638%
+batch2_head8 Q=1 v7_manual_bf16 round=4: 47.231 us MFU=0.0940%
+COMPARE batch2_head8 Q=1 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9332x
+COMPARE batch2_head8 Q=1 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6266x
+Preparing batch2_head8 B=2 H=8 Q=4 KV=2048
+batch2_head8 Q=4 v7_manual_bf16 round=1: 59.701 us MFU=0.2974%
+batch2_head8 Q=4 v7_split1_bf16 round=1: 39.617 us MFU=0.4481%
+batch2_head8 Q=4 ascendc_fia_v2 round=1: 45.301 us MFU=0.3919%
+COMPARE batch2_head8 Q=4 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7588x
+COMPARE batch2_head8 Q=4 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1435x
+batch2_head8 Q=4 ascendc_fia_v2 round=2: 45.183 us MFU=0.3929%
+batch2_head8 Q=4 v7_split1_bf16 round=2: 39.358 us MFU=0.4511%
+batch2_head8 Q=4 v7_manual_bf16 round=2: 60.314 us MFU=0.2944%
+COMPARE batch2_head8 Q=4 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7491x
+COMPARE batch2_head8 Q=4 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1480x
+batch2_head8 Q=4 v7_manual_bf16 round=3: 59.862 us MFU=0.2966%
+batch2_head8 Q=4 v7_split1_bf16 round=3: 39.472 us MFU=0.4498%
+batch2_head8 Q=4 ascendc_fia_v2 round=3: 44.961 us MFU=0.3949%
+COMPARE batch2_head8 Q=4 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7511x
+COMPARE batch2_head8 Q=4 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1391x
+batch2_head8 Q=4 ascendc_fia_v2 round=4: 45.413 us MFU=0.3909%
+batch2_head8 Q=4 v7_split1_bf16 round=4: 39.117 us MFU=0.4539%
+batch2_head8 Q=4 v7_manual_bf16 round=4: 60.492 us MFU=0.2935%
+COMPARE batch2_head8 Q=4 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7507x
+COMPARE batch2_head8 Q=4 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1610x
+Preparing batch2_head8 B=2 H=8 Q=16 KV=2048
+batch2_head8 Q=16 v7_manual_bf16 round=1: 61.642 us MFU=1.1521%
+batch2_head8 Q=16 v7_split1_bf16 round=1: 39.277 us MFU=1.8080%
+batch2_head8 Q=16 ascendc_fia_v2 round=1: 44.591 us MFU=1.5926%
+COMPARE batch2_head8 Q=16 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7234x
+COMPARE batch2_head8 Q=16 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1353x
+batch2_head8 Q=16 ascendc_fia_v2 round=2: 45.084 us MFU=1.5752%
+batch2_head8 Q=16 v7_split1_bf16 round=2: 39.522 us MFU=1.7968%
+batch2_head8 Q=16 v7_manual_bf16 round=2: 61.837 us MFU=1.1484%
+COMPARE batch2_head8 Q=16 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7291x
+COMPARE batch2_head8 Q=16 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1407x
+batch2_head8 Q=16 v7_manual_bf16 round=3: 61.728 us MFU=1.1504%
+batch2_head8 Q=16 v7_split1_bf16 round=3: 39.570 us MFU=1.7947%
+batch2_head8 Q=16 ascendc_fia_v2 round=3: 44.950 us MFU=1.5799%
+COMPARE batch2_head8 Q=16 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7282x
+COMPARE batch2_head8 Q=16 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1360x
+batch2_head8 Q=16 ascendc_fia_v2 round=4: 45.331 us MFU=1.5666%
+batch2_head8 Q=16 v7_split1_bf16 round=4: 39.301 us MFU=1.8069%
+batch2_head8 Q=16 v7_manual_bf16 round=4: 62.257 us MFU=1.1407%
+COMPARE batch2_head8 Q=16 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7281x
+COMPARE batch2_head8 Q=16 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1534x
+Preparing batch2_head8 B=2 H=8 Q=32 KV=2048
+batch2_head8 Q=32 v7_manual_bf16 round=1: 67.213 us MFU=2.1131%
+batch2_head8 Q=32 v7_split1_bf16 round=1: 40.322 us MFU=3.5224%
+batch2_head8 Q=32 ascendc_fia_v2 round=1: 45.435 us MFU=3.1260%
+COMPARE batch2_head8 Q=32 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6760x
+COMPARE batch2_head8 Q=32 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1268x
+batch2_head8 Q=32 ascendc_fia_v2 round=2: 45.420 us MFU=3.1270%
+batch2_head8 Q=32 v7_split1_bf16 round=2: 39.503 us MFU=3.5954%
+batch2_head8 Q=32 v7_manual_bf16 round=2: 67.338 us MFU=2.1092%
+COMPARE batch2_head8 Q=32 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6745x
+COMPARE batch2_head8 Q=32 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1498x
+batch2_head8 Q=32 v7_manual_bf16 round=3: 66.586 us MFU=2.1330%
+batch2_head8 Q=32 v7_split1_bf16 round=3: 39.671 us MFU=3.5802%
+batch2_head8 Q=32 ascendc_fia_v2 round=3: 44.978 us MFU=3.1578%
+COMPARE batch2_head8 Q=32 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6755x
+COMPARE batch2_head8 Q=32 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1338x
+batch2_head8 Q=32 ascendc_fia_v2 round=4: 45.148 us MFU=3.1459%
+batch2_head8 Q=32 v7_split1_bf16 round=4: 39.355 us MFU=3.6089%
+batch2_head8 Q=32 v7_manual_bf16 round=4: 67.133 us MFU=2.1156%
+COMPARE batch2_head8 Q=32 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6725x
+COMPARE batch2_head8 Q=32 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1472x
+Preparing batch2_head8 B=2 H=8 Q=64 KV=2048
+batch2_head8 Q=64 v7_manual_bf16 round=1: 72.845 us MFU=3.8995%
+batch2_head8 Q=64 v7_split1_bf16 round=1: 40.154 us MFU=7.0742%
+batch2_head8 Q=64 ascendc_fia_v2 round=1: 47.058 us MFU=6.0364%
+COMPARE batch2_head8 Q=64 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6460x
+COMPARE batch2_head8 Q=64 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1719x
+batch2_head8 Q=64 ascendc_fia_v2 round=2: 46.184 us MFU=6.1506%
+batch2_head8 Q=64 v7_split1_bf16 round=2: 39.579 us MFU=7.1770%
+batch2_head8 Q=64 v7_manual_bf16 round=2: 72.688 us MFU=3.9079%
+COMPARE batch2_head8 Q=64 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6354x
+COMPARE batch2_head8 Q=64 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1669x
+batch2_head8 Q=64 v7_manual_bf16 round=3: 71.970 us MFU=3.9469%
+batch2_head8 Q=64 v7_split1_bf16 round=3: 39.606 us MFU=7.1721%
+batch2_head8 Q=64 ascendc_fia_v2 round=3: 46.384 us MFU=6.1241%
+COMPARE batch2_head8 Q=64 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6445x
+COMPARE batch2_head8 Q=64 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1711x
+batch2_head8 Q=64 ascendc_fia_v2 round=4: 46.478 us MFU=6.1117%
+batch2_head8 Q=64 v7_split1_bf16 round=4: 39.302 us MFU=7.2276%
+batch2_head8 Q=64 v7_manual_bf16 round=4: 72.724 us MFU=3.9060%
+COMPARE batch2_head8 Q=64 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6391x
+COMPARE batch2_head8 Q=64 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1826x
+Preparing batch2_head8 B=2 H=8 Q=127 KV=2048
+batch2_head8 Q=127 v7_manual_bf16 round=1: 84.478 us MFU=6.6725%
+batch2_head8 Q=127 v7_split1_bf16 round=1: 39.888 us MFU=14.1315%
+batch2_head8 Q=127 ascendc_fia_v2 round=1: 51.425 us MFU=10.9612%
+COMPARE batch2_head8 Q=127 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6087x
+COMPARE batch2_head8 Q=127 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2892x
+batch2_head8 Q=127 ascendc_fia_v2 round=2: 50.922 us MFU=11.0695%
+batch2_head8 Q=127 v7_split1_bf16 round=2: 39.312 us MFU=14.3386%
+batch2_head8 Q=127 v7_manual_bf16 round=2: 84.169 us MFU=6.6970%
+COMPARE batch2_head8 Q=127 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6050x
+COMPARE batch2_head8 Q=127 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2953x
+batch2_head8 Q=127 v7_manual_bf16 round=3: 83.913 us MFU=6.7174%
+batch2_head8 Q=127 v7_split1_bf16 round=3: 39.496 us MFU=14.2718%
+batch2_head8 Q=127 ascendc_fia_v2 round=3: 51.863 us MFU=10.8686%
+COMPARE batch2_head8 Q=127 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6181x
+COMPARE batch2_head8 Q=127 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.3131x
+batch2_head8 Q=127 ascendc_fia_v2 round=4: 51.715 us MFU=10.8997%
+batch2_head8 Q=127 v7_split1_bf16 round=4: 39.532 us MFU=14.2588%
+batch2_head8 Q=127 v7_manual_bf16 round=4: 84.262 us MFU=6.6896%
+COMPARE batch2_head8 Q=127 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6137x
+COMPARE batch2_head8 Q=127 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.3082x
+Preparing batch2_head8 B=2 H=8 Q=128 KV=2048
+batch2_head8 Q=128 v7_manual_bf16 round=1: 85.526 us MFU=6.6426%
+batch2_head8 Q=128 v7_split1_bf16 round=1: 40.611 us MFU=13.9892%
+batch2_head8 Q=128 ascendc_fia_v2 round=1: 51.854 us MFU=10.9561%
+COMPARE batch2_head8 Q=128 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6063x
+COMPARE batch2_head8 Q=128 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2768x
+batch2_head8 Q=128 ascendc_fia_v2 round=2: 50.309 us MFU=11.2926%
+batch2_head8 Q=128 v7_split1_bf16 round=2: 39.241 us MFU=14.4776%
+batch2_head8 Q=128 v7_manual_bf16 round=2: 83.960 us MFU=6.7665%
+COMPARE batch2_head8 Q=128 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.5992x
+COMPARE batch2_head8 Q=128 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2821x
+batch2_head8 Q=128 v7_manual_bf16 round=3: 83.834 us MFU=6.7767%
+batch2_head8 Q=128 v7_split1_bf16 round=3: 39.468 us MFU=14.3944%
+batch2_head8 Q=128 ascendc_fia_v2 round=3: 50.360 us MFU=11.2811%
+COMPARE batch2_head8 Q=128 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6007x
+COMPARE batch2_head8 Q=128 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2760x
+batch2_head8 Q=128 ascendc_fia_v2 round=4: 50.190 us MFU=11.3193%
+batch2_head8 Q=128 v7_split1_bf16 round=4: 38.991 us MFU=14.5705%
+batch2_head8 Q=128 v7_manual_bf16 round=4: 84.274 us MFU=6.7413%
+COMPARE batch2_head8 Q=128 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.5956x
+COMPARE batch2_head8 Q=128 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2872x
+Preparing batch2_head8 B=2 H=8 Q=129 KV=2048
+batch2_head8 Q=129 v7_manual_bf16 round=1: 80.363 us MFU=7.1246%
+batch2_head8 Q=129 v7_split1_bf16 round=1: 55.261 us MFU=10.3609%
+batch2_head8 Q=129 ascendc_fia_v2 round=1: 61.614 us MFU=9.2926%
+COMPARE batch2_head8 Q=129 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7667x
+COMPARE batch2_head8 Q=129 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1150x
+batch2_head8 Q=129 ascendc_fia_v2 round=2: 61.023 us MFU=9.3826%
+batch2_head8 Q=129 v7_split1_bf16 round=2: 54.772 us MFU=10.4534%
+batch2_head8 Q=129 v7_manual_bf16 round=2: 80.412 us MFU=7.1203%
+COMPARE batch2_head8 Q=129 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7589x
+COMPARE batch2_head8 Q=129 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1141x
+batch2_head8 Q=129 v7_manual_bf16 round=3: 79.949 us MFU=7.1615%
+batch2_head8 Q=129 v7_split1_bf16 round=3: 54.912 us MFU=10.4268%
+batch2_head8 Q=129 ascendc_fia_v2 round=3: 61.081 us MFU=9.3737%
+COMPARE batch2_head8 Q=129 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7640x
+COMPARE batch2_head8 Q=129 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1123x
+batch2_head8 Q=129 ascendc_fia_v2 round=4: 60.875 us MFU=9.4054%
+batch2_head8 Q=129 v7_split1_bf16 round=4: 54.808 us MFU=10.4466%
+batch2_head8 Q=129 v7_manual_bf16 round=4: 80.555 us MFU=7.1076%
+COMPARE batch2_head8 Q=129 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7557x
+COMPARE batch2_head8 Q=129 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1107x
+Preparing batch2_head8 B=2 H=8 Q=256 KV=2048
+batch2_head8 Q=256 v7_manual_bf16 round=1: 94.213 us MFU=12.0603%
+batch2_head8 Q=256 v7_split1_bf16 round=1: 55.547 us MFU=20.4554%
+batch2_head8 Q=256 ascendc_fia_v2 round=1: 61.302 us MFU=18.5350%
+COMPARE batch2_head8 Q=256 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6507x
+COMPARE batch2_head8 Q=256 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1036x
+batch2_head8 Q=256 ascendc_fia_v2 round=2: 61.112 us MFU=18.5927%
+batch2_head8 Q=256 v7_split1_bf16 round=2: 55.253 us MFU=20.5642%
+batch2_head8 Q=256 v7_manual_bf16 round=2: 94.923 us MFU=11.9701%
+COMPARE batch2_head8 Q=256 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6438x
+COMPARE batch2_head8 Q=256 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1060x
+batch2_head8 Q=256 v7_manual_bf16 round=3: 94.404 us MFU=12.0359%
+batch2_head8 Q=256 v7_split1_bf16 round=3: 55.340 us MFU=20.5319%
+batch2_head8 Q=256 ascendc_fia_v2 round=3: 61.335 us MFU=18.5251%
+COMPARE batch2_head8 Q=256 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6497x
+COMPARE batch2_head8 Q=256 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1083x
+batch2_head8 Q=256 ascendc_fia_v2 round=4: 61.180 us MFU=18.5720%
+batch2_head8 Q=256 v7_split1_bf16 round=4: 55.454 us MFU=20.4897%
+batch2_head8 Q=256 v7_manual_bf16 round=4: 94.781 us MFU=11.9880%
+COMPARE batch2_head8 Q=256 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6455x
+COMPARE batch2_head8 Q=256 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.1033x
+Preparing batch2_head8 B=2 H=8 Q=512 KV=2048
+batch2_head8 Q=512 v7_manual_bf16 round=1: 120.707 us MFU=18.8263%
+batch2_head8 Q=512 v7_split1_bf16 round=1: 74.264 us MFU=30.5999%
+batch2_head8 Q=512 ascendc_fia_v2 round=1: 77.353 us MFU=29.3779%
+COMPARE batch2_head8 Q=512 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6408x
+COMPARE batch2_head8 Q=512 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0416x
+batch2_head8 Q=512 ascendc_fia_v2 round=2: 77.768 us MFU=29.2211%
+batch2_head8 Q=512 v7_split1_bf16 round=2: 75.764 us MFU=29.9941%
+batch2_head8 Q=512 v7_manual_bf16 round=2: 121.787 us MFU=18.6594%
+COMPARE batch2_head8 Q=512 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6386x
+COMPARE batch2_head8 Q=512 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0265x
+batch2_head8 Q=512 v7_manual_bf16 round=3: 122.304 us MFU=18.5805%
+batch2_head8 Q=512 v7_split1_bf16 round=3: 75.360 us MFU=30.1548%
+batch2_head8 Q=512 ascendc_fia_v2 round=3: 78.816 us MFU=28.8326%
+COMPARE batch2_head8 Q=512 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6444x
+COMPARE batch2_head8 Q=512 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0459x
+batch2_head8 Q=512 ascendc_fia_v2 round=4: 77.346 us MFU=29.3806%
+batch2_head8 Q=512 v7_split1_bf16 round=4: 72.804 us MFU=31.2135%
+batch2_head8 Q=512 v7_manual_bf16 round=4: 120.946 us MFU=18.7891%
+COMPARE batch2_head8 Q=512 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6395x
+COMPARE batch2_head8 Q=512 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0624x
+Preparing batch2_head8 B=2 H=8 Q=1024 KV=2048
+2026-11-12 10:35:11  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=1024 v7_manual_bf16 round=1: 106.687 us MFU=42.6007%
+batch2_head8 Q=1024 v7_split1_bf16 round=1: 105.596 us MFU=43.0408%
+batch2_head8 Q=1024 ascendc_fia_v2 round=1: 100.109 us MFU=45.3999%
+COMPARE batch2_head8 Q=1024 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9383x
+COMPARE batch2_head8 Q=1024 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9480x
+batch2_head8 Q=1024 ascendc_fia_v2 round=2: 105.770 us MFU=42.9700%
+batch2_head8 Q=1024 v7_split1_bf16 round=2: 112.733 us MFU=40.3160%
+batch2_head8 Q=1024 v7_manual_bf16 round=2: 112.597 us MFU=40.3647%
+COMPARE batch2_head8 Q=1024 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9394x
+COMPARE batch2_head8 Q=1024 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9382x
+batch2_head8 Q=1024 v7_manual_bf16 round=3: 111.289 us MFU=40.8391%
+batch2_head8 Q=1024 v7_split1_bf16 round=3: 109.923 us MFU=41.3466%
+batch2_head8 Q=1024 ascendc_fia_v2 round=3: 102.911 us MFU=44.1638%
+COMPARE batch2_head8 Q=1024 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9247x
+COMPARE batch2_head8 Q=1024 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9362x
+batch2_head8 Q=1024 ascendc_fia_v2 round=4: 105.972 us MFU=42.8881%
+batch2_head8 Q=1024 v7_split1_bf16 round=4: 114.350 us MFU=39.7459%
+batch2_head8 Q=1024 v7_manual_bf16 round=4: 114.056 us MFU=39.8483%
+COMPARE batch2_head8 Q=1024 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9291x
+COMPARE batch2_head8 Q=1024 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.9267x
+Preparing batch2_head8 B=2 H=8 Q=2048 KV=2048
+2026-11-12 10:35:12  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=2048 v7_manual_bf16 round=1: 189.063 us MFU=48.0786%
+batch2_head8 Q=2048 v7_split1_bf16 round=1: 189.511 us MFU=47.9649%
+batch2_head8 Q=2048 ascendc_fia_v2 round=1: 155.686 us MFU=58.3860%
+COMPARE batch2_head8 Q=2048 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8235x
+COMPARE batch2_head8 Q=2048 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8215x
+batch2_head8 Q=2048 ascendc_fia_v2 round=2: 152.336 us MFU=59.6699%
+batch2_head8 Q=2048 v7_split1_bf16 round=2: 185.878 us MFU=48.9024%
+batch2_head8 Q=2048 v7_manual_bf16 round=2: 186.114 us MFU=48.8404%
+COMPARE batch2_head8 Q=2048 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8185x
+COMPARE batch2_head8 Q=2048 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8195x
+batch2_head8 Q=2048 v7_manual_bf16 round=3: 184.709 us MFU=49.2119%
+batch2_head8 Q=2048 v7_split1_bf16 round=3: 185.698 us MFU=48.9498%
+batch2_head8 Q=2048 ascendc_fia_v2 round=3: 151.953 us MFU=59.8203%
+COMPARE batch2_head8 Q=2048 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8227x
+COMPARE batch2_head8 Q=2048 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8183x
+batch2_head8 Q=2048 ascendc_fia_v2 round=4: 151.571 us MFU=59.9711%
+batch2_head8 Q=2048 v7_split1_bf16 round=4: 185.203 us MFU=49.0806%
+batch2_head8 Q=2048 v7_manual_bf16 round=4: 185.628 us MFU=48.9682%
+COMPARE batch2_head8 Q=2048 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8165x
+COMPARE batch2_head8 Q=2048 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8184x
+Preparing batch2_head8 B=2 H=8 Q=4096 KV=2048
+2026-11-12 10:35:12  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=4096 v7_manual_bf16 round=1: 334.792 us MFU=54.3016%
+batch2_head8 Q=4096 v7_split1_bf16 round=1: 333.317 us MFU=54.5419%
+batch2_head8 Q=4096 ascendc_fia_v2 round=1: 260.040 us MFU=69.9114%
+COMPARE batch2_head8 Q=4096 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7767x
+COMPARE batch2_head8 Q=4096 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7802x
+batch2_head8 Q=4096 ascendc_fia_v2 round=2: 258.496 us MFU=70.3290%
+batch2_head8 Q=4096 v7_split1_bf16 round=2: 333.400 us MFU=54.5284%
+batch2_head8 Q=4096 v7_manual_bf16 round=2: 333.173 us MFU=54.5655%
+COMPARE batch2_head8 Q=4096 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7759x
+COMPARE batch2_head8 Q=4096 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7753x
+batch2_head8 Q=4096 v7_manual_bf16 round=3: 333.900 us MFU=54.4467%
+batch2_head8 Q=4096 v7_split1_bf16 round=3: 332.413 us MFU=54.6903%
+batch2_head8 Q=4096 ascendc_fia_v2 round=3: 258.679 us MFU=70.2792%
+COMPARE batch2_head8 Q=4096 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7747x
+COMPARE batch2_head8 Q=4096 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7782x
+batch2_head8 Q=4096 ascendc_fia_v2 round=4: 259.572 us MFU=70.0374%
+batch2_head8 Q=4096 v7_split1_bf16 round=4: 332.914 us MFU=54.6080%
+batch2_head8 Q=4096 v7_manual_bf16 round=4: 333.284 us MFU=54.5473%
+COMPARE batch2_head8 Q=4096 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7788x
+COMPARE batch2_head8 Q=4096 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7797x
+Preparing batch2_head8 B=2 H=8 Q=8192 KV=2048
+2026-11-12 10:35:13  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=8192 v7_manual_bf16 round=1: 644.292 us MFU=56.4333%
+batch2_head8 Q=8192 v7_split1_bf16 round=1: 649.219 us MFU=56.0050%
+batch2_head8 Q=8192 ascendc_fia_v2 round=1: 475.863 us MFU=76.4075%
+COMPARE batch2_head8 Q=8192 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7386x
+COMPARE batch2_head8 Q=8192 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7330x
+batch2_head8 Q=8192 ascendc_fia_v2 round=2: 478.806 us MFU=75.9379%
+batch2_head8 Q=8192 v7_split1_bf16 round=2: 659.442 us MFU=55.1368%
+batch2_head8 Q=8192 v7_manual_bf16 round=2: 667.228 us MFU=54.4934%
+COMPARE batch2_head8 Q=8192 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7176x
+COMPARE batch2_head8 Q=8192 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7261x
+batch2_head8 Q=8192 v7_manual_bf16 round=3: 669.069 us MFU=54.3434%
+batch2_head8 Q=8192 v7_split1_bf16 round=3: 687.682 us MFU=52.8726%
+batch2_head8 Q=8192 ascendc_fia_v2 round=3: 486.812 us MFU=74.6890%
+COMPARE batch2_head8 Q=8192 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7276x
+COMPARE batch2_head8 Q=8192 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7079x
+batch2_head8 Q=8192 ascendc_fia_v2 round=4: 500.337 us MFU=72.6700%
+batch2_head8 Q=8192 v7_split1_bf16 round=4: 685.726 us MFU=53.0234%
+batch2_head8 Q=8192 v7_manual_bf16 round=4: 694.491 us MFU=52.3542%
+COMPARE batch2_head8 Q=8192 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7204x
+COMPARE batch2_head8 Q=8192 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7296x
+Preparing batch2_head8 B=2 H=8 Q=16384 KV=2048
+2026-11-12 10:35:16  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=16384 v7_manual_bf16 round=1: 1408.698 us MFU=51.6214%
+batch2_head8 Q=16384 v7_split1_bf16 round=1: 1411.971 us MFU=51.5018%
+batch2_head8 Q=16384 ascendc_fia_v2 round=1: 916.574 us MFU=79.3379%
+COMPARE batch2_head8 Q=16384 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6507x
+COMPARE batch2_head8 Q=16384 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6491x
+batch2_head8 Q=16384 ascendc_fia_v2 round=2: 975.610 us MFU=74.5370%
+batch2_head8 Q=16384 v7_split1_bf16 round=2: 1505.263 us MFU=48.3098%
+batch2_head8 Q=16384 v7_manual_bf16 round=2: 1469.086 us MFU=49.4995%
+COMPARE batch2_head8 Q=16384 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6641x
+COMPARE batch2_head8 Q=16384 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6481x
+batch2_head8 Q=16384 v7_manual_bf16 round=3: 1438.054 us MFU=50.5677%
+batch2_head8 Q=16384 v7_split1_bf16 round=3: 1430.085 us MFU=50.8494%
+batch2_head8 Q=16384 ascendc_fia_v2 round=3: 964.431 us MFU=75.4010%
+COMPARE batch2_head8 Q=16384 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6707x
+COMPARE batch2_head8 Q=16384 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6744x
+batch2_head8 Q=16384 ascendc_fia_v2 round=4: 963.104 us MFU=75.5048%
+batch2_head8 Q=16384 v7_split1_bf16 round=4: 1538.727 us MFU=47.2592%
+batch2_head8 Q=16384 v7_manual_bf16 round=4: 1473.793 us MFU=49.3414%
+COMPARE batch2_head8 Q=16384 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6535x
+COMPARE batch2_head8 Q=16384 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6259x
+Preparing batch2_head8 B=2 H=8 Q=32768 KV=2048
+2026-11-12 10:35:20  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=32768 v7_manual_bf16 round=1: 2975.752 us MFU=48.8744%
+batch2_head8 Q=32768 v7_split1_bf16 round=1: 3053.414 us MFU=47.6313%
+batch2_head8 Q=32768 ascendc_fia_v2 round=1: 1972.524 us MFU=73.7320%
+COMPARE batch2_head8 Q=32768 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6629x
+COMPARE batch2_head8 Q=32768 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6460x
+batch2_head8 Q=32768 ascendc_fia_v2 round=2: 1963.545 us MFU=74.0691%
+batch2_head8 Q=32768 v7_split1_bf16 round=2: 2894.963 us MFU=50.2383%
+batch2_head8 Q=32768 v7_manual_bf16 round=2: 3006.477 us MFU=48.3749%
+COMPARE batch2_head8 Q=32768 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6531x
+COMPARE batch2_head8 Q=32768 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6783x
+batch2_head8 Q=32768 v7_manual_bf16 round=3: 2898.704 us MFU=50.1735%
+batch2_head8 Q=32768 v7_split1_bf16 round=3: 3026.923 us MFU=48.0481%
+batch2_head8 Q=32768 ascendc_fia_v2 round=3: 1904.228 us MFU=76.3764%
+COMPARE batch2_head8 Q=32768 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6569x
+COMPARE batch2_head8 Q=32768 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.6291x
+batch2_head8 Q=32768 ascendc_fia_v2 round=4: 2032.917 us MFU=71.5416%
+batch2_head8 Q=32768 v7_split1_bf16 round=4: 2879.909 us MFU=50.5009%
+batch2_head8 Q=32768 v7_manual_bf16 round=4: 3019.906 us MFU=48.1598%
+COMPARE batch2_head8 Q=32768 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6732x
+COMPARE batch2_head8 Q=32768 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.7059x
+Preparing batch1_head1 B=1 H=1 Q=1 KV=2048
+batch1_head1 Q=1 v7_manual_bf16 round=1: 26.077 us MFU=0.0106%
+batch1_head1 Q=1 v7_split1_bf16 round=1: 22.625 us MFU=0.0123%
+batch1_head1 Q=1 ascendc_fia_v2 round=1: 34.101 us MFU=0.0081%
+COMPARE batch1_head1 Q=1 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3077x
+COMPARE batch1_head1 Q=1 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5072x
+batch1_head1 Q=1 ascendc_fia_v2 round=2: 34.078 us MFU=0.0081%
+batch1_head1 Q=1 v7_split1_bf16 round=2: 22.431 us MFU=0.0124%
+batch1_head1 Q=1 v7_manual_bf16 round=2: 25.860 us MFU=0.0107%
+COMPARE batch1_head1 Q=1 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3178x
+COMPARE batch1_head1 Q=1 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5192x
+batch1_head1 Q=1 v7_manual_bf16 round=3: 28.178 us MFU=0.0098%
+batch1_head1 Q=1 v7_split1_bf16 round=3: 22.723 us MFU=0.0122%
+batch1_head1 Q=1 ascendc_fia_v2 round=3: 43.593 us MFU=0.0064%
+COMPARE batch1_head1 Q=1 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.5471x
+COMPARE batch1_head1 Q=1 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.9185x
+batch1_head1 Q=1 ascendc_fia_v2 round=4: 43.879 us MFU=0.0063%
+batch1_head1 Q=1 v7_split1_bf16 round=4: 22.670 us MFU=0.0122%
+batch1_head1 Q=1 v7_manual_bf16 round=4: 28.437 us MFU=0.0098%
+COMPARE batch1_head1 Q=1 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.5430x
+COMPARE batch1_head1 Q=1 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.9356x
+Preparing batch1_head1 B=1 H=1 Q=4 KV=2048
+batch1_head1 Q=4 v7_manual_bf16 round=1: 33.439 us MFU=0.0332%
+batch1_head1 Q=4 v7_split1_bf16 round=1: 26.513 us MFU=0.0419%
+batch1_head1 Q=4 ascendc_fia_v2 round=1: 42.116 us MFU=0.0263%
+COMPARE batch1_head1 Q=4 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2595x
+COMPARE batch1_head1 Q=4 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5885x
+batch1_head1 Q=4 ascendc_fia_v2 round=2: 41.599 us MFU=0.0267%
+batch1_head1 Q=4 v7_split1_bf16 round=2: 26.200 us MFU=0.0424%
+batch1_head1 Q=4 v7_manual_bf16 round=2: 33.178 us MFU=0.0334%
+COMPARE batch1_head1 Q=4 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2538x
+COMPARE batch1_head1 Q=4 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5877x
+batch1_head1 Q=4 v7_manual_bf16 round=3: 33.230 us MFU=0.0334%
+batch1_head1 Q=4 v7_split1_bf16 round=3: 26.707 us MFU=0.0415%
+batch1_head1 Q=4 ascendc_fia_v2 round=3: 41.946 us MFU=0.0265%
+COMPARE batch1_head1 Q=4 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2623x
+COMPARE batch1_head1 Q=4 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5706x
+batch1_head1 Q=4 ascendc_fia_v2 round=4: 41.790 us MFU=0.0266%
+batch1_head1 Q=4 v7_split1_bf16 round=4: 26.187 us MFU=0.0424%
+batch1_head1 Q=4 v7_manual_bf16 round=4: 33.172 us MFU=0.0335%
+COMPARE batch1_head1 Q=4 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2598x
+COMPARE batch1_head1 Q=4 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5958x
+Preparing batch1_head1 B=1 H=1 Q=16 KV=2048
+batch1_head1 Q=16 v7_manual_bf16 round=1: 32.535 us MFU=0.1364%
+batch1_head1 Q=16 v7_split1_bf16 round=1: 26.336 us MFU=0.1685%
+batch1_head1 Q=16 ascendc_fia_v2 round=1: 41.393 us MFU=0.1072%
+COMPARE batch1_head1 Q=16 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2723x
+COMPARE batch1_head1 Q=16 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5717x
+batch1_head1 Q=16 ascendc_fia_v2 round=2: 41.850 us MFU=0.1061%
+batch1_head1 Q=16 v7_split1_bf16 round=2: 26.340 us MFU=0.1685%
+batch1_head1 Q=16 v7_manual_bf16 round=2: 33.007 us MFU=0.1345%
+COMPARE batch1_head1 Q=16 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2679x
+COMPARE batch1_head1 Q=16 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5888x
+batch1_head1 Q=16 v7_manual_bf16 round=3: 32.693 us MFU=0.1358%
+batch1_head1 Q=16 v7_split1_bf16 round=3: 26.142 us MFU=0.1698%
+batch1_head1 Q=16 ascendc_fia_v2 round=3: 41.297 us MFU=0.1075%
+COMPARE batch1_head1 Q=16 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2632x
+COMPARE batch1_head1 Q=16 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5797x
+batch1_head1 Q=16 ascendc_fia_v2 round=4: 41.484 us MFU=0.1070%
+batch1_head1 Q=16 v7_split1_bf16 round=4: 26.295 us MFU=0.1688%
+batch1_head1 Q=16 v7_manual_bf16 round=4: 32.675 us MFU=0.1358%
+COMPARE batch1_head1 Q=16 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2696x
+COMPARE batch1_head1 Q=16 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5776x
+Preparing batch1_head1 B=1 H=1 Q=32 KV=2048
+batch1_head1 Q=32 v7_manual_bf16 round=1: 33.074 us MFU=0.2684%
+batch1_head1 Q=32 v7_split1_bf16 round=1: 26.560 us MFU=0.3342%
+batch1_head1 Q=32 ascendc_fia_v2 round=1: 41.490 us MFU=0.2140%
+COMPARE batch1_head1 Q=32 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2545x
+COMPARE batch1_head1 Q=32 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5621x
+batch1_head1 Q=32 ascendc_fia_v2 round=2: 41.464 us MFU=0.2141%
+batch1_head1 Q=32 v7_split1_bf16 round=2: 26.126 us MFU=0.3398%
+batch1_head1 Q=32 v7_manual_bf16 round=2: 32.753 us MFU=0.2710%
+COMPARE batch1_head1 Q=32 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2660x
+COMPARE batch1_head1 Q=32 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5871x
+batch1_head1 Q=32 v7_manual_bf16 round=3: 32.686 us MFU=0.2716%
+batch1_head1 Q=32 v7_split1_bf16 round=3: 26.392 us MFU=0.3363%
+batch1_head1 Q=32 ascendc_fia_v2 round=3: 41.090 us MFU=0.2160%
+COMPARE batch1_head1 Q=32 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2571x
+COMPARE batch1_head1 Q=32 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5569x
+batch1_head1 Q=32 ascendc_fia_v2 round=4: 41.386 us MFU=0.2145%
+batch1_head1 Q=32 v7_split1_bf16 round=4: 26.479 us MFU=0.3352%
+batch1_head1 Q=32 v7_manual_bf16 round=4: 32.729 us MFU=0.2712%
+COMPARE batch1_head1 Q=32 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2645x
+COMPARE batch1_head1 Q=32 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5630x
+Preparing batch1_head1 B=1 H=1 Q=64 KV=2048
+batch1_head1 Q=64 v7_manual_bf16 round=1: 33.619 us MFU=0.5281%
+batch1_head1 Q=64 v7_split1_bf16 round=1: 27.307 us MFU=0.6502%
+batch1_head1 Q=64 ascendc_fia_v2 round=1: 42.583 us MFU=0.4169%
+COMPARE batch1_head1 Q=64 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2666x
+COMPARE batch1_head1 Q=64 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5594x
+batch1_head1 Q=64 ascendc_fia_v2 round=2: 42.719 us MFU=0.4156%
+batch1_head1 Q=64 v7_split1_bf16 round=2: 26.579 us MFU=0.6680%
+batch1_head1 Q=64 v7_manual_bf16 round=2: 33.197 us MFU=0.5348%
+COMPARE batch1_head1 Q=64 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2868x
+COMPARE batch1_head1 Q=64 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6072x
+batch1_head1 Q=64 v7_manual_bf16 round=3: 32.787 us MFU=0.5415%
+batch1_head1 Q=64 v7_split1_bf16 round=3: 26.839 us MFU=0.6615%
+batch1_head1 Q=64 ascendc_fia_v2 round=3: 42.275 us MFU=0.4200%
+COMPARE batch1_head1 Q=64 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2894x
+COMPARE batch1_head1 Q=64 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5751x
+batch1_head1 Q=64 ascendc_fia_v2 round=4: 43.108 us MFU=0.4118%
+batch1_head1 Q=64 v7_split1_bf16 round=4: 26.366 us MFU=0.6734%
+batch1_head1 Q=64 v7_manual_bf16 round=4: 33.110 us MFU=0.5362%
+COMPARE batch1_head1 Q=64 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3020x
+COMPARE batch1_head1 Q=64 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6350x
+Preparing batch1_head1 B=1 H=1 Q=127 KV=2048
+batch1_head1 Q=127 v7_manual_bf16 round=1: 33.835 us MFU=1.0412%
+batch1_head1 Q=127 v7_split1_bf16 round=1: 27.557 us MFU=1.2784%
+batch1_head1 Q=127 ascendc_fia_v2 round=1: 44.402 us MFU=0.7934%
+COMPARE batch1_head1 Q=127 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3123x
+COMPARE batch1_head1 Q=127 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6113x
+batch1_head1 Q=127 ascendc_fia_v2 round=2: 44.461 us MFU=0.7924%
+batch1_head1 Q=127 v7_split1_bf16 round=2: 26.640 us MFU=1.3224%
+batch1_head1 Q=127 v7_manual_bf16 round=2: 33.506 us MFU=1.0515%
+COMPARE batch1_head1 Q=127 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3270x
+COMPARE batch1_head1 Q=127 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6690x
+batch1_head1 Q=127 v7_manual_bf16 round=3: 33.257 us MFU=1.0593%
+batch1_head1 Q=127 v7_split1_bf16 round=3: 26.868 us MFU=1.3112%
+batch1_head1 Q=127 ascendc_fia_v2 round=3: 43.853 us MFU=0.8034%
+COMPARE batch1_head1 Q=127 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3186x
+COMPARE batch1_head1 Q=127 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6322x
+batch1_head1 Q=127 ascendc_fia_v2 round=4: 44.903 us MFU=0.7846%
+batch1_head1 Q=127 v7_split1_bf16 round=4: 26.717 us MFU=1.3186%
+batch1_head1 Q=127 v7_manual_bf16 round=4: 33.521 us MFU=1.0510%
+COMPARE batch1_head1 Q=127 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3395x
+COMPARE batch1_head1 Q=127 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6807x
+Preparing batch1_head1 B=1 H=1 Q=128 KV=2048
+batch1_head1 Q=128 v7_manual_bf16 round=1: 27.626 us MFU=1.2853%
+batch1_head1 Q=128 v7_split1_bf16 round=1: 22.607 us MFU=1.5706%
+batch1_head1 Q=128 ascendc_fia_v2 round=1: 35.898 us MFU=0.9891%
+COMPARE batch1_head1 Q=128 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2994x
+COMPARE batch1_head1 Q=128 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5879x
+batch1_head1 Q=128 ascendc_fia_v2 round=2: 36.366 us MFU=0.9764%
+batch1_head1 Q=128 v7_split1_bf16 round=2: 22.624 us MFU=1.5695%
+batch1_head1 Q=128 v7_manual_bf16 round=2: 27.553 us MFU=1.2887%
+COMPARE batch1_head1 Q=128 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3199x
+COMPARE batch1_head1 Q=128 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6074x
+batch1_head1 Q=128 v7_manual_bf16 round=3: 28.994 us MFU=1.2246%
+batch1_head1 Q=128 v7_split1_bf16 round=3: 22.900 us MFU=1.5505%
+batch1_head1 Q=128 ascendc_fia_v2 round=3: 45.520 us MFU=0.7800%
+COMPARE batch1_head1 Q=128 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.5700x
+COMPARE batch1_head1 Q=128 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.9878x
+batch1_head1 Q=128 ascendc_fia_v2 round=4: 36.230 us MFU=0.9801%
+batch1_head1 Q=128 v7_split1_bf16 round=4: 22.627 us MFU=1.5692%
+batch1_head1 Q=128 v7_manual_bf16 round=4: 27.554 us MFU=1.2886%
+COMPARE batch1_head1 Q=128 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3149x
+COMPARE batch1_head1 Q=128 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6012x
+Preparing batch1_head1 B=1 H=1 Q=129 KV=2048
+batch1_head1 Q=129 v7_manual_bf16 round=1: 31.422 us MFU=1.1388%
+batch1_head1 Q=129 v7_split1_bf16 round=1: 22.761 us MFU=1.5722%
+batch1_head1 Q=129 ascendc_fia_v2 round=1: 37.609 us MFU=0.9515%
+COMPARE batch1_head1 Q=129 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1969x
+COMPARE batch1_head1 Q=129 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6523x
+batch1_head1 Q=129 ascendc_fia_v2 round=2: 37.712 us MFU=0.9489%
+batch1_head1 Q=129 v7_split1_bf16 round=2: 22.690 us MFU=1.5771%
+batch1_head1 Q=129 v7_manual_bf16 round=2: 31.537 us MFU=1.1347%
+COMPARE batch1_head1 Q=129 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1958x
+COMPARE batch1_head1 Q=129 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6621x
+batch1_head1 Q=129 v7_manual_bf16 round=3: 31.336 us MFU=1.1420%
+batch1_head1 Q=129 v7_split1_bf16 round=3: 22.692 us MFU=1.5770%
+batch1_head1 Q=129 ascendc_fia_v2 round=3: 37.475 us MFU=0.9549%
+COMPARE batch1_head1 Q=129 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1959x
+COMPARE batch1_head1 Q=129 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6515x
+batch1_head1 Q=129 ascendc_fia_v2 round=4: 37.761 us MFU=0.9477%
+batch1_head1 Q=129 v7_split1_bf16 round=4: 22.625 us MFU=1.5816%
+batch1_head1 Q=129 v7_manual_bf16 round=4: 31.677 us MFU=1.1297%
+COMPARE batch1_head1 Q=129 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1921x
+COMPARE batch1_head1 Q=129 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6690x
+Preparing batch1_head1 B=1 H=1 Q=256 KV=2048
+batch1_head1 Q=256 v7_manual_bf16 round=1: 29.560 us MFU=2.4024%
+batch1_head1 Q=256 v7_split1_bf16 round=1: 22.837 us MFU=3.1096%
+batch1_head1 Q=256 ascendc_fia_v2 round=1: 34.884 us MFU=2.0357%
+COMPARE batch1_head1 Q=256 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1801x
+COMPARE batch1_head1 Q=256 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5275x
+batch1_head1 Q=256 ascendc_fia_v2 round=2: 35.028 us MFU=2.0274%
+batch1_head1 Q=256 v7_split1_bf16 round=2: 22.818 us MFU=3.1122%
+batch1_head1 Q=256 v7_manual_bf16 round=2: 29.586 us MFU=2.4003%
+COMPARE batch1_head1 Q=256 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1839x
+COMPARE batch1_head1 Q=256 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5351x
+batch1_head1 Q=256 v7_manual_bf16 round=3: 29.735 us MFU=2.3883%
+batch1_head1 Q=256 v7_split1_bf16 round=3: 22.771 us MFU=3.1186%
+batch1_head1 Q=256 ascendc_fia_v2 round=3: 34.674 us MFU=2.0481%
+COMPARE batch1_head1 Q=256 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1661x
+COMPARE batch1_head1 Q=256 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5227x
+batch1_head1 Q=256 ascendc_fia_v2 round=4: 35.346 us MFU=2.0091%
+batch1_head1 Q=256 v7_split1_bf16 round=4: 22.768 us MFU=3.1191%
+batch1_head1 Q=256 v7_manual_bf16 round=4: 29.751 us MFU=2.3870%
+COMPARE batch1_head1 Q=256 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.1881x
+COMPARE batch1_head1 Q=256 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.5524x
+Preparing batch1_head1 B=1 H=1 Q=512 KV=2048
+batch1_head1 Q=512 v7_manual_bf16 round=1: 45.420 us MFU=3.1270%
+batch1_head1 Q=512 v7_split1_bf16 round=1: 23.183 us MFU=6.1264%
+batch1_head1 Q=512 ascendc_fia_v2 round=1: 38.685 us MFU=3.6714%
+COMPARE batch1_head1 Q=512 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8517x
+COMPARE batch1_head1 Q=512 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6687x
+batch1_head1 Q=512 ascendc_fia_v2 round=2: 37.945 us MFU=3.7430%
+batch1_head1 Q=512 v7_split1_bf16 round=2: 22.914 us MFU=6.1984%
+batch1_head1 Q=512 v7_manual_bf16 round=2: 45.294 us MFU=3.1357%
+COMPARE batch1_head1 Q=512 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8377x
+COMPARE batch1_head1 Q=512 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6560x
+batch1_head1 Q=512 v7_manual_bf16 round=3: 44.707 us MFU=3.1769%
+batch1_head1 Q=512 v7_split1_bf16 round=3: 22.871 us MFU=6.2100%
+batch1_head1 Q=512 ascendc_fia_v2 round=3: 38.261 us MFU=3.7121%
+COMPARE batch1_head1 Q=512 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8558x
+COMPARE batch1_head1 Q=512 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6729x
+batch1_head1 Q=512 ascendc_fia_v2 round=4: 38.012 us MFU=3.7364%
+batch1_head1 Q=512 v7_split1_bf16 round=4: 22.794 us MFU=6.2310%
+batch1_head1 Q=512 v7_manual_bf16 round=4: 45.080 us MFU=3.1506%
+COMPARE batch1_head1 Q=512 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8432x
+COMPARE batch1_head1 Q=512 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.6676x
+Preparing batch1_head1 B=1 H=1 Q=1024 KV=2048
+batch1_head1 Q=1024 v7_manual_bf16 round=1: 71.774 us MFU=3.9577%
+batch1_head1 Q=1024 v7_split1_bf16 round=1: 28.041 us MFU=10.1301%
+batch1_head1 Q=1024 ascendc_fia_v2 round=1: 57.200 us MFU=4.9661%
+COMPARE batch1_head1 Q=1024 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7969x
+COMPARE batch1_head1 Q=1024 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=2.0399x
+batch1_head1 Q=1024 ascendc_fia_v2 round=2: 59.336 us MFU=4.7873%
+batch1_head1 Q=1024 v7_split1_bf16 round=2: 31.199 us MFU=9.1047%
+batch1_head1 Q=1024 v7_manual_bf16 round=2: 73.145 us MFU=3.8835%
+COMPARE batch1_head1 Q=1024 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8112x
+COMPARE batch1_head1 Q=1024 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.9019x
+batch1_head1 Q=1024 v7_manual_bf16 round=3: 71.231 us MFU=3.9879%
+batch1_head1 Q=1024 v7_split1_bf16 round=3: 27.638 us MFU=10.2778%
+batch1_head1 Q=1024 ascendc_fia_v2 round=3: 47.618 us MFU=5.9654%
+COMPARE batch1_head1 Q=1024 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6685x
+COMPARE batch1_head1 Q=1024 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.7229x
+batch1_head1 Q=1024 ascendc_fia_v2 round=4: 46.645 us MFU=6.0898%
+batch1_head1 Q=1024 v7_split1_bf16 round=4: 26.598 us MFU=10.6797%
+batch1_head1 Q=1024 v7_manual_bf16 round=4: 70.898 us MFU=4.0066%
+COMPARE batch1_head1 Q=1024 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6579x
+COMPARE batch1_head1 Q=1024 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.7537x
+Preparing batch1_head1 B=1 H=1 Q=2048 KV=2048
+batch1_head1 Q=2048 v7_manual_bf16 round=1: 71.815 us MFU=7.9108%
+batch1_head1 Q=2048 v7_split1_bf16 round=1: 27.351 us MFU=20.7714%
+batch1_head1 Q=2048 ascendc_fia_v2 round=1: 49.617 us MFU=11.4501%
+COMPARE batch1_head1 Q=2048 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6909x
+COMPARE batch1_head1 Q=2048 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.8141x
+batch1_head1 Q=2048 ascendc_fia_v2 round=2: 49.696 us MFU=11.4319%
+batch1_head1 Q=2048 v7_split1_bf16 round=2: 27.067 us MFU=20.9893%
+batch1_head1 Q=2048 v7_manual_bf16 round=2: 71.681 us MFU=7.9256%
+COMPARE batch1_head1 Q=2048 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6933x
+COMPARE batch1_head1 Q=2048 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.8360x
+batch1_head1 Q=2048 v7_manual_bf16 round=3: 71.438 us MFU=7.9526%
+batch1_head1 Q=2048 v7_split1_bf16 round=3: 27.377 us MFU=20.7516%
+batch1_head1 Q=2048 ascendc_fia_v2 round=3: 49.623 us MFU=11.4487%
+COMPARE batch1_head1 Q=2048 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6946x
+COMPARE batch1_head1 Q=2048 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.8126x
+batch1_head1 Q=2048 ascendc_fia_v2 round=4: 49.640 us MFU=11.4447%
+batch1_head1 Q=2048 v7_split1_bf16 round=4: 27.311 us MFU=20.8018%
+batch1_head1 Q=2048 v7_manual_bf16 round=4: 71.607 us MFU=7.9338%
+COMPARE batch1_head1 Q=2048 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6932x
+COMPARE batch1_head1 Q=2048 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.8176x
+Preparing batch1_head1 B=1 H=1 Q=4096 KV=2048
+batch1_head1 Q=4096 v7_manual_bf16 round=1: 81.884 us MFU=13.8762%
+batch1_head1 Q=4096 v7_split1_bf16 round=1: 42.849 us MFU=26.5172%
+batch1_head1 Q=4096 ascendc_fia_v2 round=1: 59.390 us MFU=19.1318%
+COMPARE batch1_head1 Q=4096 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7253x
+COMPARE batch1_head1 Q=4096 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.3860x
+batch1_head1 Q=4096 ascendc_fia_v2 round=2: 59.105 us MFU=19.2240%
+batch1_head1 Q=4096 v7_split1_bf16 round=2: 42.745 us MFU=26.5817%
+batch1_head1 Q=4096 v7_manual_bf16 round=2: 82.050 us MFU=13.8481%
+COMPARE batch1_head1 Q=4096 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7204x
+COMPARE batch1_head1 Q=4096 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.3827x
+batch1_head1 Q=4096 v7_manual_bf16 round=3: 81.896 us MFU=13.8741%
+batch1_head1 Q=4096 v7_split1_bf16 round=3: 42.854 us MFU=26.5141%
+batch1_head1 Q=4096 ascendc_fia_v2 round=3: 59.256 us MFU=19.1750%
+COMPARE batch1_head1 Q=4096 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7236x
+COMPARE batch1_head1 Q=4096 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.3827x
+batch1_head1 Q=4096 ascendc_fia_v2 round=4: 59.565 us MFU=19.0755%
+batch1_head1 Q=4096 v7_split1_bf16 round=4: 42.957 us MFU=26.4505%
+batch1_head1 Q=4096 v7_manual_bf16 round=4: 81.867 us MFU=13.8790%
+COMPARE batch1_head1 Q=4096 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7276x
+COMPARE batch1_head1 Q=4096 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.3866x
+Preparing batch1_head1 B=1 H=1 Q=8192 KV=2048
+batch1_head1 Q=8192 v7_manual_bf16 round=1: 107.740 us MFU=21.0922%
+batch1_head1 Q=8192 v7_split1_bf16 round=1: 60.371 us MFU=37.6417%
+batch1_head1 Q=8192 ascendc_fia_v2 round=1: 72.755 us MFU=31.2345%
+COMPARE batch1_head1 Q=8192 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6753x
+COMPARE batch1_head1 Q=8192 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2051x
+batch1_head1 Q=8192 ascendc_fia_v2 round=2: 72.971 us MFU=31.1421%
+batch1_head1 Q=8192 v7_split1_bf16 round=2: 59.933 us MFU=37.9168%
+batch1_head1 Q=8192 v7_manual_bf16 round=2: 107.692 us MFU=21.1016%
+COMPARE batch1_head1 Q=8192 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6776x
+COMPARE batch1_head1 Q=8192 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2175x
+batch1_head1 Q=8192 v7_manual_bf16 round=3: 107.595 us MFU=21.1206%
+batch1_head1 Q=8192 v7_split1_bf16 round=3: 60.490 us MFU=37.5677%
+batch1_head1 Q=8192 ascendc_fia_v2 round=3: 73.150 us MFU=31.0659%
+COMPARE batch1_head1 Q=8192 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6799x
+COMPARE batch1_head1 Q=8192 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2093x
+batch1_head1 Q=8192 ascendc_fia_v2 round=4: 72.729 us MFU=31.2457%
+batch1_head1 Q=8192 v7_split1_bf16 round=4: 59.745 us MFU=38.0361%
+batch1_head1 Q=8192 v7_manual_bf16 round=4: 107.763 us MFU=21.0877%
+COMPARE batch1_head1 Q=8192 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.6749x
+COMPARE batch1_head1 Q=8192 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.2173x
+Preparing batch1_head1 B=1 H=1 Q=16384 KV=2048
+2026-11-12 10:35:30  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=16384 v7_manual_bf16 round=1: 94.522 us MFU=48.0834%
+batch1_head1 Q=16384 v7_split1_bf16 round=1: 93.752 us MFU=48.4783%
+batch1_head1 Q=16384 ascendc_fia_v2 round=1: 99.804 us MFU=45.5386%
+COMPARE batch1_head1 Q=16384 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0559x
+COMPARE batch1_head1 Q=16384 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0646x
+batch1_head1 Q=16384 ascendc_fia_v2 round=2: 100.978 us MFU=45.0092%
+batch1_head1 Q=16384 v7_split1_bf16 round=2: 93.940 us MFU=48.3813%
+batch1_head1 Q=16384 v7_manual_bf16 round=2: 94.117 us MFU=48.2903%
+COMPARE batch1_head1 Q=16384 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0729x
+COMPARE batch1_head1 Q=16384 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0749x
+batch1_head1 Q=16384 v7_manual_bf16 round=3: 94.267 us MFU=48.2135%
+batch1_head1 Q=16384 v7_split1_bf16 round=3: 93.529 us MFU=48.5939%
+batch1_head1 Q=16384 ascendc_fia_v2 round=3: 99.817 us MFU=45.5327%
+COMPARE batch1_head1 Q=16384 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0589x
+COMPARE batch1_head1 Q=16384 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0672x
+batch1_head1 Q=16384 ascendc_fia_v2 round=4: 98.624 us MFU=46.0835%
+batch1_head1 Q=16384 v7_split1_bf16 round=4: 93.217 us MFU=48.7565%
+batch1_head1 Q=16384 v7_manual_bf16 round=4: 93.305 us MFU=48.7106%
+COMPARE batch1_head1 Q=16384 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0570x
+COMPARE batch1_head1 Q=16384 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=1.0580x
+Preparing batch1_head1 B=1 H=1 Q=32768 KV=2048
+2026-11-12 10:35:31  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=32768 v7_manual_bf16 round=1: 174.041 us MFU=52.2284%
+batch1_head1 Q=32768 v7_split1_bf16 round=1: 175.006 us MFU=51.9404%
+batch1_head1 Q=32768 ascendc_fia_v2 round=1: 152.375 us MFU=59.6547%
+COMPARE batch1_head1 Q=32768 KV=2048 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8755x
+COMPARE batch1_head1 Q=32768 KV=2048 round=1 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8707x
+batch1_head1 Q=32768 ascendc_fia_v2 round=2: 154.556 us MFU=58.8128%
+batch1_head1 Q=32768 v7_split1_bf16 round=2: 174.214 us MFU=52.1765%
+batch1_head1 Q=32768 v7_manual_bf16 round=2: 174.697 us MFU=52.0323%
+COMPARE batch1_head1 Q=32768 KV=2048 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8847x
+COMPARE batch1_head1 Q=32768 KV=2048 round=2 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8872x
+batch1_head1 Q=32768 v7_manual_bf16 round=3: 173.819 us MFU=52.2951%
+batch1_head1 Q=32768 v7_split1_bf16 round=3: 174.766 us MFU=52.0117%
+batch1_head1 Q=32768 ascendc_fia_v2 round=3: 152.072 us MFU=59.7735%
+COMPARE batch1_head1 Q=32768 KV=2048 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8749x
+COMPARE batch1_head1 Q=32768 KV=2048 round=3 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8701x
+batch1_head1 Q=32768 ascendc_fia_v2 round=4: 152.250 us MFU=59.7036%
+batch1_head1 Q=32768 v7_split1_bf16 round=4: 173.888 us MFU=52.2743%
+batch1_head1 Q=32768 v7_manual_bf16 round=4: 174.467 us MFU=52.1008%
+COMPARE batch1_head1 Q=32768 KV=2048 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8727x
+COMPARE batch1_head1 Q=32768 KV=2048 round=4 v7_split1_bf16 / ascendc_fia_v2: V7 speedup=0.8756x
+passed: mha_v7_split1_ascendc_kv2048.json; compact report: mha_v7_split1_ascendc_kv2048_summary.json
