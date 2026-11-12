@@ -1,5 +1,16 @@
 # FGW
 
+## v7 / AscendC 同口径msprof对照
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_v7_ascendc_msprof
+```
+
+固定B2/H8/Q4096/KV2048，对照v7完整调用、v7直写kernel和FIA v2完整调用。
+先精度，后Event及msprof_detail各3轮，保存流水计数器和解析源码。
+[计时口径及上传文件](docs/mha_v7_ascendc_msprof.md)。
+
 ## 当前默认：验证范围内启用冻结split模型
 
 ```bash
