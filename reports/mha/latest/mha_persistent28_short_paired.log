@@ -1,0 +1,296 @@
+Preparing b2h8_q1_kv2048: B=2 Q=1 H=8 KV=2048 causal=False
+2026-11-12 17:02:24  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b2h8_q16_kv2048: B=2 Q=16 H=8 KV=2048 causal=False
+2026-11-12 17:02:24  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b2h8_q128_kv2048: B=2 Q=128 H=8 KV=2048 causal=False
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q1_kv2048: B=1 Q=1 H=1 KV=2048 causal=False
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q16_kv2048: B=1 Q=16 H=1 KV=2048 causal=False
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q128_kv2048: B=1 Q=128 H=1 KV=2048 causal=False
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q129_kv2048: B=1 Q=129 H=1 KV=2048 causal=False
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:25  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q512_kv2048: B=1 Q=512 H=1 KV=2048 causal=False
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q1024_kv2048: B=1 Q=1024 H=1 KV=2048 causal=False
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q1_kv8192: B=1 Q=1 H=1 KV=8192 causal=False
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q16_kv8192: B=1 Q=16 H=1 KV=8192 causal=False
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q128_kv8192: B=1 Q=128 H=1 KV=8192 causal=False
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q129_kv8192: B=1 Q=129 H=1 KV=8192 causal=False
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q512_kv8192: B=1 Q=512 H=1 KV=8192 causal=False
+2026-11-12 17:02:27  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:27  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q1024_kv8192: B=1 Q=1024 H=1 KV=8192 causal=False
+2026-11-12 17:02:27  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:27  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q1_kv512: B=1 Q=1 H=1 KV=512 causal=False
+2026-11-12 17:02:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[17:02:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[17:02:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[17:02:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[17:02:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[17:02:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[17:02:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[17:02:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-12 17:02:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 17:02:31  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing b1h1_q1_kv512_causal: B=1 Q=1 H=1 KV=512 causal=True
+2026-11-12 17:02:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[17:02:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-12 17:02:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 17:02:42  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 17:02:42  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+Preparing anchor_b2h8_q4096: B=2 Q=4096 H=8 KV=2048 causal=False
+Preparing anchor_b1h1_q8192: B=1 Q=8192 H=1 KV=2048 causal=False
+round=1 b2h8_q1_kv2048: medians_us={'normal': 23.75900000333786, 'persistent28': 23.262999951839447} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0213214139416784}
+round=1 b2h8_q16_kv2048: medians_us={'normal': 38.19800168275833, 'persistent28': 38.58200088143349} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9900471932532678}
+round=1 b2h8_q128_kv2048: medians_us={'normal': 38.74199837446213, 'persistent28': 38.21999952197075} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0136577409476761}
+round=1 b1h1_q1_kv2048: medians_us={'normal': 23.775000125169754, 'persistent28': 23.99200014770031} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9909553175560748}
+round=1 b1h1_q16_kv2048: medians_us={'normal': 23.43899942934513, 'persistent28': 23.628000169992447} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9920009844554112}
+round=1 b1h1_q128_kv2048: medians_us={'normal': 23.82900007069111, 'persistent28': 23.60299974679947} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.009575067843751}
+round=1 b1h1_q129_kv2048: medians_us={'normal': 23.581000044941902, 'persistent28': 23.43899942934513} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0060583053480938}
+round=1 b1h1_q512_kv2048: medians_us={'normal': 22.453999146819115, 'persistent28': 22.941000759601593} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9787715619782345}
+round=1 b1h1_q1024_kv2048: medians_us={'normal': 22.951999679207802, 'persistent28': 22.554999217391014} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0176014398400282}
+round=1 b1h1_q1_kv8192: medians_us={'normal': 23.141000419855118, 'persistent28': 23.416999727487564} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9882137203380299}
+round=1 b1h1_q16_kv8192: medians_us={'normal': 26.79399959743023, 'persistent28': 26.62700042128563} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0062717983063199}
+round=1 b1h1_q128_kv8192: medians_us={'normal': 27.116000652313232, 'persistent28': 27.29400061070919} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9934784218358185}
+round=1 b1h1_q129_kv8192: medians_us={'normal': 25.87199956178665, 'persistent28': 25.70899948477745} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0063401952730877}
+round=1 b1h1_q512_kv8192: medians_us={'normal': 30.917000025510788, 'persistent28': 30.77000007033348} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0047773790978647}
+round=1 b1h1_q1024_kv8192: medians_us={'normal': 41.2679985165596, 'persistent28': 41.68299958109856} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9900438771511266}
+round=1 b1h1_q1_kv512: medians_us={'normal': 15.67699946463108, 'persistent28': 15.76399989426136} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.994481068877579}
+round=1 b1h1_q1_kv512_causal: medians_us={'normal': 23.969000205397606, 'persistent28': 23.605000227689743} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0154204606734498}
+round=1 anchor_b2h8_q4096: medians_us={'normal': 334.4379961490631, 'persistent28': 290.6090021133423} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1508177438310283}
+round=1 anchor_b1h1_q8192: medians_us={'normal': 56.3570000231266, 'persistent28': 51.038000732660294} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.104216450764353}
+round=2 anchor_b1h1_q8192: medians_us={'normal': 56.405000388622284, 'persistent28': 51.08800157904625} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1040752944964831}
+round=2 anchor_b2h8_q4096: medians_us={'normal': 334.4300091266632, 'persistent28': 290.75801372528076} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.150200487483882}
+round=2 b1h1_q1_kv512_causal: medians_us={'normal': 23.48800003528595, 'persistent28': 23.554999381303787} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9971556209816326}
+round=2 b1h1_q1_kv512: medians_us={'normal': 15.577999874949455, 'persistent28': 15.67699946463108} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.993685042223483}
+round=2 b1h1_q1024_kv8192: medians_us={'normal': 41.26200079917908, 'persistent28': 41.4699986577034} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9949843774956167}
+round=2 b1h1_q512_kv8192: medians_us={'normal': 30.726000666618347, 'persistent28': 30.625000596046448} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0032979614238746}
+round=2 b1h1_q129_kv8192: medians_us={'normal': 25.853000581264496, 'persistent28': 25.692999362945557} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0062274246793348}
+round=2 b1h1_q128_kv8192: medians_us={'normal': 26.98500081896782, 'persistent28': 27.171999216079712} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9931179742931381}
+round=2 b1h1_q16_kv8192: medians_us={'normal': 26.791999116539955, 'persistent28': 26.561999693512917} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0086589649002673}
+round=2 b1h1_q1_kv8192: medians_us={'normal': 22.991999983787537, 'persistent28': 23.075999692082405} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9963598669866646}
+round=2 b1h1_q1024_kv2048: medians_us={'normal': 22.665999829769135, 'persistent28': 22.123999893665314} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0244982796378972}
+round=2 b1h1_q512_kv2048: medians_us={'normal': 22.122999653220177, 'persistent28': 22.51500077545643} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9825893356102581}
+round=2 b1h1_q129_kv2048: medians_us={'normal': 22.998999804258347, 'persistent28': 22.878000512719154} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.005288892771548}
+round=2 b1h1_q128_kv2048: medians_us={'normal': 22.818999364972115, 'persistent28': 22.97299914062023} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9932964879898586}
+round=2 b1h1_q16_kv2048: medians_us={'normal': 23.01100082695484, 'persistent28': 23.308999836444855} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9872152811540169}
+round=2 b1h1_q1_kv2048: medians_us={'normal': 23.141000419855118, 'persistent28': 23.088999092578888} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0022522122794375}
+round=2 b2h8_q128_kv2048: medians_us={'normal': 33.55899825692177, 'persistent28': 32.86400064826012} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.021147687285554}
+round=2 b2h8_q16_kv2048: medians_us={'normal': 32.705001533031464, 'persistent28': 33.59999880194664} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9733631755706097}
+round=2 b2h8_q1_kv2048: medians_us={'normal': 23.073000833392143, 'persistent28': 22.4629994481802} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0271558295952041}
+round=3 b2h8_q1_kv2048: medians_us={'normal': 22.95600064098835, 'persistent28': 22.39999920129776} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0248214937283737}
+round=3 b2h8_q16_kv2048: medians_us={'normal': 33.07199850678444, 'persistent28': 33.362001180648804} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9913073957316273}
+round=3 b2h8_q128_kv2048: medians_us={'normal': 33.608000725507736, 'persistent28': 33.05000066757202} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0168835112455297}
+round=3 b1h1_q1_kv2048: medians_us={'normal': 22.87900075316429, 'persistent28': 22.90000021457672} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9990829929600148}
+round=3 b1h1_q16_kv2048: medians_us={'normal': 23.070000112056732, 'persistent28': 22.791000083088875} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0122416755715287}
+round=3 b1h1_q128_kv2048: medians_us={'normal': 23.329999297857285, 'persistent28': 23.35900068283081} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9987584492432999}
+round=3 b1h1_q129_kv2048: medians_us={'normal': 22.982999682426453, 'persistent28': 23.00800010561943} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.998913403030328}
+round=3 b1h1_q512_kv2048: medians_us={'normal': 21.970000118017197, 'persistent28': 22.312000393867493} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9846719133285649}
+round=3 b1h1_q1024_kv2048: medians_us={'normal': 22.570999339222908, 'persistent28': 22.15299941599369} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0188687732699273}
+round=3 b1h1_q1_kv8192: medians_us={'normal': 22.652000188827515, 'persistent28': 22.763000801205635} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9951236388669704}
+round=3 b1h1_q16_kv8192: medians_us={'normal': 26.552999392151833, 'persistent28': 26.451999321579933} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.003818239572141}
+round=3 b1h1_q128_kv8192: medians_us={'normal': 26.923999190330505, 'persistent28': 27.02699974179268} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9961889757484661}
+round=3 b1h1_q129_kv8192: medians_us={'normal': 25.798000395298004, 'persistent28': 25.608999654650688} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0073802469130415}
+round=3 b1h1_q512_kv8192: medians_us={'normal': 30.767999589443207, 'persistent28': 30.507000163197517} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0085553946585857}
+round=3 b1h1_q1024_kv8192: medians_us={'normal': 41.134998202323914, 'persistent28': 41.29499942064285} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9961254093579438}
+round=3 b1h1_q1_kv512: medians_us={'normal': 15.011999756097794, 'persistent28': 15.141000039875507} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9914800684606052}
+round=3 b1h1_q1_kv512_causal: medians_us={'normal': 23.159999400377274, 'persistent28': 23.090999573469162} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0029881697710215}
+round=3 anchor_b2h8_q4096: medians_us={'normal': 330.48298954963684, 'persistent28': 286.624014377594} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1530191922937194}
+round=3 anchor_b1h1_q8192: medians_us={'normal': 56.13499879837036, 'persistent28': 50.76399818062782} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1058033411519619}
+round=4 anchor_b1h1_q8192: medians_us={'normal': 56.43700063228607, 'persistent28': 51.00199952721596} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.106564471108037}
+round=4 anchor_b2h8_q4096: medians_us={'normal': 330.2440047264099, 'persistent28': 286.93100810050964} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1509526520421525}
+round=4 b1h1_q1_kv512_causal: medians_us={'normal': 23.086000233888626, 'persistent28': 23.236000910401344} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9935444710520057}
+round=4 b1h1_q1_kv512: medians_us={'normal': 15.130000188946724, 'persistent28': 15.297000296413898} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9890828198842145}
+round=4 b1h1_q1024_kv8192: medians_us={'normal': 41.0039983689785, 'persistent28': 41.33500158786774} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9919921808110831}
+round=4 b1h1_q512_kv8192: medians_us={'normal': 30.7219997048378, 'persistent28': 30.432000756263733} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0095294079050776}
+round=4 b1h1_q129_kv8192: medians_us={'normal': 25.776999071240425, 'persistent28': 25.575000792741776} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0078982706642174}
+round=4 b1h1_q128_kv8192: medians_us={'normal': 26.78699977695942, 'persistent28': 27.11999975144863} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9877212397661831}
+round=4 b1h1_q16_kv8192: medians_us={'normal': 26.621000841259956, 'persistent28': 26.506999507546425} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0043008011405092}
+round=4 b1h1_q1_kv8192: medians_us={'normal': 22.873999550938606, 'persistent28': 22.77900092303753} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0041704475197155}
+round=4 b1h1_q1024_kv2048: medians_us={'normal': 22.44199998676777, 'persistent28': 22.1599992364645} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0127256660658739}
+round=4 b1h1_q512_kv2048: medians_us={'normal': 22.265000268816948, 'persistent28': 22.677000612020493} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9818317973239744}
+round=4 b1h1_q129_kv2048: medians_us={'normal': 22.81000092625618, 'persistent28': 23.013999685645103} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9911358841498479}
+round=4 b1h1_q128_kv2048: medians_us={'normal': 22.792000323534012, 'persistent28': 23.10599945485592} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.986410493433301}
+round=4 b1h1_q16_kv2048: medians_us={'normal': 23.274000734090805, 'persistent28': 23.05700071156025} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0094114592459442}
+round=4 b1h1_q1_kv2048: medians_us={'normal': 23.11999909579754, 'persistent28': 23.072000592947006} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.002080378884231}
+round=4 b2h8_q128_kv2048: medians_us={'normal': 33.66599977016449, 'persistent28': 32.954998314380646} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0215749201077513}
+round=4 b2h8_q16_kv2048: medians_us={'normal': 32.947998493909836, 'persistent28': 33.44300016760826} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9851986463170889}
+round=4 b2h8_q1_kv2048: medians_us={'normal': 23.135999217629433, 'persistent28': 22.3619993776083} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.03461228251335}
+round=5 b2h8_q1_kv2048: medians_us={'normal': 23.660000413656235, 'persistent28': 22.979000583291054} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0296357462500072}
+round=5 b2h8_q16_kv2048: medians_us={'normal': 33.14099833369255, 'persistent28': 33.27599912881851} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.995942997996744}
+round=5 b2h8_q128_kv2048: medians_us={'normal': 33.636998385190964, 'persistent28': 33.309001475572586} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0098470952321676}
+round=5 b1h1_q1_kv2048: medians_us={'normal': 22.91800081729889, 'persistent28': 23.231999948620796} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.98648419714117}
+round=5 b1h1_q16_kv2048: medians_us={'normal': 23.13699945807457, 'persistent28': 22.802000865340233} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0146916314367633}
+round=5 b1h1_q128_kv2048: medians_us={'normal': 23.08100089430809, 'persistent28': 23.083999752998352} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9998700892946478}
+round=5 b1h1_q129_kv2048: medians_us={'normal': 22.81400002539158, 'persistent28': 23.12299981713295} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9866366909922986}
+round=5 b1h1_q512_kv2048: medians_us={'normal': 22.167999297380447, 'persistent28': 22.400999441742897} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9895986719267414}
+round=5 b1h1_q1024_kv2048: medians_us={'normal': 22.67099916934967, 'persistent28': 22.120000794529915} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0249095097209948}
+round=5 b1h1_q1_kv8192: medians_us={'normal': 22.998999804258347, 'persistent28': 22.84100092947483} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.006917335858939}
+round=5 b1h1_q16_kv8192: medians_us={'normal': 26.698999106884003, 'persistent28': 26.489999145269394} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0078897685299446}
+round=5 b1h1_q128_kv8192: medians_us={'normal': 26.885999366641045, 'persistent28': 27.01999992132187} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9950406900417834}
+round=5 b1h1_q129_kv8192: medians_us={'normal': 25.73700062930584, 'persistent28': 25.560999289155006} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0068855422340826}
+round=5 b1h1_q512_kv8192: medians_us={'normal': 30.57900071144104, 'persistent28': 30.51299974322319} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0021630442360066}
+round=5 b1h1_q1024_kv8192: medians_us={'normal': 41.13699868321419, 'persistent28': 41.2600003182888} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9970188649024296}
+round=5 b1h1_q1_kv512: medians_us={'normal': 15.169000253081322, 'persistent28': 15.4600003734231} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9811772242359044}
+round=5 b1h1_q1_kv512_causal: medians_us={'normal': 23.16799946129322, 'persistent28': 23.23400042951107} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9971592938367162}
+round=5 anchor_b2h8_q4096: medians_us={'normal': 333.77599716186523, 'persistent28': 289.72500562667847} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1520441476561678}
+round=5 anchor_b1h1_q8192: medians_us={'normal': 56.59500136971474, 'persistent28': 51.128000020980835} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.10692773717905}
+round=6 anchor_b1h1_q8192: medians_us={'normal': 56.41400068998337, 'persistent28': 51.01099982857704} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1059183485829167}
+round=6 anchor_b2h8_q4096: medians_us={'normal': 330.48000931739807, 'persistent28': 286.6919934749603} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1527353984033117}
+round=6 b1h1_q1_kv512_causal: medians_us={'normal': 23.132000118494034, 'persistent28': 23.031000047922134} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.004385396655019}
+round=6 b1h1_q1_kv512: medians_us={'normal': 15.135999768972397, 'persistent28': 15.328999608755112} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9874094954198783}
+round=6 b1h1_q1024_kv8192: medians_us={'normal': 41.12299904227257, 'persistent28': 41.4079986512661} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9931172812433229}
+round=6 b1h1_q512_kv8192: medians_us={'normal': 30.618999153375626, 'persistent28': 30.650999397039413} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9989559804152135}
+round=6 b1h1_q129_kv8192: medians_us={'normal': 25.887999683618546, 'persistent28': 25.520000606775284} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0144200261792142}
+round=6 b1h1_q128_kv8192: medians_us={'normal': 26.858000084757805, 'persistent28': 27.17600017786026} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.988298495325978}
+round=6 b1h1_q16_kv8192: medians_us={'normal': 26.66199952363968, 'persistent28': 26.54699981212616} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0043319287425085}
+round=6 b1h1_q1_kv8192: medians_us={'normal': 22.89400063455105, 'persistent28': 22.880999371409416} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.000568212206582}
+round=6 b1h1_q1024_kv2048: medians_us={'normal': 22.918999195098877, 'persistent28': 22.478999570012093} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0195738081544234}
+round=6 b1h1_q512_kv2048: medians_us={'normal': 22.1560001373291, 'persistent28': 22.50099927186966} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.984667386084854}
+round=6 b1h1_q129_kv2048: medians_us={'normal': 22.99400046467781, 'persistent28': 22.78199978172779} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.009305622200912}
+round=6 b1h1_q128_kv2048: medians_us={'normal': 22.690000012516975, 'persistent28': 23.003000766038895} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9863930468591721}
+round=6 b1h1_q16_kv2048: medians_us={'normal': 23.21000024676323, 'persistent28': 23.072000592947006} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0059812608473324}
+round=6 b1h1_q1_kv2048: medians_us={'normal': 22.996999323368073, 'persistent28': 22.80299924314022} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.008507656302546}
+round=6 b2h8_q128_kv2048: medians_us={'normal': 33.52399915456772, 'persistent28': 33.604998141527176} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9975896744103859}
+round=6 b2h8_q16_kv2048: medians_us={'normal': 32.926999032497406, 'persistent28': 33.67700055241585} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9777295629772278}
+round=6 b2h8_q1_kv2048: medians_us={'normal': 23.231999948620796, 'persistent28': 22.369999438524246} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0385337743286691}
+round=7 b2h8_q1_kv2048: medians_us={'normal': 23.194000124931335, 'persistent28': 22.61500060558319} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.025602454293333}
+round=7 b2h8_q16_kv2048: medians_us={'normal': 33.250000327825546, 'persistent28': 33.78999978303909} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9840189565350457}
+round=7 b2h8_q128_kv2048: medians_us={'normal': 33.75300019979477, 'persistent28': 33.376000821590424} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0112955227985394}
+round=7 b1h1_q1_kv2048: medians_us={'normal': 22.931000217795372, 'persistent28': 22.936999797821045} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9997384322239806}
+round=7 b1h1_q16_kv2048: medians_us={'normal': 23.155000060796738, 'persistent28': 23.132000118494034} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0009942911198724}
+round=7 b1h1_q128_kv2048: medians_us={'normal': 22.951999679207802, 'persistent28': 23.016000166535378} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.997219304533173}
+round=7 b1h1_q129_kv2048: medians_us={'normal': 22.691000252962112, 'persistent28': 22.878000512719154} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9918261974138396}
+round=7 b1h1_q512_kv2048: medians_us={'normal': 22.126000374555588, 'persistent28': 22.39600010216236} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9879442879811068}
+round=7 b1h1_q1024_kv2048: medians_us={'normal': 22.47999981045723, 'persistent28': 22.173000499606133} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0138456367624467}
+round=7 b1h1_q1_kv8192: medians_us={'normal': 22.847000509500504, 'persistent28': 22.577999159693718} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0119143130400592}
+round=7 b1h1_q16_kv8192: medians_us={'normal': 26.561999693512917, 'persistent28': 26.433000341057777} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0048802387466689}
+round=7 b1h1_q128_kv8192: medians_us={'normal': 26.86700038611889, 'persistent28': 27.011999860405922} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9946320348350226}
+round=7 b1h1_q129_kv8192: medians_us={'normal': 25.76100081205368, 'persistent28': 25.654999539256096} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0041317978835036}
+round=7 b1h1_q512_kv8192: medians_us={'normal': 30.5550005286932, 'persistent28': 30.542999505996704} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0003929222044528}
+round=7 b1h1_q1024_kv8192: medians_us={'normal': 41.074998676776886, 'persistent28': 41.27199947834015} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9952267686554258}
+round=7 b1h1_q1_kv512: medians_us={'normal': 15.062999911606312, 'persistent28': 15.314999967813492} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9835455398800659}
+round=7 b1h1_q1_kv512_causal: medians_us={'normal': 22.817999124526978, 'persistent28': 23.012999445199966} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9915265143451928}
+round=7 anchor_b2h8_q4096: medians_us={'normal': 330.45798540115356, 'persistent28': 286.4049971103668} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1538136161563228}
+round=7 anchor_b1h1_q8192: medians_us={'normal': 56.11500144004822, 'persistent28': 50.65799877047539} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.107722428876391}
+round=8 anchor_b1h1_q8192: medians_us={'normal': 55.97300082445145, 'persistent28': 50.48200115561485} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.108771434236732}
+round=8 anchor_b2h8_q4096: medians_us={'normal': 330.377995967865, 'persistent28': 286.6379916667938} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1525966744559015}
+round=8 b1h1_q1_kv512_causal: medians_us={'normal': 23.027999326586723, 'persistent28': 22.585000842809677} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0196147207104524}
+round=8 b1h1_q1_kv512: medians_us={'normal': 15.10000042617321, 'persistent28': 15.287999995052814} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.987702801613001}
+round=8 b1h1_q1024_kv8192: medians_us={'normal': 41.21100157499313, 'persistent28': 41.26900061964989} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.998594609906082}
+round=8 b1h1_q512_kv8192: medians_us={'normal': 30.855000019073486, 'persistent28': 30.632000416517258} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0072799555864456}
+round=8 b1h1_q129_kv8192: medians_us={'normal': 25.962000712752342, 'persistent28': 25.597000494599342} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0142594917802972}
+round=8 b1h1_q128_kv8192: medians_us={'normal': 27.11400017142296, 'persistent28': 27.17900089919567} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9976084210006911}
+round=8 b1h1_q16_kv8192: medians_us={'normal': 26.700999587774277, 'persistent28': 26.568999513983727} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0049681988861145}
+round=8 b1h1_q1_kv8192: medians_us={'normal': 22.721000015735626, 'persistent28': 22.93499931693077} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9906693129466471}
+round=8 b1h1_q1024_kv2048: medians_us={'normal': 22.655999287962914, 'persistent28': 22.211000323295593} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.020035070829322}
+round=8 b1h1_q512_kv2048: medians_us={'normal': 22.016000002622604, 'persistent28': 22.498000413179398} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.978575855555837}
+round=8 b1h1_q129_kv2048: medians_us={'normal': 23.088999092578888, 'persistent28': 22.659000009298325} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0189769664638382}
+round=8 b1h1_q128_kv2048: medians_us={'normal': 22.859999909996986, 'persistent28': 22.988000884652138} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9944318353171541}
+round=8 b1h1_q16_kv2048: medians_us={'normal': 23.080000653862953, 'persistent28': 23.057999089360237} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0009541835966533}
+round=8 b1h1_q1_kv2048: medians_us={'normal': 23.183999583125114, 'persistent28': 23.17800000309944} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0002588480466335}
+round=8 b2h8_q128_kv2048: medians_us={'normal': 33.303000032901764, 'persistent28': 33.01500156521797} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0087232607611687}
+round=8 b2h8_q16_kv2048: medians_us={'normal': 32.78400003910065, 'persistent28': 33.44200178980827} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9803240919953494}
+round=8 b2h8_q1_kv2048: medians_us={'normal': 23.257000371813774, 'persistent28': 22.552000358700752} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.031261085575543}
+round=9 b2h8_q1_kv2048: medians_us={'normal': 23.121999576687813, 'persistent28': 22.546999156475067} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0255023037089004}
+round=9 b2h8_q16_kv2048: medians_us={'normal': 33.04300084710121, 'persistent28': 33.333998173475266} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.991270254325339}
+round=9 b2h8_q128_kv2048: medians_us={'normal': 33.50500017404556, 'persistent28': 32.903000712394714} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0182961872357152}
+round=9 b1h1_q1_kv2048: medians_us={'normal': 22.877000272274017, 'persistent28': 23.099999874830246} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9903463374993691}
+round=9 b1h1_q16_kv2048: medians_us={'normal': 23.0529997497797, 'persistent28': 23.18600006401539} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9942637663301785}
+round=9 b1h1_q128_kv2048: medians_us={'normal': 23.10200035572052, 'persistent28': 23.076999932527542} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.001083348063703}
+round=9 b1h1_q129_kv2048: medians_us={'normal': 22.96699956059456, 'persistent28': 23.079000413417816} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9951470665619409}
+round=9 b1h1_q512_kv2048: medians_us={'normal': 22.033000364899635, 'persistent28': 22.481000050902367} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9800720748637359}
+round=9 b1h1_q1024_kv2048: medians_us={'normal': 22.64299988746643, 'persistent28': 22.262999787926674} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0170686836077605}
+round=9 b1h1_q1_kv8192: medians_us={'normal': 22.78600074350834, 'persistent28': 22.801000624895096} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9993421393370614}
+round=9 b1h1_q16_kv8192: medians_us={'normal': 26.715999469161034, 'persistent28': 26.548000052571297} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0063281383251867}
+round=9 b1h1_q128_kv8192: medians_us={'normal': 26.739999651908875, 'persistent28': 27.2000003606081} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9830882094632096}
+round=9 b1h1_q129_kv8192: medians_us={'normal': 25.95200017094612, 'persistent28': 25.510000064969063} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0173265427225155}
+round=9 b1h1_q512_kv8192: medians_us={'normal': 30.760999768972397, 'persistent28': 30.493000522255898} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0087888775170188}
+round=9 b1h1_q1024_kv8192: medians_us={'normal': 41.08300060033798, 'persistent28': 41.47600010037422} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9905246528333215}
+round=9 b1h1_q1_kv512: medians_us={'normal': 15.186999924480915, 'persistent28': 15.348000451922417} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9895099998240269}
+round=9 b1h1_q1_kv512_causal: medians_us={'normal': 23.09899963438511, 'persistent28': 23.099999874830246} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9999566995475949}
+round=9 anchor_b2h8_q4096: medians_us={'normal': 330.5929899215698, 'persistent28': 287.0129942893982} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1518397999368262}
+round=9 anchor_b1h1_q8192: medians_us={'normal': 56.067999452352524, 'persistent28': 50.81300064921379} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1034183916713851}
+round=10 anchor_b1h1_q8192: medians_us={'normal': 56.14199861884117, 'persistent28': 50.80199986696243} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1051139475977882}
+round=10 anchor_b2h8_q4096: medians_us={'normal': 331.10499382019043, 'persistent28': 287.36400604248047} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1522145670924555}
+round=10 b1h1_q1_kv512_causal: medians_us={'normal': 23.437000811100006, 'persistent28': 23.189999163150787} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.010651214181228}
+round=10 b1h1_q1_kv512: medians_us={'normal': 15.294999815523624, 'persistent28': 15.538999810814857} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.984297573958305}
+round=10 b1h1_q1024_kv8192: medians_us={'normal': 41.31999984383583, 'persistent28': 41.165001690387726} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.003765289616988}
+round=10 b1h1_q512_kv8192: medians_us={'normal': 30.727000907063484, 'persistent28': 30.727000907063484} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0}
+round=10 b1h1_q129_kv8192: medians_us={'normal': 26.007000356912613, 'persistent28': 25.69900080561638} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0119848843005959}
+round=10 b1h1_q128_kv8192: medians_us={'normal': 26.938999071717262, 'persistent28': 27.148999273777008} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9922649008185512}
+round=10 b1h1_q16_kv8192: medians_us={'normal': 26.823999360203743, 'persistent28': 26.582999154925346} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.009065952410932}
+round=10 b1h1_q1_kv8192: medians_us={'normal': 23.659000173211098, 'persistent28': 23.473000153899193} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.007923998555464}
+round=10 b1h1_q1024_kv2048: medians_us={'normal': 22.94199913740158, 'persistent28': 22.48699963092804} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0202338913123716}
+round=10 b1h1_q512_kv2048: medians_us={'normal': 22.46199920773506, 'persistent28': 22.631999105215073} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9924885160745328}
+round=10 b1h1_q129_kv2048: medians_us={'normal': 23.434000089764595, 'persistent28': 23.257000371813774} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.007610599609627}
+round=10 b1h1_q128_kv2048: medians_us={'normal': 23.52200075984001, 'persistent28': 23.535000160336494} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9994476566642055}
+round=10 b1h1_q16_kv2048: medians_us={'normal': 23.653000593185425, 'persistent28': 23.806000128388405} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9935730683702496}
+round=10 b1h1_q1_kv2048: medians_us={'normal': 24.156000465154648, 'persistent28': 23.33799935877323} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0350501812004684}
+round=10 b2h8_q128_kv2048: medians_us={'normal': 34.1779999434948, 'persistent28': 34.15599837899208} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.000644149360197}
+round=10 b2h8_q16_kv2048: medians_us={'normal': 33.95099937915802, 'persistent28': 34.15500000119209} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9940272105979518}
+round=10 b2h8_q1_kv2048: medians_us={'normal': 23.34499917924404, 'persistent28': 22.941000759601593} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.017610322403802}
+round=11 b2h8_q1_kv2048: medians_us={'normal': 23.524999618530273, 'persistent28': 23.016000166535378} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.02211502642996}
+round=11 b2h8_q16_kv2048: medians_us={'normal': 34.02300179004669, 'persistent28': 34.14599969983101} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9963978823034745}
+round=11 b2h8_q128_kv2048: medians_us={'normal': 34.29900109767914, 'persistent28': 33.81400182843208} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.014343149080901}
+round=11 b1h1_q1_kv2048: medians_us={'normal': 23.187000304460526, 'persistent28': 23.49800057709217} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9867648197721625}
+round=11 b1h1_q16_kv2048: medians_us={'normal': 23.307999595999718, 'persistent28': 23.52200075984001} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9909020849873593}
+round=11 b1h1_q128_kv2048: medians_us={'normal': 23.48800003528595, 'persistent28': 23.287000134587288} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0086314209446035}
+round=11 b1h1_q129_kv2048: medians_us={'normal': 23.437000811100006, 'persistent28': 22.933000698685646} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0219770678524092}
+round=11 b1h1_q512_kv2048: medians_us={'normal': 22.221999242901802, 'persistent28': 22.684000432491302} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9796331696005545}
+round=11 b1h1_q1024_kv2048: medians_us={'normal': 22.657999768853188, 'persistent28': 22.401999682188034} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0114275551422627}
+round=11 b1h1_q1_kv8192: medians_us={'normal': 23.01100082695484, 'persistent28': 23.47400039434433} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9802760688586748}
+round=11 b1h1_q16_kv8192: medians_us={'normal': 26.830000802874565, 'persistent28': 26.329999789595604} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0189897841729774}
+round=11 b1h1_q128_kv8192: medians_us={'normal': 26.81099995970726, 'persistent28': 27.233999222517014} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9844679711064978}
+round=11 b1h1_q129_kv8192: medians_us={'normal': 25.844000279903412, 'persistent28': 25.65000019967556} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0075633558954245}
+round=11 b1h1_q512_kv8192: medians_us={'normal': 30.75999952852726, 'persistent28': 30.538000166416168} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.007269610351081}
+round=11 b1h1_q1024_kv8192: medians_us={'normal': 41.24800115823746, 'persistent28': 41.36300086975098} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.997219744479477}
+round=11 b1h1_q1_kv512: medians_us={'normal': 15.169000253081322, 'persistent28': 15.5239999294281} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9771322031718241}
+round=11 b1h1_q1_kv512_causal: medians_us={'normal': 23.711999878287315, 'persistent28': 23.3169998973608} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0169404289859445}
+round=11 anchor_b2h8_q4096: medians_us={'normal': 331.69299364089966, 'persistent28': 287.28199005126953} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.15459028107437}
+round=11 anchor_b1h1_q8192: medians_us={'normal': 56.046999990940094, 'persistent28': 50.937000662088394} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1003199886611108}
+round=12 anchor_b1h1_q8192: medians_us={'normal': 56.22199922800064, 'persistent28': 51.1230006814003} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0997398133645835}
+round=12 anchor_b2h8_q4096: medians_us={'normal': 331.6839933395386, 'persistent28': 286.7720127105713} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.1566121470657436}
+round=12 b1h1_q1_kv512_causal: medians_us={'normal': 23.554999381303787, 'persistent28': 23.44599924981594} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0046489863932202}
+round=12 b1h1_q1_kv512: medians_us={'normal': 15.59399999678135, 'persistent28': 15.801999717950821} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9868371266370048}
+round=12 b1h1_q1024_kv8192: medians_us={'normal': 41.46600142121315, 'persistent28': 41.4699986577034} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9999036113667801}
+round=12 b1h1_q512_kv8192: medians_us={'normal': 30.768999829888344, 'persistent28': 30.782999470829964} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9995452151777839}
+round=12 b1h1_q129_kv8192: medians_us={'normal': 25.82000009715557, 'persistent28': 25.685999542474747} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0052168713333207}
+round=12 b1h1_q128_kv8192: medians_us={'normal': 26.89499966800213, 'persistent28': 27.11999975144863} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9917035366700369}
+round=12 b1h1_q16_kv8192: medians_us={'normal': 26.861999183893204, 'persistent28': 26.54699981212616} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.011865723961137}
+round=12 b1h1_q1_kv8192: medians_us={'normal': 23.267999291419983, 'persistent28': 23.19899946451187} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.002974258739635}
+round=12 b1h1_q1024_kv2048: medians_us={'normal': 22.880999371409416, 'persistent28': 22.460000589489937} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0187443798250158}
+round=12 b1h1_q512_kv2048: medians_us={'normal': 22.16400019824505, 'persistent28': 22.561000660061836} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9824032423118727}
+round=12 b1h1_q129_kv2048: medians_us={'normal': 23.406999185681343, 'persistent28': 23.38399924337864} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0009835760796655}
+round=12 b1h1_q128_kv2048: medians_us={'normal': 23.45000021159649, 'persistent28': 23.670999333262444} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.990663718140729}
+round=12 b1h1_q16_kv2048: medians_us={'normal': 23.329999297857285, 'persistent28': 23.538000881671906} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9911631584661642}
+round=12 b1h1_q1_kv2048: medians_us={'normal': 23.389000445604324, 'persistent28': 23.414000868797302} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.9989322447140465}
+round=12 b2h8_q128_kv2048: medians_us={'normal': 34.18700024485588, 'persistent28': 33.4790013730526} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.0211475504873677}
+round=12 b2h8_q16_kv2048: medians_us={'normal': 33.45699980854988, 'persistent28': 34.10400077700615} speedup_vs_normal={'normal': 1.0, 'persistent28': 0.981028590378977}
+round=12 b2h8_q1_kv2048: medians_us={'normal': 23.056000471115112, 'persistent28': 22.60800078511238} speedup_vs_normal={'normal': 1.0, 'persistent28': 1.019815979761366}
+PASSED: mha_persistent28_short_paired.json
