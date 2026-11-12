@@ -1,5 +1,16 @@
 # FGW
 
+## 通用 Cube 功能扩展候选
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_cube_general
+```
+
+新增 FP16/BF16、D16～256、16 对齐分页、多 query 因果、KV 尾块与空缓存的
+Cube QK/PV 候选。先跑 48 项冒烟，再跑 360 项边界及 540 项扩展精度。
+当前默认保持已验证路径。[范围与报告说明](docs/mha_cube_general.md)。
+
 ## 当前默认：常驻28上限
 
 v7 Cube长短Q统一使用 `compute_grid=min(tasks*splits,28)`，冻结split模型保持不变。

@@ -15,13 +15,29 @@ from tilelang.layout import make_ascend_compact_nz_layout
 from operators.mha.kernels.mha_paged_decode_ascend_v2 import build_kernel as build_v2
 
 
-def route(dtype, dim, page_size, sq=1, causal=False):
+def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
+    if cube_mode not in ("stable", "general"):
+        raise ValueError("cube_mode must be stable or general")
+    if cube_mode == "general":
+        if str(dtype) not in ("float16", "torch.float16", "bfloat16", "torch.bfloat16") or dim < 16 or dim > 256 or dim % 16 or page_size <= 0 or page_size % 16:
+            raise ValueError("General Cube supports FP16/BF16, D16..256 step16, page_size divisible by16")
+        return "cube_general"
     return "cube_bf16_d128" if str(dtype) in ("bfloat16", "torch.bfloat16") and dim == 128 and (not causal or sq == 1) and page_size > 0 and page_size % 128 == 0 else "fallback_v2"
 
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable"):
+    selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if selected_route == "cube_general":
+        if num_splits not in (None, 1) or split_policy not in ("auto", "legacy"):
+            raise ValueError("General Cube currently supports split=1 without the D128 cost model")
+        if (pipeline_stages != 2 or buffer_versions != 2 or not q_resident
+                or kv_versions is not None or dump_ir_dir is not None
+                or schedule_mode != "manual" or persistent_programs != 28):
+            raise ValueError("General Cube has its own untuned schedule; v7 tuning overrides are unsupported")
+        from operators.mha.kernels.mha_paged_decode_ascend_cube_general import build_kernel as build_general
+        return build_general(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)
     if persistent_programs is not None and (type(persistent_programs) is not int or persistent_programs != 28):
         raise ValueError("persistent_programs supports None (uncapped grid) or 28 (default cap)")
     requested_split_policy = split_policy
@@ -547,7 +563,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
                      page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
-                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto", persistent_programs=28):
+                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto", persistent_programs=28, cube_mode="stable"):
     """Same public tensor contract as v0; metadata values must be valid."""
     if q.ndim != 4 or k_cache.ndim != 3:
         raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")
@@ -566,7 +582,12 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
     if q.device.type != "npu" or any(x.device != q.device or not x.is_contiguous() for x in inputs):
         raise ValueError("contiguous inputs on the same NPU required")
     full_kv_cache = False
-    if route(q.dtype, d, page_size, sq, is_causal) == "cube_bf16_d128":
+    selected_route = route(q.dtype, d, page_size, sq, is_causal, cube_mode)
+    if selected_route == "cube_general":
+        lengths = cache_seqlens.cpu().tolist()
+        if any(n < 0 or n > block_table.shape[1] * page_size for n in lengths):
+            raise ValueError("Cache lengths must be within table capacity")
+    if selected_route == "cube_bf16_d128":
         lengths = cache_seqlens.cpu().tolist()
         full_kv_cache = all(n == block_table.shape[1] * page_size for n in lengths)
         if any(n <= 0 or n % 128 or n > block_table.shape[1] * page_size for n in lengths):
@@ -575,5 +596,5 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
         kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
                               page_size, is_causal,
                               "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index, pipeline_stages=pipeline_stages, buffer_versions=buffer_versions,
-                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache, persistent_programs=persistent_programs)
+                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache, persistent_programs=persistent_programs, cube_mode=cube_mode)
         return kernel(*inputs)

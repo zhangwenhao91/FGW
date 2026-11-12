@@ -5,6 +5,7 @@ The unoptimized token-serial kernel can be slow on long caches.
 """
 import argparse
 import datetime
+import hashlib
 import itertools
 import importlib
 import json
@@ -48,6 +49,19 @@ CUBE = [
     ("cube_direct_q1024", 2, 1024, 8, 128, 128, 2),
 ]
 
+GENERAL = [
+    ("general_d16_page16", 2, 2, 2, 16, 16, 3),
+    ("general_d32_q31", 2, 31, 2, 32, 32, 2),
+    ("general_d48_page48", 2, 4, 2, 48, 48, 3),
+    ("general_d64_q33", 2, 33, 2, 64, 64, 2),
+    ("general_d80", 2, 17, 2, 80, 32, 3),
+    ("general_d96", 2, 32, 2, 96, 64, 2),
+    ("general_d128_q129", 2, 129, 2, 128, 128, 2),
+    ("general_d192", 2, 4, 2, 192, 128, 2),
+    ("general_d256", 2, 4, 2, 256, 256, 2),
+    ("general_decode", 1, 1, 2, 128, 128, 2),
+]
+
 
 def lengths_for(case, pattern, seed):
     _, b, sq, _, _, p, w = case
@@ -82,7 +96,9 @@ def make_inputs(case, seed, dtype, torch):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite", choices=["quick", "standard", "extended", "cube"], default="standard")
+    parser.add_argument("--suite", choices=["quick", "standard", "extended", "cube", "general"], default="standard")
+    parser.add_argument("--cube-mode", choices=["stable", "general"], default="stable",
+                        help="v7: opt in to general Cube QK/PV, with no Vector fallback")
     parser.add_argument("--patterns", nargs="+", choices=["mixed", "full", "empty"])
     parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
@@ -94,12 +110,16 @@ def main():
     parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7"], default="v0")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
-    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE],
+    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE + GENERAL],
                         help="Run only these named cases from the selected suite")
     parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default=None,
                         help="Default: manual for v7, auto for historical implementations")
     parser.add_argument("--persistent-programs", type=int, choices=[0, 28], default=None, help="v7 default 28; 0 explicitly selects the uncapped grid")
     args = parser.parse_args()
+    if args.cube_mode != "stable" and args.impl != "v7":
+        parser.error("General Cube requires --impl v7")
+    if args.suite == "general" and args.cube_mode != "general":
+        parser.error("The general suite requires --cube-mode general")
     if args.persistent_programs is not None and args.impl != "v7":
         parser.error("Persistent candidate requires --impl v7")
     if args.impl == "v7":
@@ -110,11 +130,14 @@ def main():
         parser.error("Schedule experiments require --impl v7")
     if args.q_resident is None:
         args.q_resident = args.impl == "v7"
+    if args.cube_mode == "general" and (args.pipeline_stages != 2 or args.kv_versions is not None
+            or not args.q_resident or args.schedule_mode != "manual" or args.persistent_programs != 28):
+        parser.error("General Cube uses its own untuned schedule; omit v7 tuning overrides")
     if (args.q_resident or args.kv_versions is not None or args.pipeline_stages != 2) and args.impl != "v7":
         parser.error("Overlap candidates require --impl v7")
     if args.output is None:
         args.output = "mha_paged_accuracy_report.json" if args.impl == "v0" else f"mha_paged_accuracy_{args.impl}_report.json"
-    cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED, "cube": CUBE}[args.suite]
+    cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED, "cube": CUBE, "general": GENERAL}[args.suite]
     if args.cases:
         missing = set(args.cases) - {c[0] for c in cases}
         if missing:
@@ -132,8 +155,10 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "suite": args.suite, "seeds": args.seeds,
               "patterns": list(patterns), "causal_modes": list(causal_modes), "dtypes": args.dtypes,
-              "schedule_mode": args.schedule_mode, "persistent_programs": args.persistent_programs,
-              "overlap_config": {"pipeline_stages": args.pipeline_stages, "kv_versions": args.kv_versions,
+              "schedule_mode": "general-auto" if args.cube_mode == "general" else args.schedule_mode,
+              "persistent_programs": None if args.cube_mode == "general" else args.persistent_programs,
+              "cube_mode": args.cube_mode,
+              "overlap_config": None if args.cube_mode == "general" else {"pipeline_stages": args.pipeline_stages, "kv_versions": args.kv_versions,
                                  "q_resident": args.q_resident, "ub_versions": 2},
               "selected_cases": [c[0] for c in cases], "implementation": args.impl,
               "total_checks": total, "results": [], "logical_device": args.device,
@@ -156,7 +181,7 @@ def main():
         if args.impl == "v7":
             import functools
             mha_paged_decode = functools.partial(mha_paged_decode, pipeline_stages=args.pipeline_stages,
-                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode, persistent_programs=args.persistent_programs)
+                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode, persistent_programs=args.persistent_programs, cube_mode=args.cube_mode)
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,
@@ -173,7 +198,11 @@ def main():
                          "seed": seed, "dtype": str(dtype), "causal": causal,
                          "pattern": pattern, "lengths": lengths.tolist(), "status": "running"}
                 report["results"].append(entry)
-                entry["execution_path"] = impl_module.route(dtype, d, p, sq, causal) if args.impl in ("v3", "v4", "v5", "v6", "v7") else args.impl
+                entry["execution_path"] = (impl_module.route(dtype, d, p, sq, causal, cube_mode=args.cube_mode)
+                                           if args.impl == "v7" else impl_module.route(dtype, d, p, sq, causal)
+                                           if args.impl in ("v3", "v4", "v5", "v6") else args.impl)
+                if args.cube_mode == "general":
+                    assert entry["execution_path"] == "cube_general", "General candidate must not fall back"
                 save()  # Preserve active case even after a native runtime crash.
                 start = time.perf_counter()
                 try:
@@ -186,6 +215,14 @@ def main():
                     k[~live], v[~live] = float("nan"), float("nan")
                     inputs = [x.to(device) for x in (q, k, v, table, lengths)]
                     got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()
+                    if args.cube_mode == "general":
+                        from operators.mha.kernels.mha_paged_decode_ascend_cube_general import build_kernel as build_general
+                        kernel = build_general(b, sq, h, d, k_base.shape[0], w, p, causal,
+                                               "float16" if dtype == torch.float16 else "bfloat16", args.device)
+                        source = kernel.direct_kernel.get_kernel_source()
+                        entry["generated_source_sha256"] = hashlib.sha256(source.encode()).hexdigest()
+                        entry["cube_mmad_calls"] = source.count("asc_mmad(")
+                        assert entry["cube_mmad_calls"] >= 2, "Generated kernel must contain both Cube GEMMs"
                     expected = reference(q, k, v, table, lengths, p, causal)
                     assert got.shape == q.shape and got.dtype == dtype
                     assert got.is_contiguous(), "Output must have contiguous B,Sq,H,D layout"
