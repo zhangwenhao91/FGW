@@ -1,5 +1,5 @@
 {
-  "status": "error",
+  "status": "passed",
   "suite": "general",
   "seeds": [
     7
@@ -49,14 +49,1430 @@
         47,
         48
       ],
-      "status": "error",
+      "status": "passed",
       "execution_path": "cube_general",
-      "error": "Traceback (most recent call last):\n  File \"/home/z30086261/FGW/tests/mha/test_mha_paged_accuracy.py\", line 217, in main\n    got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py\", line 596, in mha_paged_decode\n    kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py\", line 40, in build_kernel\n    return build_general(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_cube_general.py\", line 154, in build_kernel\n    compiled = tilelang.compile(main, out_idx=-1, target=\"ascend\", execution_backend=\"auto\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py\", line 166, in compile\n    return cached(\n           ^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/__init__.py\", line 91, in cached\n    return cache.cached(\n           ^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/kernel_cache.py\", line 427, in cached\n    kernel = JITKernel(\n             ^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py\", line 140, in __init__\n    adapter = self._compile_and_create_adapter(func, out_idx)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py\", line 280, in _compile_and_create_adapter\n    self.artifact = self._compile_artifact(tilelang_func, pass_configs, compile_metadata)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py\", line 321, in _compile_artifact\n    artifact = lower_with_context(\n               ^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py\", line 165, in lower_with_context\n    return _lower_with_context_impl(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py\", line 184, in _lower_with_context_impl\n    host_mod, device_mod, params, target, target_host = lower_to_host_device_ir(\n                                                        ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py\", line 136, in lower_to_host_device_ir\n    mod = context.lower(mod)\n          ^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py\", line 214, in lower\n    return self.module.lower(mod, self.target)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py\", line 115, in lower\n    return self.get_pipeline(target).lower(mod, target)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/pass_pipeline/pipeline.py\", line 31, in lower\n    return self._lower(mod, target)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/pipeline.py\", line 91, in AscendPassPipelineBody\n    mod = ascend_transform.InsertNd2Nz()(mod)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/ir/transform.py\", line 171, in __call__\n    return _ffi_transform_api.RunPass(self, mod)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"python/tvm_ffi/cython/function.pxi\", line 968, in tvm_ffi.core.Function.__call__\n  File \"<unknown>\", line 0, in tvm::transform::Pass::operator()(tvm::IRModule) const\n  File \"<unknown>\", line 0, in tvm::transform::Pass::operator()(tvm::IRModule, tvm::transform::PassContext const&) const\n  File \"<unknown>\", line 0, in tvm::tirx::transform::PrimFuncPassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#4}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::ForNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::ForNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#10}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"/home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_nd2nz.cc\", line 196, in std::pair<std::__cxx11::basic_string<char>, std::__cxx11::basic_string<char> > tvm::tl::{anonymous}::Nd2NzInserter::ValidateScatterTemplate(const tvm::tirx::Buffer&, const tvm::tirx::Buffer&, int64_t, int64_t) const\nValueError: UB ND->NZ scatter requires rows divisible by 16, got 8.\n",
-      "wall_seconds": 1.4861403750110185
+      "generated_source_sha256": "df8b8dde1e3081cd860830629b1a89214fbd0f57ab7349986bc4f0b18e5e9483",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 2.181529998779297e-05,
+      "max_tolerance_ratio": 0.09584052115678787,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 9.780495921993861
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        48,
+        48
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "df8b8dde1e3081cd860830629b1a89214fbd0f57ab7349986bc4f0b18e5e9483",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 2.09808349609375e-05,
+      "max_tolerance_ratio": 0.09604302048683167,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0015632540016667917
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "df8b8dde1e3081cd860830629b1a89214fbd0f57ab7349986bc4f0b18e5e9483",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0005901149997953326
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        47,
+        48
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "9979c77a55fc32840e0d84cba86288e27cf055dc67da2609ee40541999c3ad93",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 1.728534698486328e-05,
+      "max_tolerance_ratio": 0.09584052115678787,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 9.139137490012217
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        48,
+        48
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "9979c77a55fc32840e0d84cba86288e27cf055dc67da2609ee40541999c3ad93",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 2.384185791015625e-05,
+      "max_tolerance_ratio": 0.09604302048683167,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0009676310000941157
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "9979c77a55fc32840e0d84cba86288e27cf055dc67da2609ee40541999c3ad93",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.00042869300523307174
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        47,
+        48
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d03295daa055d27c05d2c703e16cc872779f8f5478d1124510fab4850897152e",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00024008750915527344,
+      "max_tolerance_ratio": 0.3491620421409607,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 9.701871284996741
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        48,
+        48
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d03295daa055d27c05d2c703e16cc872779f8f5478d1124510fab4850897152e",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.0002677440643310547,
+      "max_tolerance_ratio": 0.41597336530685425,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.00101105599605944
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d03295daa055d27c05d2c703e16cc872779f8f5478d1124510fab4850897152e",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0004800289898412302
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        47,
+        48
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "7a05901a731fdd178b121dce0d1c9a6398e3d3b474134bb912a65eb8a360ef1c",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.001953125,
+      "mean_abs_error": 0.00024700164794921875,
+      "max_tolerance_ratio": 0.30048075318336487,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 9.215912353000022
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        48,
+        48
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "7a05901a731fdd178b121dce0d1c9a6398e3d3b474134bb912a65eb8a360ef1c",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00027751922607421875,
+      "max_tolerance_ratio": 0.3491620421409607,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.004554568993626162
+    },
+    {
+      "case": "general_d16_page16",
+      "shape": {
+        "B": 2,
+        "Sq": 2,
+        "H": 2,
+        "D": 16,
+        "page_size": 16,
+        "table_width": 3,
+        "pool_rows": 112
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "7a05901a731fdd178b121dce0d1c9a6398e3d3b474134bb912a65eb8a360ef1c",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0006074910052120686
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        143,
+        144
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d34f8712ff30f6ea8964fad036da105f9e9775f931729056bd867e1d16b95ff1",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 1.9677294403663836e-05,
+      "max_tolerance_ratio": 0.09543805569410324,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 10.37207385399961
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        144,
+        144
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d34f8712ff30f6ea8964fad036da105f9e9775f931729056bd867e1d16b95ff1",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00048828125,
+      "mean_abs_error": 2.0574390873662196e-05,
+      "max_tolerance_ratio": 0.15847858786582947,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0027220710035180673
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d34f8712ff30f6ea8964fad036da105f9e9775f931729056bd867e1d16b95ff1",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.000989963999018073
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        143,
+        144
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "c5005f28fe713e1f8d7930d0cd0ed1257ae487b3b7db1f013fe742b606c09842",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 1.8776083379634656e-05,
+      "max_tolerance_ratio": 0.0948946624994278,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 8.99606918101199
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        144,
+        144
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "c5005f28fe713e1f8d7930d0cd0ed1257ae487b3b7db1f013fe742b606c09842",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 1.8438944607623853e-05,
+      "max_tolerance_ratio": 0.09549274295568466,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0017358229961246252
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "c5005f28fe713e1f8d7930d0cd0ed1257ae487b3b7db1f013fe742b606c09842",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.000586748996283859
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        143,
+        144
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "e43077f08f8812b4954ee1bd27cf1add2c8a81b60565e094ae49224c3456b588",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00017315086734015495,
+      "max_tolerance_ratio": 0.4142501950263977,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 10.44147449999582
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        144,
+        144
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "e43077f08f8812b4954ee1bd27cf1add2c8a81b60565e094ae49224c3456b588",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.001953125,
+      "mean_abs_error": 0.00015125276695471257,
+      "max_tolerance_ratio": 0.284252405166626,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.001936012995429337
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "e43077f08f8812b4954ee1bd27cf1add2c8a81b60565e094ae49224c3456b588",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.000698957999702543
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        143,
+        144
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "bb30a5fb246b2cd6b227c4988bebe99091e8e4a0aba29b777ced57a3d439e451",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.001953125,
+      "mean_abs_error": 0.0001480268983868882,
+      "max_tolerance_ratio": 0.28669726848602295,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 9.031231600994943
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        144,
+        144
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "bb30a5fb246b2cd6b227c4988bebe99091e8e4a0aba29b777ced57a3d439e451",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.001953125,
+      "mean_abs_error": 0.00015863962471485138,
+      "max_tolerance_ratio": 0.28669726848602295,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0030885610030964017
+    },
+    {
+      "case": "general_d48_page48",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 48,
+        "page_size": 48,
+        "table_width": 3,
+        "pool_rows": 336
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "bb30a5fb246b2cd6b227c4988bebe99091e8e4a0aba29b777ced57a3d439e451",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0007953530002851039
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        255,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "1c0a1574cc91dc7bc6db39a85f62e5ee7ac22e28a36fda361e41678ff4354d1d",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00048828125,
+      "mean_abs_error": 1.5404681107611395e-05,
+      "max_tolerance_ratio": 0.16051362454891205,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 12.787618902002578
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        256,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "1c0a1574cc91dc7bc6db39a85f62e5ee7ac22e28a36fda361e41678ff4354d1d",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00048828125,
+      "mean_abs_error": 1.5404320947709493e-05,
+      "max_tolerance_ratio": 0.16051362454891205,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.02331219300685916
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "1c0a1574cc91dc7bc6db39a85f62e5ee7ac22e28a36fda361e41678ff4354d1d",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0014245259953895584
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        255,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d9609d620c6513f9bad8e5c84fb207fe94751cda11966da25040ed6c3a770081",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00048828125,
+      "mean_abs_error": 1.6641828551655635e-05,
+      "max_tolerance_ratio": 0.1624959260225296,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 10.763144145996193
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        256,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d9609d620c6513f9bad8e5c84fb207fe94751cda11966da25040ed6c3a770081",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00048828125,
+      "mean_abs_error": 1.6433150449302047e-05,
+      "max_tolerance_ratio": 0.1624959260225296,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.02598640300857369
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "d9609d620c6513f9bad8e5c84fb207fe94751cda11966da25040ed6c3a770081",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0016037239984143525
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        255,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "09f41843e2ba5f907bfc6ad30bd311fcd37139d17c66068cd16a41da894197d0",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00012359792890492827,
+      "max_tolerance_ratio": 0.42844900488853455,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 12.36293065699283
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        256,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "09f41843e2ba5f907bfc6ad30bd311fcd37139d17c66068cd16a41da894197d0",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.0001242125581484288,
+      "max_tolerance_ratio": 0.42844900488853455,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.02211204299237579
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "09f41843e2ba5f907bfc6ad30bd311fcd37139d17c66068cd16a41da894197d0",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0014019219961483032
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        255,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "90ed70e6674d905b41f273c101ef9e47f6bcfba3f5b9f5d26f50a802b006159b",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00013238278916105628,
+      "max_tolerance_ratio": 0.4321520924568176,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 10.918295120995026
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        256,
+        256
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "90ed70e6674d905b41f273c101ef9e47f6bcfba3f5b9f5d26f50a802b006159b",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.00390625,
+      "mean_abs_error": 0.00013183741248212755,
+      "max_tolerance_ratio": 0.4321520924568176,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.02303017000667751
+    },
+    {
+      "case": "general_d128_q129",
+      "shape": {
+        "B": 2,
+        "Sq": 129,
+        "H": 2,
+        "D": 128,
+        "page_size": 128,
+        "table_width": 2,
+        "pool_rows": 640
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "90ed70e6674d905b41f273c101ef9e47f6bcfba3f5b9f5d26f50a802b006159b",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0013743800082011148
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        511,
+        512
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "3987cec0dc6b359af83acef4aeb4f8a2a0dfcf3a023bfb2edd421d0143bc9bca",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 1.1462063412182033e-05,
+      "max_tolerance_ratio": 0.08906304836273193,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 10.245972984004766
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        512,
+        512
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "3987cec0dc6b359af83acef4aeb4f8a2a0dfcf3a023bfb2edd421d0143bc9bca",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 1.1658979929052293e-05,
+      "max_tolerance_ratio": 0.08906304836273193,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.003123403002973646
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "3987cec0dc6b359af83acef4aeb4f8a2a0dfcf3a023bfb2edd421d0143bc9bca",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.0010236350062768906
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        511,
+        512
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "48fd6c062663b340e76de9afd254760a2a46d15231c1a80c044d384226c2b8a8",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 1.1489770258776844e-05,
+      "max_tolerance_ratio": 0.09658102691173553,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 10.69458233799378
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        512,
+        512
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "48fd6c062663b340e76de9afd254760a2a46d15231c1a80c044d384226c2b8a8",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.000244140625,
+      "mean_abs_error": 1.1869662557728589e-05,
+      "max_tolerance_ratio": 0.09658102691173553,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.002488900994649157
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.float16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "48fd6c062663b340e76de9afd254760a2a46d15231c1a80c044d384226c2b8a8",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.002,
+      "atol": 0.002,
+      "wall_seconds": 0.000996103000943549
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "mixed",
+      "lengths": [
+        511,
+        512
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "9ea9a6bf3f856413aab40288fba871bc174cd75ace38b3d9c33e7cfe556cae3f",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0009765625,
+      "mean_abs_error": 8.495453221257776e-05,
+      "max_tolerance_ratio": 0.1856665313243866,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 10.236669935999089
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "full",
+      "lengths": [
+        512,
+        512
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "9ea9a6bf3f856413aab40288fba871bc174cd75ace38b3d9c33e7cfe556cae3f",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0009765625,
+      "mean_abs_error": 8.335410529980436e-05,
+      "max_tolerance_ratio": 0.1860118955373764,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0032863980013644323
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": false,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "9ea9a6bf3f856413aab40288fba871bc174cd75ace38b3d9c33e7cfe556cae3f",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0012449260102584958
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "mixed",
+      "lengths": [
+        511,
+        512
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "e27886e3f88b06f48a1e716229892d28dce425448f92f0d0f39e6b1d0c382bc3",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.001953125,
+      "mean_abs_error": 9.099507587961853e-05,
+      "max_tolerance_ratio": 0.29515939950942993,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 10.679642607996357
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "full",
+      "lengths": [
+        512,
+        512
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "e27886e3f88b06f48a1e716229892d28dce425448f92f0d0f39e6b1d0c382bc3",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.001953125,
+      "mean_abs_error": 9.326131839770824e-05,
+      "max_tolerance_ratio": 0.29515939950942993,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.019555059989215806
+    },
+    {
+      "case": "general_d256",
+      "shape": {
+        "B": 2,
+        "Sq": 4,
+        "H": 2,
+        "D": 256,
+        "page_size": 256,
+        "table_width": 2,
+        "pool_rows": 1280
+      },
+      "seed": 7,
+      "dtype": "torch.bfloat16",
+      "causal": true,
+      "pattern": "empty",
+      "lengths": [
+        0,
+        0
+      ],
+      "status": "passed",
+      "execution_path": "cube_general",
+      "generated_source_sha256": "e27886e3f88b06f48a1e716229892d28dce425448f92f0d0f39e6b1d0c382bc3",
+      "cube_mmad_calls": 2,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_tolerance_ratio": 0.0,
+      "rtol": 0.01,
+      "atol": 0.004,
+      "wall_seconds": 0.0010797290015034378
     }
   ],
   "logical_device": 0,
-  "started_utc": "2026-11-12T19:46:30.768807+00:00",
+  "started_utc": "2026-11-12T19:51:50.432128+00:00",
   "note": "Timing includes launch/copies/checks and is not a kernel benchmark.",
   "versions": {
     "torch": "2.13.0+cpu",
@@ -64,7 +1480,6 @@
     "tilelang": "0.1.15+cpu.gita7cb753d"
   },
   "device_name": "Ascend950PR_9579",
-  "error": "Traceback (most recent call last):\n  File \"/home/z30086261/FGW/tests/mha/test_mha_paged_accuracy.py\", line 217, in main\n    got = mha_paged_decode(*inputs, page_size=p, is_causal=causal).cpu()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py\", line 596, in mha_paged_decode\n    kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py\", line 40, in build_kernel\n    return build_general(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_cube_general.py\", line 154, in build_kernel\n    compiled = tilelang.compile(main, out_idx=-1, target=\"ascend\", execution_backend=\"auto\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py\", line 166, in compile\n    return cached(\n           ^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/__init__.py\", line 91, in cached\n    return cache.cached(\n           ^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/kernel_cache.py\", line 427, in cached\n    kernel = JITKernel(\n             ^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py\", line 140, in __init__\n    adapter = self._compile_and_create_adapter(func, out_idx)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py\", line 280, in _compile_and_create_adapter\n    self.artifact = self._compile_artifact(tilelang_func, pass_configs, compile_metadata)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py\", line 321, in _compile_artifact\n    artifact = lower_with_context(\n               ^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py\", line 165, in lower_with_context\n    return _lower_with_context_impl(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py\", line 184, in _lower_with_context_impl\n    host_mod, device_mod, params, target, target_host = lower_to_host_device_ir(\n                                                        ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py\", line 136, in lower_to_host_device_ir\n    mod = context.lower(mod)\n          ^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py\", line 214, in lower\n    return self.module.lower(mod, self.target)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py\", line 115, in lower\n    return self.get_pipeline(target).lower(mod, target)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/pass_pipeline/pipeline.py\", line 31, in lower\n    return self._lower(mod, target)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/pipeline.py\", line 91, in AscendPassPipelineBody\n    mod = ascend_transform.InsertNd2Nz()(mod)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/ir/transform.py\", line 171, in __call__\n    return _ffi_transform_api.RunPass(self, mod)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"python/tvm_ffi/cython/function.pxi\", line 968, in tvm_ffi.core.Function.__call__\n  File \"<unknown>\", line 0, in tvm::transform::Pass::operator()(tvm::IRModule) const\n  File \"<unknown>\", line 0, in tvm::transform::Pass::operator()(tvm::IRModule, tvm::transform::PassContext const&) const\n  File \"<unknown>\", line 0, in tvm::tirx::transform::PrimFuncPassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#4}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::ForNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::ForNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"<unknown>\", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)\n  File \"<unknown>\", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})\n  File \"<unknown>\", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)\n  File \"<unknown>\", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const\n  File \"<unknown>\", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#10}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)\n  File \"/home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_nd2nz.cc\", line 196, in std::pair<std::__cxx11::basic_string<char>, std::__cxx11::basic_string<char> > tvm::tl::{anonymous}::Nd2NzInserter::ValidateScatterTemplate(const tvm::tirx::Buffer&, const tvm::tirx::Buffer&, int64_t, int64_t) const\nValueError: UB ND->NZ scatter requires rows divisible by 16, got 8.\n",
-  "passed": 0,
-  "failed_or_incomplete": 1
+  "passed": 48,
+  "failed_or_incomplete": 0
 }
