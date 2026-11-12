@@ -1,0 +1,1008 @@
+Preparing batch1_head1 B=1 H=1 Q=1 KV=4096
+2026-11-12 11:57:01  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 11:57:01  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=1 split1 round=1: 33.408 us MFU=0.0166%
+batch1_head1 Q=1 split2 round=1: 25.143 us MFU=0.0221%
+batch1_head1 Q=1 split4 round=1: 24.727 us MFU=0.0224%
+batch1_head1 Q=1 split8 round=1: 24.683 us MFU=0.0225%
+batch1_head1 Q=1 split16 round=1: 24.705 us MFU=0.0225%
+batch1_head1 Q=1 split16 round=2: 24.555 us MFU=0.0226%
+batch1_head1 Q=1 split8 round=2: 24.568 us MFU=0.0226%
+batch1_head1 Q=1 split4 round=2: 24.546 us MFU=0.0226%
+batch1_head1 Q=1 split2 round=2: 25.277 us MFU=0.0219%
+batch1_head1 Q=1 split1 round=2: 33.344 us MFU=0.0166%
+batch1_head1 Q=1 split1 round=3: 33.476 us MFU=0.0166%
+batch1_head1 Q=1 split2 round=3: 25.226 us MFU=0.0220%
+batch1_head1 Q=1 split4 round=3: 24.495 us MFU=0.0226%
+batch1_head1 Q=1 split8 round=3: 24.532 us MFU=0.0226%
+batch1_head1 Q=1 split16 round=3: 24.657 us MFU=0.0225%
+batch1_head1 Q=1 split16 round=4: 24.663 us MFU=0.0225%
+batch1_head1 Q=1 split8 round=4: 24.496 us MFU=0.0226%
+batch1_head1 Q=1 split4 round=4: 24.423 us MFU=0.0227%
+batch1_head1 Q=1 split2 round=4: 25.074 us MFU=0.0221%
+batch1_head1 Q=1 split1 round=4: 33.425 us MFU=0.0166%
+Preparing batch1_head1 B=1 H=1 Q=64 KV=4096
+2026-11-12 11:57:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:57:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:57:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 11:57:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 11:57:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:57:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:57:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:57:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch1_head1 Q=64 split1 round=1: 38.892 us MFU=0.9130%
+batch1_head1 Q=64 split2 round=1: 35.787 us MFU=0.9922%
+batch1_head1 Q=64 split4 round=1: 35.963 us MFU=0.9873%
+batch1_head1 Q=64 split8 round=1: 36.576 us MFU=0.9708%
+batch1_head1 Q=64 split16 round=1: 36.546 us MFU=0.9716%
+batch1_head1 Q=64 split16 round=2: 34.634 us MFU=1.0252%
+batch1_head1 Q=64 split8 round=2: 34.436 us MFU=1.0311%
+batch1_head1 Q=64 split4 round=2: 34.562 us MFU=1.0274%
+batch1_head1 Q=64 split2 round=2: 34.734 us MFU=1.0223%
+batch1_head1 Q=64 split1 round=2: 38.268 us MFU=0.9279%
+batch1_head1 Q=64 split1 round=3: 38.189 us MFU=0.9298%
+batch1_head1 Q=64 split2 round=3: 34.786 us MFU=1.0207%
+batch1_head1 Q=64 split4 round=3: 34.246 us MFU=1.0368%
+batch1_head1 Q=64 split8 round=3: 34.055 us MFU=1.0426%
+batch1_head1 Q=64 split16 round=3: 34.287 us MFU=1.0356%
+batch1_head1 Q=64 split16 round=4: 34.273 us MFU=1.0360%
+batch1_head1 Q=64 split8 round=4: 33.918 us MFU=1.0469%
+batch1_head1 Q=64 split4 round=4: 33.798 us MFU=1.0506%
+batch1_head1 Q=64 split2 round=4: 34.056 us MFU=1.0426%
+batch1_head1 Q=64 split1 round=4: 38.057 us MFU=0.9330%
+Preparing batch1_head1 B=1 H=1 Q=129 KV=4096
+batch1_head1 Q=129 split1 round=1: 37.327 us MFU=1.9174%
+batch1_head1 Q=129 split2 round=1: 31.524 us MFU=2.2703%
+batch1_head1 Q=129 split4 round=1: 31.325 us MFU=2.2847%
+batch1_head1 Q=129 split8 round=1: 31.360 us MFU=2.2822%
+batch1_head1 Q=129 split16 round=1: 36.622 us MFU=1.9543%
+batch1_head1 Q=129 split16 round=2: 36.263 us MFU=1.9736%
+batch1_head1 Q=129 split8 round=2: 30.637 us MFU=2.3360%
+batch1_head1 Q=129 split4 round=2: 30.913 us MFU=2.3152%
+batch1_head1 Q=129 split2 round=2: 31.178 us MFU=2.2955%
+batch1_head1 Q=129 split1 round=2: 36.969 us MFU=1.9359%
+batch1_head1 Q=129 split1 round=3: 36.913 us MFU=1.9389%
+batch1_head1 Q=129 split2 round=3: 30.875 us MFU=2.3180%
+batch1_head1 Q=129 split4 round=3: 30.955 us MFU=2.3120%
+batch1_head1 Q=129 split8 round=3: 30.529 us MFU=2.3443%
+batch1_head1 Q=129 split16 round=3: 36.155 us MFU=1.9795%
+batch1_head1 Q=129 split16 round=4: 36.259 us MFU=1.9738%
+batch1_head1 Q=129 split8 round=4: 30.655 us MFU=2.3347%
+batch1_head1 Q=129 split4 round=4: 30.633 us MFU=2.3364%
+batch1_head1 Q=129 split2 round=4: 30.723 us MFU=2.3295%
+batch1_head1 Q=129 split1 round=4: 37.019 us MFU=1.9333%
+Preparing batch1_head1 B=1 H=1 Q=256 KV=4096
+2026-11-12 11:57:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:57:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:57:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 11:57:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 11:57:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:57:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:57:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:57:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch1_head1 Q=256 split1 round=1: 39.366 us MFU=3.6079%
+batch1_head1 Q=256 split2 round=1: 36.926 us MFU=3.8463%
+batch1_head1 Q=256 split4 round=1: 36.176 us MFU=3.9261%
+batch1_head1 Q=256 split8 round=1: 35.901 us MFU=3.9561%
+batch1_head1 Q=256 split16 round=1: 36.755 us MFU=3.8642%
+batch1_head1 Q=256 split16 round=2: 35.734 us MFU=3.9746%
+batch1_head1 Q=256 split8 round=2: 34.340 us MFU=4.1360%
+batch1_head1 Q=256 split4 round=2: 34.335 us MFU=4.1366%
+batch1_head1 Q=256 split2 round=2: 34.629 us MFU=4.1015%
+batch1_head1 Q=256 split1 round=2: 38.383 us MFU=3.7003%
+batch1_head1 Q=256 split1 round=3: 38.381 us MFU=3.7005%
+batch1_head1 Q=256 split2 round=3: 34.071 us MFU=4.1686%
+batch1_head1 Q=256 split4 round=3: 34.040 us MFU=4.1724%
+batch1_head1 Q=256 split8 round=3: 33.835 us MFU=4.1977%
+batch1_head1 Q=256 split16 round=3: 35.610 us MFU=3.9885%
+batch1_head1 Q=256 split16 round=4: 35.627 us MFU=3.9866%
+batch1_head1 Q=256 split8 round=4: 33.648 us MFU=4.2210%
+batch1_head1 Q=256 split4 round=4: 33.409 us MFU=4.2512%
+batch1_head1 Q=256 split2 round=4: 34.016 us MFU=4.1754%
+batch1_head1 Q=256 split1 round=4: 38.235 us MFU=3.7146%
+Preparing batch1_head1 B=1 H=1 Q=512 KV=4096
+2026-11-12 11:57:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 11:57:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 11:57:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:57:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:57:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+batch1_head1 Q=512 split1 round=1: 39.438 us MFU=7.2027%
+batch1_head1 Q=512 split2 round=1: 36.639 us MFU=7.7529%
+batch1_head1 Q=512 split4 round=1: 36.162 us MFU=7.8552%
+batch1_head1 Q=512 split8 round=1: 40.138 us MFU=7.0771%
+batch1_head1 Q=512 split16 round=1: 53.133 us MFU=5.3462%
+batch1_head1 Q=512 split16 round=2: 53.488 us MFU=5.3107%
+batch1_head1 Q=512 split8 round=2: 41.116 us MFU=6.9087%
+batch1_head1 Q=512 split4 round=2: 37.971 us MFU=7.4809%
+batch1_head1 Q=512 split2 round=2: 38.253 us MFU=7.4258%
+batch1_head1 Q=512 split1 round=2: 39.923 us MFU=7.1152%
+batch1_head1 Q=512 split1 round=3: 34.421 us MFU=8.2525%
+batch1_head1 Q=512 split2 round=3: 29.310 us MFU=9.6915%
+batch1_head1 Q=512 split4 round=3: 28.418 us MFU=9.9957%
+batch1_head1 Q=512 split8 round=3: 35.297 us MFU=8.0477%
+batch1_head1 Q=512 split16 round=3: 48.312 us MFU=5.8797%
+batch1_head1 Q=512 split16 round=4: 47.241 us MFU=6.0130%
+batch1_head1 Q=512 split8 round=4: 34.633 us MFU=8.2020%
+batch1_head1 Q=512 split4 round=4: 26.294 us MFU=10.8032%
+batch1_head1 Q=512 split2 round=4: 28.527 us MFU=9.9575%
+batch1_head1 Q=512 split1 round=4: 33.975 us MFU=8.3608%
+Preparing batch1_head1 B=1 H=1 Q=2048 KV=4096
+2026-11-12 11:58:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 11:58:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 11:58:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:58:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:58:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:58:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:58:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:58:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch1_head1 Q=2048 split1 round=1: 34.583 us MFU=32.8553%
+batch1_head1 Q=2048 split2 round=1: 51.864 us MFU=21.9080%
+batch1_head1 Q=2048 split4 round=1: 59.192 us MFU=19.1957%
+batch1_head1 Q=2048 split8 round=1: 75.682 us MFU=15.0133%
+batch1_head1 Q=2048 split16 round=1: 120.208 us MFU=9.4522%
+batch1_head1 Q=2048 split16 round=2: 119.712 us MFU=9.4914%
+batch1_head1 Q=2048 split8 round=2: 75.267 us MFU=15.0961%
+batch1_head1 Q=2048 split4 round=2: 59.095 us MFU=19.2273%
+batch1_head1 Q=2048 split2 round=2: 51.829 us MFU=21.9228%
+batch1_head1 Q=2048 split1 round=2: 34.577 us MFU=32.8610%
+batch1_head1 Q=2048 split1 round=3: 34.660 us MFU=32.7823%
+batch1_head1 Q=2048 split2 round=3: 51.818 us MFU=21.9274%
+batch1_head1 Q=2048 split4 round=3: 59.158 us MFU=19.2068%
+batch1_head1 Q=2048 split8 round=3: 75.628 us MFU=15.0240%
+batch1_head1 Q=2048 split16 round=3: 119.985 us MFU=9.4698%
+batch1_head1 Q=2048 split16 round=4: 119.783 us MFU=9.4858%
+batch1_head1 Q=2048 split8 round=4: 75.460 us MFU=15.0574%
+batch1_head1 Q=2048 split4 round=4: 59.096 us MFU=19.2269%
+batch1_head1 Q=2048 split2 round=4: 51.718 us MFU=21.9698%
+batch1_head1 Q=2048 split1 round=4: 34.537 us MFU=32.8991%
+Preparing batch1_head1 B=1 H=1 Q=8192 KV=4096
+2026-11-12 11:58:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 11:58:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 11:58:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+batch1_head1 Q=8192 split1 round=1: 89.311 us MFU=50.8889%
+batch1_head1 Q=8192 split2 round=1: 131.357 us MFU=34.5999%
+batch1_head1 Q=8192 split4 round=1: 181.923 us MFU=24.9828%
+batch1_head1 Q=8192 split8 round=1: 257.070 us MFU=17.6798%
+batch1_head1 Q=8192 split16 round=1: 424.448 us MFU=10.7079%
+batch1_head1 Q=8192 split16 round=2: 424.153 us MFU=10.7153%
+batch1_head1 Q=8192 split8 round=2: 257.063 us MFU=17.6803%
+batch1_head1 Q=8192 split4 round=2: 181.873 us MFU=24.9896%
+batch1_head1 Q=8192 split2 round=2: 130.684 us MFU=34.7781%
+batch1_head1 Q=8192 split1 round=2: 89.344 us MFU=50.8701%
+batch1_head1 Q=8192 split1 round=3: 89.300 us MFU=50.8952%
+batch1_head1 Q=8192 split2 round=3: 131.116 us MFU=34.6635%
+batch1_head1 Q=8192 split4 round=3: 181.616 us MFU=25.0250%
+batch1_head1 Q=8192 split8 round=3: 257.210 us MFU=17.6701%
+batch1_head1 Q=8192 split16 round=3: 424.642 us MFU=10.7030%
+batch1_head1 Q=8192 split16 round=4: 424.671 us MFU=10.7023%
+batch1_head1 Q=8192 split8 round=4: 256.916 us MFU=17.6904%
+batch1_head1 Q=8192 split4 round=4: 181.864 us MFU=24.9909%
+batch1_head1 Q=8192 split2 round=4: 130.402 us MFU=34.8533%
+batch1_head1 Q=8192 split1 round=4: 89.502 us MFU=50.7803%
+Preparing batch1_head8 B=1 H=8 Q=1 KV=4096
+batch1_head8 Q=1 split1 round=1: 34.227 us MFU=0.1297%
+batch1_head8 Q=1 split2 round=1: 26.399 us MFU=0.1681%
+batch1_head8 Q=1 split4 round=1: 32.475 us MFU=0.1367%
+batch1_head8 Q=1 split8 round=1: 34.765 us MFU=0.1277%
+batch1_head8 Q=1 split16 round=1: 45.317 us MFU=0.0979%
+batch1_head8 Q=1 split16 round=2: 45.242 us MFU=0.0981%
+batch1_head8 Q=1 split8 round=2: 34.787 us MFU=0.1276%
+batch1_head8 Q=1 split4 round=2: 32.306 us MFU=0.1374%
+batch1_head8 Q=1 split2 round=2: 26.261 us MFU=0.1690%
+batch1_head8 Q=1 split1 round=2: 34.048 us MFU=0.1304%
+batch1_head8 Q=1 split1 round=3: 33.862 us MFU=0.1311%
+batch1_head8 Q=1 split2 round=3: 26.255 us MFU=0.1691%
+batch1_head8 Q=1 split4 round=3: 32.421 us MFU=0.1369%
+batch1_head8 Q=1 split8 round=3: 34.600 us MFU=0.1283%
+batch1_head8 Q=1 split16 round=3: 45.146 us MFU=0.0983%
+batch1_head8 Q=1 split16 round=4: 45.177 us MFU=0.0982%
+batch1_head8 Q=1 split8 round=4: 34.830 us MFU=0.1274%
+batch1_head8 Q=1 split4 round=4: 32.412 us MFU=0.1369%
+batch1_head8 Q=1 split2 round=4: 26.354 us MFU=0.1684%
+batch1_head8 Q=1 split1 round=4: 34.008 us MFU=0.1305%
+Preparing batch1_head8 B=1 H=8 Q=64 KV=4096
+2026-11-12 11:58:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:58:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:58:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:58:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:58:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 11:58:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 11:58:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:58:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:58:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:58:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:58:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:58:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch1_head8 Q=64 split1 round=1: 50.097 us MFU=5.6702%
+batch1_head8 Q=64 split2 round=1: 45.796 us MFU=6.2027%
+batch1_head8 Q=64 split4 round=1: 53.044 us MFU=5.3552%
+batch1_head8 Q=64 split8 round=1: 58.471 us MFU=4.8581%
+batch1_head8 Q=64 split16 round=1: 75.981 us MFU=3.7385%
+batch1_head8 Q=64 split16 round=2: 75.316 us MFU=3.7716%
+batch1_head8 Q=64 split8 round=2: 58.153 us MFU=4.8847%
+batch1_head8 Q=64 split4 round=2: 52.706 us MFU=5.3895%
+batch1_head8 Q=64 split2 round=2: 45.273 us MFU=6.2744%
+batch1_head8 Q=64 split1 round=2: 50.113 us MFU=5.6684%
+batch1_head8 Q=64 split1 round=3: 49.733 us MFU=5.7117%
+batch1_head8 Q=64 split2 round=3: 45.388 us MFU=6.2585%
+batch1_head8 Q=64 split4 round=3: 52.523 us MFU=5.4083%
+batch1_head8 Q=64 split8 round=3: 58.108 us MFU=4.8885%
+batch1_head8 Q=64 split16 round=3: 75.814 us MFU=3.7468%
+batch1_head8 Q=64 split16 round=4: 75.630 us MFU=3.7559%
+batch1_head8 Q=64 split8 round=4: 58.166 us MFU=4.8836%
+batch1_head8 Q=64 split4 round=4: 52.646 us MFU=5.3956%
+batch1_head8 Q=64 split2 round=4: 45.297 us MFU=6.2710%
+batch1_head8 Q=64 split1 round=4: 49.970 us MFU=5.6846%
+Preparing batch1_head8 B=1 H=8 Q=129 KV=4096
+batch1_head8 Q=129 split1 round=1: 51.085 us MFU=11.2079%
+batch1_head8 Q=129 split2 round=1: 65.126 us MFU=8.7915%
+batch1_head8 Q=129 split4 round=1: 70.570 us MFU=8.1133%
+batch1_head8 Q=129 split8 round=1: 84.087 us MFU=6.8091%
+batch1_head8 Q=129 split16 round=1: 122.633 us MFU=4.6689%
+batch1_head8 Q=129 split16 round=2: 122.939 us MFU=4.6572%
+batch1_head8 Q=129 split8 round=2: 83.965 us MFU=6.8190%
+batch1_head8 Q=129 split4 round=2: 70.899 us MFU=8.0757%
+batch1_head8 Q=129 split2 round=2: 65.043 us MFU=8.8027%
+batch1_head8 Q=129 split1 round=2: 51.230 us MFU=11.1762%
+batch1_head8 Q=129 split1 round=3: 50.238 us MFU=11.3969%
+batch1_head8 Q=129 split2 round=3: 64.155 us MFU=8.9246%
+batch1_head8 Q=129 split4 round=3: 69.775 us MFU=8.2057%
+batch1_head8 Q=129 split8 round=3: 83.192 us MFU=6.8823%
+batch1_head8 Q=129 split16 round=3: 121.979 us MFU=4.6939%
+batch1_head8 Q=129 split16 round=4: 121.910 us MFU=4.6965%
+batch1_head8 Q=129 split8 round=4: 83.049 us MFU=6.8942%
+batch1_head8 Q=129 split4 round=4: 69.828 us MFU=8.1995%
+batch1_head8 Q=129 split2 round=4: 64.314 us MFU=8.9025%
+batch1_head8 Q=129 split1 round=4: 50.275 us MFU=11.3885%
+Preparing batch1_head8 B=1 H=8 Q=256 KV=4096
+2026-11-12 11:59:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:59:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:59:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:59:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:59:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 11:59:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 11:59:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:59:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:59:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:59:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:59:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:59:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:59:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:59:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:59:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:59:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:59:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:59:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch1_head8 Q=256 split1 round=1: 46.400 us MFU=24.4878%
+batch1_head8 Q=256 split2 round=1: 64.641 us MFU=17.5776%
+batch1_head8 Q=256 split4 round=1: 72.523 us MFU=15.6672%
+batch1_head8 Q=256 split8 round=1: 90.734 us MFU=12.5227%
+batch1_head8 Q=256 split16 round=1: 139.671 us MFU=8.1351%
+batch1_head8 Q=256 split16 round=2: 139.210 us MFU=8.1620%
+batch1_head8 Q=256 split8 round=2: 90.635 us MFU=12.5364%
+batch1_head8 Q=256 split4 round=2: 72.052 us MFU=15.7696%
+batch1_head8 Q=256 split2 round=2: 64.197 us MFU=17.6992%
+batch1_head8 Q=256 split1 round=2: 46.056 us MFU=24.6707%
+batch1_head8 Q=256 split1 round=3: 45.922 us MFU=24.7427%
+batch1_head8 Q=256 split2 round=3: 64.125 us MFU=17.7191%
+batch1_head8 Q=256 split4 round=3: 72.150 us MFU=15.7482%
+batch1_head8 Q=256 split8 round=3: 90.297 us MFU=12.5833%
+batch1_head8 Q=256 split16 round=3: 139.311 us MFU=8.1561%
+batch1_head8 Q=256 split16 round=4: 139.230 us MFU=8.1608%
+batch1_head8 Q=256 split8 round=4: 90.206 us MFU=12.5960%
+batch1_head8 Q=256 split4 round=4: 71.771 us MFU=15.8314%
+batch1_head8 Q=256 split2 round=4: 64.141 us MFU=17.7146%
+batch1_head8 Q=256 split1 round=4: 45.851 us MFU=24.7810%
+Preparing batch1_head8 B=1 H=8 Q=512 KV=4096
+2026-11-12 11:59:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:59:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:59:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:59:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:59:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 11:59:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 11:59:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:59:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:59:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:59:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:59:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 11:59:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 11:59:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 11:59:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 11:59:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:00:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:00:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:00:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch1_head8 Q=512 split1 round=1: 78.395 us MFU=28.9874%
+batch1_head8 Q=512 split2 round=1: 96.513 us MFU=23.5457%
+batch1_head8 Q=512 split4 round=1: 116.962 us MFU=19.4291%
+batch1_head8 Q=512 split8 round=1: 161.622 us MFU=14.0604%
+batch1_head8 Q=512 split16 round=1: 254.273 us MFU=8.9371%
+batch1_head8 Q=512 split16 round=2: 252.360 us MFU=9.0049%
+batch1_head8 Q=512 split8 round=2: 159.571 us MFU=14.2411%
+batch1_head8 Q=512 split4 round=2: 115.568 us MFU=19.6635%
+batch1_head8 Q=512 split2 round=2: 94.728 us MFU=23.9894%
+batch1_head8 Q=512 split1 round=2: 76.840 us MFU=29.5740%
+batch1_head8 Q=512 split1 round=3: 77.064 us MFU=29.4881%
+batch1_head8 Q=512 split2 round=3: 94.387 us MFU=24.0761%
+batch1_head8 Q=512 split4 round=3: 114.928 us MFU=19.7730%
+batch1_head8 Q=512 split8 round=3: 159.534 us MFU=14.2444%
+batch1_head8 Q=512 split16 round=3: 252.170 us MFU=9.0117%
+batch1_head8 Q=512 split16 round=4: 252.150 us MFU=9.0124%
+batch1_head8 Q=512 split8 round=4: 159.757 us MFU=14.2245%
+batch1_head8 Q=512 split4 round=4: 115.855 us MFU=19.6148%
+batch1_head8 Q=512 split2 round=4: 94.688 us MFU=23.9996%
+batch1_head8 Q=512 split1 round=4: 77.501 us MFU=29.3218%
+Preparing batch1_head8 B=1 H=8 Q=2048 KV=4096
+2026-11-12 12:00:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:00:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:00:09  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:00:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:00:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:00:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:00:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:00:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:00:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:00:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:00:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:00:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:00:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:00:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:00:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:00:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:00:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:00:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:00:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch1_head8 Q=2048 split1 round=1: 161.877 us MFU=56.1530%
+batch1_head8 Q=2048 split2 round=1: 267.978 us MFU=33.9202%
+batch1_head8 Q=2048 split4 round=1: 374.017 us MFU=24.3034%
+batch1_head8 Q=2048 split8 round=1: 575.910 us MFU=15.7835%
+batch1_head8 Q=2048 split16 round=1: 1006.660 us MFU=9.0297%
+batch1_head8 Q=2048 split16 round=2: 1006.574 us MFU=9.0305%
+batch1_head8 Q=2048 split8 round=2: 576.862 us MFU=15.7575%
+batch1_head8 Q=2048 split4 round=2: 373.820 us MFU=24.3162%
+batch1_head8 Q=2048 split2 round=2: 267.650 us MFU=33.9618%
+batch1_head8 Q=2048 split1 round=2: 161.417 us MFU=56.3130%
+batch1_head8 Q=2048 split1 round=3: 161.651 us MFU=56.2315%
+batch1_head8 Q=2048 split2 round=3: 267.812 us MFU=33.9413%
+batch1_head8 Q=2048 split4 round=3: 373.943 us MFU=24.3082%
+batch1_head8 Q=2048 split8 round=3: 576.854 us MFU=15.7577%
+batch1_head8 Q=2048 split16 round=3: 1007.292 us MFU=9.0241%
+batch1_head8 Q=2048 split16 round=4: 1006.035 us MFU=9.0353%
+batch1_head8 Q=2048 split8 round=4: 576.190 us MFU=15.7758%
+batch1_head8 Q=2048 split4 round=4: 374.366 us MFU=24.2807%
+batch1_head8 Q=2048 split2 round=4: 268.018 us MFU=33.9152%
+batch1_head8 Q=2048 split1 round=4: 161.622 us MFU=56.2416%
+Preparing batch1_head8 B=1 H=8 Q=8192 KV=4096
+2026-11-12 12:00:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:00:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:00:43  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:00:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:00:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:00:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:00:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:00:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:00:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:00:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:00:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:00:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:01:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:01:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:01:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:01:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:01:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:01:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:01:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch1_head8 Q=8192 split1 round=1: 553.675 us MFU=65.6694%
+batch1_head8 Q=8192 split2 round=1: 986.088 us MFU=36.8725%
+batch1_head8 Q=8192 split4 round=1: 1496.389 us MFU=24.2982%
+batch1_head8 Q=8192 split8 round=1: 2295.308 us MFU=15.8408%
+batch1_head8 Q=8192 split16 round=1: 3966.242 us MFU=9.1672%
+batch1_head8 Q=8192 split16 round=2: 3967.719 us MFU=9.1638%
+batch1_head8 Q=8192 split8 round=2: 2297.538 us MFU=15.8254%
+batch1_head8 Q=8192 split4 round=2: 1496.368 us MFU=24.2985%
+batch1_head8 Q=8192 split2 round=2: 985.262 us MFU=36.9034%
+batch1_head8 Q=8192 split1 round=2: 553.224 us MFU=65.7229%
+batch1_head8 Q=8192 split1 round=3: 554.254 us MFU=65.6008%
+batch1_head8 Q=8192 split2 round=3: 985.730 us MFU=36.8859%
+batch1_head8 Q=8192 split4 round=3: 1498.513 us MFU=24.2637%
+batch1_head8 Q=8192 split8 round=3: 2298.625 us MFU=15.8179%
+batch1_head8 Q=8192 split16 round=3: 3971.117 us MFU=9.1560%
+batch1_head8 Q=8192 split16 round=4: 3970.759 us MFU=9.1568%
+batch1_head8 Q=8192 split8 round=4: 2297.776 us MFU=15.8238%
+batch1_head8 Q=8192 split4 round=4: 1497.604 us MFU=24.2785%
+batch1_head8 Q=8192 split2 round=4: 986.831 us MFU=36.8447%
+batch1_head8 Q=8192 split1 round=4: 554.223 us MFU=65.6045%
+Preparing batch4_head4 B=4 H=4 Q=1 KV=4096
+2026-11-12 12:01:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:01:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:01:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:01:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:01:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:01:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:01:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:01:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:01:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:01:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:01:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:01:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:01:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:01:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:01:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:01:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:01:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:01:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch4_head4 Q=1 split1 round=1: 38.128 us MFU=0.2328%
+batch4_head4 Q=1 split2 round=1: 47.003 us MFU=0.1889%
+batch4_head4 Q=1 split4 round=1: 48.852 us MFU=0.1817%
+batch4_head4 Q=1 split8 round=1: 54.952 us MFU=0.1615%
+batch4_head4 Q=1 split16 round=1: 78.489 us MFU=0.1131%
+batch4_head4 Q=1 split16 round=2: 78.188 us MFU=0.1135%
+batch4_head4 Q=1 split8 round=2: 54.615 us MFU=0.1625%
+batch4_head4 Q=1 split4 round=2: 48.515 us MFU=0.1830%
+batch4_head4 Q=1 split2 round=2: 46.581 us MFU=0.1906%
+batch4_head4 Q=1 split1 round=2: 37.941 us MFU=0.2340%
+batch4_head4 Q=1 split1 round=3: 37.997 us MFU=0.2336%
+batch4_head4 Q=1 split2 round=3: 46.884 us MFU=0.1893%
+batch4_head4 Q=1 split4 round=3: 48.827 us MFU=0.1818%
+batch4_head4 Q=1 split8 round=3: 54.823 us MFU=0.1619%
+batch4_head4 Q=1 split16 round=3: 78.242 us MFU=0.1135%
+batch4_head4 Q=1 split16 round=4: 78.391 us MFU=0.1132%
+batch4_head4 Q=1 split8 round=4: 54.822 us MFU=0.1619%
+batch4_head4 Q=1 split4 round=4: 48.756 us MFU=0.1821%
+batch4_head4 Q=1 split2 round=4: 47.031 us MFU=0.1887%
+batch4_head4 Q=1 split1 round=4: 38.234 us MFU=0.2322%
+Preparing batch4_head4 B=4 H=4 Q=64 KV=4096
+2026-11-12 12:01:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:01:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:01:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:01:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:01:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:01:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:01:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:01:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:01:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:01:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:01:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:02:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:02:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:02:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:02:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:02:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:02:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:02:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch4_head4 Q=64 split1 round=1: 56.676 us MFU=10.0239%
+batch4_head4 Q=64 split2 round=1: 69.496 us MFU=8.1748%
+batch4_head4 Q=64 split4 round=1: 74.699 us MFU=7.6054%
+batch4_head4 Q=64 split8 round=1: 86.224 us MFU=6.5889%
+batch4_head4 Q=64 split16 round=1: 120.713 us MFU=4.7063%
+batch4_head4 Q=64 split16 round=2: 117.159 us MFU=4.8491%
+batch4_head4 Q=64 split8 round=2: 82.630 us MFU=6.8754%
+batch4_head4 Q=64 split4 round=2: 70.779 us MFU=8.0266%
+batch4_head4 Q=64 split2 round=2: 66.506 us MFU=8.5423%
+batch4_head4 Q=64 split1 round=2: 53.195 us MFU=10.6799%
+batch4_head4 Q=64 split1 round=3: 52.936 us MFU=10.7322%
+batch4_head4 Q=64 split2 round=3: 66.056 us MFU=8.6005%
+batch4_head4 Q=64 split4 round=3: 70.260 us MFU=8.0859%
+batch4_head4 Q=64 split8 round=3: 82.460 us MFU=6.8896%
+batch4_head4 Q=64 split16 round=3: 116.963 us MFU=4.8572%
+batch4_head4 Q=64 split16 round=4: 116.904 us MFU=4.8597%
+batch4_head4 Q=64 split8 round=4: 82.072 us MFU=6.9222%
+batch4_head4 Q=64 split4 round=4: 70.336 us MFU=8.0772%
+batch4_head4 Q=64 split2 round=4: 65.958 us MFU=8.6133%
+batch4_head4 Q=64 split1 round=4: 52.817 us MFU=10.7563%
+Preparing batch4_head4 B=4 H=4 Q=129 KV=4096
+2026-11-12 12:02:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:02:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:02:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:02:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:02:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:02:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:02:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:02:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:02:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:02:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:02:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:02:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:02:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:02:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:02:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:02:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:02:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:02:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch4_head4 Q=129 split1 round=1: 77.691 us MFU=14.7393%
+batch4_head4 Q=129 split2 round=1: 85.843 us MFU=13.3396%
+batch4_head4 Q=129 split4 round=1: 99.256 us MFU=11.5370%
+batch4_head4 Q=129 split8 round=1: 128.229 us MFU=8.9302%
+batch4_head4 Q=129 split16 round=1: 191.412 us MFU=5.9824%
+batch4_head4 Q=129 split16 round=2: 185.362 us MFU=6.1777%
+batch4_head4 Q=129 split8 round=2: 122.090 us MFU=9.3792%
+batch4_head4 Q=129 split4 round=2: 93.099 us MFU=12.2999%
+batch4_head4 Q=129 split2 round=2: 80.159 us MFU=14.2855%
+batch4_head4 Q=129 split1 round=2: 71.996 us MFU=15.9052%
+batch4_head4 Q=129 split1 round=3: 71.998 us MFU=15.9048%
+batch4_head4 Q=129 split2 round=3: 80.159 us MFU=14.2855%
+batch4_head4 Q=129 split4 round=3: 93.415 us MFU=12.2583%
+batch4_head4 Q=129 split8 round=3: 122.250 us MFU=9.3670%
+batch4_head4 Q=129 split16 round=3: 185.713 us MFU=6.1660%
+batch4_head4 Q=129 split16 round=4: 185.102 us MFU=6.1864%
+batch4_head4 Q=129 split8 round=4: 122.330 us MFU=9.3608%
+batch4_head4 Q=129 split4 round=4: 93.405 us MFU=12.2596%
+batch4_head4 Q=129 split2 round=4: 80.080 us MFU=14.2996%
+batch4_head4 Q=129 split1 round=4: 71.872 us MFU=15.9327%
+Preparing batch4_head4 B=4 H=4 Q=256 KV=4096
+2026-11-12 12:02:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:02:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:02:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:02:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:02:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:02:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:02:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:03:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:03:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:03:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:03:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:03:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:03:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:03:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:03:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:03:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:03:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:03:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch4_head4 Q=256 split1 round=1: 76.628 us MFU=29.6559%
+batch4_head4 Q=256 split2 round=1: 92.890 us MFU=24.4641%
+batch4_head4 Q=256 split4 round=1: 112.512 us MFU=20.1976%
+batch4_head4 Q=256 split8 round=1: 153.192 us MFU=14.8341%
+batch4_head4 Q=256 split16 round=1: 238.553 us MFU=9.5261%
+batch4_head4 Q=256 split16 round=2: 237.796 us MFU=9.5564%
+batch4_head4 Q=256 split8 round=2: 152.368 us MFU=14.9143%
+batch4_head4 Q=256 split4 round=2: 112.031 us MFU=20.2843%
+batch4_head4 Q=256 split2 round=2: 92.467 us MFU=24.5760%
+batch4_head4 Q=256 split1 round=2: 76.239 us MFU=29.8072%
+batch4_head4 Q=256 split1 round=3: 76.386 us MFU=29.7498%
+batch4_head4 Q=256 split2 round=3: 92.828 us MFU=24.4804%
+batch4_head4 Q=256 split4 round=3: 112.234 us MFU=20.2476%
+batch4_head4 Q=256 split8 round=3: 152.622 us MFU=14.8895%
+batch4_head4 Q=256 split16 round=3: 238.350 us MFU=9.5342%
+batch4_head4 Q=256 split16 round=4: 237.329 us MFU=9.5752%
+batch4_head4 Q=256 split8 round=4: 152.330 us MFU=14.9181%
+batch4_head4 Q=256 split4 round=4: 111.875 us MFU=20.3126%
+batch4_head4 Q=256 split2 round=4: 92.260 us MFU=24.6311%
+batch4_head4 Q=256 split1 round=4: 75.856 us MFU=29.9577%
+Preparing batch4_head4 B=4 H=4 Q=512 KV=4096
+2026-11-12 12:03:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:03:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:03:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:03:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:03:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:03:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:03:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:03:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:03:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:03:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:03:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:03:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:03:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:03:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:03:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:03:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:03:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:03:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch4_head4 Q=512 split1 round=1: 103.896 us MFU=43.7451%
+batch4_head4 Q=512 split2 round=1: 142.396 us MFU=31.9176%
+batch4_head4 Q=512 split4 round=1: 194.283 us MFU=23.3934%
+batch4_head4 Q=512 split8 round=1: 270.651 us MFU=16.7926%
+batch4_head4 Q=512 split16 round=1: 449.285 us MFU=10.1159%
+batch4_head4 Q=512 split16 round=2: 448.556 us MFU=10.1324%
+batch4_head4 Q=512 split8 round=2: 270.475 us MFU=16.8035%
+batch4_head4 Q=512 split4 round=2: 194.091 us MFU=23.4165%
+batch4_head4 Q=512 split2 round=2: 142.587 us MFU=31.8748%
+batch4_head4 Q=512 split1 round=2: 103.766 us MFU=43.7999%
+batch4_head4 Q=512 split1 round=3: 104.231 us MFU=43.6045%
+batch4_head4 Q=512 split2 round=3: 142.639 us MFU=31.8632%
+batch4_head4 Q=512 split4 round=3: 194.234 us MFU=23.3993%
+batch4_head4 Q=512 split8 round=3: 270.584 us MFU=16.7968%
+batch4_head4 Q=512 split16 round=3: 449.736 us MFU=10.1058%
+batch4_head4 Q=512 split16 round=4: 449.058 us MFU=10.1211%
+batch4_head4 Q=512 split8 round=4: 270.524 us MFU=16.8005%
+batch4_head4 Q=512 split4 round=4: 194.329 us MFU=23.3879%
+batch4_head4 Q=512 split2 round=4: 142.691 us MFU=31.8516%
+batch4_head4 Q=512 split1 round=4: 103.810 us MFU=43.7813%
+Preparing batch4_head4 B=4 H=4 Q=2048 KV=4096
+2026-11-12 12:03:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:03:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:03:55  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:03:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:04:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:04:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:04:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:04:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:04:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:04:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:04:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:04:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:04:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:04:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:04:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:04:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:04:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:04:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:04:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch4_head4 Q=2048 split1 round=1: 295.873 us MFU=61.4445%
+batch4_head4 Q=2048 split2 round=1: 476.778 us MFU=38.1304%
+batch4_head4 Q=2048 split4 round=1: 682.625 us MFU=26.6321%
+batch4_head4 Q=2048 split8 round=1: 1139.224 us MFU=15.9580%
+batch4_head4 Q=2048 split16 round=1: 2034.858 us MFU=8.9342%
+batch4_head4 Q=2048 split16 round=2: 2033.446 us MFU=8.9404%
+batch4_head4 Q=2048 split8 round=2: 1138.890 us MFU=15.9627%
+batch4_head4 Q=2048 split4 round=2: 684.105 us MFU=26.5745%
+batch4_head4 Q=2048 split2 round=2: 476.272 us MFU=38.1710%
+batch4_head4 Q=2048 split1 round=2: 294.669 us MFU=61.6955%
+batch4_head4 Q=2048 split1 round=3: 298.156 us MFU=60.9740%
+batch4_head4 Q=2048 split2 round=3: 480.339 us MFU=37.8478%
+batch4_head4 Q=2048 split4 round=3: 685.845 us MFU=26.5071%
+batch4_head4 Q=2048 split8 round=3: 1143.000 us MFU=15.9053%
+batch4_head4 Q=2048 split16 round=3: 2039.356 us MFU=8.9145%
+batch4_head4 Q=2048 split16 round=4: 2041.765 us MFU=8.9039%
+batch4_head4 Q=2048 split8 round=4: 1145.167 us MFU=15.8752%
+batch4_head4 Q=2048 split4 round=4: 688.722 us MFU=26.3964%
+batch4_head4 Q=2048 split2 round=4: 481.600 us MFU=37.7487%
+batch4_head4 Q=2048 split1 round=4: 299.732 us MFU=60.6534%
+Preparing batch4_head4 B=4 H=4 Q=8192 KV=4096
+2026-11-12 12:04:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:04:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:04:30  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:04:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:04:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:04:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:04:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:04:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:04:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:04:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:04:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:04:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:04:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:04:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:04:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:04:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:04:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:04:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:04:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch4_head4 Q=8192 split1 round=1: 1066.647 us MFU=68.1753%
+batch4_head4 Q=8192 split2 round=1: 2003.384 us MFU=36.2981%
+batch4_head4 Q=8192 split4 round=1: 2995.030 us MFU=24.2799%
+batch4_head4 Q=8192 split8 round=1: 4576.929 us MFU=15.8882%
+batch4_head4 Q=8192 split16 round=1: 7935.201 us MFU=9.1641%
+batch4_head4 Q=8192 split16 round=2: 7940.663 us MFU=9.1578%
+batch4_head4 Q=8192 split8 round=2: 4572.413 us MFU=15.9039%
+batch4_head4 Q=8192 split4 round=2: 2994.826 us MFU=24.2816%
+batch4_head4 Q=8192 split2 round=2: 2004.778 us MFU=36.2729%
+batch4_head4 Q=8192 split1 round=2: 1066.968 us MFU=68.1548%
+batch4_head4 Q=8192 split1 round=3: 1068.127 us MFU=68.0809%
+batch4_head4 Q=8192 split2 round=3: 2004.122 us MFU=36.2847%
+batch4_head4 Q=8192 split4 round=3: 2995.694 us MFU=24.2745%
+batch4_head4 Q=8192 split8 round=3: 4580.521 us MFU=15.8757%
+batch4_head4 Q=8192 split16 round=3: 7942.024 us MFU=9.1562%
+batch4_head4 Q=8192 split16 round=4: 7943.991 us MFU=9.1540%
+batch4_head4 Q=8192 split8 round=4: 4577.668 us MFU=15.8856%
+batch4_head4 Q=8192 split4 round=4: 2996.393 us MFU=24.2689%
+batch4_head4 Q=8192 split2 round=4: 2004.236 us MFU=36.2827%
+batch4_head4 Q=8192 split1 round=4: 1067.720 us MFU=68.1068%
+Preparing batch2_head16 B=2 H=16 Q=1 KV=4096
+2026-11-12 12:05:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:05:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:05:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:05:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:05:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:05:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:05:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:05:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:05:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:05:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:05:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:05:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:05:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:05:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:05:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:05:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:05:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:05:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch2_head16 Q=1 split1 round=1: 66.164 us MFU=0.2683%
+batch2_head16 Q=1 split2 round=1: 65.264 us MFU=0.2720%
+batch2_head16 Q=1 split4 round=1: 73.212 us MFU=0.2425%
+batch2_head16 Q=1 split8 round=1: 92.690 us MFU=0.1915%
+batch2_head16 Q=1 split16 round=1: 135.624 us MFU=0.1309%
+batch2_head16 Q=1 split16 round=2: 135.390 us MFU=0.1311%
+batch2_head16 Q=1 split8 round=2: 92.127 us MFU=0.1927%
+batch2_head16 Q=1 split4 round=2: 73.417 us MFU=0.2418%
+batch2_head16 Q=1 split2 round=2: 65.535 us MFU=0.2709%
+batch2_head16 Q=1 split1 round=2: 66.434 us MFU=0.2672%
+batch2_head16 Q=1 split1 round=3: 66.347 us MFU=0.2676%
+batch2_head16 Q=1 split2 round=3: 65.354 us MFU=0.2717%
+batch2_head16 Q=1 split4 round=3: 73.360 us MFU=0.2420%
+batch2_head16 Q=1 split8 round=3: 92.533 us MFU=0.1919%
+batch2_head16 Q=1 split16 round=3: 135.431 us MFU=0.1311%
+batch2_head16 Q=1 split16 round=4: 135.202 us MFU=0.1313%
+batch2_head16 Q=1 split8 round=4: 92.234 us MFU=0.1925%
+batch2_head16 Q=1 split4 round=4: 73.536 us MFU=0.2414%
+batch2_head16 Q=1 split2 round=4: 64.942 us MFU=0.2734%
+batch2_head16 Q=1 split1 round=4: 66.300 us MFU=0.2678%
+Preparing batch2_head16 B=2 H=16 Q=64 KV=4096
+2026-11-12 12:05:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:05:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:05:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:05:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:05:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:05:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:05:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:05:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:05:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:05:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:05:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:05:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:05:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:05:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:05:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:05:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:06:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:06:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch2_head16 Q=64 split1 round=1: 73.608 us MFU=15.4363%
+batch2_head16 Q=64 split2 round=1: 82.435 us MFU=13.7834%
+batch2_head16 Q=64 split4 round=1: 95.144 us MFU=11.9423%
+batch2_head16 Q=64 split8 round=1: 124.101 us MFU=9.1557%
+batch2_head16 Q=64 split16 round=1: 188.833 us MFU=6.0171%
+batch2_head16 Q=64 split16 round=2: 188.196 us MFU=6.0375%
+batch2_head16 Q=64 split8 round=2: 123.887 us MFU=9.1715%
+batch2_head16 Q=64 split4 round=2: 95.178 us MFU=11.9380%
+batch2_head16 Q=64 split2 round=2: 81.949 us MFU=13.8651%
+batch2_head16 Q=64 split1 round=2: 73.704 us MFU=15.4162%
+batch2_head16 Q=64 split1 round=3: 73.256 us MFU=15.5105%
+batch2_head16 Q=64 split2 round=3: 82.155 us MFU=13.8304%
+batch2_head16 Q=64 split4 round=3: 94.753 us MFU=11.9915%
+batch2_head16 Q=64 split8 round=3: 123.765 us MFU=9.1806%
+batch2_head16 Q=64 split16 round=3: 187.729 us MFU=6.0525%
+batch2_head16 Q=64 split16 round=4: 187.791 us MFU=6.0505%
+batch2_head16 Q=64 split8 round=4: 123.346 us MFU=9.2118%
+batch2_head16 Q=64 split4 round=4: 94.398 us MFU=12.0366%
+batch2_head16 Q=64 split2 round=4: 81.168 us MFU=13.9986%
+batch2_head16 Q=64 split1 round=4: 73.159 us MFU=15.5310%
+Preparing batch2_head16 B=2 H=16 Q=129 KV=4096
+2026-11-12 12:06:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:06:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:06:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:06:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:06:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:06:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:06:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:06:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:06:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:06:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:06:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:06:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:06:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:06:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:06:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:06:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:06:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:06:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch2_head16 Q=129 split1 round=1: 106.207 us MFU=21.5638%
+batch2_head16 Q=129 split2 round=1: 130.358 us MFU=17.5687%
+batch2_head16 Q=129 split4 round=1: 171.755 us MFU=13.3342%
+batch2_head16 Q=129 split8 round=1: 231.306 us MFU=9.9013%
+batch2_head16 Q=129 split16 round=1: 394.758 us MFU=5.8016%
+batch2_head16 Q=129 split16 round=2: 394.463 us MFU=5.8059%
+batch2_head16 Q=129 split8 round=2: 230.608 us MFU=9.9312%
+batch2_head16 Q=129 split4 round=2: 171.749 us MFU=13.3347%
+batch2_head16 Q=129 split2 round=2: 129.633 us MFU=17.6670%
+batch2_head16 Q=129 split1 round=2: 106.048 us MFU=21.5961%
+batch2_head16 Q=129 split1 round=3: 105.917 us MFU=21.6228%
+batch2_head16 Q=129 split2 round=3: 129.949 us MFU=17.6240%
+batch2_head16 Q=129 split4 round=3: 171.830 us MFU=13.3284%
+batch2_head16 Q=129 split8 round=3: 230.890 us MFU=9.9191%
+batch2_head16 Q=129 split16 round=3: 394.533 us MFU=5.8049%
+batch2_head16 Q=129 split16 round=4: 394.623 us MFU=5.8036%
+batch2_head16 Q=129 split8 round=4: 230.536 us MFU=9.9343%
+batch2_head16 Q=129 split4 round=4: 172.296 us MFU=13.2924%
+batch2_head16 Q=129 split2 round=4: 130.166 us MFU=17.5946%
+batch2_head16 Q=129 split1 round=4: 106.180 us MFU=21.5693%
+Preparing batch2_head16 B=2 H=16 Q=256 KV=4096
+2026-11-12 12:06:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:06:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:06:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:06:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:06:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:06:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:06:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:06:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:06:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:06:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:06:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:06:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:06:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:07:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:07:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:07:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:07:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:07:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch2_head16 Q=256 split1 round=1: 106.004 us MFU=42.8752%
+batch2_head16 Q=256 split2 round=1: 147.163 us MFU=30.8837%
+batch2_head16 Q=256 split4 round=1: 197.465 us MFU=23.0164%
+batch2_head16 Q=256 split8 round=1: 277.774 us MFU=16.3620%
+batch2_head16 Q=256 split16 round=1: 493.804 us MFU=9.2039%
+batch2_head16 Q=256 split16 round=2: 492.769 us MFU=9.2233%
+batch2_head16 Q=256 split8 round=2: 275.768 us MFU=16.4810%
+batch2_head16 Q=256 split4 round=2: 197.619 us MFU=22.9985%
+batch2_head16 Q=256 split2 round=2: 148.459 us MFU=30.6141%
+batch2_head16 Q=256 split1 round=2: 105.579 us MFU=43.0478%
+batch2_head16 Q=256 split1 round=3: 105.617 us MFU=43.0323%
+batch2_head16 Q=256 split2 round=3: 146.849 us MFU=30.9497%
+batch2_head16 Q=256 split4 round=3: 197.100 us MFU=23.0591%
+batch2_head16 Q=256 split8 round=3: 277.075 us MFU=16.4033%
+batch2_head16 Q=256 split16 round=3: 493.562 us MFU=9.2084%
+batch2_head16 Q=256 split16 round=4: 492.763 us MFU=9.2234%
+batch2_head16 Q=256 split8 round=4: 276.113 us MFU=16.4604%
+batch2_head16 Q=256 split4 round=4: 197.675 us MFU=22.9920%
+batch2_head16 Q=256 split2 round=4: 147.898 us MFU=30.7302%
+batch2_head16 Q=256 split1 round=4: 106.101 us MFU=42.8360%
+Preparing batch2_head16 B=2 H=16 Q=512 KV=4096
+2026-11-12 12:07:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:07:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:07:12  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:07:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:07:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:07:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:07:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:07:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:07:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:07:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:07:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:07:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:07:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:07:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:07:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:07:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:07:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:07:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:07:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch2_head16 Q=512 split1 round=1: 179.115 us MFU=50.7488%
+batch2_head16 Q=512 split2 round=1: 265.789 us MFU=34.1996%
+batch2_head16 Q=512 split4 round=1: 360.712 us MFU=25.1998%
+batch2_head16 Q=512 split8 round=1: 568.793 us MFU=15.9810%
+batch2_head16 Q=512 split16 round=1: 1047.071 us MFU=8.6812%
+batch2_head16 Q=512 split16 round=2: 1045.856 us MFU=8.6913%
+batch2_head16 Q=512 split8 round=2: 568.988 us MFU=15.9755%
+batch2_head16 Q=512 split4 round=2: 360.525 us MFU=25.2129%
+batch2_head16 Q=512 split2 round=2: 266.096 us MFU=34.1601%
+batch2_head16 Q=512 split1 round=2: 162.579 us MFU=55.9105%
+batch2_head16 Q=512 split1 round=3: 178.917 us MFU=50.8050%
+batch2_head16 Q=512 split2 round=3: 265.840 us MFU=34.1930%
+batch2_head16 Q=512 split4 round=3: 360.459 us MFU=25.2175%
+batch2_head16 Q=512 split8 round=3: 568.762 us MFU=15.9819%
+batch2_head16 Q=512 split16 round=3: 1047.001 us MFU=8.6818%
+batch2_head16 Q=512 split16 round=4: 1045.566 us MFU=8.6937%
+batch2_head16 Q=512 split8 round=4: 569.176 us MFU=15.9702%
+batch2_head16 Q=512 split4 round=4: 360.276 us MFU=25.2303%
+batch2_head16 Q=512 split2 round=4: 265.981 us MFU=34.1749%
+batch2_head16 Q=512 split1 round=4: 162.418 us MFU=55.9660%
+Preparing batch2_head16 B=2 H=16 Q=2048 KV=4096
+2026-11-12 12:07:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:07:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:07:46  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:07:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:07:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:07:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:07:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:07:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:07:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:07:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:08:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:08:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:08:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:08:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:08:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:08:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:08:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:08:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:08:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch2_head16 Q=2048 split1 round=1: 568.135 us MFU=63.9980%
+batch2_head16 Q=2048 split2 round=1: 1014.437 us MFU=35.8421%
+batch2_head16 Q=2048 split4 round=1: 1506.065 us MFU=24.1421%
+batch2_head16 Q=2048 split8 round=1: 2317.031 us MFU=15.6923%
+batch2_head16 Q=2048 split16 round=1: 4025.040 us MFU=9.0333%
+batch2_head16 Q=2048 split16 round=2: 4030.942 us MFU=9.0201%
+batch2_head16 Q=2048 split8 round=2: 2317.293 us MFU=15.6905%
+batch2_head16 Q=2048 split4 round=2: 1506.651 us MFU=24.1327%
+batch2_head16 Q=2048 split2 round=2: 1010.872 us MFU=35.9685%
+batch2_head16 Q=2048 split1 round=2: 569.429 us MFU=63.8526%
+batch2_head16 Q=2048 split1 round=3: 567.271 us MFU=64.0955%
+batch2_head16 Q=2048 split2 round=3: 1015.248 us MFU=35.8134%
+batch2_head16 Q=2048 split4 round=3: 1509.380 us MFU=24.0890%
+batch2_head16 Q=2048 split8 round=3: 2320.776 us MFU=15.6670%
+batch2_head16 Q=2048 split16 round=3: 4031.972 us MFU=9.0178%
+batch2_head16 Q=2048 split16 round=4: 4030.553 us MFU=9.0210%
+batch2_head16 Q=2048 split8 round=4: 2318.551 us MFU=15.6820%
+batch2_head16 Q=2048 split4 round=4: 1507.870 us MFU=24.1132%
+batch2_head16 Q=2048 split2 round=4: 1012.274 us MFU=35.9186%
+batch2_head16 Q=2048 split1 round=4: 568.969 us MFU=63.9042%
+Preparing batch2_head16 B=2 H=16 Q=8192 KV=4096
+2026-11-12 12:08:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 12:08:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2026-11-12 12:08:23  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:08:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:08:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:08:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:08:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:08:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:08:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:08:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:08:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:08:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:08:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:08:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:08:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-12 12:08:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+2026-11-12 12:08:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-12 12:08:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=-1`
+2026-11-12 12:08:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+batch2_head16 Q=8192 split1 round=1: 2160.818 us MFU=67.3069%
+batch2_head16 Q=8192 split2 round=1: 4057.008 us MFU=35.8486%
+batch2_head16 Q=8192 split4 round=1: 5940.420 us MFU=24.4828%
+batch2_head16 Q=8192 split8 round=1: 9135.916 us MFU=15.9194%
+batch2_head16 Q=8192 split16 round=1: 16008.533 us MFU=9.0850%
+batch2_head16 Q=8192 split16 round=2: 16016.781 us MFU=9.0804%
+batch2_head16 Q=8192 split8 round=2: 9134.289 us MFU=15.9222%
+batch2_head16 Q=8192 split4 round=2: 5940.482 us MFU=24.4825%
+batch2_head16 Q=8192 split2 round=2: 4058.461 us MFU=35.8358%
+batch2_head16 Q=8192 split1 round=2: 2160.864 us MFU=67.3055%
+batch2_head16 Q=8192 split1 round=3: 2162.393 us MFU=67.2579%
+batch2_head16 Q=8192 split2 round=3: 4057.758 us MFU=35.8420%
+batch2_head16 Q=8192 split4 round=3: 5942.167 us MFU=24.4756%
+batch2_head16 Q=8192 split8 round=3: 9130.912 us MFU=15.9281%
+batch2_head16 Q=8192 split16 round=3: 16008.350 us MFU=9.0851%
+batch2_head16 Q=8192 split16 round=4: 16021.128 us MFU=9.0779%
+batch2_head16 Q=8192 split8 round=4: 9137.942 us MFU=15.9158%
+batch2_head16 Q=8192 split4 round=4: 5940.388 us MFU=24.4829%
+batch2_head16 Q=8192 split2 round=4: 4058.823 us MFU=35.8326%
+batch2_head16 Q=8192 split1 round=4: 2158.005 us MFU=67.3947%
+passed: mha_split_model_holdout_kv4096.json; compact report: mha_split_model_holdout_kv4096_summary.json
