@@ -1,0 +1,31 @@
+{
+  "status": "error",
+  "settings": {
+    "q_lengths": [
+      1,
+      128,
+      4096
+    ],
+    "fia_api": "auto",
+    "kv": 2048,
+    "rounds": 1,
+    "repeat": 11,
+    "warmup": 5,
+    "device": 0,
+    "peak_tflops": 378.0,
+    "list_only": false,
+    "output": "mha_v7_ascendc_smoke.json"
+  },
+  "results": [],
+  "started_utc": "2026-11-12T10:08:40.906638+00:00",
+  "baseline": "Installed CANN FusedInferAttentionScore AscendC kernels via torch_npu; not a source build of current ops-transformer master",
+  "speedup_policy": "speedup_v7_over_ascendc = AscendC median latency / v7 median latency, paired by case and round; >1 means v7 faster",
+  "sources": [
+    "https://gitcode.com/cann/ops-transformer/tree/master/attention/fused_infer_attention_score",
+    "https://github.com/Ascend/op-plugin/blob/master/op_plugin/config/op_plugin_functions.yaml"
+  ],
+  "flops_policy": "4*B*H*Q*KV*128, noncausal useful QK+PV only; no padding/softmax FLOPs",
+  "timing": "Full native callable, warm-cache NPU Event median; one call per sample. Excludes compile, H2D, CPU reference, metadata/list preparation and zero-copy K/V view creation. Includes output allocation and stream-visible launch gaps. v7 includes Q conversion and merge; FIA uses original paged storage without gather, same BSND Q/O.",
+  "comparison": "All cases match B/H/Q/KV, values, page table and per-request lengths. BF16 Q/K/V/O, D128, page128, noncausal, scale=128**-0.5, seed7. v7 manual/stages2/Q resident. FIA inner_precise=0, sparse_mode=0, no mask, no quantization. No source installation or environment modification.",
+  "error": "Traceback (most recent call last):\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch/__init__.py\", line 3030, in _import_device_backends\n    entrypoint = backend_extension.load()\n                 ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/importlib/metadata/__init__.py\", line 205, in load\n    module = import_module(match.group('module'))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 999, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch_npu/__init__.py\", line 38, in <module>\n    import torch_npu.utils.patch_getenv\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch_npu/utils/__init__.py\", line 4, in <module>\n    from torch_npu.npu.utils import get_cann_version\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch_npu/npu/__init__.py\", line 164, in <module>\n    from .utils import (obfuscation_initialize, obfuscation_calculate, obfuscation_finalize,\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch_npu/npu/utils.py\", line 8, in <module>\n    import torch_npu._C\nImportError: libhccl.so: cannot open shared object file: No such file or directory\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/z30086261/FGW/benchmarks/mha/bench_v7_ascendc.py\", line 61, in main\n    import torch\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch/__init__.py\", line 3077, in <module>\n    _import_device_backends()\n  File \"/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch/__init__.py\", line 3034, in _import_device_backends\n    raise RuntimeError(\nRuntimeError: Failed to load the backend extension: torch_npu. You can disable extension auto-loading with TORCH_DEVICE_BACKEND_AUTOLOAD=0.\n"
+}
