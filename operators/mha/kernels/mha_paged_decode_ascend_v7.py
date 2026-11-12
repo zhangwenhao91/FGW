@@ -21,7 +21,9 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=None):
+    if persistent_programs is not None and (type(persistent_programs) is not int or persistent_programs != 28):
+        raise ValueError("persistent_programs supports None (current grid) or 28 (experimental)")
     requested_split_policy = split_policy
     if split_policy not in ("auto", "legacy", "cost_model"):
         raise ValueError("split_policy must be auto, legacy or cost_model")
@@ -46,7 +48,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if page_size <= 0 or pool_rows <= 0 or pool_rows % page_size or width <= 0:
         raise ValueError("positive page size, whole pool pages and positive table width required")
     if route(dtype, dim, page_size, sq, causal) != "cube_bf16_d128":
-        if num_splits is not None or split_policy == "cost_model":
+        if num_splits is not None or split_policy == "cost_model" or persistent_programs is not None:
             raise ValueError("split override/policy requires the v7 Cube path")
         return build_v2(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)
     if split_policy == "auto":
@@ -82,6 +84,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             raise ValueError("Experimental cost model is calibrated for 28 Cube cores")
         from operators.mha.split_cost_model import select_splits
         splits = select_splits(batch, sq, heads, width * page_size // BC)
+    compute_work = tasks * splits
+    compute_grid = compute_work if persistent_programs is None else min(compute_work, persistent_programs)
     @T.macro
     def softmax(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
         with T.SimdVF(latency=735):
@@ -206,12 +210,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
         LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
     ):
-        with T.Kernel(tasks * splits) as bx:
-            task = bx // splits
-            split = bx % splits
-            b = task // (q_tiles * heads)
-            qi = (task // heads % q_tiles) * BR
-            h = task % heads
+        with T.Kernel(compute_grid) as bx:
             Q_l1 = T.alloc_l1((BR, D), dtype)
             K_l1 = T.alloc_l1((BC, D), dtype)
             V_l1 = T.alloc_l1((D, BC), dtype)
@@ -233,20 +232,6 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             old_max = T.alloc_shared((ROWS,), accum_dtype)
             row_sum = T.alloc_shared((ROWS,), accum_dtype)
             lse = T.alloc_shared((ROWS,), accum_dtype)
-            # As in the reference PR, GM->L1 clamps a partial query tile
-            # and zero-pads its missing rows. Only valid rows are merged out.
-            T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
-            init_m_l(maximum, total)
-            clear_O_ub(output)
-            end = Lengths[b]
-            if causal:
-                end = T.max(end - sq + qi + 1, 0)
-            tiles = end // BC
-            per_split = T.ceildiv(tiles, splits)
-            begin = split * per_split
-            count = T.max(T.min(begin + per_split, tiles) - begin, 0)
-            # Keep automatic stage assignment. Multi-version only the streamed
-            # operands/results; online row statistics remain loop-carried state.
             if schedule_mode == "manual":
                 T.annotate_buffer_versions({K_l1: 3, V_l1: 3, qk: 2, pv: 2,
                                            scores: 3, probs: 2, current: 1, alpha: 3})
@@ -255,62 +240,84 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                            qk: buffer_versions, pv: buffer_versions,
                                            scores: buffer_versions, probs: buffer_versions,
                                            current: buffer_versions, alpha: buffer_versions})
-            if q_resident:
-                T.copy(Q_l1, qa)
-            for tile in T.Pipelined(count, num_stages=pipeline_stages, annotations=pipeline_annotations):
-                logical = (begin + tile) * BC
-                physical = Table[b, logical // page_size] * page_size + logical % page_size
-                if schedule_mode == "manual":
-                    with T.Stage(0):
-                        T.copy(K[physical:physical + BC, h, :], K_l1)
-                    with T.Stage(1):
-                        if not q_resident:
-                            T.copy(Q_l1, qa)
-                        T.copy(K_l1, kb)
-                        T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
-                    with T.Stage(3):
-                        T.dual_copy(qk, scores)
-                    with T.Stage(5):
-                        softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
-                    with T.Stage(6):
-                        T.dual_copy(probs[0:ROWS, :], P_l1)
-                    with T.Stage(3):
-                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
-                    with T.Stage(6):
-                        T.copy(P_l1, pa)
-                        T.copy(V_l1, vb)
-                        T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
-                    with T.Stage(7):
-                        T.dual_copy(pv, current)
-                        accumulate_output(current, output, alpha)
-                else:
-                    T.copy(K[physical:physical + BC, h, :], K_l1)
-                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
-                    if not q_resident:
+            for work in T.serial(T.ceildiv(compute_work, compute_grid)):
+                work_id = bx + work * compute_grid
+                if work_id < compute_work:
+                    task = work_id // splits
+                    split = work_id % splits
+                    b = task // (q_tiles * heads)
+                    qi = (task // heads % q_tiles) * BR
+                    h = task % heads
+                    # As in the reference PR, GM->L1 clamps a partial query tile
+                    # and zero-pads its missing rows. Only valid rows are merged out.
+                    T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
+                    init_m_l(maximum, total)
+                    clear_O_ub(output)
+                    end = Lengths[b]
+                    if causal:
+                        end = T.max(end - sq + qi + 1, 0)
+                    tiles = end // BC
+                    per_split = T.ceildiv(tiles, splits)
+                    begin = split * per_split
+                    count = T.max(T.min(begin + per_split, tiles) - begin, 0)
+                    # Keep automatic stage assignment. Multi-version only the streamed
+                    # operands/results; online row statistics remain loop-carried state.
+                    if q_resident:
                         T.copy(Q_l1, qa)
-                    T.copy(K_l1, kb)
-                    T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
-                    T.dual_copy(qk, scores)
-                    softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
-                    T.dual_copy(probs[0:ROWS, :], P_l1)
-                    T.copy(P_l1, pa)
-                    T.copy(V_l1, vb)
-                    T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
-                    T.dual_copy(pv, current)
-                    accumulate_output(current, output, alpha)
-            with T.SimtVF(threads=128):
-                for r, d in T.Parallel(ROWS, D):
-                    output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
-                for r in T.Parallel(ROWS):
-                    if total[r] > 0:
-                        lse[r] = T.log2(T.max(total[r], 1.0e-30)) * 0.6931471805599453 + maximum[r]
-                    else:
-                        lse[r] = -1.0e30
-            T.dual_copy(output, Parts[task, split, :, :])
-            # Integer indices in a multidimensional BufferRegion retain rank.
-            # Flatten LSE so UB[ROWS] -> GM[BR] is an actual 1-D 1:2 copy.
-            lse_offset = (task * splits + split) * BR
-            T.dual_copy(lse, LSE[lse_offset:lse_offset + BR])
+                    for tile in T.Pipelined(count, num_stages=pipeline_stages, annotations=pipeline_annotations):
+                        logical = (begin + tile) * BC
+                        physical = Table[b, logical // page_size] * page_size + logical % page_size
+                        if schedule_mode == "manual":
+                            with T.Stage(0):
+                                T.copy(K[physical:physical + BC, h, :], K_l1)
+                            with T.Stage(1):
+                                if not q_resident:
+                                    T.copy(Q_l1, qa)
+                                T.copy(K_l1, kb)
+                                T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                            with T.Stage(3):
+                                T.dual_copy(qk, scores)
+                            with T.Stage(5):
+                                softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                            with T.Stage(6):
+                                T.dual_copy(probs[0:ROWS, :], P_l1)
+                            with T.Stage(3):
+                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                            with T.Stage(6):
+                                T.copy(P_l1, pa)
+                                T.copy(V_l1, vb)
+                                T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                            with T.Stage(7):
+                                T.dual_copy(pv, current)
+                                accumulate_output(current, output, alpha)
+                        else:
+                            T.copy(K[physical:physical + BC, h, :], K_l1)
+                            T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                            if not q_resident:
+                                T.copy(Q_l1, qa)
+                            T.copy(K_l1, kb)
+                            T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                            T.dual_copy(qk, scores)
+                            softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                            T.dual_copy(probs[0:ROWS, :], P_l1)
+                            T.copy(P_l1, pa)
+                            T.copy(V_l1, vb)
+                            T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                            T.dual_copy(pv, current)
+                            accumulate_output(current, output, alpha)
+                    with T.SimtVF(threads=128):
+                        for r, d in T.Parallel(ROWS, D):
+                            output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
+                        for r in T.Parallel(ROWS):
+                            if total[r] > 0:
+                                lse[r] = T.log2(T.max(total[r], 1.0e-30)) * 0.6931471805599453 + maximum[r]
+                            else:
+                                lse[r] = -1.0e30
+                    T.dual_copy(output, Parts[task, split, :, :])
+                    # Integer indices in a multidimensional BufferRegion retain rank.
+                    # Flatten LSE so UB[ROWS] -> GM[BR] is an actual 1-D 1:2 copy.
+                    lse_offset = (task * splits + split) * BR
+                    T.dual_copy(lse, LSE[lse_offset:lse_offset + BR])
 
     merge_rows = min(8, tilelang.next_power_of_2(sq))
     merge_groups = (sq + merge_rows - 1) // merge_rows
@@ -383,12 +390,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             Lengths: T.Tensor((batch,), "int32"),
             O: T.Tensor((batch, sq, heads * D), dtype),
         ):
-            with T.Kernel(tasks * splits) as bx:
-                task = bx // splits
-                split = bx % splits
-                b = task // (q_tiles * heads)
-                qi = (task // heads % q_tiles) * BR
-                h = task % heads
+            with T.Kernel(compute_grid) as bx:
                 Q_l1 = T.alloc_l1((BR, D), dtype)
                 K_l1 = T.alloc_l1((BC, D), dtype)
                 V_l1 = T.alloc_l1((D, BC), dtype)
@@ -409,20 +411,6 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                 alpha = T.alloc_shared((ROWS,), accum_dtype)
                 old_max = T.alloc_shared((ROWS,), accum_dtype)
                 row_sum = T.alloc_shared((ROWS,), accum_dtype)
-                # As in the reference PR, GM->L1 clamps a partial query tile
-                # and zero-pads its missing rows. Only valid rows are merged out.
-                T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
-                init_m_l(maximum, total)
-                clear_O_ub(output)
-                end = Lengths[b]
-                if causal:
-                    end = T.max(end - sq + qi + 1, 0)
-                tiles = end // BC
-                per_split = T.ceildiv(tiles, splits)
-                begin = split * per_split
-                count = T.max(T.min(begin + per_split, tiles) - begin, 0)
-                # Keep automatic stage assignment. Multi-version only the streamed
-                # operands/results; online row statistics remain loop-carried state.
                 if schedule_mode == "manual":
                     T.annotate_buffer_versions({K_l1: 3, V_l1: 3, qk: 2, pv: 2,
                                                scores: 3, probs: 2, current: 1, alpha: 3})
@@ -431,65 +419,87 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                                qk: buffer_versions, pv: buffer_versions,
                                                scores: buffer_versions, probs: buffer_versions,
                                                current: buffer_versions, alpha: buffer_versions})
-                if q_resident:
-                    T.copy(Q_l1, qa)
-                for tile in T.Pipelined(count, num_stages=pipeline_stages, annotations=pipeline_annotations):
-                    logical = (begin + tile) * BC
-                    physical = Table[b, logical // page_size] * page_size + logical % page_size
-                    if schedule_mode == "manual":
-                        with T.Stage(0):
-                            T.copy(K[physical:physical + BC, h, :], K_l1)
-                        with T.Stage(1):
-                            if not q_resident:
-                                T.copy(Q_l1, qa)
-                            T.copy(K_l1, kb)
-                            T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
-                        with T.Stage(3):
-                            T.dual_copy(qk, scores)
-                        with T.Stage(5):
-                            softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
-                        with T.Stage(6):
-                            T.dual_copy(probs[0:ROWS, :], P_l1)
-                        with T.Stage(3):
-                            T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
-                        with T.Stage(6):
-                            T.copy(P_l1, pa)
-                            T.copy(V_l1, vb)
-                            T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
-                        with T.Stage(7):
-                            T.dual_copy(pv, current)
-                            accumulate_output(current, output, alpha)
-                    else:
-                        T.copy(K[physical:physical + BC, h, :], K_l1)
-                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
-                        if not q_resident:
+                for work in T.serial(T.ceildiv(compute_work, compute_grid)):
+                    work_id = bx + work * compute_grid
+                    if work_id < compute_work:
+                        task = work_id // splits
+                        split = work_id % splits
+                        b = task // (q_tiles * heads)
+                        qi = (task // heads % q_tiles) * BR
+                        h = task % heads
+                        # As in the reference PR, GM->L1 clamps a partial query tile
+                        # and zero-pads its missing rows. Only valid rows are merged out.
+                        T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
+                        init_m_l(maximum, total)
+                        clear_O_ub(output)
+                        end = Lengths[b]
+                        if causal:
+                            end = T.max(end - sq + qi + 1, 0)
+                        tiles = end // BC
+                        per_split = T.ceildiv(tiles, splits)
+                        begin = split * per_split
+                        count = T.max(T.min(begin + per_split, tiles) - begin, 0)
+                        # Keep automatic stage assignment. Multi-version only the streamed
+                        # operands/results; online row statistics remain loop-carried state.
+                        if q_resident:
                             T.copy(Q_l1, qa)
-                        T.copy(K_l1, kb)
-                        T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
-                        T.dual_copy(qk, scores)
-                        softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
-                        T.dual_copy(probs[0:ROWS, :], P_l1)
-                        T.copy(P_l1, pa)
-                        T.copy(V_l1, vb)
-                        T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
-                        T.dual_copy(pv, current)
-                        accumulate_output(current, output, alpha)
-                with T.SimtVF(threads=128):
-                    for r, d in T.Parallel(ROWS, D):
-                        output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
-                # Reuse FP32 output storage for BF16 conversion, as in upstream.
-                # Sequential SIMD rows ensure a cast store cannot overwrite a future
-                # FP32 source row before it is read.
-                cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
-                with T.SimdVF(latency=193):
-                    mask = S.pset(32, "PAT_ALL")
-                    for r in range(ROWS):
-                        for c in range(0, D, VL):
-                            value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
-                            S.vsts(cast_view[r, c], value, mask, "PK_B32")
-                # Keep Sq as its own bounded axis for Q-tail clamping, and expose
-                # query/D as the trailing two region axes for dual-copy inference.
-                T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi:qi + BR, h * D:(h + 1) * D])
+                        for tile in T.Pipelined(count, num_stages=pipeline_stages, annotations=pipeline_annotations):
+                            logical = (begin + tile) * BC
+                            physical = Table[b, logical // page_size] * page_size + logical % page_size
+                            if schedule_mode == "manual":
+                                with T.Stage(0):
+                                    T.copy(K[physical:physical + BC, h, :], K_l1)
+                                with T.Stage(1):
+                                    if not q_resident:
+                                        T.copy(Q_l1, qa)
+                                    T.copy(K_l1, kb)
+                                    T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                                with T.Stage(3):
+                                    T.dual_copy(qk, scores)
+                                with T.Stage(5):
+                                    softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                                with T.Stage(6):
+                                    T.dual_copy(probs[0:ROWS, :], P_l1)
+                                with T.Stage(3):
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                with T.Stage(6):
+                                    T.copy(P_l1, pa)
+                                    T.copy(V_l1, vb)
+                                    T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                                with T.Stage(7):
+                                    T.dual_copy(pv, current)
+                                    accumulate_output(current, output, alpha)
+                            else:
+                                T.copy(K[physical:physical + BC, h, :], K_l1)
+                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                if not q_resident:
+                                    T.copy(Q_l1, qa)
+                                T.copy(K_l1, kb)
+                                T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                                T.dual_copy(qk, scores)
+                                softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                                T.dual_copy(probs[0:ROWS, :], P_l1)
+                                T.copy(P_l1, pa)
+                                T.copy(V_l1, vb)
+                                T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                                T.dual_copy(pv, current)
+                                accumulate_output(current, output, alpha)
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(ROWS, D):
+                                output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
+                        # Reuse FP32 output storage for BF16 conversion, as in upstream.
+                        # Sequential SIMD rows ensure a cast store cannot overwrite a future
+                        # FP32 source row before it is read.
+                        cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
+                        with T.SimdVF(latency=193):
+                            mask = S.pset(32, "PAT_ALL")
+                            for r in range(ROWS):
+                                for c in range(0, D, VL):
+                                    value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
+                                    S.vsts(cast_view[r, c], value, mask, "PK_B32")
+                        # Keep Sq as its own bounded axis for Q-tail clamping, and expose
+                        # query/D as the trailing two region axes for dual-copy inference.
+                        T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi:qi + BR, h * D:(h + 1) * D])
 
         direct_kernel = tilelang.compile(direct, out_idx=-1, target="ascend", execution_backend="auto",
                                         pass_configs=dump_configs("direct"))
@@ -498,6 +508,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             prepared = q.permute(0, 2, 1, 3).contiguous()
             return direct_kernel(prepared, k, v, table, lengths).view(batch, sq, heads, D)
 
+        launch_direct.compute_grid = compute_grid
+        launch_direct.compute_work = compute_work
+        launch_direct.persistent_programs = persistent_programs
         launch_direct.requested_split_policy = requested_split_policy
         launch_direct.split_policy = "explicit" if num_splits is not None else split_policy
         launch_direct.num_splits = splits
@@ -519,6 +532,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
         return merge_kernel(parts, lse)
     # Expose the exact compiled callables for isolated profiling; launch unchanged.
+    launch.compute_grid = compute_grid
+    launch.compute_work = compute_work
+    launch.persistent_programs = persistent_programs
     launch.requested_split_policy = requested_split_policy
     launch.split_policy = "explicit" if num_splits is not None else split_policy
     launch.num_splits = splits
@@ -531,7 +547,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
                      page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
-                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto"):
+                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto", persistent_programs=None):
     """Same public tensor contract as v0; metadata values must be valid."""
     if q.ndim != 4 or k_cache.ndim != 3:
         raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")
@@ -559,5 +575,5 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
         kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
                               page_size, is_causal,
                               "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index, pipeline_stages=pipeline_stages, buffer_versions=buffer_versions,
-                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache)
+                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache, persistent_programs=persistent_programs)
         return kernel(*inputs)

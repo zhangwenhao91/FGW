@@ -23,7 +23,9 @@ def main():
     parser.add_argument("--cache-mb", type=int, default=256)
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output", default="mha_v7_ascendc_msprof.json")
+    parser.add_argument("--compare-persistent", action="store_true")
     args = parser.parse_args()
+    variants = LABELS + (("v7_persistent_full", "v7_persistent_direct") if args.compare_persistent else ())
     if min(args.rounds, args.warmup, args.repeat, args.event_repeat, args.cache_mb) < 1:
         parser.error("rounds/warmup/repeat/event-repeat/cache-mb must be positive")
     b, sq, h, d, length, page = 2, 4096, 8, 128, 2048, 128
@@ -105,8 +107,20 @@ def main():
             return program.direct_kernel(prepared,*inputs[1:]).view(b,sq,h,d)
         functions = {"v7_full": functools.partial(program,*inputs), "v7_direct": direct,
                      "ascendc_full": lambda: fia()[0]}
+        if args.compare_persistent:
+            persistent = v7.build_kernel(b,sq,h,d,k.shape[0],width,page,False,"bfloat16",args.device,
+                schedule_mode="manual",full_kv_cache=True,persistent_programs=28)
+            if persistent.num_splits != program.num_splits:
+                raise ValueError("Persistent experiment changed split selection")
+            report["persistent_configuration"] = {"compute_grid":persistent.compute_grid,
+                "compute_work":persistent.compute_work,"num_splits":persistent.num_splits,
+                "split_policy":persistent.split_policy}
+            def persistent_direct():
+                return persistent.direct_kernel(prepared,*inputs[1:]).view(b,sq,h,d)
+            functions["v7_persistent_full"] = functools.partial(persistent,*inputs)
+            functions["v7_persistent_direct"] = persistent_direct
         report["accuracy"] = {}
-        for label in LABELS:
+        for label in variants:
             got = functions[label]().cpu()
             if got.dtype != torch.bfloat16 or got.shape != expected.shape:
                 raise ValueError(f"Unexpected {label} output dtype/shape")
@@ -117,12 +131,12 @@ def main():
         save()
         # Warm-cache Event checkpoint; all compilation/correctness above is excluded.
         for rid in range(args.rounds):
-            order = list(LABELS) if rid%2==0 else list(reversed(LABELS))
+            order = list(variants) if rid%2==0 else list(reversed(variants))
             for _ in range(args.warmup):
                 for label in order:
                     functions[label]()
             torch.npu.synchronize()
-            samples = {label: [] for label in LABELS}
+            samples = {label: [] for label in variants}
             start,end = torch.npu.Event(enable_timing=True),torch.npu.Event(enable_timing=True)
             for sample in range(args.event_repeat):
                 offset = sample%len(order)
@@ -138,7 +152,7 @@ def main():
                     if not math.isfinite(us) or us<=0:
                         raise ValueError(f"Invalid Event time {us}")
                     samples[label].append(us)
-            for label in LABELS:
+            for label in variants:
                 median = statistics.median(samples[label])
                 report["event_results"].append({"label":label,"round":rid+1,"status":"passed",
                     "median_us":median,"samples_us":samples[label],
@@ -147,8 +161,8 @@ def main():
             save()
         # Rotate profiling session order; do not modify upstream parser or kernel.
         for rid in range(args.rounds):
-            order = list(LABELS[rid%len(LABELS):]+LABELS[:rid%len(LABELS)])
-            if (rid//len(LABELS))%2:
+            order = list(variants[rid%len(variants):]+variants[:rid%len(variants)])
+            if (rid//len(variants))%2:
                 order.reverse()
             for label in order:
                 row = {"label":label,"round":rid+1,"status":"running"}
@@ -169,7 +183,7 @@ def main():
                 print(f"MSPROF round={rid+1} {label}: {profile}",flush=True)
                 save()
         report["summary"] = {}
-        for label in LABELS:
+        for label in variants:
             events = [r["median_us"] for r in report["event_results"] if r["label"]==label]
             profs = [r["profiler_duration_us"] for r in report["msprof_results"] if r["label"]==label]
             report["summary"][label] = {"median_round_event_us":statistics.median(events),
@@ -177,6 +191,9 @@ def main():
                 "round_profiler_us":profs}
         report["speedups"] = {"event_ascendc_over_v7_full":report["summary"]["ascendc_full"]["median_round_event_us"]/report["summary"]["v7_full"]["median_round_event_us"],
             "msprof_ascendc_over_v7_full":report["summary"]["ascendc_full"]["median_round_profiler_us"]/report["summary"]["v7_full"]["median_round_profiler_us"]}
+        if args.compare_persistent:
+            report["speedups"]["event_persistent_over_current"] = report["summary"]["v7_full"]["median_round_event_us"]/report["summary"]["v7_persistent_full"]["median_round_event_us"]
+            report["speedups"]["msprof_persistent_over_current"] = report["summary"]["v7_full"]["median_round_profiler_us"]/report["summary"]["v7_persistent_full"]["median_round_profiler_us"]
         report["status"] = "passed"
     except Exception:
         report.update(status="error",error=traceback.format_exc())

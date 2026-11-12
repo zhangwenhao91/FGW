@@ -1,5 +1,15 @@
 # FGW
 
+## 28-program常驻调度实验
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_persistent28
+```
+
+复用现有tile计算和冻结split模型，比较当前调度、28-program候选及AscendC。
+先精度再Event及msprof；默认调度不变。[范围与报告](docs/mha_persistent28.md)。
+
 ## 实机kernel名称与tiling采集
 
 ```bash

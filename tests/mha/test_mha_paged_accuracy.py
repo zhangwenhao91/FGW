@@ -98,7 +98,10 @@ def main():
                         help="Run only these named cases from the selected suite")
     parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default=None,
                         help="Default: manual for v7, auto for historical implementations")
+    parser.add_argument("--persistent-programs", type=int, choices=[28], default=None)
     args = parser.parse_args()
+    if args.persistent_programs is not None and args.impl != "v7":
+        parser.error("Persistent candidate requires --impl v7")
     if args.schedule_mode is None:
         args.schedule_mode = "manual" if args.impl == "v7" else "auto"
     if args.schedule_mode != "auto" and args.impl != "v7":
@@ -127,7 +130,7 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "suite": args.suite, "seeds": args.seeds,
               "patterns": list(patterns), "causal_modes": list(causal_modes), "dtypes": args.dtypes,
-              "schedule_mode": args.schedule_mode,
+              "schedule_mode": args.schedule_mode, "persistent_programs": args.persistent_programs,
               "overlap_config": {"pipeline_stages": args.pipeline_stages, "kv_versions": args.kv_versions,
                                  "q_resident": args.q_resident, "ub_versions": 2},
               "selected_cases": [c[0] for c in cases], "implementation": args.impl,
@@ -151,7 +154,7 @@ def main():
         if args.impl == "v7":
             import functools
             mha_paged_decode = functools.partial(mha_paged_decode, pipeline_stages=args.pipeline_stages,
-                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode)
+                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode, persistent_programs=args.persistent_programs)
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,
