@@ -1,5 +1,16 @@
 # FGW
 
+## v7 split扫描
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_v7_split_scan
+```
+
+扫描split=1/2/4/8/16，覆盖四种KV长度、两组B/H和8种Q长度。
+先精度后4轮交替计时，汇总最佳split及稳定性；当前自动策略不变。
+[规格与报告说明](docs/mha_v7_split_scan.md)。
+
 ## 多KV长度下split1与AscendC三方对照
 
 ```bash

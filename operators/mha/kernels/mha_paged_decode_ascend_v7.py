@@ -22,8 +22,8 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
                  pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None):
-    if num_splits is not None and (type(num_splits) is not int or num_splits != 1):
-        raise ValueError("num_splits supports None (automatic) or 1 (force direct output)")
+    if num_splits is not None and (type(num_splits) is not int or num_splits not in (1, 2, 4, 8, 16)):
+        raise ValueError("num_splits supports None (automatic) or 1/2/4/8/16")
     if schedule_mode not in ("auto", "auto-offset", "manual"):
         raise ValueError("schedule_mode must be auto, auto-offset or manual")
     pipeline_annotations = {} if schedule_mode == "auto" else {"enable_offset": True}
@@ -56,6 +56,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     while splits < 16 and splits * 2 <= width * page_size // BC and tasks * splits < 128:
         splits *= 2
     if num_splits is not None:
+        if num_splits > width * page_size // BC:
+            raise ValueError("num_splits must not exceed the number of KV tiles in table capacity")
         splits = num_splits
     @T.macro
     def softmax(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):

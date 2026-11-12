@@ -19,6 +19,7 @@ COMMANDS = {
         "compare-pr-mfu": "benchmarks.mha.bench_v7_pr3896_mfu",
         "compare-ascendc": "benchmarks.mha.bench_v7_ascendc",
         "split1-paired": "benchmarks.mha.bench_v7_split1",
+        "split-scan": "benchmarks.mha.bench_v7_split_scan",
         "event-profile": "benchmarks.mha.profile_mha_v4",
         "export-schedule": "tools.mha.export_schedule",
     },

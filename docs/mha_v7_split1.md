@@ -10,7 +10,7 @@
 - None：原有自动选择，默认行为不变。
 - 1：强制走已有 single-split direct kernel，内部完成归一化、BF16转换和输出。
 
-该覆盖只用于v7 Cube范围，回退规格拒绝显式覆盖，其他数值不受支持。
+该覆盖只用于v7 Cube范围，回退规格拒绝显式覆盖，后续split扫描扩展支持2/4/8/16，详见mha_v7_split_scan.md。
 没有新增按长短Q分派的版本，也没有改写Cube/softmax/merge内部计算。
 返回callable暴露num_splits、query_tile_tasks和execution_mode，报告直接读取实际配置。
 
