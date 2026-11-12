@@ -23,6 +23,7 @@ COMMANDS = {
         "split-scan": "benchmarks.mha.bench_v7_split_scan",
         "event-profile": "benchmarks.mha.profile_mha_v4",
         "export-schedule": "tools.mha.export_schedule",
+        "inspect-runtime": "tools.mha.inspect_runtime",
     },
 }
 

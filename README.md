@@ -1,5 +1,15 @@
 # FGW
 
+## 实机kernel名称与tiling采集
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_kernel_inspect
+```
+
+固定B2/H8/Q4096/KV2048，采集FIA运行日志、实际kernel记录及v7设备源码/流水IR。
+[范围、限制与上传文件](docs/mha_kernel_inspect.md)。
+
 ## v7 / AscendC 同口径msprof对照
 
 ```bash
