@@ -21,9 +21,9 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=None):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28):
     if persistent_programs is not None and (type(persistent_programs) is not int or persistent_programs != 28):
-        raise ValueError("persistent_programs supports None (current grid) or 28 (experimental)")
+        raise ValueError("persistent_programs supports None (uncapped grid) or 28 (default cap)")
     requested_split_policy = split_policy
     if split_policy not in ("auto", "legacy", "cost_model"):
         raise ValueError("split_policy must be auto, legacy or cost_model")
@@ -48,7 +48,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if page_size <= 0 or pool_rows <= 0 or pool_rows % page_size or width <= 0:
         raise ValueError("positive page size, whole pool pages and positive table width required")
     if route(dtype, dim, page_size, sq, causal) != "cube_bf16_d128":
-        if num_splits is not None or split_policy == "cost_model" or persistent_programs is not None:
+        if num_splits is not None or split_policy == "cost_model":
             raise ValueError("split override/policy requires the v7 Cube path")
         return build_v2(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)
     if split_policy == "auto":
@@ -547,7 +547,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
                      page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
-                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto", persistent_programs=None):
+                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto", persistent_programs=28):
     """Same public tensor contract as v0; metadata values must be valid."""
     if q.ndim != 4 or k_cache.ndim != 3:
         raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")

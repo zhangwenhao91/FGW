@@ -53,7 +53,7 @@ def main():
                     "https://github.com/Ascend/op-plugin/blob/master/op_plugin/config/op_plugin_functions.yaml"],
         "flops_policy": "4*B*H*Q*KV*128, noncausal useful QK+PV only; no padding/softmax FLOPs",
         "timing": "Full native callable, warm-cache NPU Event median; one call per sample. Excludes compile, H2D, CPU reference, metadata/list preparation and zero-copy K/V view creation. Includes output allocation and stream-visible launch gaps. v7 includes Q conversion and merge; FIA uses original paged storage without gather, same BSND Q/O.",
-        "v7_variant_policy": "v7_manual_bf16=guarded current default; v7_legacy_bf16=old automatic strategy; v7_split1_bf16=explicit split1",
+        "v7_variant_policy": "v7_manual_bf16=current default (uncapped control only with --compare-persistent); v7_legacy_bf16=legacy split + uncapped grid; v7_split1_bf16=explicit split1",
         "comparison": "All cases match B/H/Q/KV, values, page table and per-request lengths. BF16 Q/K/V/O, D128, page128, noncausal, scale=128**-0.5, seed7. v7 manual/stages2/Q resident. FIA inner_precise=0, sparse_mode=0, no mask, no quantization. No source installation or environment modification."}
     if args.split_comparison:
         report["comparison"] += " Includes forced num_splits=1 candidate, same tuning otherwise; measures whole strategy change, not isolated merge time. Default auto policy selects cost_model only for eligible full-cache configurations; otherwise legacy."
@@ -146,7 +146,8 @@ def main():
                             "bfloat16", args.device, schedule_mode="manual",
                             num_splits=1 if variant == "v7_split1_bf16" else None,
                             split_policy="legacy" if variant == "v7_legacy_bf16" else "auto", full_kv_cache=True,
-                            persistent_programs=28 if variant == "v7_persistent28_bf16" else None)
+                            persistent_programs=(None if variant == "v7_legacy_bf16" or
+                                (args.compare_persistent and variant != "v7_persistent28_bf16") else 28))
                         call = functools.partial(kernel, *inputs)
                         got = call().cpu()
                         kernel_mode = kernel.execution_mode

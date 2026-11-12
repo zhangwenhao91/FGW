@@ -98,10 +98,12 @@ def main():
                         help="Run only these named cases from the selected suite")
     parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default=None,
                         help="Default: manual for v7, auto for historical implementations")
-    parser.add_argument("--persistent-programs", type=int, choices=[28], default=None)
+    parser.add_argument("--persistent-programs", type=int, choices=[0, 28], default=None, help="v7 default 28; 0 explicitly selects the uncapped grid")
     args = parser.parse_args()
     if args.persistent_programs is not None and args.impl != "v7":
         parser.error("Persistent candidate requires --impl v7")
+    if args.impl == "v7":
+        args.persistent_programs = 28 if args.persistent_programs is None else (None if args.persistent_programs == 0 else 28)
     if args.schedule_mode is None:
         args.schedule_mode = "manual" if args.impl == "v7" else "auto"
     if args.schedule_mode != "auto" and args.impl != "v7":

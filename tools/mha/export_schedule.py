@@ -58,6 +58,8 @@ def main():
             kernels = {"direct": program.direct_kernel} if direct else {"partial": program.partial_kernel, "merge": program.merge_kernel}
             row["split_policy"] = program.split_policy
             row["num_splits"] = program.num_splits
+            row["compute_grid"] = program.compute_grid
+            row["persistent_programs"] = program.persistent_programs
             row["kernel_mode"] = getattr(program, "execution_mode", "unknown")
             for label, kernel in kernels.items():
                 item = {"name": label, "optional_export_errors": {}}

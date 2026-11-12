@@ -90,9 +90,10 @@ def main():
         expected = chunked_cpu_reference(q,k,v,table,lengths,page,False,128)
         inputs = [x.to(device) for x in (q,k,v,table,lengths)]
         program = v7.build_kernel(b,sq,h,d,k.shape[0],width,page,False,"bfloat16",args.device,
-            schedule_mode="manual", full_kv_cache=True)
+            schedule_mode="manual", full_kv_cache=True, persistent_programs=None if args.compare_persistent else 28)
         report["v7_configuration"] = {"split_policy": program.split_policy, "num_splits": program.num_splits,
-            "query_tile_tasks": program.query_tile_tasks, "execution_mode": program.execution_mode}
+            "query_tile_tasks": program.query_tile_tasks, "execution_mode": program.execution_mode, "compute_grid": program.compute_grid,
+            "compute_work": program.compute_work, "persistent_programs": program.persistent_programs}
         if program.execution_mode != "direct_single_split":
             raise ValueError("Expected split=1 direct path for B2/H8/Q4096/KV2048")
         prepared = program.prepare_q(inputs[0])

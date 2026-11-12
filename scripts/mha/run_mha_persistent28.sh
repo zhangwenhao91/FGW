@@ -5,7 +5,7 @@ repo_root="$(cd -- "$script_dir/../.." && pwd)"
 export PYTHONPATH="$repo_root${PYTHONPATH:+:$PYTHONPATH}"
 mkdir -p "$repo_root/reports/mha/latest"
 cd -- "$repo_root/reports/mha/latest"
-python -u -m tests.mha.test_mha_paged_accuracy --impl v7 --suite cube \
+python -u -m tests.mha.test_mha_paged_accuracy --impl v7 --suite cube --persistent-programs 0 \
   --patterns full --dtypes bfloat16 --causal noncausal --output mha_persistent28_control_accuracy.json \
   2>&1 | tee mha_persistent28_control_accuracy.log
 python -u -m tests.mha.test_mha_paged_accuracy --impl v7 --suite cube --persistent-programs 28 \

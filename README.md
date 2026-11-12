@@ -1,5 +1,11 @@
 # FGW
 
+## 当前默认：常驻28上限
+
+v7 Cube长短Q统一使用 `compute_grid=min(tasks*splits,28)`，冻结split模型保持不变。
+显式 `persistent_programs=None` 可恢复原grid；非Cube保持既有回退。
+[验证结果与对照入口](docs/mha_persistent28_default.md)。
+
 ## 常驻28短Q控制组复测
 
 ```bash
@@ -8,7 +14,7 @@ python fgw.py mha run run_mha_persistent28_short
 ```
 
 17个同grid控制组、2个长Q参照组，同进程12轮AB/BA交替计时，比较生成源码哈希。
-默认调度暂不切换。[说明及上传文件](docs/mha_persistent28_short.md)。
+历史默认切换前复测。[说明及上传文件](docs/mha_persistent28_short.md)。
 
 ## 28-program常驻调度实验
 

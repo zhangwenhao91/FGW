@@ -202,6 +202,8 @@ def main():
                     row["kernel_mode"] = getattr(kernel, "execution_mode", "legacy_or_fallback")
                     row["split_policy"] = getattr(kernel, "split_policy", "legacy_or_fallback")
                     row["num_splits"] = getattr(kernel, "num_splits", None)
+                    row["compute_grid"] = getattr(kernel, "compute_grid", None)
+                    row["persistent_programs"] = getattr(kernel, "persistent_programs", None)
                     got = kernel(*inputs).cpu()
                     if args.reference_chunk_size:
                         expected = chunked_cpu_reference(q, k, v, table, lengths, p, causal, args.reference_chunk_size)

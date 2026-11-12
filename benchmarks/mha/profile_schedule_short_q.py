@@ -69,7 +69,7 @@ def main():
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
             programs = {mode: implementation.build_kernel(b, sq, h, 128, k.shape[0], width,
                 128, causal, "bfloat16", args.device, pipeline_stages=2, buffer_versions=2,
-                q_resident=True, kv_versions=None, schedule_mode=mode)
+                q_resident=True, kv_versions=None, schedule_mode=mode, persistent_programs=None)
                 for mode in MODES}
             tasks = b * ((sq + 127) // 128) * h
             splits = 1

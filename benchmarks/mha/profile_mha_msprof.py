@@ -151,7 +151,7 @@ def main():
                     splits = getattr(program, "num_splits", splits)
                     row["split_policy"] = getattr(program, "split_policy", "legacy")
                     row["launch_geometry"] = {"query_tile_tasks": tasks, "splits": splits,
-                        "partial_grid": tasks * splits,
+                        "partial_grid": getattr(program, "compute_grid", tasks * splits),
                         "merge_work": batch * heads * ((sq + 7) // 8),
                         "merge_grid": 0 if direct_mode else min(batch * heads * ((sq + 7) // 8), 32768) if args.impl in ("v6", "v7") else batch * heads * ((sq + 7) // 8)}
                     report["results"].append(row)

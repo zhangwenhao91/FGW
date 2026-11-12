@@ -62,7 +62,7 @@ def main():
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
             programs = {label: implementation.build_kernel(b, sq, h, 128, k.shape[0], width,
                 128, causal, "bfloat16", args.device, pipeline_stages=2, buffer_versions=2,
-                q_resident=resident, kv_versions=2, schedule_mode="auto", split_policy="legacy")
+                q_resident=resident, kv_versions=2, schedule_mode="auto", split_policy="legacy", persistent_programs=None)
                 for label, resident in (("base", False), ("resident", True))}
             expected = reference(q, k, v, table, lengths, 128, causal)
             for p in programs.values():

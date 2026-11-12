@@ -101,11 +101,11 @@ def main():
             programs = {}
             correctness = {}
             auto_kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
-                "bfloat16", args.device, schedule_mode="manual", split_policy="legacy")
+                "bfloat16", args.device, schedule_mode="manual", split_policy="legacy", persistent_programs=None)
             model_kernel = None
             if args.evaluate_cost_model:
                 model_kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
-                    "bfloat16", args.device, schedule_mode="manual", split_policy="cost_model")
+                    "bfloat16", args.device, schedule_mode="manual", split_policy="cost_model", persistent_programs=None)
             auto_splits = auto_kernel.num_splits
             auto_label = f"split{auto_splits}"
             variants = tuple(f"split{n}" for n in SPLITS if n <= width)
@@ -122,7 +122,7 @@ def main():
                         if model_kernel is not None and n == model_kernel.num_splits else None)
                     kernel = kernel if kernel is not None else v7.build_kernel(
                         b, sq, h, 128, k.shape[0], width, 128, False, "bfloat16", args.device,
-                        schedule_mode="manual", num_splits=n)
+                        schedule_mode="manual", num_splits=n, persistent_programs=None)
                     call = functools.partial(kernel, *inputs)
                     got = call().cpu()
                     kernel_mode = kernel.execution_mode
