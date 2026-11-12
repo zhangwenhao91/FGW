@@ -1,5 +1,16 @@
 # FGW
 
+## v7 强制 split=1 对照
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_v7_split1
+```
+
+在相同长短Q输入上交替测自动split与强制split=1，先精度、后4轮Event计时。
+报告实际split数、耗时、MFU和节省的延迟；当前默认split策略不变。
+[基准说明](docs/mha_v7_split1.md)。
+
 ## v7 与官方 AscendC 加速比
 
 ```bash

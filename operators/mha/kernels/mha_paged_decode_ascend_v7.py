@@ -21,7 +21,9 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual"):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None):
+    if num_splits is not None and (type(num_splits) is not int or num_splits != 1):
+        raise ValueError("num_splits supports None (automatic) or 1 (force direct output)")
     if schedule_mode not in ("auto", "auto-offset", "manual"):
         raise ValueError("schedule_mode must be auto, auto-offset or manual")
     pipeline_annotations = {} if schedule_mode == "auto" else {"enable_offset": True}
@@ -41,6 +43,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if page_size <= 0 or pool_rows <= 0 or pool_rows % page_size or width <= 0:
         raise ValueError("positive page size, whole pool pages and positive table width required")
     if route(dtype, dim, page_size, sq, causal) != "cube_bf16_d128":
+        if num_splits is not None:
+            raise ValueError("num_splits override requires the v7 Cube path")
         return build_v2(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)
     BR, BC, ROWS, VL, D = 128, 128, 64, 64, 128
     dtype, accum_dtype = "bfloat16", "float32"
@@ -51,6 +55,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     splits = 1
     while splits < 16 and splits * 2 <= width * page_size // BC and tasks * splits < 128:
         splits *= 2
+    if num_splits is not None:
+        splits = num_splits
     @T.macro
     def softmax(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
         with T.SimdVF(latency=735):
@@ -467,6 +473,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             prepared = q.permute(0, 2, 1, 3).contiguous()
             return direct_kernel(prepared, k, v, table, lengths).view(batch, sq, heads, D)
 
+        launch_direct.num_splits = splits
+        launch_direct.query_tile_tasks = tasks
         launch_direct.execution_mode = "direct_single_split"
         launch_direct.direct_kernel = direct_kernel
         launch_direct.prepare_q = lambda q: q.permute(0, 2, 1, 3).contiguous()
@@ -484,6 +492,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
         return merge_kernel(parts, lse)
     # Expose the exact compiled callables for isolated profiling; launch unchanged.
+    launch.num_splits = splits
+    launch.query_tile_tasks = tasks
     launch.execution_mode = "split_and_merge"
     launch.partial_kernel = partial_kernel
     launch.merge_kernel = merge_kernel
@@ -492,7 +502,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
                      page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
-                     q_resident=True, kv_versions=None, schedule_mode="manual"):
+                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None):
     """Same public tensor contract as v0; metadata values must be valid."""
     if q.ndim != 4 or k_cache.ndim != 3:
         raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")
@@ -518,5 +528,5 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
         kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
                               page_size, is_causal,
                               "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index, pipeline_stages=pipeline_stages, buffer_versions=buffer_versions,
-                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode)
+                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits)
         return kernel(*inputs)
