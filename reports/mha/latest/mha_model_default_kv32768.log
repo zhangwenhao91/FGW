@@ -1,0 +1,355 @@
+FIA API availability={'v2': True, 'v1': True}; selected=['v2']
+Preparing batch2_head8 B=2 H=8 Q=1 KV=32768
+2026-11-12 15:02:53  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 15:02:53  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=1 v7_manual_bf16 round=1: 218.835 us MFU=0.3245%
+batch2_head8 Q=1 ascendc_fia_v2 round=1: 183.855 us MFU=0.3863%
+batch2_head8 Q=1 v7_legacy_bf16 round=1: 204.276 us MFU=0.3476%
+COMPARE batch2_head8 Q=1 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8402x
+COMPARE batch2_head8 Q=1 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.9000x
+batch2_head8 Q=1 v7_legacy_bf16 round=2: 218.514 us MFU=0.3250%
+batch2_head8 Q=1 ascendc_fia_v2 round=2: 183.541 us MFU=0.3869%
+batch2_head8 Q=1 v7_manual_bf16 round=2: 203.495 us MFU=0.3490%
+COMPARE batch2_head8 Q=1 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9019x
+COMPARE batch2_head8 Q=1 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8400x
+batch2_head8 Q=1 v7_manual_bf16 round=3: 219.340 us MFU=0.3238%
+batch2_head8 Q=1 ascendc_fia_v2 round=3: 184.172 us MFU=0.3856%
+batch2_head8 Q=1 v7_legacy_bf16 round=3: 202.337 us MFU=0.3510%
+COMPARE batch2_head8 Q=1 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8397x
+COMPARE batch2_head8 Q=1 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.9102x
+batch2_head8 Q=1 v7_legacy_bf16 round=4: 218.291 us MFU=0.3253%
+batch2_head8 Q=1 ascendc_fia_v2 round=4: 183.162 us MFU=0.3877%
+batch2_head8 Q=1 v7_manual_bf16 round=4: 208.330 us MFU=0.3409%
+COMPARE batch2_head8 Q=1 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8792x
+COMPARE batch2_head8 Q=1 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8391x
+Preparing batch2_head8 B=2 H=8 Q=16 KV=32768
+2026-11-12 15:02:54  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 15:02:54  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=16 v7_manual_bf16 round=1: 235.050 us MFU=4.8340%
+batch2_head8 Q=16 ascendc_fia_v2 round=1: 187.302 us MFU=6.0663%
+batch2_head8 Q=16 v7_legacy_bf16 round=1: 219.071 us MFU=5.1866%
+COMPARE batch2_head8 Q=16 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7969x
+COMPARE batch2_head8 Q=16 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8550x
+batch2_head8 Q=16 v7_legacy_bf16 round=2: 235.230 us MFU=4.8303%
+batch2_head8 Q=16 ascendc_fia_v2 round=2: 187.209 us MFU=6.0693%
+batch2_head8 Q=16 v7_manual_bf16 round=2: 221.093 us MFU=5.1392%
+COMPARE batch2_head8 Q=16 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8467x
+COMPARE batch2_head8 Q=16 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7959x
+batch2_head8 Q=16 v7_manual_bf16 round=3: 235.071 us MFU=4.8336%
+batch2_head8 Q=16 ascendc_fia_v2 round=3: 186.778 us MFU=6.0833%
+batch2_head8 Q=16 v7_legacy_bf16 round=3: 221.095 us MFU=5.1391%
+COMPARE batch2_head8 Q=16 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7946x
+COMPARE batch2_head8 Q=16 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8448x
+batch2_head8 Q=16 v7_legacy_bf16 round=4: 235.830 us MFU=4.8180%
+batch2_head8 Q=16 ascendc_fia_v2 round=4: 186.876 us MFU=6.0802%
+batch2_head8 Q=16 v7_manual_bf16 round=4: 222.324 us MFU=5.1107%
+COMPARE batch2_head8 Q=16 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8406x
+COMPARE batch2_head8 Q=16 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7924x
+Preparing batch2_head8 B=2 H=8 Q=128 KV=32768
+batch2_head8 Q=128 v7_manual_bf16 round=1: 250.298 us MFU=36.3162%
+batch2_head8 Q=128 ascendc_fia_v2 round=1: 205.341 us MFU=44.2672%
+batch2_head8 Q=128 v7_legacy_bf16 round=1: 253.972 us MFU=35.7909%
+COMPARE batch2_head8 Q=128 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8204x
+COMPARE batch2_head8 Q=128 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8085x
+batch2_head8 Q=128 v7_legacy_bf16 round=2: 257.202 us MFU=35.3414%
+batch2_head8 Q=128 ascendc_fia_v2 round=2: 205.851 us MFU=44.1576%
+batch2_head8 Q=128 v7_manual_bf16 round=2: 246.776 us MFU=36.8345%
+COMPARE batch2_head8 Q=128 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8342x
+COMPARE batch2_head8 Q=128 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8003x
+batch2_head8 Q=128 v7_manual_bf16 round=3: 249.938 us MFU=36.3685%
+batch2_head8 Q=128 ascendc_fia_v2 round=3: 205.363 us MFU=44.2625%
+batch2_head8 Q=128 v7_legacy_bf16 round=3: 253.522 us MFU=35.8544%
+COMPARE batch2_head8 Q=128 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8217x
+COMPARE batch2_head8 Q=128 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8100x
+batch2_head8 Q=128 v7_legacy_bf16 round=4: 257.609 us MFU=35.2856%
+batch2_head8 Q=128 ascendc_fia_v2 round=4: 205.848 us MFU=44.1582%
+batch2_head8 Q=128 v7_manual_bf16 round=4: 248.381 us MFU=36.5965%
+COMPARE batch2_head8 Q=128 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8288x
+COMPARE batch2_head8 Q=128 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7991x
+Preparing batch2_head8 B=2 H=8 Q=129 KV=32768
+2026-11-12 15:02:56  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 15:02:56  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=129 v7_manual_bf16 round=1: 416.829 us MFU=21.9776%
+batch2_head8 Q=129 ascendc_fia_v2 round=1: 364.312 us MFU=25.1457%
+batch2_head8 Q=129 v7_legacy_bf16 round=1: 415.396 us MFU=22.0534%
+COMPARE batch2_head8 Q=129 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8740x
+COMPARE batch2_head8 Q=129 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8770x
+batch2_head8 Q=129 v7_legacy_bf16 round=2: 416.641 us MFU=21.9875%
+batch2_head8 Q=129 ascendc_fia_v2 round=2: 363.196 us MFU=25.2230%
+batch2_head8 Q=129 v7_manual_bf16 round=2: 414.613 us MFU=22.0950%
+COMPARE batch2_head8 Q=129 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8760x
+COMPARE batch2_head8 Q=129 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8717x
+batch2_head8 Q=129 v7_manual_bf16 round=3: 417.003 us MFU=21.9684%
+batch2_head8 Q=129 ascendc_fia_v2 round=3: 363.007 us MFU=25.2361%
+batch2_head8 Q=129 v7_legacy_bf16 round=3: 410.263 us MFU=22.3293%
+COMPARE batch2_head8 Q=129 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8705x
+COMPARE batch2_head8 Q=129 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8848x
+batch2_head8 Q=129 v7_legacy_bf16 round=4: 416.496 us MFU=21.9952%
+batch2_head8 Q=129 ascendc_fia_v2 round=4: 362.668 us MFU=25.2597%
+batch2_head8 Q=129 v7_manual_bf16 round=4: 406.083 us MFU=22.5592%
+COMPARE batch2_head8 Q=129 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8931x
+COMPARE batch2_head8 Q=129 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8708x
+Preparing batch2_head8 B=2 H=8 Q=512 KV=32768
+batch2_head8 Q=512 v7_manual_bf16 round=1: 652.411 us MFU=55.7310%
+batch2_head8 Q=512 ascendc_fia_v2 round=1: 612.136 us MFU=59.3978%
+batch2_head8 Q=512 v7_legacy_bf16 round=1: 783.621 us MFU=46.3994%
+COMPARE batch2_head8 Q=512 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9383x
+COMPARE batch2_head8 Q=512 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7812x
+batch2_head8 Q=512 v7_legacy_bf16 round=2: 862.573 us MFU=42.1524%
+batch2_head8 Q=512 ascendc_fia_v2 round=2: 766.715 us MFU=47.4225%
+batch2_head8 Q=512 v7_manual_bf16 round=2: 811.439 us MFU=44.8087%
+COMPARE batch2_head8 Q=512 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9449x
+COMPARE batch2_head8 Q=512 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8889x
+batch2_head8 Q=512 v7_manual_bf16 round=3: 777.267 us MFU=46.7787%
+batch2_head8 Q=512 ascendc_fia_v2 round=3: 684.882 us MFU=53.0887%
+batch2_head8 Q=512 v7_legacy_bf16 round=3: 838.673 us MFU=43.3536%
+COMPARE batch2_head8 Q=512 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8811x
+COMPARE batch2_head8 Q=512 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8166x
+batch2_head8 Q=512 v7_legacy_bf16 round=4: 826.534 us MFU=43.9903%
+batch2_head8 Q=512 ascendc_fia_v2 round=4: 720.171 us MFU=50.4873%
+batch2_head8 Q=512 v7_manual_bf16 round=4: 775.992 us MFU=46.8555%
+COMPARE batch2_head8 Q=512 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9281x
+COMPARE batch2_head8 Q=512 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8713x
+Preparing batch2_head8 B=2 H=8 Q=1024 KV=32768
+2026-11-12 15:03:00  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=1024 v7_manual_bf16 round=1: 1222.258 us MFU=59.4956%
+batch2_head8 Q=1024 ascendc_fia_v2 round=1: 1186.751 us MFU=61.2757%
+batch2_head8 Q=1024 v7_legacy_bf16 round=1: 1224.100 us MFU=59.4061%
+COMPARE batch2_head8 Q=1024 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9709x
+COMPARE batch2_head8 Q=1024 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.9695x
+batch2_head8 Q=1024 v7_legacy_bf16 round=2: 1392.969 us MFU=52.2043%
+batch2_head8 Q=1024 ascendc_fia_v2 round=2: 1337.717 us MFU=54.3605%
+batch2_head8 Q=1024 v7_manual_bf16 round=2: 1309.448 us MFU=55.5341%
+COMPARE batch2_head8 Q=1024 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0216x
+COMPARE batch2_head8 Q=1024 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.9603x
+batch2_head8 Q=1024 v7_manual_bf16 round=3: 1389.360 us MFU=52.3399%
+batch2_head8 Q=1024 ascendc_fia_v2 round=3: 1318.582 us MFU=55.1494%
+batch2_head8 Q=1024 v7_legacy_bf16 round=3: 1419.395 us MFU=51.2324%
+COMPARE batch2_head8 Q=1024 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9491x
+COMPARE batch2_head8 Q=1024 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.9290x
+batch2_head8 Q=1024 v7_legacy_bf16 round=4: 1400.391 us MFU=51.9277%
+batch2_head8 Q=1024 ascendc_fia_v2 round=4: 1348.093 us MFU=53.9421%
+batch2_head8 Q=1024 v7_manual_bf16 round=4: 1358.848 us MFU=53.5152%
+COMPARE batch2_head8 Q=1024 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.9921x
+COMPARE batch2_head8 Q=1024 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.9627x
+Preparing batch2_head8 B=2 H=8 Q=4096 KV=32768
+2026-11-12 15:03:05  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=4096 v7_manual_bf16 round=1: 5467.922 us MFU=53.1968%
+batch2_head8 Q=4096 ascendc_fia_v2 round=1: 4872.347 us MFU=59.6994%
+batch2_head8 Q=4096 v7_legacy_bf16 round=1: 5502.640 us MFU=52.8612%
+COMPARE batch2_head8 Q=4096 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8911x
+COMPARE batch2_head8 Q=4096 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8855x
+batch2_head8 Q=4096 v7_legacy_bf16 round=2: 5828.837 us MFU=49.9029%
+batch2_head8 Q=4096 ascendc_fia_v2 round=2: 4854.888 us MFU=59.9141%
+batch2_head8 Q=4096 v7_manual_bf16 round=2: 5530.593 us MFU=52.5940%
+COMPARE batch2_head8 Q=4096 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8778x
+COMPARE batch2_head8 Q=4096 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8329x
+batch2_head8 Q=4096 v7_manual_bf16 round=3: 5679.077 us MFU=51.2189%
+batch2_head8 Q=4096 ascendc_fia_v2 round=3: 4875.352 us MFU=59.6626%
+batch2_head8 Q=4096 v7_legacy_bf16 round=3: 5510.850 us MFU=52.7824%
+COMPARE batch2_head8 Q=4096 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8585x
+COMPARE batch2_head8 Q=4096 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8847x
+batch2_head8 Q=4096 v7_legacy_bf16 round=4: 5598.687 us MFU=51.9543%
+batch2_head8 Q=4096 ascendc_fia_v2 round=4: 5048.729 us MFU=57.6137%
+batch2_head8 Q=4096 v7_manual_bf16 round=4: 5653.854 us MFU=51.4474%
+COMPARE batch2_head8 Q=4096 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8930x
+COMPARE batch2_head8 Q=4096 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.9018x
+Preparing batch2_head8 B=2 H=8 Q=8192 KV=32768
+2026-11-12 15:03:17  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=8192 v7_manual_bf16 round=1: 11732.671 us MFU=49.5840%
+batch2_head8 Q=8192 ascendc_fia_v2 round=1: 9361.630 us MFU=62.1422%
+batch2_head8 Q=8192 v7_legacy_bf16 round=1: 11596.203 us MFU=50.1675%
+COMPARE batch2_head8 Q=8192 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7979x
+COMPARE batch2_head8 Q=8192 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8073x
+batch2_head8 Q=8192 v7_legacy_bf16 round=2: 12033.280 us MFU=48.3453%
+batch2_head8 Q=8192 ascendc_fia_v2 round=2: 9398.730 us MFU=61.8969%
+batch2_head8 Q=8192 v7_manual_bf16 round=2: 11548.404 us MFU=50.3751%
+COMPARE batch2_head8 Q=8192 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8139x
+COMPARE batch2_head8 Q=8192 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7811x
+batch2_head8 Q=8192 v7_manual_bf16 round=3: 12185.974 us MFU=47.7395%
+batch2_head8 Q=8192 ascendc_fia_v2 round=3: 9443.139 us MFU=61.6058%
+batch2_head8 Q=8192 v7_legacy_bf16 round=3: 11637.268 us MFU=49.9904%
+COMPARE batch2_head8 Q=8192 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.7749x
+COMPARE batch2_head8 Q=8192 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8115x
+batch2_head8 Q=8192 v7_legacy_bf16 round=4: 12196.982 us MFU=47.6964%
+batch2_head8 Q=8192 ascendc_fia_v2 round=4: 9479.372 us MFU=61.3703%
+batch2_head8 Q=8192 v7_manual_bf16 round=4: 11695.615 us MFU=49.7411%
+COMPARE batch2_head8 Q=8192 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8105x
+COMPARE batch2_head8 Q=8192 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7772x
+Preparing batch1_head1 B=1 H=1 Q=1 KV=32768
+2026-11-12 15:03:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 15:03:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=1 v7_manual_bf16 round=1: 36.697 us MFU=0.1209%
+batch1_head1 Q=1 ascendc_fia_v2 round=1: 49.050 us MFU=0.0905%
+batch1_head1 Q=1 v7_legacy_bf16 round=1: 36.745 us MFU=0.1208%
+COMPARE batch1_head1 Q=1 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3366x
+COMPARE batch1_head1 Q=1 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.3349x
+batch1_head1 Q=1 v7_legacy_bf16 round=2: 36.487 us MFU=0.1216%
+batch1_head1 Q=1 ascendc_fia_v2 round=2: 49.223 us MFU=0.0902%
+batch1_head1 Q=1 v7_manual_bf16 round=2: 36.628 us MFU=0.1212%
+COMPARE batch1_head1 Q=1 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3439x
+COMPARE batch1_head1 Q=1 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.3491x
+batch1_head1 Q=1 v7_manual_bf16 round=3: 36.802 us MFU=0.1206%
+batch1_head1 Q=1 ascendc_fia_v2 round=3: 49.355 us MFU=0.0899%
+batch1_head1 Q=1 v7_legacy_bf16 round=3: 36.576 us MFU=0.1213%
+COMPARE batch1_head1 Q=1 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3411x
+COMPARE batch1_head1 Q=1 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.3494x
+batch1_head1 Q=1 v7_legacy_bf16 round=4: 36.404 us MFU=0.1219%
+batch1_head1 Q=1 ascendc_fia_v2 round=4: 48.796 us MFU=0.0910%
+batch1_head1 Q=1 v7_manual_bf16 round=4: 36.323 us MFU=0.1222%
+COMPARE batch1_head1 Q=1 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3434x
+COMPARE batch1_head1 Q=1 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.3404x
+Preparing batch1_head1 B=1 H=1 Q=16 KV=32768
+2026-11-12 15:03:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 15:03:26  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=16 v7_manual_bf16 round=1: 40.886 us MFU=1.7369%
+batch1_head1 Q=16 ascendc_fia_v2 round=1: 49.604 us MFU=1.4316%
+batch1_head1 Q=16 v7_legacy_bf16 round=1: 40.866 us MFU=1.7377%
+COMPARE batch1_head1 Q=16 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2132x
+COMPARE batch1_head1 Q=16 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.2138x
+batch1_head1 Q=16 v7_legacy_bf16 round=2: 40.113 us MFU=1.7704%
+batch1_head1 Q=16 ascendc_fia_v2 round=2: 49.923 us MFU=1.4225%
+batch1_head1 Q=16 v7_manual_bf16 round=2: 40.378 us MFU=1.7587%
+COMPARE batch1_head1 Q=16 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2364x
+COMPARE batch1_head1 Q=16 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.2446x
+batch1_head1 Q=16 v7_manual_bf16 round=3: 40.086 us MFU=1.7716%
+batch1_head1 Q=16 ascendc_fia_v2 round=3: 50.158 us MFU=1.4158%
+batch1_head1 Q=16 v7_legacy_bf16 round=3: 40.187 us MFU=1.7671%
+COMPARE batch1_head1 Q=16 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2513x
+COMPARE batch1_head1 Q=16 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.2481x
+batch1_head1 Q=16 v7_legacy_bf16 round=4: 39.755 us MFU=1.7863%
+batch1_head1 Q=16 ascendc_fia_v2 round=4: 49.927 us MFU=1.4224%
+batch1_head1 Q=16 v7_manual_bf16 round=4: 40.056 us MFU=1.7729%
+COMPARE batch1_head1 Q=16 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.2464x
+COMPARE batch1_head1 Q=16 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.2559x
+Preparing batch1_head1 B=1 H=1 Q=128 KV=32768
+2026-11-12 15:03:27  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 15:03:27  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=128 v7_manual_bf16 round=1: 40.940 us MFU=13.8768%
+batch1_head1 Q=128 ascendc_fia_v2 round=1: 54.120 us MFU=10.4974%
+batch1_head1 Q=128 v7_legacy_bf16 round=1: 41.069 us MFU=13.8332%
+COMPARE batch1_head1 Q=128 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3219x
+COMPARE batch1_head1 Q=128 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.3178x
+batch1_head1 Q=128 v7_legacy_bf16 round=2: 40.702 us MFU=13.9580%
+batch1_head1 Q=128 ascendc_fia_v2 round=2: 53.504 us MFU=10.6182%
+batch1_head1 Q=128 v7_manual_bf16 round=2: 40.561 us MFU=14.0065%
+COMPARE batch1_head1 Q=128 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3191x
+COMPARE batch1_head1 Q=128 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.3145x
+batch1_head1 Q=128 v7_manual_bf16 round=3: 39.978 us MFU=14.2107%
+batch1_head1 Q=128 ascendc_fia_v2 round=3: 53.367 us MFU=10.6455%
+batch1_head1 Q=128 v7_legacy_bf16 round=3: 40.560 us MFU=14.0068%
+COMPARE batch1_head1 Q=128 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3349x
+COMPARE batch1_head1 Q=128 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.3158x
+batch1_head1 Q=128 v7_legacy_bf16 round=4: 39.898 us MFU=14.2392%
+batch1_head1 Q=128 ascendc_fia_v2 round=4: 53.195 us MFU=10.6799%
+batch1_head1 Q=128 v7_manual_bf16 round=4: 40.083 us MFU=14.1735%
+COMPARE batch1_head1 Q=128 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3271x
+COMPARE batch1_head1 Q=128 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.3333x
+Preparing batch1_head1 B=1 H=1 Q=129 KV=32768
+batch1_head1 Q=129 v7_manual_bf16 round=1: 46.485 us MFU=12.3170%
+batch1_head1 Q=129 ascendc_fia_v2 round=1: 65.145 us MFU=8.7889%
+batch1_head1 Q=129 v7_legacy_bf16 round=1: 57.699 us MFU=9.9231%
+COMPARE batch1_head1 Q=129 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4014x
+COMPARE batch1_head1 Q=129 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.1290x
+batch1_head1 Q=129 v7_legacy_bf16 round=2: 57.461 us MFU=9.9643%
+batch1_head1 Q=129 ascendc_fia_v2 round=2: 64.556 us MFU=8.8691%
+batch1_head1 Q=129 v7_manual_bf16 round=2: 46.379 us MFU=12.3452%
+COMPARE batch1_head1 Q=129 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3919x
+COMPARE batch1_head1 Q=129 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.1235x
+batch1_head1 Q=129 v7_manual_bf16 round=3: 46.081 us MFU=12.4250%
+batch1_head1 Q=129 ascendc_fia_v2 round=3: 64.757 us MFU=8.8416%
+batch1_head1 Q=129 v7_legacy_bf16 round=3: 57.754 us MFU=9.9137%
+COMPARE batch1_head1 Q=129 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.4053x
+COMPARE batch1_head1 Q=129 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.1213x
+batch1_head1 Q=129 v7_legacy_bf16 round=4: 57.606 us MFU=9.9392%
+batch1_head1 Q=129 ascendc_fia_v2 round=4: 64.013 us MFU=8.9444%
+batch1_head1 Q=129 v7_manual_bf16 round=4: 46.355 us MFU=12.3515%
+COMPARE batch1_head1 Q=129 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.3809x
+COMPARE batch1_head1 Q=129 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=1.1112x
+Preparing batch1_head1 B=1 H=1 Q=512 KV=32768
+batch1_head1 Q=512 v7_manual_bf16 round=1: 68.427 us MFU=33.2101%
+batch1_head1 Q=512 ascendc_fia_v2 round=1: 71.780 us MFU=31.6588%
+batch1_head1 Q=512 v7_legacy_bf16 round=1: 82.581 us MFU=27.5181%
+COMPARE batch1_head1 Q=512 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0490x
+COMPARE batch1_head1 Q=512 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8692x
+batch1_head1 Q=512 v7_legacy_bf16 round=2: 82.769 us MFU=27.4556%
+batch1_head1 Q=512 ascendc_fia_v2 round=2: 71.571 us MFU=31.7513%
+batch1_head1 Q=512 v7_manual_bf16 round=2: 68.174 us MFU=33.3334%
+COMPARE batch1_head1 Q=512 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0498x
+COMPARE batch1_head1 Q=512 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8647x
+batch1_head1 Q=512 v7_manual_bf16 round=3: 67.758 us MFU=33.5380%
+batch1_head1 Q=512 ascendc_fia_v2 round=3: 71.898 us MFU=31.6069%
+batch1_head1 Q=512 v7_legacy_bf16 round=3: 81.752 us MFU=27.7971%
+COMPARE batch1_head1 Q=512 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0611x
+COMPARE batch1_head1 Q=512 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8795x
+batch1_head1 Q=512 v7_legacy_bf16 round=4: 82.096 us MFU=27.6806%
+batch1_head1 Q=512 ascendc_fia_v2 round=4: 71.660 us MFU=31.7118%
+batch1_head1 Q=512 v7_manual_bf16 round=4: 67.568 us MFU=33.6323%
+COMPARE batch1_head1 Q=512 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=1.0606x
+COMPARE batch1_head1 Q=512 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8729x
+Preparing batch1_head1 B=1 H=1 Q=1024 KV=32768
+batch1_head1 Q=1024 v7_manual_bf16 round=1: 112.935 us MFU=40.2438%
+batch1_head1 Q=1024 ascendc_fia_v2 round=1: 99.077 us MFU=45.8728%
+batch1_head1 Q=1024 v7_legacy_bf16 round=1: 127.323 us MFU=35.6961%
+COMPARE batch1_head1 Q=1024 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8773x
+COMPARE batch1_head1 Q=1024 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7782x
+batch1_head1 Q=1024 v7_legacy_bf16 round=2: 127.318 us MFU=35.6975%
+batch1_head1 Q=1024 ascendc_fia_v2 round=2: 98.545 us MFU=46.1204%
+batch1_head1 Q=1024 v7_manual_bf16 round=2: 112.669 us MFU=40.3389%
+COMPARE batch1_head1 Q=1024 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8746x
+COMPARE batch1_head1 Q=1024 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7740x
+batch1_head1 Q=1024 v7_manual_bf16 round=3: 113.361 us MFU=40.0926%
+batch1_head1 Q=1024 ascendc_fia_v2 round=3: 99.662 us MFU=45.6035%
+batch1_head1 Q=1024 v7_legacy_bf16 round=3: 127.577 us MFU=35.6251%
+COMPARE batch1_head1 Q=1024 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8792x
+COMPARE batch1_head1 Q=1024 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7812x
+batch1_head1 Q=1024 v7_legacy_bf16 round=4: 127.469 us MFU=35.6552%
+batch1_head1 Q=1024 ascendc_fia_v2 round=4: 100.688 us MFU=45.1388%
+batch1_head1 Q=1024 v7_manual_bf16 round=4: 113.151 us MFU=40.1670%
+COMPARE batch1_head1 Q=1024 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8899x
+COMPARE batch1_head1 Q=1024 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.7899x
+Preparing batch1_head1 B=1 H=1 Q=4096 KV=32768
+2026-11-12 15:03:28  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 15:03:28  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=4096 v7_manual_bf16 round=1: 294.195 us MFU=61.7949%
+batch1_head1 Q=4096 ascendc_fia_v2 round=1: 258.873 us MFU=70.2265%
+batch1_head1 Q=4096 v7_legacy_bf16 round=1: 296.892 us MFU=61.2336%
+COMPARE batch1_head1 Q=4096 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8799x
+COMPARE batch1_head1 Q=4096 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8719x
+batch1_head1 Q=4096 v7_legacy_bf16 round=2: 293.366 us MFU=61.9695%
+batch1_head1 Q=4096 ascendc_fia_v2 round=2: 254.955 us MFU=71.3057%
+batch1_head1 Q=4096 v7_manual_bf16 round=2: 293.422 us MFU=61.9577%
+COMPARE batch1_head1 Q=4096 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8689x
+COMPARE batch1_head1 Q=4096 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8691x
+batch1_head1 Q=4096 v7_manual_bf16 round=3: 290.829 us MFU=62.5101%
+batch1_head1 Q=4096 ascendc_fia_v2 round=3: 254.260 us MFU=71.5007%
+batch1_head1 Q=4096 v7_legacy_bf16 round=3: 290.069 us MFU=62.6739%
+COMPARE batch1_head1 Q=4096 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8743x
+COMPARE batch1_head1 Q=4096 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8766x
+batch1_head1 Q=4096 v7_legacy_bf16 round=4: 303.481 us MFU=59.9041%
+batch1_head1 Q=4096 ascendc_fia_v2 round=4: 265.927 us MFU=68.3637%
+batch1_head1 Q=4096 v7_manual_bf16 round=4: 302.416 us MFU=60.1151%
+COMPARE batch1_head1 Q=4096 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8793x
+COMPARE batch1_head1 Q=4096 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8763x
+Preparing batch1_head1 B=1 H=1 Q=8192 KV=32768
+batch1_head1 Q=8192 v7_manual_bf16 round=1: 584.795 us MFU=62.1748%
+batch1_head1 Q=8192 ascendc_fia_v2 round=1: 486.893 us MFU=74.6766%
+batch1_head1 Q=8192 v7_legacy_bf16 round=1: 543.665 us MFU=66.8785%
+COMPARE batch1_head1 Q=8192 KV=32768 round=1 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8326x
+COMPARE batch1_head1 Q=8192 KV=32768 round=1 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8956x
+batch1_head1 Q=8192 v7_legacy_bf16 round=2: 564.471 us MFU=64.4134%
+batch1_head1 Q=8192 ascendc_fia_v2 round=2: 506.205 us MFU=71.8276%
+batch1_head1 Q=8192 v7_manual_bf16 round=2: 604.574 us MFU=60.1407%
+COMPARE batch1_head1 Q=8192 KV=32768 round=2 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8373x
+COMPARE batch1_head1 Q=8192 KV=32768 round=2 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8968x
+batch1_head1 Q=8192 v7_manual_bf16 round=3: 648.159 us MFU=56.0966%
+batch1_head1 Q=8192 ascendc_fia_v2 round=3: 550.101 us MFU=66.0961%
+batch1_head1 Q=8192 v7_legacy_bf16 round=3: 610.865 us MFU=59.5214%
+COMPARE batch1_head1 Q=8192 KV=32768 round=3 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8487x
+COMPARE batch1_head1 Q=8192 KV=32768 round=3 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.9005x
+batch1_head1 Q=8192 v7_legacy_bf16 round=4: 540.334 us MFU=67.2908%
+batch1_head1 Q=8192 ascendc_fia_v2 round=4: 485.781 us MFU=74.8475%
+batch1_head1 Q=8192 v7_manual_bf16 round=4: 575.822 us MFU=63.1437%
+COMPARE batch1_head1 Q=8192 KV=32768 round=4 v7_manual_bf16 / ascendc_fia_v2: V7 speedup=0.8436x
+COMPARE batch1_head1 Q=8192 KV=32768 round=4 v7_legacy_bf16 / ascendc_fia_v2: V7 speedup=0.8990x
+passed: mha_model_default_kv32768.json; compact report: mha_model_default_kv32768_summary.json
