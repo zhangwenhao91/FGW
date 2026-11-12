@@ -1,0 +1,808 @@
+{
+  "status": "passed",
+  "artifact_dir": "/home/z30086261/FGW/reports/mha/latest/mha_kernel_inspect_20261112_154329_266800",
+  "shape": {
+    "B": 2,
+    "Q": 4096,
+    "H": 8,
+    "D": 128,
+    "KV": 2048,
+    "page_size": 128
+  },
+  "notes": [
+    "Inspection only: DEBUG/profiler collection is not a latency benchmark.",
+    "Runtime log fields are observations, not automatically decoded tiling bytes.",
+    "blockSize is the cache page size; s1Size/s2Size may be input lengths. Do not equate them to compute tiles.",
+    "Missing fields remain unknown; installed CANN may differ from public master.",
+    "No source/kernel/model/system configuration changes; DEBUG env applies to FIA child only."
+  ],
+  "children": {
+    "fia-debug": {
+      "status": "passed",
+      "mode": "fia-debug",
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "torch_npu": "2.13.0"
+      },
+      "cann_environment": {
+        "ASCEND_HOME_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+        "ASCEND_TOOLKIT_HOME": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+        "ASCEND_OPP_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp",
+        "ASCEND_RT_VISIBLE_DEVICES": null
+      },
+      "cann_version_probe_error": "module 'torch_npu.npu' has no attribute 'get_cann_version'",
+      "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=cc08d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+      "accuracy": {
+        "status": "passed",
+        "max_abs_error": 0.001953125
+      },
+      "fia_schema": "{'': npu::npu_fused_infer_attention_score_v2(Tensor query, Tensor key, Tensor value, *, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_qlen=None, SymInt[]? actual_seq_kvlen=None, Tensor? block_table=None, Tensor? dequant_scale_query=None, Tensor? dequant_scale_key=None, Tensor? dequant_offset_key=None, Tensor? dequant_scale_value=None, Tensor? dequant_offset_value=None, Tensor? dequant_scale_key_rope=None, Tensor? quant_scale_out=None, Tensor? quant_offset_out=None, Tensor? quant_scale_p=None, Tensor? learnable_sink=None, int num_query_heads=1, int num_key_value_heads=0, float softmax_scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int sparse_mode=0, int block_size=0, int query_quant_mode=0, int key_quant_mode=0, int value_quant_mode=0, int inner_precise=0, bool return_softmax_lse=False, int? query_dtype=None, int? key_dtype=None, int? value_dtype=None, int? query_rope_dtype=None, int? key_rope_dtype=None, int? key_shared_prefix_dtype=None, int? value_shared_prefix_dtype=None, int? dequant_scale_query_dtype=None, int? dequant_scale_key_dtype=None, int? dequant_scale_value_dtype=None, int? dequant_scale_key_rope_dtype=None, int? out_dtype=None) -> (Tensor, Tensor), 'out': npu::npu_fused_infer_attention_score_v2.out(Tensor query, Tensor key, Tensor value, *, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_qlen=None, SymInt[]? actual_seq_kvlen=None, Tensor? block_table=None, Tensor? dequant_scale_query=None, Tensor? dequant_scale_key=None, Tensor? dequant_offset_key=None, Tensor? dequant_scale_value=None, Tensor? dequant_offset_value=None, Tensor? dequant_scale_key_rope=None, Tensor? quant_scale_out=None, Tensor? quant_offset_out=None, Tensor? quant_scale_p=None, Tensor? learnable_sink=None, int num_query_heads=1, int num_key_value_heads=0, float softmax_scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int sparse_mode=0, int block_size=0, int query_quant_mode=0, int key_quant_mode=0, int value_quant_mode=0, int inner_precise=0, bool return_softmax_lse=False, int? query_dtype=None, int? key_dtype=None, int? value_dtype=None, int? query_rope_dtype=None, int? key_rope_dtype=None, int? key_shared_prefix_dtype=None, int? value_shared_prefix_dtype=None, int? dequant_scale_query_dtype=None, int? dequant_scale_key_dtype=None, int? dequant_scale_value_dtype=None, int? dequant_scale_key_rope_dtype=None, int? out_dtype=None, Tensor? workspace=None, Tensor[] out) -> (Tensor, Tensor)}",
+      "returncode": 0
+    },
+    "fia-profile": {
+      "status": "passed",
+      "mode": "fia-profile",
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "torch_npu": "2.13.0"
+      },
+      "cann_environment": {
+        "ASCEND_HOME_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+        "ASCEND_TOOLKIT_HOME": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+        "ASCEND_OPP_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp",
+        "ASCEND_RT_VISIBLE_DEVICES": null
+      },
+      "cann_version_probe_error": "module 'torch_npu.npu' has no attribute 'get_cann_version'",
+      "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=cc08d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+      "accuracy": {
+        "status": "passed",
+        "max_abs_error": 0.001953125
+      },
+      "fia_schema": "{'': npu::npu_fused_infer_attention_score_v2(Tensor query, Tensor key, Tensor value, *, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_qlen=None, SymInt[]? actual_seq_kvlen=None, Tensor? block_table=None, Tensor? dequant_scale_query=None, Tensor? dequant_scale_key=None, Tensor? dequant_offset_key=None, Tensor? dequant_scale_value=None, Tensor? dequant_offset_value=None, Tensor? dequant_scale_key_rope=None, Tensor? quant_scale_out=None, Tensor? quant_offset_out=None, Tensor? quant_scale_p=None, Tensor? learnable_sink=None, int num_query_heads=1, int num_key_value_heads=0, float softmax_scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int sparse_mode=0, int block_size=0, int query_quant_mode=0, int key_quant_mode=0, int value_quant_mode=0, int inner_precise=0, bool return_softmax_lse=False, int? query_dtype=None, int? key_dtype=None, int? value_dtype=None, int? query_rope_dtype=None, int? key_rope_dtype=None, int? key_shared_prefix_dtype=None, int? value_shared_prefix_dtype=None, int? dequant_scale_query_dtype=None, int? dequant_scale_key_dtype=None, int? dequant_scale_value_dtype=None, int? dequant_scale_key_rope_dtype=None, int? out_dtype=None) -> (Tensor, Tensor), 'out': npu::npu_fused_infer_attention_score_v2.out(Tensor query, Tensor key, Tensor value, *, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_qlen=None, SymInt[]? actual_seq_kvlen=None, Tensor? block_table=None, Tensor? dequant_scale_query=None, Tensor? dequant_scale_key=None, Tensor? dequant_offset_key=None, Tensor? dequant_scale_value=None, Tensor? dequant_offset_value=None, Tensor? dequant_scale_key_rope=None, Tensor? quant_scale_out=None, Tensor? quant_offset_out=None, Tensor? quant_scale_p=None, Tensor? learnable_sink=None, int num_query_heads=1, int num_key_value_heads=0, float softmax_scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int sparse_mode=0, int block_size=0, int query_quant_mode=0, int key_quant_mode=0, int value_quant_mode=0, int inner_precise=0, bool return_softmax_lse=False, int? query_dtype=None, int? key_dtype=None, int? value_dtype=None, int? query_rope_dtype=None, int? key_rope_dtype=None, int? key_shared_prefix_dtype=None, int? value_shared_prefix_dtype=None, int? dequant_scale_query_dtype=None, int? dequant_scale_key_dtype=None, int? dequant_scale_value_dtype=None, int? dequant_scale_key_rope_dtype=None, int? out_dtype=None, Tensor? workspace=None, Tensor[] out) -> (Tensor, Tensor)}",
+      "trace_directory": "/home/z30086261/FGW/reports/mha/latest/mha_kernel_inspect_20261112_154329_266800/fia_trace",
+      "trace_files": [
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/profiler_info.json",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/profiler_metadata.json",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/FRAMEWORK/torch.op_mark",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/FRAMEWORK/torch.op_range",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154342_1599208_MemoryViewParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154342_1599218_CommunicationParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154341_1599184_OperatorViewParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154341_1599177_TraceViewParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154340_1598942_CANNExportParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154342_1599204_KernelViewParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154341_1599187_TraceStepTimeParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154340_1598949_TracePreParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154341_1599179_CANNAnalyzeParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154342_1599206_IntegrateParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/logs/profiler_20261112154340_1598927_ProfilingParser.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/ascend_pytorch_profiler.db",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/analysis.db",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/operator_details.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/task_time.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/api_statistic.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/step_trace_time.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/analyse.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_log/msprof_analysis_1599159.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_log/collection_device_0.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_log/msprof_analysis_1599059.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_log/collection_host.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_log/collection_analyze.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_log/msprof_analysis_1598965.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/info.json",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/end_info.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/host_start.log",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/info.json.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/sample.json",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/sample.json.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/start_info.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/end_info",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/start_info",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/host_start.log.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/start_info.0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/host_start.log.0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/end_info.0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/start_info.0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/sample.json",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/sample.json.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/host_start.log.0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/dev_start.log.0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/end_info.0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/info.json.0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/dev_start.log.0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/info.json.0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_output/api_statistic_20261112154341.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_output/task_time_20261112154341.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_output/op_statistic_20261112154341.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_output/op_summary_20261112154341.csv",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_output/msprof_20261112154340.json",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_output/README.txt",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_output/step_trace_20261112154340.json",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.compact.stream_sq_info.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.hash_dic.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_5.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.hash_dic.slice_1.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_5",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.compact.stream_sq_info.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.additional.context_id_info.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.api_event.data.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.api_event.data.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.additional.tensor_info.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_3",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.compact.node_basic_info.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.compact.expand_stream_spec.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.hash_dic.slice_1",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.additional.tensor_info.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_1",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_3.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.compact.task_track.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_4",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_2",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/all_file.complete",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_1.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.compact.expand_stream_spec.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_2.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.compact.task_track.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.compact.node_basic_info.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.hash_dic.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/aging.additional.context_id_info.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/host/data/unaging.additional.type_info_dic.slice_4.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/data/ffts_profile.data.0.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/data/stars_soc.data.0.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/data/stars_soc_profile.data.0.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/data/stars_soc_profile.data.0.slice_0",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/data/all_file.complete",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/data/stars_soc.data.0.slice_0.done",
+        "fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/device_0/data/ffts_profile.data.0.slice_0.done"
+      ],
+      "returncode": 0
+    },
+    "v7-export": {
+      "status": "passed",
+      "mode": "v7-export",
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "torch_npu": "2.13.0"
+      },
+      "cann_environment": {
+        "ASCEND_HOME_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+        "ASCEND_TOOLKIT_HOME": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0",
+        "ASCEND_OPP_PATH": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp",
+        "ASCEND_RT_VISIBLE_DEVICES": null
+      },
+      "cann_version_probe_error": "module 'torch_npu.npu' has no attribute 'get_cann_version'",
+      "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=cc08d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+      "tilelang": "0.1.15+cpu.gita7cb753d",
+      "split_policy": "cost_model",
+      "num_splits": 1,
+      "query_tile_tasks": 512,
+      "kernel_source_sha256": "48ad471ff4b4d8f25a437165ddd62d01be97cdb1d724ed558154eef1a0375434",
+      "generated_source_sha256": "cce160f7df3aae0017f80890af9ef89593bbe605be79b552e355a05dabffa16c",
+      "ir_files": [
+        "v7_passes/direct/005_tl.AddWrapperForSingleBufStore.py",
+        "v7_passes/direct/030_tl.ResolveCore.py",
+        "v7_passes/direct/007_tl.InjectAssumes.py",
+        "v7_passes/direct/043_tl.VerifyReducerConsumed.py",
+        "v7_passes/direct/046_tl.LegalizeSafeMemoryAccess.py",
+        "v7_passes/direct/080_tl.AscendThreadSync.py",
+        "v7_passes/direct/094_tirx.LowerCustomDatatypes.py",
+        "v7_passes/direct/000_pass_fn.py",
+        "v7_passes/direct/079_tl.AscendThreadSync.py",
+        "v7_passes/direct/053_tl.RewriteAscendBufferVersionLayout.py",
+        "v7_passes/direct/016_tl.AscendLayoutInference.py",
+        "v7_passes/direct/040_tl.LetInline.py",
+        "v7_passes/direct/081_tl.MergeIfStmt.py",
+        "v7_passes/direct/034_tl.RestoreWhileLoops.py",
+        "v7_passes/direct/083_tl.Simplify.py",
+        "v7_passes/direct/078_tl.RewriteFlagToBuf.py",
+        "v7_passes/direct/020_pass_fn.py",
+        "v7_passes/direct/037_tl.AscendSimdVFLowerParallel.py",
+        "v7_passes/direct/041_tl.Simplify.py",
+        "v7_passes/direct/056_tl.ConfigIndexBitwidth.py",
+        "v7_passes/direct/090_tirx.BindTarget.py",
+        "v7_passes/direct/012_tl.VerifyReducerEpoch.py",
+        "v7_passes/direct/039_tl.Simplify.py",
+        "v7_passes/direct/032_tl.MaterializeMultiBuffer.py",
+        "v7_passes/direct/011_tl.CanonicalizeLegacyReducer.py",
+        "v7_passes/direct/084_tl.LowerDeviceKernelLaunch.py",
+        "v7_passes/direct/082_tl.MakePackedAPI.py",
+        "v7_passes/direct/050_tl.HoistGlobalBufferAllocations.py",
+        "v7_passes/direct/059_tl.RewriteFp4ToFp4x2.py",
+        "v7_passes/direct/026_tl.AnnotateMultiBufferEligible.py",
+        "v7_passes/direct/038_tl.LetInline.py",
+        "v7_passes/direct/014_tl.UnrollLoopSkipVF.py",
+        "v7_passes/direct/067_tl.AscendRemoveNoOp.py",
+        "v7_passes/direct/047_tl.LowerAccessPtr.py",
+        "v7_passes/direct/021_tl.AscendInsertOOBPadding.py",
+        "v7_passes/direct/055_tl.FlattenBuffer.py",
+        "v7_passes/direct/004_tl.MaterializeKernelLaunch.py",
+        "v7_passes/direct/049_tl.HoistNonRestrictParams.py",
+        "v7_passes/direct/015_tl.Simplify.py",
+        "v7_passes/direct/010_tl.Simplify.py",
+        "v7_passes/direct/025_tl.AssignCore.py",
+        "v7_passes/direct/044_tl.DecoupleTypeCast.py",
+        "v7_passes/direct/045_tl.LegalizeVectorizedLoop.py",
+        "v7_passes/direct/027_tl.EstimateLatency.py",
+        "v7_passes/direct/068_tirx.VerifyMemory.py",
+        "v7_passes/direct/062_s_tir.RenormalizeSplitPattern.py",
+        "v7_passes/direct/086_tirx.Filter.py",
+        "v7_passes/direct/092_tirx.BF16StorageLegalize.py",
+        "v7_passes/direct/070_s_tir.InferFragment.py",
+        "v7_passes/direct/036_tl.NormalizeBufferVersion.py",
+        "v7_passes/direct/060_tl.LoopUnswitching.py",
+        "v7_passes/direct/002_pass_fn.py",
+        "v7_passes/direct/075_tl.SplitHostDevice.py",
+        "v7_passes/direct/022_tl.NormalizeControlFlowForSchedule.py",
+        "v7_passes/direct/077_tl.MergeUBAllocations.py",
+        "v7_passes/direct/054_tirx.NarrowDataType.py",
+        "v7_passes/direct/093_tirx.LowerTVMBuiltin.py",
+        "v7_passes/direct/088_tirx.Simplify.py",
+        "v7_passes/direct/051_tl.LowerOpaqueBlock.py",
+        "v7_passes/direct/057_tirx.Simplify.py",
+        "v7_passes/direct/033_tl.LowerScheduledTIR.py",
+        "v7_passes/direct/006_tl.LegalizeNegativeIndex.py",
+        "v7_passes/direct/061_tl.UnrollLoop.py",
+        "v7_passes/direct/065_s_tir.InsertHoistIfThenElse.py",
+        "v7_passes/direct/003_tirx.BindTarget.py",
+        "v7_passes/direct/066_tirx.Simplify.py",
+        "v7_passes/direct/018_tl.NormalizeAscendFractalStorage.py",
+        "v7_passes/direct/013_tl.VerifyBufferInit.py",
+        "v7_passes/direct/072_tl.AnnotateDeviceRegions.py",
+        "v7_passes/direct/089_pass_fn.py",
+        "v7_passes/direct/074_tirx.ConvertSSA.py",
+        "v7_passes/direct/024_tl.MaterializeScheduleUnits.py",
+        "v7_passes/direct/028_tl.AutoSchedule.py",
+        "v7_passes/direct/085_tirx.Filter.py",
+        "v7_passes/direct/029_tl.PrepareMultiBuffer.py",
+        "v7_passes/direct/095_tl.LowerIntrin.py",
+        "v7_passes/direct/071_tl.LowerThreadAllreduce.py",
+        "v7_passes/direct/052_tl.Simplify.py",
+        "v7_passes/direct/017_tl.ReducerPlanAndMaterialize.py",
+        "v7_passes/direct/058_tl.VectorizeLoop.py",
+        "v7_passes/direct/087_tl.LowerIntrin.py",
+        "v7_passes/direct/009_tl.LegalizeSimdMerging.py",
+        "v7_passes/direct/035_tl.Simplify.py",
+        "v7_passes/direct/023_tl.NormalizeConflictHints.py",
+        "v7_passes/direct/091_tirx.FP8StorageLegalize.py",
+        "v7_passes/direct/063_tirx.Simplify.py",
+        "v7_passes/direct/073_tl.MarkScalarDcacheBypass.py",
+        "v7_passes/direct/069_tirx.AnnotateEntryFunc.py",
+        "v7_passes/direct/048_tl.Simplify.py",
+        "v7_passes/direct/019_tl.InsertNd2Nz.py",
+        "v7_passes/direct/064_tl.AscendRemoveNoOp.py",
+        "v7_passes/direct/008_tl.RewriteDualCopy.py",
+        "v7_passes/direct/076_tl.AnnotateReadOnlyParams.py",
+        "v7_passes/direct/042_tl.AscendLowerTileOp.py",
+        "v7_passes/direct/001_pass_fn.py",
+        "v7_passes/direct/031_tl.InsertSync.py"
+      ],
+      "returncode": 0
+    }
+  },
+  "runtime_kernel_rows": [
+    {
+      "source": "/home/z30086261/FGW/reports/mha/latest/mha_kernel_inspect_20261112_154329_266800/fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv",
+      "rows": [
+        {
+          "Step Id": "0",
+          "Device_id": "0",
+          "Model ID": "4294967295",
+          "Task ID": "12",
+          "Stream ID": "56",
+          "Name": "FusedInferAttentionScore",
+          "Type": "FusedInferAttentionScore",
+          "OP State": "dynamic",
+          "Accelerator Core": "MIX_AIC",
+          "Start Time(us)": "1794498219544628.095\t",
+          "Duration(us)": "227.096",
+          "Wait Time(us)": "0",
+          "Block Num": "28",
+          "Mix Block Num": "56",
+          "HF32 Eligible": "NO",
+          "Input Shapes": "\"2,4096,8,128;32,128,1024;32,128,1024;;;2;2;;;;;;;;2,16;;;;;;;;;;;;;;;;\"",
+          "Input Data Types": "DT_BF16;DT_BF16;DT_BF16;DT_UNDEFINED;DT_UNDEFINED;INT64;INT64;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;INT32;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED",
+          "Input Formats": "ND;ND;ND;NULL;NULL;ND;ND;NULL;NULL;NULL;NULL;NULL;NULL;NULL;ND;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL",
+          "Output Shapes": "\"2,4096,8,128;\"",
+          "Output Data Types": "DT_BF16;FLOAT",
+          "Output Formats": "ND;ND",
+          "Context ID": "N/A",
+          "aicore_time(us)": "226.12",
+          "aic_total_cycles": "10104703",
+          "aic_mac_time(us)": "197.662",
+          "aic_mac_ratio": "0.874",
+          "aic_scalar_time(us)": "199.435",
+          "aic_scalar_ratio": "0.882",
+          "aic_mte1_time(us)": "126.14",
+          "aic_mte1_ratio": "0.558",
+          "aic_mte2_time(us)": "187.684",
+          "aic_mte2_ratio": "0.83",
+          "aic_mte3_time(us)": "0.001",
+          "aic_mte3_ratio": "0.0",
+          "aic_fixpipe_time(us)": "192.524",
+          "aic_fixpipe_ratio": "0.851",
+          "aic_icache_miss_rate": "0.0",
+          "aiv_time(us)": "225.03",
+          "aiv_total_cycles": "20792328",
+          "aiv_vec_time(us)": "190.827",
+          "aiv_vec_ratio": "0.848",
+          "aiv_scalar_time(us)": "148.15",
+          "aiv_scalar_ratio": "0.658",
+          "aiv_mte2_time(us)": "2.908",
+          "aiv_mte2_ratio": "0.013",
+          "aiv_mte3_time(us)": "113.803",
+          "aiv_mte3_ratio": "0.506",
+          "aiv_icache_miss_rate": "0.004",
+          "cube_utilization(%)": "96.310"
+        }
+      ],
+      "total_rows": 1,
+      "truncated": false
+    },
+    {
+      "source": "/home/z30086261/FGW/reports/mha/latest/mha_kernel_inspect_20261112_154329_266800/fia_trace/ubuntu162_1598361_20261112154339382_ascend_pt/PROF_000001_20261112154339400_01598361IBQMRENH/mindstudio_profiler_output/op_summary_20261112154341.csv",
+      "rows": [
+        {
+          "Device_id": "0",
+          "Model ID": "4294967295",
+          "Task ID": "12",
+          "Stream ID": "56",
+          "Op Name": "FusedInferAttentionScore",
+          "OP Type": "FusedInferAttentionScore",
+          "OP State": "dynamic",
+          "Task Type": "MIX_AIC",
+          "Task Start Time(us)": "1794498219544628.095\t",
+          "Task Duration(us)": "227.096",
+          "Task Wait Time(us)": "0",
+          "Block Num": "28",
+          "Mix Block Num": "56",
+          "HF32 Eligible": "NO",
+          "Input Shapes": "\"2,4096,8,128;32,128,1024;32,128,1024;;;2;2;;;;;;;;2,16;;;;;;;;;;;;;;;;\"",
+          "Input Data Types": "DT_BF16;DT_BF16;DT_BF16;DT_UNDEFINED;DT_UNDEFINED;INT64;INT64;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;INT32;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED",
+          "Input Formats": "ND;ND;ND;NULL;NULL;ND;ND;NULL;NULL;NULL;NULL;NULL;NULL;NULL;ND;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL;NULL",
+          "Output Shapes": "\"2,4096,8,128;\"",
+          "Output Data Types": "DT_BF16;FLOAT",
+          "Output Formats": "ND;ND",
+          "Context ID": "N/A",
+          "aicore_time(us)": "226.12",
+          "aic_total_cycles": "10104703",
+          "aic_mac_time(us)": "197.662",
+          "aic_mac_ratio": "0.874",
+          "aic_scalar_time(us)": "199.435",
+          "aic_scalar_ratio": "0.882",
+          "aic_mte1_time(us)": "126.14",
+          "aic_mte1_ratio": "0.558",
+          "aic_mte2_time(us)": "187.684",
+          "aic_mte2_ratio": "0.83",
+          "aic_mte3_time(us)": "0.001",
+          "aic_mte3_ratio": "0.0",
+          "aic_fixpipe_time(us)": "192.524",
+          "aic_fixpipe_ratio": "0.851",
+          "aic_icache_miss_rate": "0.0",
+          "aiv_time(us)": "225.03",
+          "aiv_total_cycles": "20792328",
+          "aiv_vec_time(us)": "190.827",
+          "aiv_vec_ratio": "0.848",
+          "aiv_scalar_time(us)": "148.15",
+          "aiv_scalar_ratio": "0.658",
+          "aiv_mte2_time(us)": "2.908",
+          "aiv_mte2_ratio": "0.013",
+          "aiv_mte3_time(us)": "113.803",
+          "aiv_mte3_ratio": "0.506",
+          "aiv_icache_miss_rate": "0.004",
+          "cube_utilization(%)": "96.310"
+        }
+      ],
+      "total_rows": 1,
+      "truncated": false
+    }
+  ],
+  "trace_kernel_events": [],
+  "runtime_log": {
+    "matched_lines": 89453,
+    "retained_lines": 1500,
+    "truncated": true,
+    "path": "/home/z30086261/FGW/reports/mha/latest/mha_kernel_inspect_runtime_tiling.log",
+    "raw_path": "/home/z30086261/FGW/reports/mha/latest/mha_kernel_inspect_20261112_154329_266800/fia-debug.log"
+  },
+  "runtime_numeric_fields": {
+    "size": [
+      "1304"
+    ],
+    "tilingKey": [
+      "17309893124",
+      "17309893380",
+      "17309893892",
+      "17309894404",
+      "17309894660",
+      "17309897220",
+      "17309898500",
+      "17309898756",
+      "17312252928",
+      "17312252929",
+      "17312252930",
+      "17312252932",
+      "17444110852",
+      "17444111108",
+      "17444111620",
+      "17444112132",
+      "17444112388",
+      "17444114948",
+      "17444116228",
+      "17444116484",
+      "17446470656",
+      "17446470657",
+      "17446470658",
+      "17446470660",
+      "17580688384",
+      "17580688385",
+      "17580688386",
+      "17580688388",
+      "17714906112",
+      "17714906113",
+      "17714906114",
+      "17714906116",
+      "17846764036",
+      "17846764292",
+      "17846764804",
+      "17846765316",
+      "17846765572",
+      "17846768132",
+      "17846769412",
+      "17846769668",
+      "17849123840",
+      "17849123841",
+      "17849123842",
+      "17849123844",
+      "17980981764",
+      "17980982020",
+      "17980982532",
+      "17980983044",
+      "17980983300",
+      "17980985860",
+      "17980987140",
+      "17980987396",
+      "17983341568",
+      "17983341569",
+      "17983341570",
+      "17983341572",
+      "18117559296",
+      "18117559297",
+      "18117559298",
+      "18117559300",
+      "18251777024",
+      "18251777025",
+      "18251777026",
+      "18251777028",
+      "37176476417",
+      "4424990720"
+    ],
+    "dfxSize": [
+      "768"
+    ],
+    "shareMemSize": [
+      "8192"
+    ],
+    "userParamNum": [
+      "35"
+    ],
+    "sysParamNum": [
+      "1"
+    ],
+    "bSize": [
+      "2"
+    ],
+    "n2Size": [
+      "8"
+    ],
+    "gSize": [
+      "1"
+    ],
+    "s1Size": [
+      "4096"
+    ],
+    "s2Size": [
+      "2048"
+    ],
+    "actualSeqPrefixSize": [
+      "0"
+    ],
+    "mBaseSize": [
+      "128"
+    ],
+    "s2BaseSize": [
+      "128"
+    ],
+    "gS1BaseSizeOfFd": [
+      "8"
+    ],
+    "usedCoreNum": [
+      "28"
+    ],
+    "fdNum": [
+      "27"
+    ],
+    "fdUsedVecNum": [
+      "54"
+    ],
+    "fdS2SplitNum[0]": [
+      "2"
+    ],
+    "mSize[0]": [
+      "128"
+    ],
+    "fdS2SplitNum[1]": [
+      "2"
+    ],
+    "mSize[1]": [
+      "128"
+    ],
+    "fdS2SplitNum[2]": [
+      "2"
+    ],
+    "mSize[2]": [
+      "128"
+    ],
+    "fdS2SplitNum[3]": [
+      "2"
+    ],
+    "mSize[3]": [
+      "128"
+    ],
+    "fdS2SplitNum[4]": [
+      "2"
+    ],
+    "mSize[4]": [
+      "128"
+    ],
+    "fdS2SplitNum[5]": [
+      "2"
+    ],
+    "mSize[5]": [
+      "128"
+    ],
+    "fdS2SplitNum[6]": [
+      "2"
+    ],
+    "mSize[6]": [
+      "128"
+    ],
+    "fdS2SplitNum[7]": [
+      "2"
+    ],
+    "mSize[7]": [
+      "128"
+    ],
+    "fdS2SplitNum[8]": [
+      "2"
+    ],
+    "mSize[8]": [
+      "128"
+    ],
+    "fdS2SplitNum[9]": [
+      "2"
+    ],
+    "mSize[9]": [
+      "128"
+    ],
+    "fdS2SplitNum[10]": [
+      "2"
+    ],
+    "mSize[10]": [
+      "128"
+    ],
+    "fdS2SplitNum[11]": [
+      "2"
+    ],
+    "mSize[11]": [
+      "128"
+    ],
+    "fdS2SplitNum[12]": [
+      "2"
+    ],
+    "mSize[12]": [
+      "128"
+    ],
+    "fdS2SplitNum[13]": [
+      "2"
+    ],
+    "mSize[13]": [
+      "128"
+    ],
+    "fdS2SplitNum[14]": [
+      "2"
+    ],
+    "mSize[14]": [
+      "128"
+    ],
+    "fdS2SplitNum[15]": [
+      "2"
+    ],
+    "mSize[15]": [
+      "128"
+    ],
+    "fdS2SplitNum[16]": [
+      "2"
+    ],
+    "mSize[16]": [
+      "128"
+    ],
+    "fdS2SplitNum[17]": [
+      "2"
+    ],
+    "mSize[17]": [
+      "128"
+    ],
+    "fdS2SplitNum[18]": [
+      "2"
+    ],
+    "mSize[18]": [
+      "128"
+    ],
+    "fdS2SplitNum[19]": [
+      "2"
+    ],
+    "mSize[19]": [
+      "128"
+    ],
+    "fdS2SplitNum[20]": [
+      "2"
+    ],
+    "mSize[20]": [
+      "128"
+    ],
+    "fdS2SplitNum[21]": [
+      "2"
+    ],
+    "mSize[21]": [
+      "128"
+    ],
+    "fdS2SplitNum[22]": [
+      "2"
+    ],
+    "mSize[22]": [
+      "128"
+    ],
+    "fdS2SplitNum[23]": [
+      "2"
+    ],
+    "mSize[23]": [
+      "128"
+    ],
+    "fdS2SplitNum[24]": [
+      "2"
+    ],
+    "mSize[24]": [
+      "128"
+    ],
+    "fdS2SplitNum[25]": [
+      "2"
+    ],
+    "mSize[25]": [
+      "128"
+    ],
+    "fdS2SplitNum[26]": [
+      "2"
+    ],
+    "mSize[26]": [
+      "128"
+    ],
+    "Num": [
+      "28",
+      "56"
+    ],
+    "t1Size": [
+      "0"
+    ],
+    "t2Size": [
+      "0"
+    ],
+    "dSize": [
+      "128"
+    ],
+    "dSizeV": [
+      "128"
+    ],
+    "dSizeRope": [
+      "0"
+    ],
+    "actualSeqLengthsQSize": [
+      "2"
+    ],
+    "actualSeqLengthsKVSize": [
+      "2"
+    ],
+    "coreNum": [
+      "28"
+    ],
+    "attenMaskS1Size": [
+      "0"
+    ],
+    "attenMaskS2Size": [
+      "0"
+    ],
+    "pseS1Size": [
+      "0"
+    ],
+    "pseS2Size": [
+      "0"
+    ],
+    "prefixSeqInnerSize": [
+      "0"
+    ],
+    "blockSize": [
+      "128"
+    ],
+    "maxBlockNumPerBatch": [
+      "16"
+    ],
+    "accumOutSize": [
+      "0"
+    ],
+    "logSumExpSize": [
+      "0"
+    ],
+    "enableS1OutSplit": [
+      "0"
+    ],
+    "totalSize": [
+      "0"
+    ],
+    "singleCoreSize": [
+      "149797"
+    ],
+    "totalOutputSize": [
+      "8388608"
+    ],
+    "totalSoftMaxLseOutputSize": [
+      "0"
+    ],
+    "numBlocks": [
+      "28"
+    ],
+    "aicpuNumBlocks": [
+      "0"
+    ],
+    "dynBufSize": [
+      "0"
+    ],
+    "arg_size": [
+      "4216"
+    ],
+    "coreDim": [
+      "28"
+    ],
+    "dynamicSmSize": [
+      "0"
+    ],
+    "groupBlockDim": [
+      "0",
+      "14"
+    ],
+    "hostInputInfoNum": [
+      "5"
+    ],
+    "argsSize": [
+      "4216"
+    ],
+    "hasTiling": [
+      "0"
+    ],
+    "blockDim": [
+      "28"
+    ],
+    "blockdim": [
+      "28"
+    ]
+  },
+  "tiling_status": "runtime_log_fields_available",
+  "v7_ir_snapshots": {
+    "AutoSchedule": "/home/z30086261/FGW/reports/mha/latest/mha_kernel_inspect_v7_AutoSchedule.py",
+    "InsertSync": "/home/z30086261/FGW/reports/mha/latest/mha_kernel_inspect_v7_InsertSync.py"
+  },
+  "kernel_names_status": "profiler_records_available"
+}
