@@ -92,7 +92,7 @@ def main():
                 try:
                     kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
                         "bfloat16", args.device, schedule_mode="manual",
-                        num_splits=1 if variant == "v7_split1" else None)
+                        num_splits=1 if variant == "v7_split1" else None, split_policy="legacy")
                     call = functools.partial(kernel, *inputs)
                     got = call().cpu()
                     kernel_mode = kernel.execution_mode

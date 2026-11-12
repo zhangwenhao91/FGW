@@ -101,7 +101,7 @@ def main():
             programs = {}
             correctness = {}
             auto_kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
-                "bfloat16", args.device, schedule_mode="manual")
+                "bfloat16", args.device, schedule_mode="manual", split_policy="legacy")
             model_kernel = None
             if args.evaluate_cost_model:
                 model_kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,

@@ -53,9 +53,11 @@ def main():
             print(f"Compiling/exporting {name} ...", flush=True)
             program = implementation.build_kernel(b, sq, h, 128, b * length, length // 128,
                 128, False, "bfloat16", args.device, q_resident=True,
-                pipeline_stages=2, buffer_versions=2, kv_versions=2, dump_ir_dir=str(dest / "passes"), schedule_mode=args.schedule_mode)
+                pipeline_stages=2, buffer_versions=2, kv_versions=2, dump_ir_dir=str(dest / "passes"), schedule_mode=args.schedule_mode, full_kv_cache=True)
             direct = getattr(program, "execution_mode", "") == "direct_single_split"
             kernels = {"direct": program.direct_kernel} if direct else {"partial": program.partial_kernel, "merge": program.merge_kernel}
+            row["split_policy"] = program.split_policy
+            row["num_splits"] = program.num_splits
             row["kernel_mode"] = getattr(program, "execution_mode", "unknown")
             for label, kernel in kernels.items():
                 item = {"name": label, "optional_export_errors": {}}

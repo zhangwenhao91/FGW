@@ -115,7 +115,7 @@ def main():
             table = torch.randperm(batch * width, generator=gen).reshape(batch, width).int()
             lengths = torch.full((batch,), length, dtype=torch.int32)
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
-            extra = {"q_resident": args.q_resident, "kv_versions": args.kv_versions, "schedule_mode": args.schedule_mode} if args.impl == "v7" else {}
+            extra = {"q_resident": args.q_resident, "kv_versions": args.kv_versions, "schedule_mode": args.schedule_mode, "full_kv_cache": True} if args.impl == "v7" else {}
             program = build_kernel(batch, sq, heads, d, k.shape[0], width, page, causal, "bfloat16", args.device,
                                    pipeline_stages=args.pipeline_stages, buffer_versions=args.buffer_versions, **extra)
             got = program(*inputs).cpu()
@@ -148,6 +148,8 @@ def main():
                     splits = 1
                     while splits < 16 and splits * 2 <= length // 128 and tasks * splits < 128:
                         splits *= 2
+                    splits = getattr(program, "num_splits", splits)
+                    row["split_policy"] = getattr(program, "split_policy", "legacy")
                     row["launch_geometry"] = {"query_tile_tasks": tasks, "splits": splits,
                         "partial_grid": tasks * splits,
                         "merge_work": batch * heads * ((sq + 7) // 8),

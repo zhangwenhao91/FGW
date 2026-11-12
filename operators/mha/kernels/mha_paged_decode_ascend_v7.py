@@ -21,9 +21,10 @@ def route(dtype, dim, page_size, sq=1, causal=False):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="legacy"):
-    if split_policy not in ("legacy", "cost_model"):
-        raise ValueError("split_policy must be legacy or cost_model")
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False):
+    requested_split_policy = split_policy
+    if split_policy not in ("auto", "legacy", "cost_model"):
+        raise ValueError("split_policy must be auto, legacy or cost_model")
     if num_splits is not None and (type(num_splits) is not int or num_splits not in (1, 2, 4, 8, 16)):
         raise ValueError("num_splits supports None (automatic) or 1/2/4/8/16")
     if schedule_mode not in ("auto", "auto-offset", "manual"):
@@ -45,9 +46,20 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if page_size <= 0 or pool_rows <= 0 or pool_rows % page_size or width <= 0:
         raise ValueError("positive page size, whole pool pages and positive table width required")
     if route(dtype, dim, page_size, sq, causal) != "cube_bf16_d128":
-        if num_splits is not None or split_policy != "legacy":
+        if num_splits is not None or split_policy == "cost_model":
             raise ValueError("split override/policy requires the v7 Cube path")
         return build_v2(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)
+    if split_policy == "auto":
+        from operators.mha.split_cost_model import eligible_config
+        cores = None
+        if full_kv_cache:
+            props = torch.npu.get_device_properties(device_index if device_index is not None else torch.npu.current_device())
+            cores = getattr(props, "cube_core_num", None)
+        use_model = eligible_config(batch, sq, heads, width * page_size, dtype=dtype, dim=dim,
+            page_size=page_size, causal=causal, pipeline_stages=pipeline_stages,
+            buffer_versions=buffer_versions, kv_versions=kv_versions, q_resident=q_resident,
+            schedule_mode=schedule_mode, full_kv_cache=full_kv_cache, cube_cores=cores)
+        split_policy = "cost_model" if use_model else "legacy"
     BR, BC, ROWS, VL, D = 128, 128, 64, 64, 128
     dtype, accum_dtype = "bfloat16", "float32"
     scale = D ** -0.5
@@ -486,7 +498,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             prepared = q.permute(0, 2, 1, 3).contiguous()
             return direct_kernel(prepared, k, v, table, lengths).view(batch, sq, heads, D)
 
-        launch_direct.split_policy = split_policy
+        launch_direct.requested_split_policy = requested_split_policy
+        launch_direct.split_policy = "explicit" if num_splits is not None else split_policy
         launch_direct.num_splits = splits
         launch_direct.query_tile_tasks = tasks
         launch_direct.execution_mode = "direct_single_split"
@@ -506,7 +519,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
         return merge_kernel(parts, lse)
     # Expose the exact compiled callables for isolated profiling; launch unchanged.
-    launch.split_policy = split_policy
+    launch.requested_split_policy = requested_split_policy
+    launch.split_policy = "explicit" if num_splits is not None else split_policy
     launch.num_splits = splits
     launch.query_tile_tasks = tasks
     launch.execution_mode = "split_and_merge"
@@ -517,7 +531,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
                      page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
-                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="legacy"):
+                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto"):
     """Same public tensor contract as v0; metadata values must be valid."""
     if q.ndim != 4 or k_cache.ndim != 3:
         raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")
@@ -535,13 +549,15 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
     inputs = (q, k_cache, v_cache, block_table, cache_seqlens)
     if q.device.type != "npu" or any(x.device != q.device or not x.is_contiguous() for x in inputs):
         raise ValueError("contiguous inputs on the same NPU required")
+    full_kv_cache = False
     if route(q.dtype, d, page_size, sq, is_causal) == "cube_bf16_d128":
         lengths = cache_seqlens.cpu().tolist()
+        full_kv_cache = all(n == block_table.shape[1] * page_size for n in lengths)
         if any(n <= 0 or n % 128 or n > block_table.shape[1] * page_size for n in lengths):
             raise ValueError("Full-block Cube path requires positive 128-aligned cache lengths within table capacity")
     with torch.npu.device(q.device):
         kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
                               page_size, is_causal,
                               "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index, pipeline_stages=pipeline_stages, buffer_versions=buffer_versions,
-                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy)
+                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache)
         return kernel(*inputs)

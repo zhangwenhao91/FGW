@@ -20,6 +20,8 @@ def main():
                         help="auto prefers v2 if exposed; no silent retry after runtime/accuracy failures")
     parser.add_argument("--split-comparison", action="store_true",
                         help="Also compare forced v7 num_splits=1 against auto split and FIA")
+    parser.add_argument("--bh", nargs="+", default=["2x8", "1x1"])
+    parser.add_argument("--compare-legacy", action="store_true")
     parser.add_argument("--kv", type=int, default=2048)
     parser.add_argument("--rounds", type=int, default=2)
     parser.add_argument("--repeat", type=int, default=51)
@@ -32,8 +34,13 @@ def main():
     if (min(args.q_lengths) < 1 or args.kv < 128 or args.kv % 128 or args.rounds < 1
             or args.repeat < 3 or args.warmup < 1 or not math.isfinite(args.peak_tflops) or args.peak_tflops <= 0):
         parser.error("positive Q, 128-aligned KV, rounds>=1, repeat>=3, warmup>=1, positive finite peak required")
-    cases = [(track, b, h, q) for track, b, h in (("batch2_head8", 2, 8), ("batch1_head1", 1, 1))
-             for q in args.q_lengths]
+    try:
+        bh = [tuple(map(int, item.split("x"))) for item in args.bh]
+        if any(len(pair) != 2 or min(pair) <= 0 for pair in bh):
+            raise ValueError()
+    except ValueError:
+        parser.error("--bh requires positive BxH pairs")
+    cases = [(f"batch{b}_head{h}", b, h, q) for b, h in bh for q in args.q_lengths]
     if args.list_only:
         print(json.dumps(cases, indent=2))
         return 0
@@ -45,9 +52,10 @@ def main():
                     "https://github.com/Ascend/op-plugin/blob/master/op_plugin/config/op_plugin_functions.yaml"],
         "flops_policy": "4*B*H*Q*KV*128, noncausal useful QK+PV only; no padding/softmax FLOPs",
         "timing": "Full native callable, warm-cache NPU Event median; one call per sample. Excludes compile, H2D, CPU reference, metadata/list preparation and zero-copy K/V view creation. Includes output allocation and stream-visible launch gaps. v7 includes Q conversion and merge; FIA uses original paged storage without gather, same BSND Q/O.",
+        "v7_variant_policy": "v7_manual_bf16=guarded current default; v7_legacy_bf16=old automatic strategy; v7_split1_bf16=explicit split1",
         "comparison": "All cases match B/H/Q/KV, values, page table and per-request lengths. BF16 Q/K/V/O, D128, page128, noncausal, scale=128**-0.5, seed7. v7 manual/stages2/Q resident. FIA inner_precise=0, sparse_mode=0, no mask, no quantization. No source installation or environment modification."}
     if args.split_comparison:
-        report["comparison"] += " Includes forced num_splits=1 candidate, same tuning otherwise; measures whole strategy change, not isolated merge time. Production defaults unchanged."
+        report["comparison"] += " Includes forced num_splits=1 candidate, same tuning otherwise; measures whole strategy change, not isolated merge time. Default auto policy selects cost_model only for eligible full-cache configurations; otherwise legacy."
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
     summary_path = path.with_name(path.stem + "_summary.json")
@@ -74,6 +82,9 @@ def main():
             raise ValueError("378 TFLOPS assumes 28 Cube cores; override --peak-tflops")
         report["device"] = str(props)
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__, "tilelang": tilelang.__version__}
+        from operators.mha.split_cost_model import MODEL_PATH
+        report["cost_model_sha256"] = hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest()
+        report["cost_model_weights"] = json.loads(MODEL_PATH.read_text(encoding="utf-8"))["weights"]
         report["v7_sha256"] = hashlib.sha256(Path(v7.__file__).read_bytes()).hexdigest()
         report["api_probe"] = {}
         names = {"v2": "npu_fused_infer_attention_score_v2", "v1": "npu_fused_infer_attention_score"}
@@ -118,6 +129,8 @@ def main():
             correctness = {}
             geometry = {}
             variants = (("v7_manual_bf16", "v7_split1_bf16") if args.split_comparison else ("v7_manual_bf16",)) + tuple("ascendc_fia_" + api for api in selected)
+            if args.compare_legacy:
+                variants += ("v7_legacy_bf16",)
             # BnBsH physical layout: views only, same bytes and physical page IDs.
             paged_k = inputs[1].view(b * width, 128, h * 128)
             paged_v = inputs[2].view(b * width, 128, h * 128)
@@ -125,14 +138,15 @@ def main():
             q_lengths = [sq] * b
             for variant in variants:
                 try:
-                    if variant in ("v7_manual_bf16", "v7_split1_bf16"):
+                    if variant in ("v7_manual_bf16", "v7_split1_bf16", "v7_legacy_bf16"):
                         kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
                             "bfloat16", args.device, schedule_mode="manual",
-                            num_splits=1 if variant == "v7_split1_bf16" else None)
+                            num_splits=1 if variant == "v7_split1_bf16" else None,
+                            split_policy="legacy" if variant == "v7_legacy_bf16" else "auto", full_kv_cache=True)
                         call = functools.partial(kernel, *inputs)
                         got = call().cpu()
                         kernel_mode = kernel.execution_mode
-                        geometry[variant] = {"num_splits": kernel.num_splits,
+                        geometry[variant] = {"split_policy": kernel.split_policy, "num_splits": kernel.num_splits,
                             "query_tile_tasks": kernel.query_tile_tasks}
                     else:
                         api = variant.rsplit("_", 1)[1]
@@ -199,7 +213,7 @@ def main():
                         "mfu_percent": 100*tflops/args.peak_tflops, "samples_ms": samples[label]}
                     report["results"].append(row)
                     print(f"{track} Q={sq} {label} round={round_id+1}: {median*1000:.3f} us MFU={row['mfu_percent']:.4f}%", flush=True)
-                for v7_label in ("v7_manual_bf16", "v7_split1_bf16"):
+                for v7_label in ("v7_manual_bf16", "v7_split1_bf16", "v7_legacy_bf16"):
                     if v7_label not in samples:
                         continue
                     v7_ms = statistics.median(samples[v7_label])
@@ -223,6 +237,14 @@ def main():
                         "auto_median_us": auto_ms*1000, "split1_median_us": forced_ms*1000,
                         "speedup_split1_over_auto": auto_ms/forced_ms,
                         "latency_saved_us": (auto_ms-forced_ms)*1000})
+                if all(label in samples for label in ("v7_manual_bf16", "v7_legacy_bf16")):
+                    current_ms = statistics.median(samples["v7_manual_bf16"])
+                    legacy_ms = statistics.median(samples["v7_legacy_bf16"])
+                    report.setdefault("policy_comparisons", []).append({"track": track, "Q": sq, "KV": args.kv,
+                        "round": round_id+1, "current_policy": geometry["v7_manual_bf16"],
+                        "legacy_policy": geometry["v7_legacy_bf16"],
+                        "current_median_us": current_ms*1000, "legacy_median_us": legacy_ms*1000,
+                        "speedup_current_over_legacy": legacy_ms/current_ms})
                 save()
             del programs, inputs
         report.pop("active_case", None)

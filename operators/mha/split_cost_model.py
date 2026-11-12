@@ -29,3 +29,16 @@ def select_splits(batch, sq, heads, kv_tiles):
     scores = {s: sum(w*x for w, x in zip(weights, features(batch, sq, heads, kv_tiles, s)))
               for s in SPLITS if s <= kv_tiles}
     return min(scores, key=lambda s: (scores[s], s))
+
+
+def eligible_config(batch, sq, heads, kv_tokens, *, dtype, dim, page_size, causal,
+                    pipeline_stages, buffer_versions, kv_versions, q_resident,
+                    schedule_mode, full_kv_cache, cube_cores):
+    """Default promotion guard; explicit cost_model remains an experimental opt-in."""
+    return (full_kv_cache is True and cube_cores == 28
+        and str(dtype) in ("bfloat16", "torch.bfloat16") and dim == 128
+        and page_size == 128 and not causal and pipeline_stages == 2
+        and buffer_versions == 2 and kv_versions == 2 and q_resident
+        and schedule_mode == "manual" and 1 <= batch <= 4 and 1 <= heads <= 16
+        and batch * heads <= 32 and 1 <= sq <= 8192
+        and 512 <= kv_tokens <= 32768 and kv_tokens % 128 == 0)

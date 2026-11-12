@@ -1,5 +1,16 @@
 # FGW
 
+## 当前默认：验证范围内启用冻结split模型
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_model_default_ascendc
+```
+
+固定满缓存且配置在验证范围内时自动使用cost_model，其他情况保留legacy。
+冻结系数不变；同输入重新对照当前v7、旧策略v7和AscendC FIA v2。
+[范围、低层调用约定和上传文件](docs/mha_model_default.md)。
+
 ## split代价模型独立验证
 
 ```bash
@@ -8,7 +19,7 @@ python fgw.py mha run run_mha_split_model_validation
 ```
 
 模型已离线拟合并冻结，验证新B/H、KV4096/16384及原边界形状，逐项扫描全部split检查预测损失。
-默认仍legacy；[模型、离线误差与上传文件](docs/mha_split_cost_model.md)。
+该实验当时默认legacy；当前默认见上文。[模型、离线误差与上传文件](docs/mha_split_cost_model.md)。
 
 ## v7 split扫描
 

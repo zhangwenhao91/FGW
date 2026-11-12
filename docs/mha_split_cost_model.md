@@ -1,6 +1,6 @@
 # 实验性统一split代价模型
 
-默认split策略仍为legacy。显式候选：`split_policy="cost_model"`。
+本文记录候选阶段；当前默认范围见[mha_model_default.md](mha_model_default.md)。原候选入口：`split_policy="cost_model"`。
 参数num_splits显式指定时优先于策略，Cube计算体不变。
 候选仅用于28-Cube、BF16/D128、page128、非因果、manual/stages2/buffers2/Q驻留。
 模型使用页表容量对应KV块数；目前校准及验证均为每请求等长且缓存长度等于容量的场景。

@@ -196,10 +196,12 @@ def main():
                     extra = {"device_index": args.device} if args.impl != "v0" else {}
                     if args.impl == "v7":
                         extra.update(pipeline_stages=args.pipeline_stages, kv_versions=args.kv_versions,
-                                     q_resident=args.q_resident, schedule_mode=args.schedule_mode)
+                                     q_resident=args.q_resident, schedule_mode=args.schedule_mode, full_kv_cache=True)
                     kernel = build_kernel(b, sq, h, d, k.shape[0], width, p, causal,
                                           "float16" if dtype == torch.float16 else "bfloat16", **extra)
                     row["kernel_mode"] = getattr(kernel, "execution_mode", "legacy_or_fallback")
+                    row["split_policy"] = getattr(kernel, "split_policy", "legacy_or_fallback")
+                    row["num_splits"] = getattr(kernel, "num_splits", None)
                     got = kernel(*inputs).cpu()
                     if args.reference_chunk_size:
                         expected = chunked_cpu_reference(q, k, v, table, lengths, p, causal, args.reference_chunk_size)

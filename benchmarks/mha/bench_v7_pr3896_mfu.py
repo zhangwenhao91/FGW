@@ -115,7 +115,7 @@ def main():
                 try:
                     if variant == "v7_manual_bf16":
                         kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
-                            "bfloat16", args.device, schedule_mode="manual")
+                            "bfloat16", args.device, schedule_mode="manual", full_kv_cache=True)
                         call = functools.partial(kernel, *inputs)
                         got = call().cpu()
                         kernel_mode = kernel.execution_mode
