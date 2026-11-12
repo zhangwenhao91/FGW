@@ -22,7 +22,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal,
         raise ValueError("Positive tensor extents required")
     if page_size % 16 or pool_rows % page_size:
         raise ValueError("General Cube requires whole pages of a multiple of 16 tokens")
-    BR, BC, ROWS = 32, 16, 16
+    # ND->NZ scatter requires >=16 rows per AIV, including the K tile.
+    # Splitting BC=16 between two AIVs would produce an unsupported 8-row copy.
+    BR, BC, ROWS = 32, 32, 16
     # Keep the transposed V half-tile at least 16 rows wide. Zero feature
     # padding preserves QK and PV; attention scaling uses the original D.
     D = max(32, tilelang.next_power_of_2(dim))
@@ -86,18 +88,23 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal,
             T.copy(q_l1, qa)
             for block in T.serial(T.ceildiv(Lengths[b], BC)):
                 row0 = block * BC
-                physical = Table[b, row0 // page_size] * page_size + row0 % page_size
-                # BC divides every supported page. Branch before GM reads:
-                # unread cache rows can be NaN, and 0*NaN would corrupt PV.
+                # BC can cross a page boundary (e.g. page_size=16 or 48).
+                # Resolve each logical token through the page table, inside
+                # the validity guard, before reading either K or V.
+                # Unread cache rows can be NaN, and 0*NaN would corrupt PV.
                 with T.SimtVF(threads=128):
                     for j, d in T.Parallel(BC // 2, D):
                         k_ub[j, d] = 0
-                        if row0 + sid * (BC // 2) + j < Lengths[b] and d < dim:
-                            k_ub[j, d] = K[physical + sid * (BC // 2) + j, h, d]
+                        kpos = row0 + sid * (BC // 2) + j
+                        if kpos < Lengths[b] and d < dim:
+                            kphysical = Table[b, kpos // page_size] * page_size + kpos % page_size
+                            k_ub[j, d] = K[kphysical, h, d]
                     for d, j in T.Parallel(D // 2, BC):
                         v_ub[d, j] = 0
-                        if row0 + j < Lengths[b] and sid * (D // 2) + d < dim:
-                            v_ub[d, j] = V[physical + j, h, sid * (D // 2) + d]
+                        vpos = row0 + j
+                        if vpos < Lengths[b] and sid * (D // 2) + d < dim:
+                            vphysical = Table[b, vpos // page_size] * page_size + vpos % page_size
+                            v_ub[d, j] = V[vphysical, h, sid * (D // 2) + d]
                 T.copy(k_ub, k_nz[:BC // 2, :])
                 T.copy(v_ub, v_nz[:D // 2, :])
                 T.dual_copy(k_nz[:BC // 2, :], k_l1)

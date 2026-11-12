@@ -19,11 +19,18 @@ Cube QK 与 PV，不调用 v2，不因短 Q、因果或尾块改用 Vector 点�
 有效页号必须指向缓存池。此候选不新增 GQA、量化、滑窗或 KV 更新功能。
 
 实现位于 `operators/mha/kernels/mha_paged_decode_ascend_cube_general.py`。
-BR=32、BC=16，两 AIV 各处理 16 个 query；BC 整除所有支持的页大小，
-因此一次 KV tile 不会跨物理页。D 补到至少 32 的二次幂，补零由 kernel
+BR=32、BC=32，两 AIV 各处理 16 个 query，并各提供 16 行 K。
+每个 KV token 单独按逻辑位置查页表，支持一个 tile 跨物理页边界。
+D 补到至少 32 的二次幂，补零由 kernel
 完成，不在主机侧扩展缓存，也不改变 softmax 的原始 D 缩放。
 QK 和 PV 是两次 L0 输入 `T.gemm`；Vector 仍负责搬运、掩码、softmax、
 归一化及类型转换，这些属于 Cube attention 的正常组成部分。
+
+首轮冒烟在第 1 项编译失败（FP16、D16、page16），尚未运行到精度检查。
+原 BC16 导致每个 AIV 的 K ND→NZ 转换只有 8 行，而安装的编译器要求
+转换行数是 16 的倍数。修正 BC32 后，Q/K/P 的转换均为 16 行，V 为
+D补齐值/2 行（16/32/64/128）；同时改为逐 token 查页表，避免 BC32
+跨越 page16、page48 边界时错误读取相邻物理页。需要重新跑实机回归。
 
 读取 K/V 前检查有效长度，补齐的特征和 KV token 清零，防止无效位置的
 NaN 经 PV 传播。有限负数哨兵与显式概率清零共同处理全遮罩行。
