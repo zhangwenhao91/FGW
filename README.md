@@ -1,5 +1,15 @@
 # FGW
 
+## split代价模型独立验证
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_split_model_validation
+```
+
+模型已离线拟合并冻结，验证新B/H、KV4096/16384及原边界形状，逐项扫描全部split检查预测损失。
+默认仍legacy；[模型、离线误差与上传文件](docs/mha_split_cost_model.md)。
+
 ## v7 split扫描
 
 ```bash

@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "scope": "experimental 28-Cube Ascend950 BF16/D128 page128 noncausal, uniform full KV",
+  "features": [
+    "compute_wave_tiles",
+    "compute_waves",
+    "extra_launch",
+    "partial_elements_scaled",
+    "merge_work_times_splits",
+    "multi_split_wave_tiles"
+  ],
+  "weights": [
+    0.6832090220301325,
+    1.1964970998229219,
+    4.3367013795716725,
+    0.1038025835315521,
+    0.015520174210146887,
+    0.0653446344626205
+  ],
+  "training_cases": 64,
+  "sources": [
+    {
+      "name": "mha_v7_split_scan_kv512_summary.json",
+      "sha256": "0c02bd5449545e9f14b9052a234ac85af864963f6bc42fe2aa1669dc73a1e99e"
+    },
+    {
+      "name": "mha_v7_split_scan_kv2048_summary.json",
+      "sha256": "d0e20facec90bcc0277b3d6dfe6a3024463be4f414079d92ea8d94b7d3cf80b6"
+    },
+    {
+      "name": "mha_v7_split_scan_kv8192_summary.json",
+      "sha256": "0cf9cf8e22f79af62d15c36ccd052afe0edbd2902e0ff0fc40b593915b4d7562"
+    },
+    {
+      "name": "mha_v7_split_scan_kv32768_summary.json",
+      "sha256": "4034bbb3482207c1268f9fab4ee316d2e5351f2305209fc28670f8068cb95438"
+    }
+  ],
+  "fit": "Nonnegative coordinate descent on within-case latency differences, weighted by inverse best latency. Scores omit case-constant cost and are not absolute latency."
+}

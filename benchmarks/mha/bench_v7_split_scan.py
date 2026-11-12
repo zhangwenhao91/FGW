@@ -17,6 +17,8 @@ SPLITS = (1, 2, 4, 8, 16)
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--q-lengths", nargs="+", type=int, default=list(Q_LENGTHS))
+    parser.add_argument("--bh", nargs="+", default=["2x8", "1x1"], help="Batch x heads, e.g. 1x8 4x4 2x16")
+    parser.add_argument("--evaluate-cost-model", action="store_true")
     parser.add_argument("--kv", type=int, default=2048)
     parser.add_argument("--rounds", type=int, default=4)
     parser.add_argument("--repeat", type=int, default=51)
@@ -29,8 +31,15 @@ def main():
     if (min(args.q_lengths) < 1 or args.kv < 128 or args.kv % 128 or args.rounds < 1
             or args.repeat < 3 or args.warmup < 1 or not math.isfinite(args.peak_tflops) or args.peak_tflops <= 0):
         parser.error("positive Q, 128-aligned KV, rounds>=1, repeat>=3, warmup>=1, positive finite peak required")
-    cases = [(track, b, h, q) for track, b, h in (("batch2_head8", 2, 8), ("batch1_head1", 1, 1))
-             for q in args.q_lengths]
+    try:
+        bh = [tuple(map(int, item.split("x"))) for item in args.bh]
+        if any(len(pair) != 2 or min(pair) <= 0 for pair in bh):
+            raise ValueError()
+    except ValueError:
+        parser.error("--bh requires positive BxH pairs")
+    cases = [(f"batch{b}_head{h}", b, h, q) for b, h in bh for q in args.q_lengths]
+    if max(b * h * math.ceil(q/128) * 16 for _, b, h, q in cases) > 32768:
+        parser.error("Scan compute grid exceeds validated 32768 cap; reduce B/H/Q")
     if args.list_only:
         print(json.dumps(cases, indent=2))
         return 0
@@ -70,6 +79,10 @@ def main():
         report["v7_sha256"] = hashlib.sha256(Path(v7.__file__).read_bytes()).hexdigest()
         report["cann_environment"] = {key: os.environ.get(key) for key in
             ("ASCEND_HOME_PATH", "ASCEND_TOOLKIT_HOME", "ASCEND_OPP_PATH", "ASCEND_RT_VISIBLE_DEVICES")}
+        if args.evaluate_cost_model:
+            from operators.mha.split_cost_model import MODEL_PATH
+            report["cost_model"] = json.loads(MODEL_PATH.read_text(encoding="utf-8"))
+            report["cost_model_sha256"] = hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest()
         save()
 
         for track, b, h, sq in cases:
@@ -89,6 +102,10 @@ def main():
             correctness = {}
             auto_kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
                 "bfloat16", args.device, schedule_mode="manual")
+            model_kernel = None
+            if args.evaluate_cost_model:
+                model_kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
+                    "bfloat16", args.device, schedule_mode="manual", split_policy="cost_model")
             auto_splits = auto_kernel.num_splits
             auto_label = f"split{auto_splits}"
             variants = tuple(f"split{n}" for n in SPLITS if n <= width)
@@ -101,7 +118,9 @@ def main():
             for variant in variants:
                 try:
                     n = int(variant.removeprefix("split"))
-                    kernel = auto_kernel if n == auto_splits else v7.build_kernel(
+                    kernel = (auto_kernel if n == auto_splits else model_kernel
+                        if model_kernel is not None and n == model_kernel.num_splits else None)
+                    kernel = kernel if kernel is not None else v7.build_kernel(
                         b, sq, h, 128, k.shape[0], width, 128, False, "bfloat16", args.device,
                         schedule_mode="manual", num_splits=n)
                     call = functools.partial(kernel, *inputs)
@@ -193,6 +212,14 @@ def main():
                     "within_2pct_of_best": [item["num_splits"] for item in stats if item["median_round_us"] <= best["median_round_us"]*1.02],
                     "best_speedup_vs_auto": auto["median_round_us"]/best["median_round_us"] if auto else None,
                     "all_candidates_passed": all(row["status"] == "passed" for row in rows), "ranking": stats})
+                if model_kernel is not None:
+                    chosen = next((item for item in stats if item["num_splits"] == model_kernel.num_splits), None)
+                    report["best_by_case"][-1]["cost_model"] = {
+                        "selected_num_splits": model_kernel.num_splits,
+                        "median_us": chosen["median_round_us"] if chosen else None,
+                        "relative_to_best": chosen["median_round_us"]/best["median_round_us"] if chosen else None,
+                        "speedup_vs_legacy": auto["median_round_us"]/chosen["median_round_us"] if auto and chosen else None,
+                        "selection_passed": chosen is not None}
             save()
             del programs, inputs
         report.pop("active_case", None)
