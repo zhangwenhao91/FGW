@@ -18,6 +18,8 @@ def main():
     parser.add_argument("--q-lengths", nargs="+", type=int, default=list(Q_LENGTHS))
     parser.add_argument("--fia-api", choices=["auto", "v1", "v2", "both"], default="auto",
                         help="auto prefers v2 if exposed; no silent retry after runtime/accuracy failures")
+    parser.add_argument("--split-comparison", action="store_true",
+                        help="Also compare forced v7 num_splits=1 against auto split and FIA")
     parser.add_argument("--kv", type=int, default=2048)
     parser.add_argument("--rounds", type=int, default=2)
     parser.add_argument("--repeat", type=int, default=51)
@@ -44,6 +46,8 @@ def main():
         "flops_policy": "4*B*H*Q*KV*128, noncausal useful QK+PV only; no padding/softmax FLOPs",
         "timing": "Full native callable, warm-cache NPU Event median; one call per sample. Excludes compile, H2D, CPU reference, metadata/list preparation and zero-copy K/V view creation. Includes output allocation and stream-visible launch gaps. v7 includes Q conversion and merge; FIA uses original paged storage without gather, same BSND Q/O.",
         "comparison": "All cases match B/H/Q/KV, values, page table and per-request lengths. BF16 Q/K/V/O, D128, page128, noncausal, scale=128**-0.5, seed7. v7 manual/stages2/Q resident. FIA inner_precise=0, sparse_mode=0, no mask, no quantization. No source installation or environment modification."}
+    if args.split_comparison:
+        report["comparison"] += " Includes forced num_splits=1 candidate, same tuning otherwise; measures whole strategy change, not isolated merge time. Production defaults unchanged."
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
     summary_path = path.with_name(path.stem + "_summary.json")
@@ -112,7 +116,8 @@ def main():
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
             programs = {}
             correctness = {}
-            variants = ("v7_manual_bf16",) + tuple("ascendc_fia_" + api for api in selected)
+            geometry = {}
+            variants = (("v7_manual_bf16", "v7_split1_bf16") if args.split_comparison else ("v7_manual_bf16",)) + tuple("ascendc_fia_" + api for api in selected)
             # BnBsH physical layout: views only, same bytes and physical page IDs.
             paged_k = inputs[1].view(b * width, 128, h * 128)
             paged_v = inputs[2].view(b * width, 128, h * 128)
@@ -120,12 +125,15 @@ def main():
             q_lengths = [sq] * b
             for variant in variants:
                 try:
-                    if variant == "v7_manual_bf16":
+                    if variant in ("v7_manual_bf16", "v7_split1_bf16"):
                         kernel = v7.build_kernel(b, sq, h, 128, k.shape[0], width, 128, False,
-                            "bfloat16", args.device, schedule_mode="manual")
+                            "bfloat16", args.device, schedule_mode="manual",
+                            num_splits=1 if variant == "v7_split1_bf16" else None)
                         call = functools.partial(kernel, *inputs)
                         got = call().cpu()
                         kernel_mode = kernel.execution_mode
+                        geometry[variant] = {"num_splits": kernel.num_splits,
+                            "query_tile_tasks": kernel.query_tile_tasks}
                     else:
                         api = variant.rsplit("_", 1)[1]
                         if not available[api]:
@@ -186,23 +194,35 @@ def main():
                         "D": 128, "round": round_id+1, "status": "passed", "correctness": "passed",
                         "accuracy": correctness[label],
                         "input_dtype": "bfloat16", "output_dtype": "bfloat16",
-                        "kernel_mode": programs[label][1], "median_us": median*1000,
+                        "kernel_mode": programs[label][1], "geometry": geometry.get(label), "median_us": median*1000,
                         "effective_flops": flops, "effective_tflops": tflops,
                         "mfu_percent": 100*tflops/args.peak_tflops, "samples_ms": samples[label]}
                     report["results"].append(row)
                     print(f"{track} Q={sq} {label} round={round_id+1}: {median*1000:.3f} us MFU={row['mfu_percent']:.4f}%", flush=True)
-                if "v7_manual_bf16" in samples:
-                    v7_ms = statistics.median(samples["v7_manual_bf16"])
+                for v7_label in ("v7_manual_bf16", "v7_split1_bf16"):
+                    if v7_label not in samples:
+                        continue
+                    v7_ms = statistics.median(samples[v7_label])
                     for api in selected:
                         label = "ascendc_fia_" + api
                         if label in samples:
                             fia_ms = statistics.median(samples[label])
                             comparison = {"track": track, "B": b, "H": h, "Q": sq, "KV": args.kv,
-                                "round": round_id+1, "baseline": label, "v7_median_us": v7_ms*1000,
+                                "round": round_id+1, "candidate": v7_label, "geometry": geometry[v7_label],
+                                "baseline": label, "v7_median_us": v7_ms*1000,
                                 "ascendc_median_us": fia_ms*1000, "speedup_v7_over_ascendc": fia_ms/v7_ms,
                                 "v7_latency_change_percent": 100*(v7_ms/fia_ms-1)}
                             report.setdefault("comparisons", []).append(comparison)
-                            print(f"COMPARE {track} Q={sq} round={round_id+1} {label}: V7 speedup={fia_ms/v7_ms:.4f}x", flush=True)
+                            print(f"COMPARE {track} Q={sq} KV={args.kv} round={round_id+1} {v7_label} / {label}: V7 speedup={fia_ms/v7_ms:.4f}x", flush=True)
+                if all(label in samples for label in ("v7_manual_bf16", "v7_split1_bf16")):
+                    auto_ms = statistics.median(samples["v7_manual_bf16"])
+                    forced_ms = statistics.median(samples["v7_split1_bf16"])
+                    report.setdefault("split_comparisons", []).append({"track": track, "B": b, "H": h,
+                        "Q": sq, "KV": args.kv, "round": round_id+1,
+                        "auto_num_splits": geometry["v7_manual_bf16"]["num_splits"],
+                        "auto_median_us": auto_ms*1000, "split1_median_us": forced_ms*1000,
+                        "speedup_split1_over_auto": auto_ms/forced_ms,
+                        "latency_saved_us": (auto_ms-forced_ms)*1000})
                 save()
             del programs, inputs
         report.pop("active_case", None)

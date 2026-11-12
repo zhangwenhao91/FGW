@@ -1,5 +1,16 @@
 # FGW
 
+## 多KV长度下split1与AscendC三方对照
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_v7_split1_ascendc
+```
+
+KV512/2048/8192/32768，交替测v7自动split、强制split1和官方FIA v2。
+先冒烟及独立精度检查，再进行四轮Event计时；默认策略不变。
+[形状、口径与上传文件](docs/mha_v7_split1_ascendc.md)。
+
 ## v7 强制 split=1 对照
 
 ```bash
