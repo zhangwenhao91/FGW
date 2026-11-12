@@ -1,0 +1,463 @@
+Preparing batch2_head8 B=2 H=8 Q=1 KV=2048
+batch2_head8 Q=1 v7_auto_split round=1: 46.538 us MFU=0.0954%
+batch2_head8 Q=1 v7_split1 round=1: 26.866 us MFU=0.1652%
+COMPARE batch2_head8 Q=1 round=1: auto_splits=8 split1 speedup=1.7322x saved=19.672 us
+batch2_head8 Q=1 v7_split1 round=2: 26.959 us MFU=0.1646%
+batch2_head8 Q=1 v7_auto_split round=2: 46.919 us MFU=0.0946%
+COMPARE batch2_head8 Q=1 round=2: auto_splits=8 split1 speedup=1.7404x saved=19.960 us
+batch2_head8 Q=1 v7_auto_split round=3: 46.737 us MFU=0.0950%
+batch2_head8 Q=1 v7_split1 round=3: 26.735 us MFU=0.1660%
+COMPARE batch2_head8 Q=1 round=3: auto_splits=8 split1 speedup=1.7482x saved=20.002 us
+batch2_head8 Q=1 v7_split1 round=4: 26.625 us MFU=0.1667%
+batch2_head8 Q=1 v7_auto_split round=4: 46.229 us MFU=0.0960%
+COMPARE batch2_head8 Q=1 round=4: auto_splits=8 split1 speedup=1.7363x saved=19.604 us
+Preparing batch2_head8 B=2 H=8 Q=4 KV=2048
+2026-11-12 10:26:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=4 v7_auto_split round=1: 89.140 us MFU=0.1992%
+batch2_head8 Q=4 v7_split1 round=1: 69.722 us MFU=0.2546%
+COMPARE batch2_head8 Q=4 round=1: auto_splits=8 split1 speedup=1.2785x saved=19.418 us
+batch2_head8 Q=4 v7_split1 round=2: 44.813 us MFU=0.3962%
+batch2_head8 Q=4 v7_auto_split round=2: 63.434 us MFU=0.2799%
+COMPARE batch2_head8 Q=4 round=2: auto_splits=8 split1 speedup=1.4155x saved=18.621 us
+batch2_head8 Q=4 v7_auto_split round=3: 59.942 us MFU=0.2962%
+batch2_head8 Q=4 v7_split1 round=3: 39.596 us MFU=0.4484%
+COMPARE batch2_head8 Q=4 round=3: auto_splits=8 split1 speedup=1.5138x saved=20.346 us
+batch2_head8 Q=4 v7_split1 round=4: 38.720 us MFU=0.4585%
+batch2_head8 Q=4 v7_auto_split round=4: 59.354 us MFU=0.2991%
+COMPARE batch2_head8 Q=4 round=4: auto_splits=8 split1 speedup=1.5329x saved=20.634 us
+Preparing batch2_head8 B=2 H=8 Q=16 KV=2048
+2026-11-12 10:26:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=16 v7_auto_split round=1: 61.500 us MFU=1.1547%
+batch2_head8 Q=16 v7_split1 round=1: 38.819 us MFU=1.8294%
+COMPARE batch2_head8 Q=16 round=1: auto_splits=8 split1 speedup=1.5843x saved=22.681 us
+batch2_head8 Q=16 v7_split1 round=2: 38.758 us MFU=1.8323%
+batch2_head8 Q=16 v7_auto_split round=2: 61.007 us MFU=1.1640%
+COMPARE batch2_head8 Q=16 round=2: auto_splits=8 split1 speedup=1.5740x saved=22.249 us
+batch2_head8 Q=16 v7_auto_split round=3: 61.205 us MFU=1.1603%
+batch2_head8 Q=16 v7_split1 round=3: 38.781 us MFU=1.8312%
+COMPARE batch2_head8 Q=16 round=3: auto_splits=8 split1 speedup=1.5782x saved=22.424 us
+batch2_head8 Q=16 v7_split1 round=4: 38.833 us MFU=1.8287%
+batch2_head8 Q=16 v7_auto_split round=4: 61.137 us MFU=1.1616%
+COMPARE batch2_head8 Q=16 round=4: auto_splits=8 split1 speedup=1.5744x saved=22.304 us
+Preparing batch2_head8 B=2 H=8 Q=32 KV=2048
+2026-11-12 10:26:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=32 v7_auto_split round=1: 67.623 us MFU=2.1003%
+batch2_head8 Q=32 v7_split1 round=1: 39.844 us MFU=3.5646%
+COMPARE batch2_head8 Q=32 round=1: auto_splits=8 split1 speedup=1.6972x saved=27.779 us
+batch2_head8 Q=32 v7_split1 round=2: 39.347 us MFU=3.6097%
+batch2_head8 Q=32 v7_auto_split round=2: 66.967 us MFU=2.1209%
+COMPARE batch2_head8 Q=32 round=2: auto_splits=8 split1 speedup=1.7020x saved=27.620 us
+batch2_head8 Q=32 v7_auto_split round=3: 67.028 us MFU=2.1190%
+batch2_head8 Q=32 v7_split1 round=3: 39.248 us MFU=3.6188%
+COMPARE batch2_head8 Q=32 round=3: auto_splits=8 split1 speedup=1.7078x saved=27.780 us
+batch2_head8 Q=32 v7_split1 round=4: 39.095 us MFU=3.6329%
+batch2_head8 Q=32 v7_auto_split round=4: 66.992 us MFU=2.1201%
+COMPARE batch2_head8 Q=32 round=4: auto_splits=8 split1 speedup=1.7136x saved=27.897 us
+Preparing batch2_head8 B=2 H=8 Q=64 KV=2048
+2026-11-12 10:26:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=64 v7_auto_split round=1: 73.219 us MFU=3.8796%
+batch2_head8 Q=64 v7_split1 round=1: 39.478 us MFU=7.1954%
+COMPARE batch2_head8 Q=64 round=1: auto_splits=8 split1 speedup=1.8547x saved=33.741 us
+batch2_head8 Q=64 v7_split1 round=2: 39.396 us MFU=7.2103%
+batch2_head8 Q=64 v7_auto_split round=2: 72.741 us MFU=3.9051%
+COMPARE batch2_head8 Q=64 round=2: auto_splits=8 split1 speedup=1.8464x saved=33.345 us
+batch2_head8 Q=64 v7_auto_split round=3: 74.685 us MFU=3.8034%
+batch2_head8 Q=64 v7_split1 round=3: 41.552 us MFU=6.8362%
+COMPARE batch2_head8 Q=64 round=3: auto_splits=8 split1 speedup=1.7974x saved=33.133 us
+batch2_head8 Q=64 v7_split1 round=4: 44.783 us MFU=6.3430%
+batch2_head8 Q=64 v7_auto_split round=4: 78.245 us MFU=3.6304%
+COMPARE batch2_head8 Q=64 round=4: auto_splits=8 split1 speedup=1.7472x saved=33.462 us
+Preparing batch2_head8 B=2 H=8 Q=127 KV=2048
+2026-11-12 10:26:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=127 v7_auto_split round=1: 81.127 us MFU=6.9481%
+batch2_head8 Q=127 v7_split1 round=1: 35.886 us MFU=15.7075%
+COMPARE batch2_head8 Q=127 round=1: auto_splits=8 split1 speedup=2.2607x saved=45.241 us
+batch2_head8 Q=127 v7_split1 round=2: 35.636 us MFU=15.8177%
+batch2_head8 Q=127 v7_auto_split round=2: 80.114 us MFU=7.0360%
+COMPARE batch2_head8 Q=127 round=2: auto_splits=8 split1 speedup=2.2481x saved=44.478 us
+batch2_head8 Q=127 v7_auto_split round=3: 80.205 us MFU=7.0280%
+batch2_head8 Q=127 v7_split1 round=3: 35.612 us MFU=15.8283%
+COMPARE batch2_head8 Q=127 round=3: auto_splits=8 split1 speedup=2.2522x saved=44.593 us
+batch2_head8 Q=127 v7_split1 round=4: 35.395 us MFU=15.9254%
+batch2_head8 Q=127 v7_auto_split round=4: 79.890 us MFU=7.0557%
+COMPARE batch2_head8 Q=127 round=4: auto_splits=8 split1 speedup=2.2571x saved=44.495 us
+Preparing batch2_head8 B=2 H=8 Q=128 KV=2048
+2026-11-12 10:26:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=128 v7_auto_split round=1: 84.570 us MFU=6.7177%
+batch2_head8 Q=128 v7_split1 round=1: 39.768 us MFU=14.2858%
+COMPARE batch2_head8 Q=128 round=1: auto_splits=8 split1 speedup=2.1266x saved=44.802 us
+batch2_head8 Q=128 v7_split1 round=2: 39.365 us MFU=14.4320%
+batch2_head8 Q=128 v7_auto_split round=2: 83.695 us MFU=6.7879%
+COMPARE batch2_head8 Q=128 round=2: auto_splits=8 split1 speedup=2.1261x saved=44.330 us
+batch2_head8 Q=128 v7_auto_split round=3: 83.970 us MFU=6.7657%
+batch2_head8 Q=128 v7_split1 round=3: 39.268 us MFU=14.4677%
+COMPARE batch2_head8 Q=128 round=3: auto_splits=8 split1 speedup=2.1384x saved=44.702 us
+batch2_head8 Q=128 v7_split1 round=4: 39.164 us MFU=14.5061%
+batch2_head8 Q=128 v7_auto_split round=4: 83.856 us MFU=6.7749%
+COMPARE batch2_head8 Q=128 round=4: auto_splits=8 split1 speedup=2.1412x saved=44.692 us
+Preparing batch2_head8 B=2 H=8 Q=129 KV=2048
+batch2_head8 Q=129 v7_auto_split round=1: 80.020 us MFU=7.1552%
+batch2_head8 Q=129 v7_split1 round=1: 55.284 us MFU=10.3566%
+COMPARE batch2_head8 Q=129 round=1: auto_splits=4 split1 speedup=1.4474x saved=24.736 us
+batch2_head8 Q=129 v7_split1 round=2: 54.803 us MFU=10.4475%
+batch2_head8 Q=129 v7_auto_split round=2: 79.461 us MFU=7.2055%
+COMPARE batch2_head8 Q=129 round=2: auto_splits=4 split1 speedup=1.4499x saved=24.658 us
+batch2_head8 Q=129 v7_auto_split round=3: 79.572 us MFU=7.1954%
+batch2_head8 Q=129 v7_split1 round=3: 54.609 us MFU=10.4846%
+COMPARE batch2_head8 Q=129 round=3: auto_splits=4 split1 speedup=1.4571x saved=24.963 us
+batch2_head8 Q=129 v7_split1 round=4: 54.557 us MFU=10.4946%
+batch2_head8 Q=129 v7_auto_split round=4: 79.497 us MFU=7.2022%
+COMPARE batch2_head8 Q=129 round=4: auto_splits=4 split1 speedup=1.4571x saved=24.940 us
+Preparing batch2_head8 B=2 H=8 Q=256 KV=2048
+2026-11-12 10:26:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=256 v7_auto_split round=1: 90.354 us MFU=12.5754%
+batch2_head8 Q=256 v7_split1 round=1: 51.618 us MFU=22.0124%
+COMPARE batch2_head8 Q=256 round=1: auto_splits=4 split1 speedup=1.7504x saved=38.736 us
+batch2_head8 Q=256 v7_split1 round=2: 51.362 us MFU=22.1221%
+batch2_head8 Q=256 v7_auto_split round=2: 89.717 us MFU=12.6647%
+COMPARE batch2_head8 Q=256 round=2: auto_splits=4 split1 speedup=1.7468x saved=38.355 us
+batch2_head8 Q=256 v7_auto_split round=3: 89.630 us MFU=12.6769%
+batch2_head8 Q=256 v7_split1 round=3: 51.469 us MFU=22.0761%
+COMPARE batch2_head8 Q=256 round=3: auto_splits=4 split1 speedup=1.7414x saved=38.161 us
+batch2_head8 Q=256 v7_split1 round=4: 51.242 us MFU=22.1739%
+batch2_head8 Q=256 v7_auto_split round=4: 89.877 us MFU=12.6421%
+COMPARE batch2_head8 Q=256 round=4: auto_splits=4 split1 speedup=1.7540x saved=38.635 us
+Preparing batch2_head8 B=2 H=8 Q=512 KV=2048
+2026-11-12 10:26:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch2_head8 Q=512 v7_auto_split round=1: 117.592 us MFU=19.3250%
+batch2_head8 Q=512 v7_split1 round=1: 71.125 us MFU=31.9504%
+COMPARE batch2_head8 Q=512 round=1: auto_splits=2 split1 speedup=1.6533x saved=46.467 us
+batch2_head8 Q=512 v7_split1 round=2: 70.937 us MFU=32.0350%
+batch2_head8 Q=512 v7_auto_split round=2: 117.496 us MFU=19.3408%
+COMPARE batch2_head8 Q=512 round=2: auto_splits=2 split1 speedup=1.6563x saved=46.559 us
+batch2_head8 Q=512 v7_auto_split round=3: 117.279 us MFU=19.3766%
+batch2_head8 Q=512 v7_split1 round=3: 70.700 us MFU=32.1424%
+COMPARE batch2_head8 Q=512 round=3: auto_splits=2 split1 speedup=1.6588x saved=46.579 us
+batch2_head8 Q=512 v7_split1 round=4: 70.799 us MFU=32.0975%
+batch2_head8 Q=512 v7_auto_split round=4: 117.374 us MFU=19.3609%
+COMPARE batch2_head8 Q=512 round=4: auto_splits=2 split1 speedup=1.6578x saved=46.575 us
+Preparing batch2_head8 B=2 H=8 Q=1024 KV=2048
+2026-11-12 10:26:31  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=1024 v7_auto_split round=1: 105.723 us MFU=42.9891%
+batch2_head8 Q=1024 v7_split1 round=1: 106.018 us MFU=42.8695%
+COMPARE batch2_head8 Q=1024 round=1: auto_splits=1 split1 speedup=0.9972x saved=-0.295 us
+batch2_head8 Q=1024 v7_split1 round=2: 109.637 us MFU=41.4544%
+batch2_head8 Q=1024 v7_auto_split round=2: 109.611 us MFU=41.4643%
+COMPARE batch2_head8 Q=1024 round=2: auto_splits=1 split1 speedup=0.9998x saved=-0.026 us
+batch2_head8 Q=1024 v7_auto_split round=3: 109.760 us MFU=41.4080%
+batch2_head8 Q=1024 v7_split1 round=3: 109.556 us MFU=41.4851%
+COMPARE batch2_head8 Q=1024 round=3: auto_splits=1 split1 speedup=1.0019x saved=0.204 us
+batch2_head8 Q=1024 v7_split1 round=4: 109.571 us MFU=41.4794%
+batch2_head8 Q=1024 v7_auto_split round=4: 109.468 us MFU=41.5184%
+COMPARE batch2_head8 Q=1024 round=4: auto_splits=1 split1 speedup=0.9991x saved=-0.103 us
+Preparing batch2_head8 B=2 H=8 Q=2048 KV=2048
+2026-11-12 10:26:32  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=2048 v7_auto_split round=1: 184.311 us MFU=49.3182%
+batch2_head8 Q=2048 v7_split1 round=1: 184.578 us MFU=49.2468%
+COMPARE batch2_head8 Q=2048 round=1: auto_splits=1 split1 speedup=0.9986x saved=-0.267 us
+batch2_head8 Q=2048 v7_split1 round=2: 184.301 us MFU=49.3208%
+batch2_head8 Q=2048 v7_auto_split round=2: 184.780 us MFU=49.1930%
+COMPARE batch2_head8 Q=2048 round=2: auto_splits=1 split1 speedup=1.0026x saved=0.479 us
+batch2_head8 Q=2048 v7_auto_split round=3: 184.241 us MFU=49.3369%
+batch2_head8 Q=2048 v7_split1 round=3: 184.287 us MFU=49.3246%
+COMPARE batch2_head8 Q=2048 round=3: auto_splits=1 split1 speedup=0.9998x saved=-0.046 us
+batch2_head8 Q=2048 v7_split1 round=4: 184.388 us MFU=49.2976%
+batch2_head8 Q=2048 v7_auto_split round=4: 184.409 us MFU=49.2919%
+COMPARE batch2_head8 Q=2048 round=4: auto_splits=1 split1 speedup=1.0001x saved=0.021 us
+Preparing batch2_head8 B=2 H=8 Q=4096 KV=2048
+2026-11-12 10:26:32  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=4096 v7_auto_split round=1: 332.732 us MFU=54.6378%
+batch2_head8 Q=4096 v7_split1 round=1: 331.953 us MFU=54.7661%
+COMPARE batch2_head8 Q=4096 round=1: auto_splits=1 split1 speedup=1.0023x saved=0.779 us
+batch2_head8 Q=4096 v7_split1 round=2: 331.443 us MFU=54.8503%
+batch2_head8 Q=4096 v7_auto_split round=2: 331.635 us MFU=54.8186%
+COMPARE batch2_head8 Q=4096 round=2: auto_splits=1 split1 speedup=1.0006x saved=0.192 us
+batch2_head8 Q=4096 v7_auto_split round=3: 331.741 us MFU=54.8011%
+batch2_head8 Q=4096 v7_split1 round=3: 331.981 us MFU=54.7614%
+COMPARE batch2_head8 Q=4096 round=3: auto_splits=1 split1 speedup=0.9993x saved=-0.240 us
+batch2_head8 Q=4096 v7_split1 round=4: 332.014 us MFU=54.7560%
+batch2_head8 Q=4096 v7_auto_split round=4: 331.888 us MFU=54.7768%
+COMPARE batch2_head8 Q=4096 round=4: auto_splits=1 split1 speedup=0.9996x saved=-0.126 us
+Preparing batch2_head8 B=2 H=8 Q=8192 KV=2048
+2026-11-12 10:26:33  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=8192 v7_auto_split round=1: 633.401 us MFU=57.4036%
+batch2_head8 Q=8192 v7_split1 round=1: 633.203 us MFU=57.4216%
+COMPARE batch2_head8 Q=8192 round=1: auto_splits=1 split1 speedup=1.0003x saved=0.198 us
+batch2_head8 Q=8192 v7_split1 round=2: 633.600 us MFU=57.3856%
+batch2_head8 Q=8192 v7_auto_split round=2: 632.602 us MFU=57.4761%
+COMPARE batch2_head8 Q=8192 round=2: auto_splits=1 split1 speedup=0.9984x saved=-0.998 us
+batch2_head8 Q=8192 v7_auto_split round=3: 633.269 us MFU=57.4156%
+batch2_head8 Q=8192 v7_split1 round=3: 633.385 us MFU=57.4051%
+COMPARE batch2_head8 Q=8192 round=3: auto_splits=1 split1 speedup=0.9998x saved=-0.116 us
+batch2_head8 Q=8192 v7_split1 round=4: 642.634 us MFU=56.5789%
+batch2_head8 Q=8192 v7_auto_split round=4: 643.206 us MFU=56.5286%
+COMPARE batch2_head8 Q=8192 round=4: auto_splits=1 split1 speedup=1.0009x saved=0.572 us
+Preparing batch2_head8 B=2 H=8 Q=16384 KV=2048
+2026-11-12 10:26:34  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=16384 v7_auto_split round=1: 1349.033 us MFU=53.9046%
+batch2_head8 Q=16384 v7_split1 round=1: 1352.628 us MFU=53.7613%
+COMPARE batch2_head8 Q=16384 round=1: auto_splits=1 split1 speedup=0.9973x saved=-3.595 us
+batch2_head8 Q=16384 v7_split1 round=2: 1394.976 us MFU=52.1292%
+batch2_head8 Q=16384 v7_auto_split round=2: 1386.673 us MFU=52.4414%
+COMPARE batch2_head8 Q=16384 round=2: auto_splits=1 split1 speedup=0.9940x saved=-8.303 us
+batch2_head8 Q=16384 v7_auto_split round=3: 1402.919 us MFU=51.8341%
+batch2_head8 Q=16384 v7_split1 round=3: 1408.748 us MFU=51.6196%
+COMPARE batch2_head8 Q=16384 round=3: auto_splits=1 split1 speedup=0.9959x saved=-5.829 us
+batch2_head8 Q=16384 v7_split1 round=4: 1408.414 us MFU=51.6319%
+batch2_head8 Q=16384 v7_auto_split round=4: 1403.157 us MFU=51.8253%
+COMPARE batch2_head8 Q=16384 round=4: auto_splits=1 split1 speedup=0.9963x saved=-5.257 us
+Preparing batch2_head8 B=2 H=8 Q=32768 KV=2048
+2026-11-12 10:26:36  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=32768 v7_auto_split round=1: 2804.810 us MFU=51.8531%
+batch2_head8 Q=32768 v7_split1 round=1: 2815.806 us MFU=51.6506%
+COMPARE batch2_head8 Q=32768 round=1: auto_splits=1 split1 speedup=0.9961x saved=-10.996 us
+batch2_head8 Q=32768 v7_split1 round=2: 2853.401 us MFU=50.9701%
+batch2_head8 Q=32768 v7_auto_split round=2: 2863.795 us MFU=50.7851%
+COMPARE batch2_head8 Q=32768 round=2: auto_splits=1 split1 speedup=1.0036x saved=10.394 us
+batch2_head8 Q=32768 v7_auto_split round=3: 2858.407 us MFU=50.8808%
+batch2_head8 Q=32768 v7_split1 round=3: 2858.404 us MFU=50.8809%
+COMPARE batch2_head8 Q=32768 round=3: auto_splits=1 split1 speedup=1.0000x saved=0.003 us
+batch2_head8 Q=32768 v7_split1 round=4: 2834.064 us MFU=51.3178%
+batch2_head8 Q=32768 v7_auto_split round=4: 2851.478 us MFU=51.0044%
+COMPARE batch2_head8 Q=32768 round=4: auto_splits=1 split1 speedup=1.0061x saved=17.414 us
+Preparing batch1_head1 B=1 H=1 Q=1 KV=2048
+batch1_head1 Q=1 v7_auto_split round=1: 32.308 us MFU=0.0086%
+batch1_head1 Q=1 v7_split1 round=1: 26.075 us MFU=0.0106%
+COMPARE batch1_head1 Q=1 round=1: auto_splits=16 split1 speedup=1.2390x saved=6.233 us
+batch1_head1 Q=1 v7_split1 round=2: 26.079 us MFU=0.0106%
+batch1_head1 Q=1 v7_auto_split round=2: 32.076 us MFU=0.0086%
+COMPARE batch1_head1 Q=1 round=2: auto_splits=16 split1 speedup=1.2300x saved=5.997 us
+batch1_head1 Q=1 v7_auto_split round=3: 32.129 us MFU=0.0086%
+batch1_head1 Q=1 v7_split1 round=3: 26.471 us MFU=0.0105%
+COMPARE batch1_head1 Q=1 round=3: auto_splits=16 split1 speedup=1.2137x saved=5.658 us
+batch1_head1 Q=1 v7_split1 round=4: 25.902 us MFU=0.0107%
+batch1_head1 Q=1 v7_auto_split round=4: 31.934 us MFU=0.0087%
+COMPARE batch1_head1 Q=1 round=4: auto_splits=16 split1 speedup=1.2329x saved=6.032 us
+Preparing batch1_head1 B=1 H=1 Q=4 KV=2048
+2026-11-12 10:26:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=4 v7_auto_split round=1: 32.428 us MFU=0.0342%
+batch1_head1 Q=4 v7_split1 round=1: 26.297 us MFU=0.0422%
+COMPARE batch1_head1 Q=4 round=1: auto_splits=16 split1 speedup=1.2331x saved=6.131 us
+batch1_head1 Q=4 v7_split1 round=2: 26.577 us MFU=0.0418%
+batch1_head1 Q=4 v7_auto_split round=2: 32.183 us MFU=0.0345%
+COMPARE batch1_head1 Q=4 round=2: auto_splits=16 split1 speedup=1.2109x saved=5.606 us
+batch1_head1 Q=4 v7_auto_split round=3: 32.436 us MFU=0.0342%
+batch1_head1 Q=4 v7_split1 round=3: 26.271 us MFU=0.0422%
+COMPARE batch1_head1 Q=4 round=3: auto_splits=16 split1 speedup=1.2347x saved=6.165 us
+batch1_head1 Q=4 v7_split1 round=4: 25.911 us MFU=0.0428%
+batch1_head1 Q=4 v7_auto_split round=4: 31.784 us MFU=0.0349%
+COMPARE batch1_head1 Q=4 round=4: auto_splits=16 split1 speedup=1.2267x saved=5.873 us
+Preparing batch1_head1 B=1 H=1 Q=16 KV=2048
+2026-11-12 10:26:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=16 v7_auto_split round=1: 26.109 us MFU=0.1700%
+batch1_head1 Q=16 v7_split1 round=1: 22.468 us MFU=0.1975%
+COMPARE batch1_head1 Q=16 round=1: auto_splits=16 split1 speedup=1.1621x saved=3.641 us
+batch1_head1 Q=16 v7_split1 round=2: 22.410 us MFU=0.1981%
+batch1_head1 Q=16 v7_auto_split round=2: 25.955 us MFU=0.1710%
+COMPARE batch1_head1 Q=16 round=2: auto_splits=16 split1 speedup=1.1582x saved=3.545 us
+batch1_head1 Q=16 v7_auto_split round=3: 25.895 us MFU=0.1714%
+batch1_head1 Q=16 v7_split1 round=3: 22.458 us MFU=0.1976%
+COMPARE batch1_head1 Q=16 round=3: auto_splits=16 split1 speedup=1.1530x saved=3.437 us
+batch1_head1 Q=16 v7_split1 round=4: 22.426 us MFU=0.1979%
+batch1_head1 Q=16 v7_auto_split round=4: 26.020 us MFU=0.1706%
+COMPARE batch1_head1 Q=16 round=4: auto_splits=16 split1 speedup=1.1603x saved=3.594 us
+Preparing batch1_head1 B=1 H=1 Q=32 KV=2048
+2026-11-12 10:26:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=32 v7_auto_split round=1: 32.247 us MFU=0.2753%
+batch1_head1 Q=32 v7_split1 round=1: 26.356 us MFU=0.3368%
+COMPARE batch1_head1 Q=32 round=1: auto_splits=16 split1 speedup=1.2235x saved=5.891 us
+batch1_head1 Q=32 v7_split1 round=2: 26.149 us MFU=0.3395%
+batch1_head1 Q=32 v7_auto_split round=2: 31.892 us MFU=0.2783%
+COMPARE batch1_head1 Q=32 round=2: auto_splits=16 split1 speedup=1.2196x saved=5.743 us
+batch1_head1 Q=32 v7_auto_split round=3: 32.147 us MFU=0.2761%
+batch1_head1 Q=32 v7_split1 round=3: 26.311 us MFU=0.3374%
+COMPARE batch1_head1 Q=32 round=3: auto_splits=16 split1 speedup=1.2218x saved=5.836 us
+batch1_head1 Q=32 v7_split1 round=4: 25.951 us MFU=0.3421%
+batch1_head1 Q=32 v7_auto_split round=4: 31.518 us MFU=0.2816%
+COMPARE batch1_head1 Q=32 round=4: auto_splits=16 split1 speedup=1.2145x saved=5.567 us
+Preparing batch1_head1 B=1 H=1 Q=64 KV=2048
+2026-11-12 10:26:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=64 v7_auto_split round=1: 32.812 us MFU=0.5411%
+batch1_head1 Q=64 v7_split1 round=1: 26.397 us MFU=0.6726%
+COMPARE batch1_head1 Q=64 round=1: auto_splits=16 split1 speedup=1.2430x saved=6.415 us
+batch1_head1 Q=64 v7_split1 round=2: 26.282 us MFU=0.6755%
+batch1_head1 Q=64 v7_auto_split round=2: 32.531 us MFU=0.5457%
+COMPARE batch1_head1 Q=64 round=2: auto_splits=16 split1 speedup=1.2378x saved=6.249 us
+batch1_head1 Q=64 v7_auto_split round=3: 32.520 us MFU=0.5459%
+batch1_head1 Q=64 v7_split1 round=3: 26.427 us MFU=0.6718%
+COMPARE batch1_head1 Q=64 round=3: auto_splits=16 split1 speedup=1.2306x saved=6.093 us
+batch1_head1 Q=64 v7_split1 round=4: 26.623 us MFU=0.6669%
+batch1_head1 Q=64 v7_auto_split round=4: 32.564 us MFU=0.5452%
+COMPARE batch1_head1 Q=64 round=4: auto_splits=16 split1 speedup=1.2232x saved=5.941 us
+Preparing batch1_head1 B=1 H=1 Q=127 KV=2048
+2026-11-12 10:26:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=127 v7_auto_split round=1: 26.537 us MFU=1.3276%
+batch1_head1 Q=127 v7_split1 round=1: 22.510 us MFU=1.5651%
+COMPARE batch1_head1 Q=127 round=1: auto_splits=16 split1 speedup=1.1789x saved=4.027 us
+batch1_head1 Q=127 v7_split1 round=2: 22.520 us MFU=1.5644%
+batch1_head1 Q=127 v7_auto_split round=2: 26.284 us MFU=1.3404%
+COMPARE batch1_head1 Q=127 round=2: auto_splits=16 split1 speedup=1.1671x saved=3.764 us
+batch1_head1 Q=127 v7_auto_split round=3: 26.440 us MFU=1.3324%
+batch1_head1 Q=127 v7_split1 round=3: 22.543 us MFU=1.5628%
+COMPARE batch1_head1 Q=127 round=3: auto_splits=16 split1 speedup=1.1729x saved=3.897 us
+batch1_head1 Q=127 v7_split1 round=4: 22.451 us MFU=1.5692%
+batch1_head1 Q=127 v7_auto_split round=4: 26.263 us MFU=1.3414%
+COMPARE batch1_head1 Q=127 round=4: auto_splits=16 split1 speedup=1.1698x saved=3.812 us
+Preparing batch1_head1 B=1 H=1 Q=128 KV=2048
+2026-11-12 10:26:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:26:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=128 v7_auto_split round=1: 32.938 us MFU=1.0780%
+batch1_head1 Q=128 v7_split1 round=1: 26.795 us MFU=1.3251%
+COMPARE batch1_head1 Q=128 round=1: auto_splits=16 split1 speedup=1.2293x saved=6.143 us
+batch1_head1 Q=128 v7_split1 round=2: 26.307 us MFU=1.3497%
+batch1_head1 Q=128 v7_auto_split round=2: 32.244 us MFU=1.1012%
+COMPARE batch1_head1 Q=128 round=2: auto_splits=16 split1 speedup=1.2257x saved=5.937 us
+batch1_head1 Q=128 v7_auto_split round=3: 32.347 us MFU=1.0977%
+batch1_head1 Q=128 v7_split1 round=3: 26.092 us MFU=1.3609%
+COMPARE batch1_head1 Q=128 round=3: auto_splits=16 split1 speedup=1.2397x saved=6.255 us
+batch1_head1 Q=128 v7_split1 round=4: 26.263 us MFU=1.3520%
+batch1_head1 Q=128 v7_auto_split round=4: 32.512 us MFU=1.0921%
+COMPARE batch1_head1 Q=128 round=4: auto_splits=16 split1 speedup=1.2379x saved=6.249 us
+Preparing batch1_head1 B=1 H=1 Q=129 KV=2048
+batch1_head1 Q=129 v7_auto_split round=1: 35.846 us MFU=0.9983%
+batch1_head1 Q=129 v7_split1 round=1: 26.991 us MFU=1.3258%
+COMPARE batch1_head1 Q=129 round=1: auto_splits=16 split1 speedup=1.3281x saved=8.855 us
+batch1_head1 Q=129 v7_split1 round=2: 26.095 us MFU=1.3713%
+batch1_head1 Q=129 v7_auto_split round=2: 35.368 us MFU=1.0118%
+COMPARE batch1_head1 Q=129 round=2: auto_splits=16 split1 speedup=1.3554x saved=9.273 us
+batch1_head1 Q=129 v7_auto_split round=3: 35.167 us MFU=1.0176%
+batch1_head1 Q=129 v7_split1 round=3: 26.020 us MFU=1.3753%
+COMPARE batch1_head1 Q=129 round=3: auto_splits=16 split1 speedup=1.3515x saved=9.147 us
+batch1_head1 Q=129 v7_split1 round=4: 25.930 us MFU=1.3801%
+batch1_head1 Q=129 v7_auto_split round=4: 35.190 us MFU=1.0169%
+COMPARE batch1_head1 Q=129 round=4: auto_splits=16 split1 speedup=1.3571x saved=9.260 us
+Preparing batch1_head1 B=1 H=1 Q=256 KV=2048
+2026-11-12 10:26:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:27:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=256 v7_auto_split round=1: 29.760 us MFU=2.3862%
+batch1_head1 Q=256 v7_split1 round=1: 22.842 us MFU=3.1090%
+COMPARE batch1_head1 Q=256 round=1: auto_splits=16 split1 speedup=1.3029x saved=6.918 us
+batch1_head1 Q=256 v7_split1 round=2: 22.630 us MFU=3.1381%
+batch1_head1 Q=256 v7_auto_split round=2: 29.673 us MFU=2.3932%
+COMPARE batch1_head1 Q=256 round=2: auto_splits=16 split1 speedup=1.3112x saved=7.043 us
+batch1_head1 Q=256 v7_auto_split round=3: 29.478 us MFU=2.4091%
+batch1_head1 Q=256 v7_split1 round=3: 22.733 us MFU=3.1239%
+COMPARE batch1_head1 Q=256 round=3: auto_splits=16 split1 speedup=1.2967x saved=6.745 us
+batch1_head1 Q=256 v7_split1 round=4: 22.635 us MFU=3.1374%
+batch1_head1 Q=256 v7_auto_split round=4: 29.397 us MFU=2.4157%
+COMPARE batch1_head1 Q=256 round=4: auto_splits=16 split1 speedup=1.2987x saved=6.762 us
+Preparing batch1_head1 B=1 H=1 Q=512 KV=2048
+2026-11-12 10:27:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:27:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=512 v7_auto_split round=1: 45.685 us MFU=3.1089%
+batch1_head1 Q=512 v7_split1 round=1: 23.084 us MFU=6.1527%
+COMPARE batch1_head1 Q=512 round=1: auto_splits=16 split1 speedup=1.9791x saved=22.601 us
+batch1_head1 Q=512 v7_split1 round=2: 22.899 us MFU=6.2024%
+batch1_head1 Q=512 v7_auto_split round=2: 44.801 us MFU=3.1702%
+COMPARE batch1_head1 Q=512 round=2: auto_splits=16 split1 speedup=1.9565x saved=21.902 us
+batch1_head1 Q=512 v7_auto_split round=3: 45.089 us MFU=3.1500%
+batch1_head1 Q=512 v7_split1 round=3: 22.777 us MFU=6.2356%
+COMPARE batch1_head1 Q=512 round=3: auto_splits=16 split1 speedup=1.9796x saved=22.312 us
+batch1_head1 Q=512 v7_split1 round=4: 22.795 us MFU=6.2307%
+batch1_head1 Q=512 v7_auto_split round=4: 45.073 us MFU=3.1511%
+COMPARE batch1_head1 Q=512 round=4: auto_splits=16 split1 speedup=1.9773x saved=22.278 us
+Preparing batch1_head1 B=1 H=1 Q=1024 KV=2048
+2026-11-12 10:27:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:27:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=1024 v7_auto_split round=1: 66.843 us MFU=4.2496%
+batch1_head1 Q=1024 v7_split1 round=1: 22.791 us MFU=12.4636%
+COMPARE batch1_head1 Q=1024 round=1: auto_splits=16 split1 speedup=2.9329x saved=44.052 us
+batch1_head1 Q=1024 v7_split1 round=2: 22.035 us MFU=12.8912%
+batch1_head1 Q=1024 v7_auto_split round=2: 66.233 us MFU=4.2888%
+COMPARE batch1_head1 Q=1024 round=2: auto_splits=16 split1 speedup=3.0058x saved=44.198 us
+batch1_head1 Q=1024 v7_auto_split round=3: 66.326 us MFU=4.2828%
+batch1_head1 Q=1024 v7_split1 round=3: 21.949 us MFU=12.9418%
+COMPARE batch1_head1 Q=1024 round=3: auto_splits=16 split1 speedup=3.0218x saved=44.377 us
+batch1_head1 Q=1024 v7_split1 round=4: 22.169 us MFU=12.8133%
+batch1_head1 Q=1024 v7_auto_split round=4: 66.190 us MFU=4.2916%
+COMPARE batch1_head1 Q=1024 round=4: auto_splits=16 split1 speedup=2.9857x saved=44.021 us
+Preparing batch1_head1 B=1 H=1 Q=2048 KV=2048
+2026-11-12 10:27:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:27:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=2048 v7_auto_split round=1: 71.307 us MFU=7.9672%
+batch1_head1 Q=2048 v7_split1 round=1: 27.562 us MFU=20.6123%
+COMPARE batch1_head1 Q=2048 round=1: auto_splits=8 split1 speedup=2.5871x saved=43.745 us
+batch1_head1 Q=2048 v7_split1 round=2: 27.021 us MFU=21.0250%
+batch1_head1 Q=2048 v7_auto_split round=2: 71.237 us MFU=7.9750%
+COMPARE batch1_head1 Q=2048 round=2: auto_splits=8 split1 speedup=2.6364x saved=44.216 us
+batch1_head1 Q=2048 v7_auto_split round=3: 71.205 us MFU=7.9786%
+batch1_head1 Q=2048 v7_split1 round=3: 27.063 us MFU=20.9924%
+COMPARE batch1_head1 Q=2048 round=3: auto_splits=8 split1 speedup=2.6311x saved=44.142 us
+batch1_head1 Q=2048 v7_split1 round=4: 27.382 us MFU=20.7478%
+batch1_head1 Q=2048 v7_auto_split round=4: 71.287 us MFU=7.9694%
+COMPARE batch1_head1 Q=2048 round=4: auto_splits=8 split1 speedup=2.6034x saved=43.905 us
+Preparing batch1_head1 B=1 H=1 Q=4096 KV=2048
+batch1_head1 Q=4096 v7_auto_split round=1: 82.394 us MFU=13.7903%
+batch1_head1 Q=4096 v7_split1 round=1: 43.362 us MFU=26.2035%
+COMPARE batch1_head1 Q=4096 round=1: auto_splits=4 split1 speedup=1.9001x saved=39.032 us
+batch1_head1 Q=4096 v7_split1 round=2: 42.978 us MFU=26.4376%
+batch1_head1 Q=4096 v7_auto_split round=2: 81.758 us MFU=13.8975%
+COMPARE batch1_head1 Q=4096 round=2: auto_splits=4 split1 speedup=1.9023x saved=38.780 us
+batch1_head1 Q=4096 v7_auto_split round=3: 81.592 us MFU=13.9258%
+batch1_head1 Q=4096 v7_split1 round=3: 42.784 us MFU=26.5575%
+COMPARE batch1_head1 Q=4096 round=3: auto_splits=4 split1 speedup=1.9071x saved=38.808 us
+batch1_head1 Q=4096 v7_split1 round=4: 42.762 us MFU=26.5711%
+batch1_head1 Q=4096 v7_auto_split round=4: 81.942 us MFU=13.8663%
+COMPARE batch1_head1 Q=4096 round=4: auto_splits=4 split1 speedup=1.9162x saved=39.180 us
+Preparing batch1_head1 B=1 H=1 Q=8192 KV=2048
+2026-11-12 10:27:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+2026-11-12 10:27:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+batch1_head1 Q=8192 v7_auto_split round=1: 107.883 us MFU=21.0642%
+batch1_head1 Q=8192 v7_split1 round=1: 60.610 us MFU=37.4933%
+COMPARE batch1_head1 Q=8192 round=1: auto_splits=2 split1 speedup=1.7800x saved=47.273 us
+batch1_head1 Q=8192 v7_split1 round=2: 60.040 us MFU=37.8493%
+batch1_head1 Q=8192 v7_auto_split round=2: 105.943 us MFU=21.4499%
+COMPARE batch1_head1 Q=8192 round=2: auto_splits=2 split1 speedup=1.7645x saved=45.903 us
+batch1_head1 Q=8192 v7_auto_split round=3: 105.892 us MFU=21.4603%
+batch1_head1 Q=8192 v7_split1 round=3: 60.247 us MFU=37.7192%
+COMPARE batch1_head1 Q=8192 round=3: auto_splits=2 split1 speedup=1.7576x saved=45.645 us
+batch1_head1 Q=8192 v7_split1 round=4: 60.281 us MFU=37.6979%
+batch1_head1 Q=8192 v7_auto_split round=4: 106.175 us MFU=21.4031%
+COMPARE batch1_head1 Q=8192 round=4: auto_splits=2 split1 speedup=1.7613x saved=45.894 us
+Preparing batch1_head1 B=1 H=1 Q=16384 KV=2048
+2026-11-12 10:27:07  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=16384 v7_auto_split round=1: 93.245 us MFU=48.7419%
+batch1_head1 Q=16384 v7_split1 round=1: 92.892 us MFU=48.9271%
+COMPARE batch1_head1 Q=16384 round=1: auto_splits=1 split1 speedup=1.0038x saved=0.353 us
+batch1_head1 Q=16384 v7_split1 round=2: 93.486 us MFU=48.6163%
+batch1_head1 Q=16384 v7_auto_split round=2: 93.659 us MFU=48.5265%
+COMPARE batch1_head1 Q=16384 round=2: auto_splits=1 split1 speedup=1.0019x saved=0.173 us
+batch1_head1 Q=16384 v7_auto_split round=3: 93.426 us MFU=48.6475%
+batch1_head1 Q=16384 v7_split1 round=3: 93.925 us MFU=48.3890%
+COMPARE batch1_head1 Q=16384 round=3: auto_splits=1 split1 speedup=0.9947x saved=-0.499 us
+batch1_head1 Q=16384 v7_split1 round=4: 94.214 us MFU=48.2406%
+batch1_head1 Q=16384 v7_auto_split round=4: 94.229 us MFU=48.2329%
+COMPARE batch1_head1 Q=16384 round=4: auto_splits=1 split1 speedup=1.0002x saved=0.015 us
+Preparing batch1_head1 B=1 H=1 Q=32768 KV=2048
+2026-11-12 10:27:07  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=32768 v7_auto_split round=1: 173.054 us MFU=52.5263%
+batch1_head1 Q=32768 v7_split1 round=1: 173.117 us MFU=52.5071%
+COMPARE batch1_head1 Q=32768 round=1: auto_splits=1 split1 speedup=0.9996x saved=-0.063 us
+batch1_head1 Q=32768 v7_split1 round=2: 173.053 us MFU=52.5266%
+batch1_head1 Q=32768 v7_auto_split round=2: 172.803 us MFU=52.6025%
+COMPARE batch1_head1 Q=32768 round=2: auto_splits=1 split1 speedup=0.9986x saved=-0.250 us
+batch1_head1 Q=32768 v7_auto_split round=3: 172.994 us MFU=52.5445%
+batch1_head1 Q=32768 v7_split1 round=3: 173.223 us MFU=52.4750%
+COMPARE batch1_head1 Q=32768 round=3: auto_splits=1 split1 speedup=0.9987x saved=-0.229 us
+batch1_head1 Q=32768 v7_split1 round=4: 172.747 us MFU=52.6196%
+batch1_head1 Q=32768 v7_auto_split round=4: 173.214 us MFU=52.4777%
+COMPARE batch1_head1 Q=32768 round=4: auto_splits=1 split1 speedup=1.0027x saved=0.467 us
+passed: mha_v7_split1_paired.json; compact report: mha_v7_split1_paired_summary.json
