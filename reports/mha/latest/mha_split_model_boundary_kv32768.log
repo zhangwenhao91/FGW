@@ -1,0 +1,178 @@
+Preparing batch1_head1 B=1 H=1 Q=1 KV=32768
+2026-11-12 12:20:59  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:20:59  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=1 split1 round=1: 192.008 us MFU=0.0231%
+batch1_head1 Q=1 split2 round=1: 108.086 us MFU=0.0411%
+batch1_head1 Q=1 split4 round=1: 65.360 us MFU=0.0679%
+batch1_head1 Q=1 split8 round=1: 45.684 us MFU=0.0972%
+batch1_head1 Q=1 split16 round=1: 40.475 us MFU=0.1097%
+batch1_head1 Q=1 split16 round=2: 40.475 us MFU=0.1097%
+batch1_head1 Q=1 split8 round=2: 45.644 us MFU=0.0972%
+batch1_head1 Q=1 split4 round=2: 65.449 us MFU=0.0678%
+batch1_head1 Q=1 split2 round=2: 108.143 us MFU=0.0410%
+batch1_head1 Q=1 split1 round=2: 192.095 us MFU=0.0231%
+batch1_head1 Q=1 split1 round=3: 191.949 us MFU=0.0231%
+batch1_head1 Q=1 split2 round=3: 108.118 us MFU=0.0411%
+batch1_head1 Q=1 split4 round=3: 65.436 us MFU=0.0678%
+batch1_head1 Q=1 split8 round=3: 45.603 us MFU=0.0973%
+batch1_head1 Q=1 split16 round=3: 40.422 us MFU=0.1098%
+batch1_head1 Q=1 split16 round=4: 40.640 us MFU=0.1092%
+batch1_head1 Q=1 split8 round=4: 45.501 us MFU=0.0975%
+batch1_head1 Q=1 split4 round=4: 65.360 us MFU=0.0679%
+batch1_head1 Q=1 split2 round=4: 108.004 us MFU=0.0411%
+batch1_head1 Q=1 split1 round=4: 191.792 us MFU=0.0231%
+Preparing batch1_head1 B=1 H=1 Q=128 KV=32768
+2026-11-12 12:20:59  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:20:59  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch1_head1 Q=128 split1 round=1: 192.106 us MFU=2.9573%
+batch1_head1 Q=128 split2 round=1: 108.907 us MFU=5.2165%
+batch1_head1 Q=128 split4 round=1: 66.649 us MFU=8.5240%
+batch1_head1 Q=128 split8 round=1: 48.182 us MFU=11.7911%
+batch1_head1 Q=128 split16 round=1: 42.952 us MFU=13.2268%
+batch1_head1 Q=128 split16 round=2: 43.078 us MFU=13.1881%
+batch1_head1 Q=128 split8 round=2: 48.132 us MFU=11.8033%
+batch1_head1 Q=128 split4 round=2: 67.000 us MFU=8.4794%
+batch1_head1 Q=128 split2 round=2: 109.235 us MFU=5.2009%
+batch1_head1 Q=128 split1 round=2: 192.301 us MFU=2.9543%
+batch1_head1 Q=128 split1 round=3: 191.551 us MFU=2.9659%
+batch1_head1 Q=128 split2 round=3: 108.286 us MFU=5.2465%
+batch1_head1 Q=128 split4 round=3: 66.127 us MFU=8.5913%
+batch1_head1 Q=128 split8 round=3: 47.366 us MFU=11.9942%
+batch1_head1 Q=128 split16 round=3: 42.251 us MFU=13.4462%
+batch1_head1 Q=128 split16 round=4: 42.985 us MFU=13.2166%
+batch1_head1 Q=128 split8 round=4: 48.018 us MFU=11.8313%
+batch1_head1 Q=128 split4 round=4: 66.634 us MFU=8.5259%
+batch1_head1 Q=128 split2 round=4: 108.956 us MFU=5.2142%
+batch1_head1 Q=128 split1 round=4: 192.015 us MFU=2.9587%
+Preparing batch1_head1 B=1 H=1 Q=129 KV=32768
+batch1_head1 Q=129 split1 round=1: 191.177 us MFU=2.9949%
+batch1_head1 Q=129 split2 round=1: 107.814 us MFU=5.3106%
+batch1_head1 Q=129 split4 round=1: 65.817 us MFU=8.6992%
+batch1_head1 Q=129 split8 round=1: 47.498 us MFU=12.0543%
+batch1_head1 Q=129 split16 round=1: 58.846 us MFU=9.7297%
+batch1_head1 Q=129 split16 round=2: 58.495 us MFU=9.7881%
+batch1_head1 Q=129 split8 round=2: 47.351 us MFU=12.0917%
+batch1_head1 Q=129 split4 round=2: 65.751 us MFU=8.7079%
+batch1_head1 Q=129 split2 round=2: 107.606 us MFU=5.3209%
+batch1_head1 Q=129 split1 round=2: 191.054 us MFU=2.9968%
+batch1_head1 Q=129 split1 round=3: 190.983 us MFU=2.9979%
+batch1_head1 Q=129 split2 round=3: 107.751 us MFU=5.3137%
+batch1_head1 Q=129 split4 round=3: 65.684 us MFU=8.7168%
+batch1_head1 Q=129 split8 round=3: 47.411 us MFU=12.0764%
+batch1_head1 Q=129 split16 round=3: 58.521 us MFU=9.7838%
+batch1_head1 Q=129 split16 round=4: 58.472 us MFU=9.7920%
+batch1_head1 Q=129 split8 round=4: 47.500 us MFU=12.0538%
+batch1_head1 Q=129 split4 round=4: 65.660 us MFU=8.7200%
+batch1_head1 Q=129 split2 round=4: 107.560 us MFU=5.3231%
+batch1_head1 Q=129 split1 round=4: 191.225 us MFU=2.9941%
+Preparing batch1_head1 B=1 H=1 Q=1024 KV=32768
+batch1_head1 Q=1024 split1 round=1: 192.499 us MFU=23.6102%
+batch1_head1 Q=1024 split2 round=1: 113.124 us MFU=40.1766%
+batch1_head1 Q=1024 split4 round=1: 121.982 us MFU=37.2591%
+batch1_head1 Q=1024 split8 round=1: 113.678 us MFU=39.9808%
+batch1_head1 Q=1024 split16 round=1: 128.120 us MFU=35.4741%
+batch1_head1 Q=1024 split16 round=2: 128.070 us MFU=35.4879%
+batch1_head1 Q=1024 split8 round=2: 113.337 us MFU=40.1011%
+batch1_head1 Q=1024 split4 round=2: 121.948 us MFU=37.2695%
+batch1_head1 Q=1024 split2 round=2: 113.091 us MFU=40.1883%
+batch1_head1 Q=1024 split1 round=2: 192.248 us MFU=23.6410%
+batch1_head1 Q=1024 split1 round=3: 192.058 us MFU=23.6644%
+batch1_head1 Q=1024 split2 round=3: 112.564 us MFU=40.3765%
+batch1_head1 Q=1024 split4 round=3: 121.771 us MFU=37.3237%
+batch1_head1 Q=1024 split8 round=3: 113.105 us MFU=40.1834%
+batch1_head1 Q=1024 split16 round=3: 127.674 us MFU=35.5980%
+batch1_head1 Q=1024 split16 round=4: 127.795 us MFU=35.5643%
+batch1_head1 Q=1024 split8 round=4: 113.269 us MFU=40.1252%
+batch1_head1 Q=1024 split4 round=4: 121.689 us MFU=37.3488%
+batch1_head1 Q=1024 split2 round=4: 112.681 us MFU=40.3346%
+batch1_head1 Q=1024 split1 round=4: 192.296 us MFU=23.6351%
+Preparing batch2_head8 B=2 H=8 Q=1 KV=32768
+2026-11-12 12:21:02  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:21:02  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=1 split1 round=1: 209.017 us MFU=0.3398%
+batch2_head8 Q=1 split2 round=1: 249.367 us MFU=0.2848%
+batch2_head8 Q=1 split4 round=1: 224.913 us MFU=0.3157%
+batch2_head8 Q=1 split8 round=1: 224.942 us MFU=0.3157%
+batch2_head8 Q=1 split16 round=1: 237.283 us MFU=0.2993%
+batch2_head8 Q=1 split16 round=2: 217.018 us MFU=0.3272%
+batch2_head8 Q=1 split8 round=2: 225.125 us MFU=0.3154%
+batch2_head8 Q=1 split4 round=2: 226.755 us MFU=0.3132%
+batch2_head8 Q=1 split2 round=2: 247.997 us MFU=0.2864%
+batch2_head8 Q=1 split1 round=2: 206.495 us MFU=0.3439%
+batch2_head8 Q=1 split1 round=3: 208.458 us MFU=0.3407%
+batch2_head8 Q=1 split2 round=3: 249.062 us MFU=0.2851%
+batch2_head8 Q=1 split4 round=3: 224.311 us MFU=0.3166%
+batch2_head8 Q=1 split8 round=3: 224.279 us MFU=0.3166%
+batch2_head8 Q=1 split16 round=3: 236.251 us MFU=0.3006%
+batch2_head8 Q=1 split16 round=4: 216.988 us MFU=0.3273%
+batch2_head8 Q=1 split8 round=4: 222.981 us MFU=0.3185%
+batch2_head8 Q=1 split4 round=4: 227.117 us MFU=0.3127%
+batch2_head8 Q=1 split2 round=4: 247.720 us MFU=0.2867%
+batch2_head8 Q=1 split1 round=4: 205.378 us MFU=0.3458%
+Preparing batch2_head8 B=2 H=8 Q=128 KV=32768
+batch2_head8 Q=128 split1 round=1: 238.286 us MFU=38.1469%
+batch2_head8 Q=128 split2 round=1: 286.431 us MFU=31.7350%
+batch2_head8 Q=128 split4 round=1: 267.054 us MFU=34.0376%
+batch2_head8 Q=128 split8 round=1: 277.963 us MFU=32.7018%
+batch2_head8 Q=128 split16 round=1: 315.449 us MFU=28.8157%
+batch2_head8 Q=128 split16 round=2: 315.586 us MFU=28.8032%
+batch2_head8 Q=128 split8 round=2: 277.708 us MFU=32.7318%
+batch2_head8 Q=128 split4 round=2: 269.594 us MFU=33.7169%
+batch2_head8 Q=128 split2 round=2: 286.614 us MFU=31.7147%
+batch2_head8 Q=128 split1 round=2: 234.916 us MFU=38.6942%
+batch2_head8 Q=128 split1 round=3: 235.853 us MFU=38.5404%
+batch2_head8 Q=128 split2 round=3: 286.807 us MFU=31.6934%
+batch2_head8 Q=128 split4 round=3: 263.528 us MFU=34.4930%
+batch2_head8 Q=128 split8 round=3: 276.949 us MFU=32.8215%
+batch2_head8 Q=128 split16 round=3: 313.309 us MFU=29.0125%
+batch2_head8 Q=128 split16 round=4: 315.666 us MFU=28.7959%
+batch2_head8 Q=128 split8 round=4: 277.932 us MFU=32.7054%
+batch2_head8 Q=128 split4 round=4: 267.719 us MFU=33.9531%
+batch2_head8 Q=128 split2 round=4: 285.626 us MFU=31.8244%
+batch2_head8 Q=128 split1 round=4: 235.538 us MFU=38.5920%
+Preparing batch2_head8 B=2 H=8 Q=129 KV=32768
+2026-11-12 12:21:04  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'partial' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+2026-11-12 12:21:04  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'merge' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=129 split1 round=1: 404.460 us MFU=22.6497%
+batch2_head8 Q=129 split2 round=1: 425.106 us MFU=21.5497%
+batch2_head8 Q=129 split4 round=1: 421.058 us MFU=21.7568%
+batch2_head8 Q=129 split8 round=1: 472.146 us MFU=19.4027%
+batch2_head8 Q=129 split16 round=1: 514.203 us MFU=17.8157%
+batch2_head8 Q=129 split16 round=2: 533.369 us MFU=17.1755%
+batch2_head8 Q=129 split8 round=2: 486.608 us MFU=18.8260%
+batch2_head8 Q=129 split4 round=2: 435.146 us MFU=21.0525%
+batch2_head8 Q=129 split2 round=2: 439.221 us MFU=20.8571%
+batch2_head8 Q=129 split1 round=2: 440.300 us MFU=20.8060%
+batch2_head8 Q=129 split1 round=3: 416.107 us MFU=22.0157%
+batch2_head8 Q=129 split2 round=3: 433.337 us MFU=21.1403%
+batch2_head8 Q=129 split4 round=3: 428.338 us MFU=21.3871%
+batch2_head8 Q=129 split8 round=3: 475.054 us MFU=19.2839%
+batch2_head8 Q=129 split16 round=3: 519.623 us MFU=17.6299%
+batch2_head8 Q=129 split16 round=4: 521.950 us MFU=17.5513%
+batch2_head8 Q=129 split8 round=4: 476.183 us MFU=19.2382%
+batch2_head8 Q=129 split4 round=4: 428.305 us MFU=21.3887%
+batch2_head8 Q=129 split2 round=4: 428.129 us MFU=21.3975%
+batch2_head8 Q=129 split1 round=4: 409.912 us MFU=22.3484%
+Preparing batch2_head8 B=2 H=8 Q=1024 KV=32768
+2026-11-12 12:21:07  [TileLang:tilelang.cache.kernel_cache:WARNING] (kernel_cache.py:379): Found kernel 'direct' in memory cache. For better performance, consider using `@tilelang.jit` instead of direct kernel caching.
+batch2_head8 Q=1024 split1 round=1: 1327.711 us MFU=54.7702%
+batch2_head8 Q=1024 split2 round=1: 1642.268 us MFU=44.2796%
+batch2_head8 Q=1024 split4 round=1: 1723.800 us MFU=42.1853%
+batch2_head8 Q=1024 split8 round=1: 2064.149 us MFU=35.2295%
+batch2_head8 Q=1024 split16 round=1: 2591.581 us MFU=28.0597%
+batch2_head8 Q=1024 split16 round=2: 2626.556 us MFU=27.6861%
+batch2_head8 Q=1024 split8 round=2: 2004.848 us MFU=36.2716%
+batch2_head8 Q=1024 split4 round=2: 1771.426 us MFU=41.0511%
+batch2_head8 Q=1024 split2 round=2: 1640.800 us MFU=44.3192%
+batch2_head8 Q=1024 split1 round=2: 1303.641 us MFU=55.7815%
+batch2_head8 Q=1024 split1 round=3: 1387.085 us MFU=52.4258%
+batch2_head8 Q=1024 split2 round=3: 1659.287 us MFU=43.8255%
+batch2_head8 Q=1024 split4 round=3: 1741.316 us MFU=41.7610%
+batch2_head8 Q=1024 split8 round=3: 1996.890 us MFU=36.4161%
+batch2_head8 Q=1024 split16 round=3: 2599.091 us MFU=27.9786%
+batch2_head8 Q=1024 split16 round=4: 2646.010 us MFU=27.4825%
+batch2_head8 Q=1024 split8 round=4: 2133.825 us MFU=34.0792%
+batch2_head8 Q=1024 split4 round=4: 1757.785 us MFU=41.3697%
+batch2_head8 Q=1024 split2 round=4: 1682.045 us MFU=43.2325%
+batch2_head8 Q=1024 split1 round=4: 1309.051 us MFU=55.5509%
+passed: mha_split_model_boundary_kv32768.json; compact report: mha_split_model_boundary_kv32768_summary.json
