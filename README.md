@@ -1,5 +1,16 @@
 # FGW
 
+## v7 与官方 AscendC 加速比
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_v7_ascendc
+```
+
+使用已安装CANN的FusedInferAttentionScore：先冒烟，再比较B2/H8和B1/H1的长短Q。
+同一份分页数据、BF16输入输出，先精度后交替计时；加速比=AscendC耗时/v7耗时。
+[配置与报告说明](docs/mha_v7_ascendc.md)。
+
 ## v7 与 PR3896 长短 Q MFU 对照
 
 ```bash
