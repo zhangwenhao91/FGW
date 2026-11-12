@@ -1,0 +1,28 @@
+EVENT round=1 v7_full: 332.248 us
+EVENT round=1 v7_direct: 321.024 us
+EVENT round=1 ascendc_full: 256.587 us
+EVENT round=2 v7_full: 331.446 us
+EVENT round=2 v7_direct: 321.993 us
+EVENT round=2 ascendc_full: 256.927 us
+EVENT round=3 v7_full: 332.372 us
+EVENT round=3 v7_direct: 320.784 us
+EVENT round=3 ascendc_full: 256.248 us
+MSPROF round=1 v7_full starting
+MSPROF round=1 v7_full: KernelProfile(331.4us, mad=75.3%, aic_mte2=62.1%, aic_mte1=39.1%, aic_fix=64.6%, aiv_vec=71.5%, aiv_mte2=3.3%, aiv_mte3=37.6%, aic_cycles=12179392, aiv_cycles=28728687)
+MSPROF round=1 v7_direct starting
+MSPROF round=1 v7_direct: KernelProfile(322.8us, mad=73.8%, aic_mte2=62.8%, aic_mte1=38.6%, aic_fix=63.4%, aiv_vec=73.2%, aiv_mte3=37.8%, aic_cycles=12427412, aiv_cycles=28030406)
+MSPROF round=1 ascendc_full starting
+MSPROF round=1 ascendc_full: KernelProfile(227.5us, mad=87.0%, aic_mte2=85.0%, aic_mte1=55.3%, aic_fix=84.7%, aiv_vec=84.3%, aiv_mte2=1.1%, aiv_mte3=50.5%, aic_cycles=10136678, aiv_cycles=20908500)
+MSPROF round=2 v7_direct starting
+MSPROF round=2 v7_direct: KernelProfile(322.7us, mad=73.8%, aic_mte2=62.7%, aic_mte1=38.6%, aic_fix=63.4%, aiv_vec=73.3%, aiv_mte3=37.8%, aic_cycles=12421146, aiv_cycles=28017522)
+MSPROF round=2 ascendc_full starting
+MSPROF round=2 ascendc_full: KernelProfile(229.0us, mad=87.0%, aic_mte2=84.9%, aic_mte1=55.3%, aic_fix=84.6%, aiv_vec=84.1%, aiv_mte2=1.1%, aiv_mte3=50.4%, aic_cycles=10139172, aiv_cycles=20957666)
+MSPROF round=2 v7_full starting
+MSPROF round=2 v7_full: KernelProfile(331.2us, mad=75.3%, aic_mte2=62.1%, aic_mte1=39.2%, aic_fix=64.7%, aiv_vec=71.5%, aiv_mte2=3.3%, aiv_mte3=37.6%, aic_cycles=12170254, aiv_cycles=28710337)
+MSPROF round=3 ascendc_full starting
+MSPROF round=3 ascendc_full: KernelProfile(227.4us, mad=87.0%, aic_mte2=85.0%, aic_mte1=55.4%, aic_fix=84.7%, aiv_vec=84.4%, aiv_mte2=1.1%, aiv_mte3=50.5%, aic_cycles=10132725, aiv_cycles=20895146)
+MSPROF round=3 v7_full starting
+MSPROF round=3 v7_full: KernelProfile(331.3us, mad=75.3%, aic_mte2=62.0%, aic_mte1=39.1%, aic_fix=64.7%, aiv_vec=71.5%, aiv_mte2=3.3%, aiv_mte3=37.6%, aic_cycles=12174536, aiv_cycles=28718389)
+MSPROF round=3 v7_direct starting
+MSPROF round=3 v7_direct: KernelProfile(322.7us, mad=73.8%, aic_mte2=62.9%, aic_mte1=38.6%, aic_fix=63.4%, aiv_vec=73.3%, aiv_mte3=37.8%, aic_cycles=12423223, aiv_cycles=28021646)
+passed: mha_v7_ascendc_msprof.json

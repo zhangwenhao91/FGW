@@ -1,0 +1,384 @@
+{
+  "status": "passed",
+  "settings": {
+    "rounds": 3,
+    "warmup": 20,
+    "repeat": 30,
+    "event_repeat": 51,
+    "cache_mb": 256,
+    "device": 0,
+    "output": "mha_v7_ascendc_msprof.json"
+  },
+  "started_utc": "2026-11-12T15:20:50.584898+00:00",
+  "shape": {
+    "B": 2,
+    "Q": 4096,
+    "H": 8,
+    "D": 128,
+    "KV": 2048,
+    "page_size": 128
+  },
+  "dtype": "bfloat16",
+  "causal": false,
+  "seed": 7,
+  "effective_flops": 68719476736,
+  "msprof_results": [
+    {
+      "label": "v7_full",
+      "round": 1,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 331371.2,
+        "aic_total_cycles": 12179392,
+        "aic_mad": 0.7526365489987564,
+        "aic_scalar": 0.20508850024021263,
+        "aic_mte1": 0.3914375709248832,
+        "aic_mte2": 0.6208411633020958,
+        "aic_mte3": 8.407731150052309e-05,
+        "aic_fixpipe": 0.6463400125249813,
+        "aiv_total_cycles": 28728687,
+        "aiv_vec": 0.7145147120645781,
+        "aiv_scalar": 0.0724586981601973,
+        "aiv_mte2": 0.03300073703100017,
+        "aiv_mte3": 0.37603540354548143
+      },
+      "profiler_duration_us": 331.3712
+    },
+    {
+      "label": "v7_direct",
+      "round": 1,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 322779.13333333336,
+        "aic_total_cycles": 12427412,
+        "aic_mad": 0.7376231887192038,
+        "aic_scalar": 0.20153572626416738,
+        "aic_mte1": 0.38596365586772013,
+        "aic_mte2": 0.6275433895315508,
+        "aic_mte3": 8.239909413032042e-05,
+        "aic_fixpipe": 0.6335215966734232,
+        "aiv_total_cycles": 28030406,
+        "aiv_vec": 0.7323071262593718,
+        "aiv_scalar": 0.0671760992335943,
+        "aiv_mte2": 0.0002980779475313724,
+        "aiv_mte3": 0.37771060148191393
+      },
+      "profiler_duration_us": 322.77913333333333
+    },
+    {
+      "label": "ascendc_full",
+      "round": 1,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 227541.26666666666,
+        "aic_total_cycles": 10136678,
+        "aic_mad": 0.8701632187022116,
+        "aic_scalar": 0.8761754208510696,
+        "aic_mte1": 0.5534757175783241,
+        "aic_mte2": 0.8497472077862724,
+        "aic_mte3": 5.5245348229046885e-06,
+        "aic_fixpipe": 0.8466103379227581,
+        "aiv_total_cycles": 20908500,
+        "aiv_vec": 0.8430058872790366,
+        "aiv_scalar": 0.6538990087590155,
+        "aiv_mte2": 0.011191946440118726,
+        "aiv_mte3": 0.5046451361797893
+      },
+      "profiler_duration_us": 227.54126666666667
+    },
+    {
+      "label": "v7_direct",
+      "round": 2,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 322690.26666666666,
+        "aic_total_cycles": 12421146,
+        "aic_mad": 0.7379423869794388,
+        "aic_scalar": 0.20104759336510014,
+        "aic_mte1": 0.3859136637932326,
+        "aic_mte2": 0.626640687879591,
+        "aic_mte3": 8.244063310821107e-05,
+        "aic_fixpipe": 0.6337627495029141,
+        "aiv_total_cycles": 28017522,
+        "aiv_vec": 0.7326300631742081,
+        "aiv_scalar": 0.0668145855327731,
+        "aiv_mte2": 0.00029831602344458766,
+        "aiv_mte3": 0.3778492624351425
+      },
+      "profiler_duration_us": 322.6902666666667
+    },
+    {
+      "label": "ascendc_full",
+      "round": 2,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 229018.36666666667,
+        "aic_total_cycles": 10139172,
+        "aic_mad": 0.8697999260617318,
+        "aic_scalar": 0.8760232925766372,
+        "aic_mte1": 0.5534841698580302,
+        "aic_mte2": 0.8490964413528336,
+        "aic_mte3": 5.523167927603446e-06,
+        "aic_fixpipe": 0.846281035031659,
+        "aiv_total_cycles": 20957666,
+        "aiv_vec": 0.8410432669095479,
+        "aiv_scalar": 0.6523566282712424,
+        "aiv_mte2": 0.0111206243459201,
+        "aiv_mte3": 0.5036388531452954
+      },
+      "profiler_duration_us": 229.01836666666668
+    },
+    {
+      "label": "v7_full",
+      "round": 2,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 331151.8,
+        "aic_total_cycles": 12170254,
+        "aic_mad": 0.7532103907935255,
+        "aic_scalar": 0.20507599295835244,
+        "aic_mte1": 0.3917102343428262,
+        "aic_mte2": 0.6209617857566576,
+        "aic_mte3": 8.414019200555996e-05,
+        "aic_fixpipe": 0.6468986665346746,
+        "aiv_total_cycles": 28710337,
+        "aiv_vec": 0.7149816178846358,
+        "aiv_scalar": 0.07235999843587175,
+        "aiv_mte2": 0.033036117718972,
+        "aiv_mte3": 0.37632931540528847
+      },
+      "profiler_duration_us": 331.1518
+    },
+    {
+      "label": "ascendc_full",
+      "round": 3,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 227351.8,
+        "aic_total_cycles": 10132725,
+        "aic_mad": 0.8704728655553443,
+        "aic_scalar": 0.8761017887704798,
+        "aic_mte1": 0.5536993503253351,
+        "aic_mte2": 0.8504373016390802,
+        "aic_mte3": 5.526681880928168e-06,
+        "aic_fixpipe": 0.8468461891532882,
+        "aiv_total_cycles": 20895146,
+        "aiv_vec": 0.8435382520422148,
+        "aiv_scalar": 0.6541072823792082,
+        "aiv_mte2": 0.011128299384890966,
+        "aiv_mte3": 0.5052783504058602
+      },
+      "profiler_duration_us": 227.3518
+    },
+    {
+      "label": "v7_full",
+      "round": 3,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 331282.26666666666,
+        "aic_total_cycles": 12174536,
+        "aic_mad": 0.752935646085842,
+        "aic_scalar": 0.20563165500485317,
+        "aic_mte1": 0.3914811391080768,
+        "aic_mte2": 0.6197689430922905,
+        "aic_mte3": 8.411051994657757e-05,
+        "aic_fixpipe": 0.6466683120028731,
+        "aiv_total_cycles": 28718389,
+        "aiv_vec": 0.7147665253142662,
+        "aiv_scalar": 0.07272492410380654,
+        "aiv_mte2": 0.03303456933806212,
+        "aiv_mte3": 0.37632858914831835
+      },
+      "profiler_duration_us": 331.28226666666666
+    },
+    {
+      "label": "v7_direct",
+      "round": 3,
+      "status": "passed",
+      "profile": {
+        "dur_ns": 322711.0,
+        "aic_total_cycles": 12423223,
+        "aic_mad": 0.737866699573203,
+        "aic_scalar": 0.20107872247668085,
+        "aic_mte1": 0.3860723274975185,
+        "aic_mte2": 0.6289238549032774,
+        "aic_mte3": 8.242693729258878e-05,
+        "aic_fixpipe": 0.6337242005986722,
+        "aiv_total_cycles": 28021646,
+        "aiv_vec": 0.732547075660854,
+        "aiv_scalar": 0.06661212450006147,
+        "aiv_mte2": 0.000298101069274003,
+        "aiv_mte3": 0.37769378196822195
+      },
+      "profiler_duration_us": 322.711
+    }
+  ],
+  "notes": [
+    "Event: warm-cache elapsed median, interleaved one invocation per sample.",
+    "msprof_detail: same upstream do_bench for all candidates, cache flush before invocation; dur_ns is profiler record aggregation per invocation, not Event elapsed median or CPU wall time.",
+    "Pipe ratios use their own AIC/AIV cycle denominators and may overlap; do not add or interpret as an exclusive time breakdown.",
+    "Upstream sums kernel profiles for multi-kernel calls: counters are aggregate, not per-kernel attribution. Parser source is preserved.",
+    "v7_full includes Q conversion and direct kernel; v7_direct consumes preconverted Q; ascendc_full is native FIA v2 with same paged storage, BSND Q/O, no KV gather.",
+    "Separate full/direct profiling sessions are not additive; their difference is not an exact Q-conversion cost.",
+    "FIA inner_precise=0, sparse_mode=0, no mask/quantization/LSE; model and kernel unchanged."
+  ],
+  "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=cc08d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+  "versions": {
+    "torch": "2.13.0+cpu",
+    "torch_npu": "2.13.0",
+    "tilelang": "0.1.15+cpu.gita7cb753d"
+  },
+  "v7_sha256": "48ad471ff4b4d8f25a437165ddd62d01be97cdb1d724ed558154eef1a0375434",
+  "cost_model_sha256": "036497d1b0a389396d5482d49a3af664c117955b1b810ae6524a36acf67fc8d9",
+  "cost_model_weights": [
+    0.6832090220301325,
+    1.1964970998229219,
+    4.3367013795716725,
+    0.1038025835315521,
+    0.015520174210146887,
+    0.0653446344626205
+  ],
+  "msprof_source_sha256": "e322b8e09d2e1e3565093bcd6e332316426a4a596375db131d04096a3feef7f9",
+  "msprof_source_file": "mha_v7_ascendc_msprof_msprof_source.py",
+  "do_bench_signature": "(fn: 'Callable', warmup: 'float' = 25, rep: 'float' = 100, _n_warmup: 'int' = 0, _n_repeat: 'int' = 0, quantiles: 'list[float] | None' = None, fast_flush: 'bool' = True, backend: \"Literal['event', 'cupti', 'cudagraph', 'wall', 'msprof', 'msprof_detail']\" = 'event', return_mode: \"Literal['min', 'max', 'mean', 'median']\" = 'mean', device: 'int | torch.device | None' = None, cache_size: 'int' = 256, early_stop_baseline: 'float | None' = None) -> 'float | list[float]'",
+  "fia_schema": "{'': npu::npu_fused_infer_attention_score_v2(Tensor query, Tensor key, Tensor value, *, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_qlen=None, SymInt[]? actual_seq_kvlen=None, Tensor? block_table=None, Tensor? dequant_scale_query=None, Tensor? dequant_scale_key=None, Tensor? dequant_offset_key=None, Tensor? dequant_scale_value=None, Tensor? dequant_offset_value=None, Tensor? dequant_scale_key_rope=None, Tensor? quant_scale_out=None, Tensor? quant_offset_out=None, Tensor? quant_scale_p=None, Tensor? learnable_sink=None, int num_query_heads=1, int num_key_value_heads=0, float softmax_scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int sparse_mode=0, int block_size=0, int query_quant_mode=0, int key_quant_mode=0, int value_quant_mode=0, int inner_precise=0, bool return_softmax_lse=False, int? query_dtype=None, int? key_dtype=None, int? value_dtype=None, int? query_rope_dtype=None, int? key_rope_dtype=None, int? key_shared_prefix_dtype=None, int? value_shared_prefix_dtype=None, int? dequant_scale_query_dtype=None, int? dequant_scale_key_dtype=None, int? dequant_scale_value_dtype=None, int? dequant_scale_key_rope_dtype=None, int? out_dtype=None) -> (Tensor, Tensor), 'out': npu::npu_fused_infer_attention_score_v2.out(Tensor query, Tensor key, Tensor value, *, Tensor? query_rope=None, Tensor? key_rope=None, Tensor? pse_shift=None, Tensor? atten_mask=None, SymInt[]? actual_seq_qlen=None, SymInt[]? actual_seq_kvlen=None, Tensor? block_table=None, Tensor? dequant_scale_query=None, Tensor? dequant_scale_key=None, Tensor? dequant_offset_key=None, Tensor? dequant_scale_value=None, Tensor? dequant_offset_value=None, Tensor? dequant_scale_key_rope=None, Tensor? quant_scale_out=None, Tensor? quant_offset_out=None, Tensor? quant_scale_p=None, Tensor? learnable_sink=None, int num_query_heads=1, int num_key_value_heads=0, float softmax_scale=1., int pre_tokens=2147483647, int next_tokens=2147483647, str input_layout=\"BSH\", int sparse_mode=0, int block_size=0, int query_quant_mode=0, int key_quant_mode=0, int value_quant_mode=0, int inner_precise=0, bool return_softmax_lse=False, int? query_dtype=None, int? key_dtype=None, int? value_dtype=None, int? query_rope_dtype=None, int? key_rope_dtype=None, int? key_shared_prefix_dtype=None, int? value_shared_prefix_dtype=None, int? dequant_scale_query_dtype=None, int? dequant_scale_key_dtype=None, int? dequant_scale_value_dtype=None, int? dequant_scale_key_rope_dtype=None, int? out_dtype=None, Tensor? workspace=None, Tensor[] out) -> (Tensor, Tensor)}",
+  "v7_configuration": {
+    "split_policy": "cost_model",
+    "num_splits": 1,
+    "query_tile_tasks": 512,
+    "execution_mode": "direct_single_split"
+  },
+  "accuracy": {
+    "v7_full": {
+      "status": "passed",
+      "rtol": 0.01,
+      "atol": 0.004,
+      "max_abs_error": 0.001953125
+    },
+    "v7_direct": {
+      "status": "passed",
+      "rtol": 0.01,
+      "atol": 0.004,
+      "max_abs_error": 0.001953125
+    },
+    "ascendc_full": {
+      "status": "passed",
+      "rtol": 0.01,
+      "atol": 0.004,
+      "max_abs_error": 0.001953125
+    }
+  },
+  "summary": {
+    "v7_full": {
+      "median_round_event_us": 332.2480022907257,
+      "round_event_us": [
+        332.2480022907257,
+        331.44599199295044,
+        332.3720097541809
+      ],
+      "median_round_profiler_us": 331.28226666666666,
+      "round_profiler_us": [
+        331.3712,
+        331.1518,
+        331.28226666666666
+      ]
+    },
+    "v7_direct": {
+      "median_round_event_us": 321.02400064468384,
+      "round_event_us": [
+        321.02400064468384,
+        321.99299335479736,
+        320.7840025424957
+      ],
+      "median_round_profiler_us": 322.711,
+      "round_profiler_us": [
+        322.77913333333333,
+        322.6902666666667,
+        322.711
+      ]
+    },
+    "ascendc_full": {
+      "median_round_event_us": 256.5869987010956,
+      "round_event_us": [
+        256.5869987010956,
+        256.9270133972168,
+        256.24799728393555
+      ],
+      "median_round_profiler_us": 227.54126666666667,
+      "round_profiler_us": [
+        227.54126666666667,
+        229.01836666666668,
+        227.3518
+      ]
+    }
+  },
+  "speedups": {
+    "event_ascendc_over_v7_full": 0.7722755198888306,
+    "msprof_ascendc_over_v7_full": 0.6868501261965124
+  },
+  "event_results": [
+    {
+      "label": "v7_full",
+      "round": 1,
+      "status": "passed",
+      "median_us": 332.2480022907257,
+      "mfu_percent": 54.71742681648026
+    },
+    {
+      "label": "v7_direct",
+      "round": 1,
+      "status": "passed",
+      "median_us": 321.02400064468384,
+      "mfu_percent": 56.63051894486322
+    },
+    {
+      "label": "ascendc_full",
+      "round": 1,
+      "status": "passed",
+      "median_us": 256.5869987010956,
+      "mfu_percent": 70.85220935703991
+    },
+    {
+      "label": "v7_full",
+      "round": 2,
+      "status": "passed",
+      "median_us": 331.44599199295044,
+      "mfu_percent": 54.8498282961624
+    },
+    {
+      "label": "v7_direct",
+      "round": 2,
+      "status": "passed",
+      "median_us": 321.99299335479736,
+      "mfu_percent": 56.460097348244645
+    },
+    {
+      "label": "ascendc_full",
+      "round": 2,
+      "status": "passed",
+      "median_us": 256.9270133972168,
+      "mfu_percent": 70.75844423629411
+    },
+    {
+      "label": "v7_full",
+      "round": 3,
+      "status": "passed",
+      "median_us": 332.3720097541809,
+      "mfu_percent": 54.69701183234449
+    },
+    {
+      "label": "v7_direct",
+      "round": 3,
+      "status": "passed",
+      "median_us": 320.7840025424957,
+      "mfu_percent": 56.67288769444229
+    },
+    {
+      "label": "ascendc_full",
+      "round": 3,
+      "status": "passed",
+      "median_us": 256.24799728393555,
+      "mfu_percent": 70.94594277012231
+    }
+  ]
+}
