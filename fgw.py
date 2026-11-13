@@ -18,6 +18,7 @@ COMMANDS = {
         "schedule-paired": "benchmarks.mha.profile_schedule_short_q",
         "persistent-paired": "benchmarks.mha.profile_persistent_short_paired",
         "cube-vector": "benchmarks.mha.bench_cube_vector",
+        "cube-ascendc": "benchmarks.mha.bench_cube_ascendc",
         "compare-pr-mfu": "benchmarks.mha.bench_v7_pr3896_mfu",
         "compare-ascendc": "benchmarks.mha.bench_v7_ascendc",
         "compare-msprof": "benchmarks.mha.profile_v7_ascendc_msprof",

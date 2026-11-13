@@ -1,5 +1,15 @@
 # FGW
 
+## 通用 Cube MFU / 原生 AscendC 对照
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_cube_ascendc_mfu
+```
+
+保持 split=1，50 项 Cube MFU、46 项原生 FIA 配对，补 Q4096/Q32768。
+默认生成紧凑汇总与日志。[范围与计时口径](docs/mha_cube_ascendc_mfu.md)。
+
 ## 通用 Cube / v2 Vector 性能对照
 
 ```bash
