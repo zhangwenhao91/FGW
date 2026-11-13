@@ -14,7 +14,7 @@ from operators.mha.general_split_policy import select_splits
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal,
-                 dtype, device_index=None, num_splits=None, split_policy="legacy", cache_lengths=None):
+                 dtype, device_index=None, num_splits=None, split_policy="legacy", cache_lengths=None, model_version=1):
     if dtype not in ("float16", "bfloat16"):
         raise ValueError("General Cube requires FP16 or BF16")
     if dim < 16 or dim > 256 or dim % 16:
@@ -42,7 +42,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal,
         if getattr(props, "cube_core_num", None) != 28:
             raise ValueError("General split model is calibrated for28 Cube cores")
         from operators.mha.general_split_cost_model import select_model_splits
-        splits = select_model_splits(batch, sq, heads, dim, page_size, width, cache_lengths)
+        splits = select_model_splits(batch, sq, heads, dim, page_size, width, cache_lengths, version=model_version)
     else:
         splits = select_splits(work, capacity_tiles, num_splits)
 
@@ -297,6 +297,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal,
     launch.split_policy = ("explicit" if num_splits is not None else
                            "cost_model" if split_policy == "cost_model" else "fill_28")
     launch.requested_split_policy = split_policy
+    launch.general_model_version = model_version if launch.split_policy == "cost_model" else None
     launch.compute_grid = work * splits
     launch.compute_work = work * splits
     launch.persistent_programs = None

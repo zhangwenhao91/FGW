@@ -1,4 +1,7 @@
-"""Independent general split-model holdout: excluded from model fitting."""
+"""Versioned datasets: HOLDOUT is v1's former holdout, used for v2 calibration.
+
+HOLDOUT_V2 is fresh independent geometry, excluded from both fits.
+"""
 # name, B, Q, H, D, page_size, table_width, runtime lengths, causal
 HOLDOUT = [
     ("hold_b1h1_q2_d32", 1, 2, 1, 32, 128, 6, (768,), False),
@@ -25,4 +28,32 @@ HOLDOUT = [
     ("hold_causal_empty_rows", 3, 33, 2, 256, 64, 8, (0, 17, 63), True),
     ("hold_large_capacity_short_live", 2, 7, 2, 128, 128, 16, (65, 257), False),
     ("hold_zero_cache", 2, 31, 4, 64, 128, 8, (0, 0), False),
+]
+
+# Fresh v2 validation: neither these shapes nor their timings enter v2 fitting.
+HOLDOUT_V2 = [
+    ("v2_b4h2_q1_d64", 4, 1, 2, 64, 128, 24, (3072, 1537, 513, 0), False),
+    ("v2_b2h5_q1_d128", 2, 1, 5, 128, 256, 12, (3072, 769), False),
+    ("v2_b3h3_q3_d192", 3, 3, 3, 192, 128, 16, (2048, 1025, 257), False),
+    ("v2_b1h3_q1_d64", 1, 1, 3, 64, 128, 24, (3072,), False),
+    ("v2_b2h1_q2_d32", 2, 2, 1, 32, 64, 16, (1024, 129), False),
+    ("v2_b1h2_q15_d48", 1, 15, 2, 48, 48, 24, (1151,), False),
+    ("v2_b5h1_q16_d64", 5, 16, 1, 64, 128, 8, (1024, 513, 129, 33, 0), False),
+    ("v2_b2h4_q17_d80", 2, 17, 4, 80, 128, 8, (1024, 257), False),
+    ("v2_b3h2_q31_d96", 3, 31, 2, 96, 64, 16, (1024, 513, 65), False),
+    ("v2_b2h3_q32_d128", 2, 32, 3, 128, 128, 8, (1024, 1024), False),
+    ("v2_b4h1_q33_d192", 4, 33, 1, 192, 128, 8, (1024, 769, 257, 0), False),
+    ("v2_b1h6_q63_d64", 1, 63, 6, 64, 256, 6, (1536,), False),
+    ("v2_b3h1_q65_d128", 3, 65, 1, 128, 128, 16, (2048, 1025, 257), False),
+    ("v2_b2h2_q126_d256", 2, 126, 2, 256, 128, 8, (1024, 257), False),
+    ("v2_b1h3_q129_d96", 1, 129, 3, 96, 128, 16, (2048,), False),
+    ("v2_b2h2_q257_d128", 2, 257, 2, 128, 256, 8, (2048, 513), False),
+    ("v2_b1h2_q511_d64", 1, 511, 2, 64, 128, 24, (3072,), False),
+    ("v2_b2h3_q1023_d128", 2, 1023, 3, 128, 128, 16, (2048, 1025), False),
+    ("v2_page16_q5", 2, 5, 3, 32, 16, 20, (319, 97), False),
+    ("v2_page48_q19", 4, 19, 1, 48, 48, 12, (575, 337, 97, 1), False),
+    ("v2_causal_mixed_empty", 4, 35, 1, 256, 128, 8, (0, 19, 67, 259), True),
+    ("v2_causal_q125_d128", 2, 125, 4, 128, 128, 12, (1536, 129), True),
+    ("v2_causal_q253_d192", 1, 253, 3, 192, 64, 16, (513,), True),
+    ("v2_zero_cache", 3, 15, 2, 128, 128, 8, (0, 0, 0), False),
 ]

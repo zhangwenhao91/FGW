@@ -1,5 +1,15 @@
 # FGW
 
+## 通用 Cube 模型v2：长度不均衡候选
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_cube_model_v2_validate
+```
+
+增加最长分片特征；扩展校准后，用另一批48项全新配置同场比较v2、v1和旧策略。
+默认不变，自动生成可粘贴状态文本。[设计与验证说明](docs/mha_general_split_model_v2.md)。
+
 ## 通用 Cube 成本模型候选验证
 
 ```bash

@@ -27,7 +27,7 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1):
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
     if selected_route == "cube_general":
         if split_policy not in ("auto", "legacy", "cost_model"):
@@ -38,7 +38,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             raise ValueError("General Cube has its own untuned schedule; v7 tuning overrides are unsupported")
         from operators.mha.kernels.mha_paged_decode_ascend_cube_general import build_kernel as build_general
         return build_general(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index,
-                             num_splits=num_splits, split_policy=split_policy, cache_lengths=cache_lengths)
+                             num_splits=num_splits, split_policy=split_policy, cache_lengths=cache_lengths,
+                             model_version=general_model_version)
     if persistent_programs is not None and (type(persistent_programs) is not int or persistent_programs != 28):
         raise ValueError("persistent_programs supports None (uncapped grid) or 28 (default cap)")
     requested_split_policy = split_policy
@@ -564,7 +565,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
                      page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
-                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto", persistent_programs=28, cube_mode="stable"):
+                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto", persistent_programs=28, cube_mode="stable", general_model_version=1):
     """Same public tensor contract as v0; metadata values must be valid."""
     if q.ndim != 4 or k_cache.ndim != 3:
         raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")
@@ -600,5 +601,5 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
         kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
                               page_size, is_causal,
                               "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index, pipeline_stages=pipeline_stages, buffer_versions=buffer_versions,
-                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache, persistent_programs=persistent_programs, cube_mode=cube_mode, cache_lengths=model_cache_lengths)
+                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache, persistent_programs=persistent_programs, cube_mode=cube_mode, cache_lengths=model_cache_lengths, general_model_version=general_model_version)
         return kernel(*inputs)

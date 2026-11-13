@@ -14,7 +14,7 @@ from benchmarks.mha.bench_cube_vector import CASES
 from benchmarks.mha.bench_cube_ascendc import performance
 from benchmarks.mha.bench_mha_mfu import useful_flops
 from operators.mha.general_split_policy import SPLITS, select_splits
-from benchmarks.mha.general_model_cases import HOLDOUT
+from benchmarks.mha.general_model_cases import HOLDOUT, HOLDOUT_V2
 
 
 COMPONENT_CASES = {
@@ -24,7 +24,7 @@ COMPONENT_CASES = {
 }
 
 
-def plan(case, requested, evaluate_model=False):
+def plan(case, requested, evaluate_model=False, model_version=1, compare_v1=False):
     _, b, sq, h, _, page, width, _, _ = case
     tasks = b*h*((sq+31)//32)
     tiles = (page*width+31)//32
@@ -36,9 +36,14 @@ def plan(case, requested, evaluate_model=False):
             "query_tile_tasks": tasks, "capacity_tiles": tiles}
     if evaluate_model:
         from operators.mha.general_split_cost_model import select_model_splits
-        model_splits = select_model_splits(b, sq, h, case[4], page, width, case[7])
+        model_splits = select_model_splits(b, sq, h, case[4], page, width, case[7], version=model_version)
         result["model_splits"] = model_splits
+        result["model_version"] = model_version
         result["splits"] = sorted(set(allowed+[model_splits]))
+        if compare_v1:
+            v1_splits = select_model_splits(b, sq, h, case[4], page, width, case[7], version=1)
+            result["v1_model_splits"] = v1_splits
+            result["splits"] = sorted(set(result["splits"]+[v1_splits]))
     return result
 
 
@@ -75,6 +80,12 @@ def aggregate(results, cases, components, peak):
             model_us = medians[str(info["model_splits"])]
             summary.update(model_splits=info["model_splits"], model_regret_percent=(model_us/best_us-1)*100,
                            model_speedup_vs_auto=auto_us/model_us)
+            summary["model_version"] = info.get("model_version", 1)
+            if "v1_model_splits" in info:
+                v1_us = medians[str(info["v1_model_splits"])]
+                summary.update(v1_model_splits=info["v1_model_splits"],
+                               v1_model_regret_percent=(v1_us/best_us-1)*100,
+                               model_speedup_vs_v1=v1_us/model_us)
         summaries.append(summary)
     groups = {}
     for name in ("all", "float16", "bfloat16"):
@@ -90,14 +101,21 @@ def aggregate(results, cases, components, peak):
                 groups[name].update(model_within_2pct_cases=sum(s["model_regret_percent"] <= 2 for s in modeled),
                                     max_model_regret_percent=max(s["model_regret_percent"] for s in modeled),
                                     geomean_model_speedup_vs_auto=math.exp(statistics.mean(math.log(s["model_speedup_vs_auto"]) for s in modeled)))
+                compared = [s for s in modeled if "model_speedup_vs_v1" in s]
+                if compared:
+                    groups[name].update(geomean_model_speedup_vs_v1=math.exp(statistics.mean(math.log(s["model_speedup_vs_v1"]) for s in compared)),
+                                        model_faster_than_v1_cases=sum(s["model_speedup_vs_v1"] > 1 for s in compared),
+                                        max_model_slowdown_vs_v1_percent=max(0.0, max((1/s["model_speedup_vs_v1"]-1)*100 for s in compared)))
     return summaries, groups
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite", choices=["standard", "holdout", "all"], default="standard")
-    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in CASES+HOLDOUT])
+    parser.add_argument("--suite", choices=["standard", "holdout", "all", "expanded", "holdout-v2"], default="standard")
+    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in CASES+HOLDOUT+HOLDOUT_V2])
     parser.add_argument("--evaluate-cost-model", action="store_true")
+    parser.add_argument("--general-model-version", type=int, choices=[1, 2], default=1)
+    parser.add_argument("--compare-model-v1", action="store_true")
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--splits", nargs="+", type=int, choices=SPLITS, default=list(SPLITS))
     parser.add_argument("--rounds", type=int, default=6)
@@ -118,14 +136,17 @@ def main():
             or args.component_pairs < 3 or args.component_warmup < 1
             or not math.isfinite(args.peak_tflops) or args.peak_tflops <= 0):
         parser.error("rounds>=2, pairs>=3, warmup>=1, valid component counts and finite positive peak required")
-    suite = {"standard": CASES, "holdout": HOLDOUT, "all": CASES+HOLDOUT}[args.suite]
+    if args.compare_model_v1 and (not args.evaluate_cost_model or args.general_model_version != 2):
+        parser.error("--compare-model-v1 requires --evaluate-cost-model --general-model-version 2")
+    suite = {"standard": CASES, "holdout": HOLDOUT, "all": CASES+HOLDOUT,
+             "expanded": CASES+HOLDOUT, "holdout-v2": HOLDOUT_V2}[args.suite]
     if args.cases and set(args.cases)-{c[0] for c in suite}:
         parser.error("Selected case is not in the selected suite")
     cases = [c for c in suite if not args.cases or c[0] in args.cases]
     if args.list_only:
-        print(json.dumps({"cases": [{"spec": c, **plan(c, args.splits, args.evaluate_cost_model)} for c in cases],
+        print(json.dumps({"cases": [{"spec": c, **plan(c, args.splits, args.evaluate_cost_model, args.general_model_version, args.compare_model_v1)} for c in cases],
                           "dtype_cases": len(cases)*len(args.dtypes),
-                          "compiled_variants": sum(len(plan(c, args.splits, args.evaluate_cost_model)["splits"]) for c in cases)*len(args.dtypes)}, indent=2))
+                          "compiled_variants": sum(len(plan(c, args.splits, args.evaluate_cost_model, args.general_model_version, args.compare_model_v1)["splits"]) for c in cases)*len(args.dtypes)}, indent=2))
         return 0
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -156,6 +177,8 @@ def main():
             lines.append(f"{s['key']} auto={s['auto_splits']} best={s['best_split']} near2%={s['near_best_2pct']} regret={s['auto_regret_percent']:.2f}% rounds={s['rounds']} us: {timings}")
             if "model_splits" in s:
                 lines.append(f"  model={s['model_splits']} model_regret={s['model_regret_percent']:.2f}% model_vs_auto={s['model_speedup_vs_auto']:.4f}x")
+                if "v1_model_splits" in s:
+                    lines.append(f"  v1_model={s['v1_model_splits']} v2_vs_v1={s['model_speedup_vs_v1']:.4f}x")
             components = {k: {part: round(us, 3) for part, us in v["components_us"].items()}
                           for k, v in s["variants"].items() if "components_us" in v}
             if components:
@@ -182,9 +205,13 @@ def main():
         report["split_policy_sha256"] = hashlib.sha256(Path(general_split_policy.__file__).read_bytes()).hexdigest()
         report["benchmark_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
         if args.evaluate_cost_model:
-            from operators.mha.general_split_cost_model import MODEL_PATH
-            report["general_model_sha256"] = hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest()
-            report["model_validation_scope"] = "Independent holdout" if args.suite == "holdout" else "Calibration replay" if args.suite == "standard" else "Mixed: inspect cases separately"
+            from operators.mha.general_split_cost_model import model_path
+            report["general_model_sha256"] = hashlib.sha256(model_path(args.general_model_version).read_bytes()).hexdigest()
+            if args.compare_model_v1:
+                report["v1_model_sha256"] = hashlib.sha256(model_path(1).read_bytes()).hexdigest()
+            report["model_validation_scope"] = ("Fresh independent v2 holdout" if args.suite == "holdout-v2" else
+                                                "Independent v1 holdout" if args.suite == "holdout" and args.general_model_version == 1 else
+                                                "Calibration replay or development data; not independent validation")
         bundles = []
         for case, dtype_name in itertools.product(cases, args.dtypes):
             name, b, sq, h, d, p, w, lengths_list, causal = case
@@ -194,7 +221,7 @@ def main():
             info = {"case": name, "dtype": dtype_name, "B": b, "Q": sq, "H": h, "D": d,
                     "page_size": p, "table_width": w, "lengths": lengths_list, "causal": causal,
                     "effective_flops": useful_flops(lengths_list, sq, h, d, causal),
-                    **plan(case, args.splits, args.evaluate_cost_model), "correctness": {}, "geometry": {}}
+                    **plan(case, args.splits, args.evaluate_cost_model, args.general_model_version, args.compare_model_v1), "correctness": {}, "geometry": {}}
             report["cases"][key] = info
             print(f"Preparing {key}: auto={info['auto_splits']} candidates={info['splits']}", flush=True)
             save()
@@ -211,8 +238,13 @@ def main():
                 save()
                 if args.evaluate_cost_model and splits == info["model_splits"]:
                     program = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name,
-                                                args.device, split_policy="cost_model", cache_lengths=tuple(lengths_list))
+                                                args.device, split_policy="cost_model", cache_lengths=tuple(lengths_list),
+                                                model_version=args.general_model_version)
                     assert program.num_splits == splits, "Public model selector must match offline prediction"
+                elif args.compare_model_v1 and splits == info["v1_model_splits"]:
+                    program = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name,
+                                                args.device, split_policy="cost_model", cache_lengths=tuple(lengths_list), model_version=1)
+                    assert program.num_splits == splits
                 else:
                     program = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name,
                                                 args.device, num_splits=splits)

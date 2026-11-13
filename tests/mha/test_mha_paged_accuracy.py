@@ -109,6 +109,7 @@ def main():
     parser.add_argument("--cube-mode", choices=["stable", "general"], default="stable",
                         help="v7: opt in to general Cube QK/PV, with no Vector fallback")
     parser.add_argument("--general-split-policy", choices=["legacy", "cost_model"], default="legacy")
+    parser.add_argument("--general-model-version", type=int, choices=[1, 2], default=1)
     parser.add_argument("--patterns", nargs="+", choices=["mixed", "full", "empty"])
     parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
@@ -130,6 +131,8 @@ def main():
         parser.error("General Cube requires --impl v7")
     if args.general_split_policy != "legacy" and args.cube_mode != "general":
         parser.error("General split model requires --cube-mode general")
+    if args.general_model_version != 1 and (args.cube_mode != "general" or args.general_split_policy != "cost_model"):
+        parser.error("Model version override requires general Cube cost_model")
     if (args.suite in ("general", "split") or args.num_splits is not None) and args.cube_mode != "general":
         parser.error("General/split suites and explicit split override require --cube-mode general")
     if args.persistent_programs is not None and args.impl != "v7":
@@ -172,6 +175,7 @@ def main():
               "cube_mode": args.cube_mode,
               "requested_num_splits": args.num_splits,
               "general_split_policy": args.general_split_policy,
+              "general_model_version": args.general_model_version,
               "overlap_config": None if args.cube_mode == "general" else {"pipeline_stages": args.pipeline_stages, "kv_versions": args.kv_versions,
                                  "q_resident": args.q_resident, "ub_versions": 2},
               "selected_cases": [c[0] for c in cases], "implementation": args.impl,
@@ -196,10 +200,11 @@ def main():
             import functools
             mha_paged_decode = functools.partial(mha_paged_decode, pipeline_stages=args.pipeline_stages,
                                                 kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode, persistent_programs=args.persistent_programs, cube_mode=args.cube_mode, num_splits=args.num_splits,
-                                                split_policy=args.general_split_policy if args.cube_mode == "general" else "auto")
+                                                split_policy=args.general_split_policy if args.cube_mode == "general" else "auto",
+                                                general_model_version=args.general_model_version)
             if args.general_split_policy == "cost_model":
-                from operators.mha.general_split_cost_model import MODEL_PATH
-                report["general_model_sha256"] = hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest()
+                from operators.mha.general_split_cost_model import model_path
+                report["general_model_sha256"] = hashlib.sha256(model_path(args.general_model_version).read_bytes()).hexdigest()
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,
@@ -238,7 +243,8 @@ def main():
                         kernel = build_general(b, sq, h, d, k_base.shape[0], w, p, causal,
                                                "float16" if dtype == torch.float16 else "bfloat16", args.device,
                                                num_splits=args.num_splits, split_policy=args.general_split_policy,
-                                               cache_lengths=tuple(lengths.tolist()) if args.general_split_policy == "cost_model" else None)
+                                               cache_lengths=tuple(lengths.tolist()) if args.general_split_policy == "cost_model" else None,
+                                               model_version=args.general_model_version)
                         device_kernel = kernel.direct_kernel if kernel.num_splits == 1 else kernel.partial_kernel
                         source = device_kernel.get_kernel_source()
                         entry["num_splits"] = kernel.num_splits

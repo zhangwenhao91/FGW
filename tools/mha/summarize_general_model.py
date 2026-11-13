@@ -37,6 +37,9 @@ def main():
                          f"auto_us={timings[str(s['auto_splits'])]['us']:.3f} model_us={timings[str(model)]['us']:.3f} "
                          f"best_us={timings[str(s['best_split'])]['us']:.3f} model_regret={s['model_regret_percent']:.2f}% "
                          f"model_vs_auto={s['model_speedup_vs_auto']:.4f}x")
+            if "v1_model_splits" in s:
+                lines.append(f"  v1_model={s['v1_model_splits']} v1_regret={s['v1_model_regret_percent']:.2f}% "
+                             f"v2_vs_v1={s['model_speedup_vs_v1']:.4f}x")
         lines.append("")
     output = Path(args.directory)/args.output
     output.write_text("\n".join(lines) if lines else "No reports from this run found.\n", encoding="utf-8")
