@@ -1,5 +1,15 @@
 # FGW
 
+## 通用 Cube split 扫描
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_cube_split_scan
+```
+
+42项输入，扫描合法的split=1/2/4/8/16/32；重点项另测局部计算与merge。
+自动生成可粘贴文本。[范围与结果传回方式](docs/mha_cube_split_scan.md)。
+
 ## 通用 Cube：同体 split-KV 候选
 
 ```bash
