@@ -1,0 +1,476 @@
+{
+  "feature_names": [
+    "constant",
+    "wave_tiles_times_padded_d",
+    "wave_tiles",
+    "waves_times_padded_d",
+    "waves",
+    "has_merge",
+    "merge_rows_times_splits_times_padded_d",
+    "partial_tasks_times_splits_times_padded_d"
+  ],
+  "weights": [
+    13.338831344421909,
+    3.0046762724468663,
+    0.9965926052248724,
+    0.7212260427731989,
+    1.8132974174528909,
+    3.5449380351542397,
+    0.426588260052799,
+    0.562399454175382
+  ],
+  "latency_floor_us": {
+    "single": 22.921,
+    "multi": 30.715
+  },
+  "selection_tolerance": 0.02,
+  "coordinate_descent_iterations": 530,
+  "version": 1,
+  "status": "experimental_not_default",
+  "hardware": "Ascend950PR_9579 / 28 Cube cores",
+  "training_sha256": "bcc3dfa507ab7958d4034de82284bc225952a3e7734be7721230dc43394c5bf6",
+  "training_rows": 42,
+  "training_shapes": 21,
+  "training_variants": 212,
+  "source_precision_us": 0.001,
+  "fitting": "Relative-error least squares; nonnegative coordinate descent; empirical single/multi latency floors",
+  "validation": {
+    "calibration": {
+      "cases": 42,
+      "within_2pct": 42,
+      "max_regret_percent": 0.6992583999668733,
+      "geomean_regret_percent": 0.0321714035874443,
+      "results": [
+        {
+          "key": "dim16_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.17580986488685557
+        },
+        {
+          "key": "dim16_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim48_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim48_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim64_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim64_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim80_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim80_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim96_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim96_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim128_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim128_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim192_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim192_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim256_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim256_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q1_kv2048/float16",
+          "model_splits": 16,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q1_kv2048/bfloat16",
+          "model_splits": 16,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q128_kv2048/float16",
+          "model_splits": 8,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q128_kv2048/bfloat16",
+          "model_splits": 8,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q512_kv2048/float16",
+          "model_splits": 2,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q512_kv2048/bfloat16",
+          "model_splits": 2,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q1_kv2048/float16",
+          "model_splits": 32,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q1_kv2048/bfloat16",
+          "model_splits": 32,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q128_kv2048/float16",
+          "model_splits": 8,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q128_kv2048/bfloat16",
+          "model_splits": 8,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q512_kv2048/float16",
+          "model_splits": 2,
+          "regret_percent": 0.47964786645675606
+        },
+        {
+          "key": "d128_q512_kv2048/bfloat16",
+          "model_splits": 2,
+          "regret_percent": 0.6992583999668733
+        },
+        {
+          "key": "single_decode_kv8192/float16",
+          "model_splits": 16,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "single_decode_kv8192/bfloat16",
+          "model_splits": 16,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "page16_tail/float16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "page16_tail/bfloat16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "page48_crossing/float16",
+          "model_splits": 2,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "page48_crossing/bfloat16",
+          "model_splits": 2,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q129_kv_tail/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q129_kv_tail/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_d64_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_d64_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_d128_q129/float16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_d128_q129/bfloat16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_empty_rows_d256/float16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_empty_rows_d256/bfloat16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        }
+      ]
+    },
+    "leave_one_shape_out": {
+      "cases": 42,
+      "within_2pct": 40,
+      "max_regret_percent": 2.402366863905314,
+      "geomean_regret_percent": 0.1415839433554833,
+      "results": [
+        {
+          "key": "causal_d128_q129/float16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_d128_q129/bfloat16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_d64_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_d64_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_empty_rows_d256/float16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "causal_empty_rows_d256/bfloat16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q128_kv2048/float16",
+          "model_splits": 8,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q128_kv2048/bfloat16",
+          "model_splits": 8,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q129_kv_tail/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q129_kv_tail/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q1_kv2048/float16",
+          "model_splits": 32,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q1_kv2048/bfloat16",
+          "model_splits": 32,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d128_q512_kv2048/float16",
+          "model_splits": 2,
+          "regret_percent": 0.47964786645675606
+        },
+        {
+          "key": "d128_q512_kv2048/bfloat16",
+          "model_splits": 2,
+          "regret_percent": 0.6992583999668733
+        },
+        {
+          "key": "d64_q128_kv2048/float16",
+          "model_splits": 8,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q128_kv2048/bfloat16",
+          "model_splits": 8,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q1_kv2048/float16",
+          "model_splits": 32,
+          "regret_percent": 2.402366863905314
+        },
+        {
+          "key": "d64_q1_kv2048/bfloat16",
+          "model_splits": 32,
+          "regret_percent": 2.2421407136585803
+        },
+        {
+          "key": "d64_q512_kv2048/float16",
+          "model_splits": 2,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "d64_q512_kv2048/bfloat16",
+          "model_splits": 2,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim128_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim128_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim16_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.17580986488685557
+        },
+        {
+          "key": "dim16_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim192_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim192_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim256_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim256_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim48_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim48_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim64_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim64_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim80_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim80_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim96_q16/float16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "dim96_q16/bfloat16",
+          "model_splits": 4,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "page16_tail/float16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "page16_tail/bfloat16",
+          "model_splits": 1,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "page48_crossing/float16",
+          "model_splits": 2,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "page48_crossing/bfloat16",
+          "model_splits": 2,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "single_decode_kv8192/float16",
+          "model_splits": 16,
+          "regret_percent": 0.0
+        },
+        {
+          "key": "single_decode_kv8192/bfloat16",
+          "model_splits": 16,
+          "regret_percent": 0.0
+        }
+      ]
+    }
+  },
+  "limitations": "Rounded pasted medians, not raw samples. LOSO is offline validation; independent NPU holdout pending. No default promotion."
+}

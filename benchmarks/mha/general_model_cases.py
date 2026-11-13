@@ -1,0 +1,28 @@
+"""Independent general split-model holdout: excluded from model fitting."""
+# name, B, Q, H, D, page_size, table_width, runtime lengths, causal
+HOLDOUT = [
+    ("hold_b1h1_q2_d32", 1, 2, 1, 32, 128, 6, (768,), False),
+    ("hold_b1h2_q7_d64", 1, 7, 2, 64, 128, 12, (1536,), False),
+    ("hold_b1h4_q31_d128", 1, 31, 4, 128, 128, 8, (1024,), False),
+    ("hold_b3h2_q1_d64", 3, 1, 2, 64, 256, 16, (4096, 3072, 1024), False),
+    ("hold_b2h4_q1_d192", 2, 1, 4, 192, 128, 12, (1536, 769), False),
+    ("hold_b1h1_q1_d128", 1, 1, 1, 128, 128, 32, (4096,), False),
+    ("hold_b4h1_q16_d48", 4, 16, 1, 48, 48, 16, (768, 577, 385, 193), False),
+    ("hold_b1h8_q16_d80", 1, 16, 8, 80, 128, 6, (768,), False),
+    ("hold_b3h1_q32_d96", 3, 32, 1, 96, 64, 12, (768, 513, 257), False),
+    ("hold_b2h3_q33_d128", 2, 33, 3, 128, 128, 12, (1536, 769), False),
+    ("hold_b1h4_q64_d64", 1, 64, 4, 64, 256, 8, (2048,), False),
+    ("hold_b3h2_q127_d256", 3, 127, 2, 256, 128, 6, (768, 511, 257), False),
+    ("hold_b1h2_q255_d128", 1, 255, 2, 128, 128, 12, (1536,), False),
+    ("hold_b2h1_q256_d64", 2, 256, 1, 64, 128, 12, (1536, 1023), False),
+    ("hold_b1h4_q513_d128", 1, 513, 4, 128, 128, 8, (1024,), False),
+    ("hold_b2h2_q1024_d96", 2, 1024, 2, 96, 256, 8, (2048, 1537), False),
+    ("hold_page16_q3", 1, 3, 2, 16, 16, 12, (181,), False),
+    ("hold_page48_q17", 3, 17, 1, 48, 48, 8, (383, 193, 49), False),
+    ("hold_causal_q31_d64", 1, 31, 4, 64, 128, 6, (768,), True),
+    ("hold_causal_q127_d128", 2, 127, 3, 128, 128, 8, (1024, 513), True),
+    ("hold_causal_q255_d192", 1, 255, 2, 192, 128, 6, (512,), True),
+    ("hold_causal_empty_rows", 3, 33, 2, 256, 64, 8, (0, 17, 63), True),
+    ("hold_large_capacity_short_live", 2, 7, 2, 128, 128, 16, (65, 257), False),
+    ("hold_zero_cache", 2, 31, 4, 64, 128, 8, (0, 0), False),
+]

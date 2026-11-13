@@ -108,6 +108,7 @@ def main():
                         help="General Cube explicit split count; default automatically fills program parallelism")
     parser.add_argument("--cube-mode", choices=["stable", "general"], default="stable",
                         help="v7: opt in to general Cube QK/PV, with no Vector fallback")
+    parser.add_argument("--general-split-policy", choices=["legacy", "cost_model"], default="legacy")
     parser.add_argument("--patterns", nargs="+", choices=["mixed", "full", "empty"])
     parser.add_argument("--causal", choices=["both", "noncausal", "causal"], default="both")
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
@@ -127,6 +128,8 @@ def main():
     args = parser.parse_args()
     if args.cube_mode != "stable" and args.impl != "v7":
         parser.error("General Cube requires --impl v7")
+    if args.general_split_policy != "legacy" and args.cube_mode != "general":
+        parser.error("General split model requires --cube-mode general")
     if (args.suite in ("general", "split") or args.num_splits is not None) and args.cube_mode != "general":
         parser.error("General/split suites and explicit split override require --cube-mode general")
     if args.persistent_programs is not None and args.impl != "v7":
@@ -168,6 +171,7 @@ def main():
               "persistent_programs": None if args.cube_mode == "general" else args.persistent_programs,
               "cube_mode": args.cube_mode,
               "requested_num_splits": args.num_splits,
+              "general_split_policy": args.general_split_policy,
               "overlap_config": None if args.cube_mode == "general" else {"pipeline_stages": args.pipeline_stages, "kv_versions": args.kv_versions,
                                  "q_resident": args.q_resident, "ub_versions": 2},
               "selected_cases": [c[0] for c in cases], "implementation": args.impl,
@@ -191,7 +195,11 @@ def main():
         if args.impl == "v7":
             import functools
             mha_paged_decode = functools.partial(mha_paged_decode, pipeline_stages=args.pipeline_stages,
-                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode, persistent_programs=args.persistent_programs, cube_mode=args.cube_mode, num_splits=args.num_splits)
+                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode, persistent_programs=args.persistent_programs, cube_mode=args.cube_mode, num_splits=args.num_splits,
+                                                split_policy=args.general_split_policy if args.cube_mode == "general" else "auto")
+            if args.general_split_policy == "cost_model":
+                from operators.mha.general_split_cost_model import MODEL_PATH
+                report["general_model_sha256"] = hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest()
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,
@@ -229,12 +237,14 @@ def main():
                         from operators.mha.kernels.mha_paged_decode_ascend_cube_general import build_kernel as build_general
                         kernel = build_general(b, sq, h, d, k_base.shape[0], w, p, causal,
                                                "float16" if dtype == torch.float16 else "bfloat16", args.device,
-                                               num_splits=args.num_splits)
+                                               num_splits=args.num_splits, split_policy=args.general_split_policy,
+                                               cache_lengths=tuple(lengths.tolist()) if args.general_split_policy == "cost_model" else None)
                         device_kernel = kernel.direct_kernel if kernel.num_splits == 1 else kernel.partial_kernel
                         source = device_kernel.get_kernel_source()
                         entry["num_splits"] = kernel.num_splits
                         entry["execution_mode"] = kernel.execution_mode
                         entry["compute_grid"] = kernel.compute_grid
+                        entry["split_policy"] = kernel.split_policy
                         if kernel.num_splits > 1:
                             entry["merge_generated_source_sha256"] = hashlib.sha256(kernel.merge_kernel.get_kernel_source().encode()).hexdigest()
                         entry["generated_source_sha256"] = hashlib.sha256(source.encode()).hexdigest()

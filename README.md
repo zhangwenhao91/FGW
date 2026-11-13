@@ -1,5 +1,15 @@
 # FGW
 
+## 通用 Cube 成本模型候选验证
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_cube_model_validate
+```
+
+独立模型，先900项精度，再校准集回放及48项新配置的同场split扫描。
+默认策略保持fill28；自动导出可粘贴文本。[模型与验证说明](docs/mha_general_split_model.md)。
+
 ## 通用 Cube split 扫描
 
 ```bash

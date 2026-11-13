@@ -14,7 +14,7 @@ from operators.mha.general_split_policy import select_splits
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal,
-                 dtype, device_index=None, num_splits=None):
+                 dtype, device_index=None, num_splits=None, split_policy="legacy", cache_lengths=None):
     if dtype not in ("float16", "bfloat16"):
         raise ValueError("General Cube requires FP16 or BF16")
     if dim < 16 or dim > 256 or dim % 16:
@@ -34,7 +34,17 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal,
     work = batch * heads * q_tiles
 
     capacity_tiles = (width * page_size + BC - 1) // BC
-    splits = select_splits(work, capacity_tiles, num_splits)
+    if split_policy not in ("auto", "legacy", "cost_model"):
+        raise ValueError("General split_policy must be auto, legacy or cost_model")
+    if num_splits is None and split_policy == "cost_model":
+        import torch
+        props = torch.npu.get_device_properties(device_index if device_index is not None else torch.npu.current_device())
+        if getattr(props, "cube_core_num", None) != 28:
+            raise ValueError("General split model is calibrated for28 Cube cores")
+        from operators.mha.general_split_cost_model import select_model_splits
+        splits = select_model_splits(batch, sq, heads, dim, page_size, width, cache_lengths)
+    else:
+        splits = select_splits(work, capacity_tiles, num_splits)
 
     @T.macro
     def compute_tile(Q, K, V, Table, Lengths, b, qi, h, sid, split, output, maximum, total):
@@ -284,7 +294,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal,
     launch.execution_path = "cube_general"
     launch.num_splits = splits
     launch.requested_num_splits = num_splits
-    launch.split_policy = "fill_28" if num_splits is None else "explicit"
+    launch.split_policy = ("explicit" if num_splits is not None else
+                           "cost_model" if split_policy == "cost_model" else "fill_28")
+    launch.requested_split_policy = split_policy
     launch.compute_grid = work * splits
     launch.compute_work = work * splits
     launch.persistent_programs = None

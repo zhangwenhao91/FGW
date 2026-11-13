@@ -27,18 +27,18 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable"):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None):
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
     if selected_route == "cube_general":
-        if split_policy not in ("auto", "legacy"):
-            raise ValueError("General Cube uses its own task-filling split policy, not the D128 cost model")
+        if split_policy not in ("auto", "legacy", "cost_model"):
+            raise ValueError("General Cube split_policy must be auto, legacy or cost_model")
         if (pipeline_stages != 2 or buffer_versions != 2 or not q_resident
                 or kv_versions is not None or dump_ir_dir is not None
                 or schedule_mode != "manual" or persistent_programs != 28):
             raise ValueError("General Cube has its own untuned schedule; v7 tuning overrides are unsupported")
         from operators.mha.kernels.mha_paged_decode_ascend_cube_general import build_kernel as build_general
         return build_general(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index,
-                             num_splits=num_splits)
+                             num_splits=num_splits, split_policy=split_policy, cache_lengths=cache_lengths)
     if persistent_programs is not None and (type(persistent_programs) is not int or persistent_programs != 28):
         raise ValueError("persistent_programs supports None (uncapped grid) or 28 (default cap)")
     requested_split_policy = split_policy
@@ -583,11 +583,14 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
     if q.device.type != "npu" or any(x.device != q.device or not x.is_contiguous() for x in inputs):
         raise ValueError("contiguous inputs on the same NPU required")
     full_kv_cache = False
+    model_cache_lengths = None
     selected_route = route(q.dtype, d, page_size, sq, is_causal, cube_mode)
     if selected_route == "cube_general":
         lengths = cache_seqlens.cpu().tolist()
         if any(n < 0 or n > block_table.shape[1] * page_size for n in lengths):
             raise ValueError("Cache lengths must be within table capacity")
+        if split_policy == "cost_model":
+            model_cache_lengths = tuple(lengths)
     if selected_route == "cube_bf16_d128":
         lengths = cache_seqlens.cpu().tolist()
         full_kv_cache = all(n == block_table.shape[1] * page_size for n in lengths)
@@ -597,5 +600,5 @@ def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
         kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
                               page_size, is_causal,
                               "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index, pipeline_stages=pipeline_stages, buffer_versions=buffer_versions,
-                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache, persistent_programs=persistent_programs, cube_mode=cube_mode)
+                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache, persistent_programs=persistent_programs, cube_mode=cube_mode, cache_lengths=model_cache_lengths)
         return kernel(*inputs)

@@ -14,6 +14,7 @@ from benchmarks.mha.bench_cube_vector import CASES
 from benchmarks.mha.bench_cube_ascendc import performance
 from benchmarks.mha.bench_mha_mfu import useful_flops
 from operators.mha.general_split_policy import SPLITS, select_splits
+from benchmarks.mha.general_model_cases import HOLDOUT
 
 
 COMPONENT_CASES = {
@@ -23,16 +24,22 @@ COMPONENT_CASES = {
 }
 
 
-def plan(case, requested):
+def plan(case, requested, evaluate_model=False):
     _, b, sq, h, _, page, width, _, _ = case
     tasks = b*h*((sq+31)//32)
     tiles = (page*width+31)//32
     auto = select_splits(tasks, tiles)
     allowed = sorted({1, auto, *(s for s in requested if s <= tiles)})
-    return {"auto_splits": auto, "splits": allowed,
+    result = {"auto_splits": auto, "splits": allowed,
             "skipped_splits": [{"num_splits": s, "reason": "Exceeds KV tiles in table capacity"}
                                for s in requested if s > tiles],
             "query_tile_tasks": tasks, "capacity_tiles": tiles}
+    if evaluate_model:
+        from operators.mha.general_split_cost_model import select_model_splits
+        model_splits = select_model_splits(b, sq, h, case[4], page, width, case[7])
+        result["model_splits"] = model_splits
+        result["splits"] = sorted(set(allowed+[model_splits]))
+    return result
 
 
 def aggregate(results, cases, components, peak):
@@ -59,11 +66,16 @@ def aggregate(results, cases, components, peak):
                 variant["components_us"] = {part: statistics.median(c["median_us"][part] for c in comp)
                                              for part in ("partial", "merge")}
             variants[label] = variant
-        summaries.append({"key": key, "dtype": info["dtype"], "auto_splits": info["auto_splits"],
+        summary = {"key": key, "dtype": info["dtype"], "auto_splits": info["auto_splits"],
                           "best_split": best, "near_best_2pct": near, "smallest_near_best_2pct": min(near),
                           "rounds": len(rows), "auto_regret_percent": (auto_us/best_us-1)*100,
                           "best_speedup_vs_auto": auto_us/best_us,
-                          "best_speedup_vs_split1": medians["1"]/best_us, "variants": variants})
+                          "best_speedup_vs_split1": medians["1"]/best_us, "variants": variants}
+        if "model_splits" in info:
+            model_us = medians[str(info["model_splits"])]
+            summary.update(model_splits=info["model_splits"], model_regret_percent=(model_us/best_us-1)*100,
+                           model_speedup_vs_auto=auto_us/model_us)
+        summaries.append(summary)
     groups = {}
     for name in ("all", "float16", "bfloat16"):
         selected = [s for s in summaries if name == "all" or s["dtype"] == name]
@@ -73,12 +85,19 @@ def aggregate(results, cases, components, peak):
                             "best_is_split1_cases": sum(s["best_split"] == 1 for s in selected),
                             "geomean_best_speedup_vs_auto": math.exp(statistics.mean(math.log(s["best_speedup_vs_auto"]) for s in selected)),
                             "max_auto_regret_percent": max(s["auto_regret_percent"] for s in selected)}
+            modeled = [s for s in selected if "model_splits" in s]
+            if modeled:
+                groups[name].update(model_within_2pct_cases=sum(s["model_regret_percent"] <= 2 for s in modeled),
+                                    max_model_regret_percent=max(s["model_regret_percent"] for s in modeled),
+                                    geomean_model_speedup_vs_auto=math.exp(statistics.mean(math.log(s["model_speedup_vs_auto"]) for s in modeled)))
     return summaries, groups
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in CASES])
+    parser.add_argument("--suite", choices=["standard", "holdout", "all"], default="standard")
+    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in CASES+HOLDOUT])
+    parser.add_argument("--evaluate-cost-model", action="store_true")
     parser.add_argument("--dtypes", nargs="+", choices=["float16", "bfloat16"], default=["float16", "bfloat16"])
     parser.add_argument("--splits", nargs="+", type=int, choices=SPLITS, default=list(SPLITS))
     parser.add_argument("--rounds", type=int, default=6)
@@ -99,11 +118,14 @@ def main():
             or args.component_pairs < 3 or args.component_warmup < 1
             or not math.isfinite(args.peak_tflops) or args.peak_tflops <= 0):
         parser.error("rounds>=2, pairs>=3, warmup>=1, valid component counts and finite positive peak required")
-    cases = [c for c in CASES if not args.cases or c[0] in args.cases]
+    suite = {"standard": CASES, "holdout": HOLDOUT, "all": CASES+HOLDOUT}[args.suite]
+    if args.cases and set(args.cases)-{c[0] for c in suite}:
+        parser.error("Selected case is not in the selected suite")
+    cases = [c for c in suite if not args.cases or c[0] in args.cases]
     if args.list_only:
-        print(json.dumps({"cases": [{"spec": c, **plan(c, args.splits)} for c in cases],
+        print(json.dumps({"cases": [{"spec": c, **plan(c, args.splits, args.evaluate_cost_model)} for c in cases],
                           "dtype_cases": len(cases)*len(args.dtypes),
-                          "compiled_variants": sum(len(plan(c, args.splits)["splits"]) for c in cases)*len(args.dtypes)}, indent=2))
+                          "compiled_variants": sum(len(plan(c, args.splits, args.evaluate_cost_model)["splits"]) for c in cases)*len(args.dtypes)}, indent=2))
         return 0
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -132,6 +154,8 @@ def main():
         for s in report["summary"]:
             timings = ", ".join(f"S{k}={v['us']:.3f}" for k, v in s["variants"].items())
             lines.append(f"{s['key']} auto={s['auto_splits']} best={s['best_split']} near2%={s['near_best_2pct']} regret={s['auto_regret_percent']:.2f}% rounds={s['rounds']} us: {timings}")
+            if "model_splits" in s:
+                lines.append(f"  model={s['model_splits']} model_regret={s['model_regret_percent']:.2f}% model_vs_auto={s['model_speedup_vs_auto']:.4f}x")
             components = {k: {part: round(us, 3) for part, us in v["components_us"].items()}
                           for k, v in s["variants"].items() if "components_us" in v}
             if components:
@@ -157,6 +181,10 @@ def main():
         report["kernel_sha256"] = hashlib.sha256(Path(cube.__file__).read_bytes()).hexdigest()
         report["split_policy_sha256"] = hashlib.sha256(Path(general_split_policy.__file__).read_bytes()).hexdigest()
         report["benchmark_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+        if args.evaluate_cost_model:
+            from operators.mha.general_split_cost_model import MODEL_PATH
+            report["general_model_sha256"] = hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest()
+            report["model_validation_scope"] = "Independent holdout" if args.suite == "holdout" else "Calibration replay" if args.suite == "standard" else "Mixed: inspect cases separately"
         bundles = []
         for case, dtype_name in itertools.product(cases, args.dtypes):
             name, b, sq, h, d, p, w, lengths_list, causal = case
@@ -166,7 +194,7 @@ def main():
             info = {"case": name, "dtype": dtype_name, "B": b, "Q": sq, "H": h, "D": d,
                     "page_size": p, "table_width": w, "lengths": lengths_list, "causal": causal,
                     "effective_flops": useful_flops(lengths_list, sq, h, d, causal),
-                    **plan(case, args.splits), "correctness": {}, "geometry": {}}
+                    **plan(case, args.splits, args.evaluate_cost_model), "correctness": {}, "geometry": {}}
             report["cases"][key] = info
             print(f"Preparing {key}: auto={info['auto_splits']} candidates={info['splits']}", flush=True)
             save()
@@ -181,8 +209,13 @@ def main():
             for splits in info["splits"]:
                 report["active_split"] = splits
                 save()
-                program = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name,
-                                            args.device, num_splits=splits)
+                if args.evaluate_cost_model and splits == info["model_splits"]:
+                    program = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name,
+                                                args.device, split_policy="cost_model", cache_lengths=tuple(lengths_list))
+                    assert program.num_splits == splits, "Public model selector must match offline prediction"
+                else:
+                    program = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name,
+                                                args.device, num_splits=splits)
                 got = program(*inputs).cpu()
                 assert got.shape == q.shape and got.dtype == dtype and got.is_contiguous()
                 assert torch.isfinite(got).all()
