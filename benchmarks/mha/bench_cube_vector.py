@@ -134,7 +134,9 @@ def main():
             for label, module in (("cube_general", cube), ("vector_v2", v2)):
                 report["active_variant"] = label
                 save()
-                program = module.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name, args.device)
+                # Preserve this historical split=1 versus v2 benchmark.
+                options = {"num_splits": 1} if label == "cube_general" else {}
+                program = module.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name, args.device, **options)
                 got = program(*inputs).cpu()
                 assert got.shape == q.shape and got.dtype == dtype and got.is_contiguous()
                 assert torch.isfinite(got).all(), "Nonfinite output"

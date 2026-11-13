@@ -62,6 +62,13 @@ GENERAL = [
     ("general_decode", 1, 1, 2, 128, 128, 2),
 ]
 
+SPLIT = [
+    ("split_d16_q1", 2, 1, 2, 16, 16, 64),
+    ("split_d48_q17", 2, 17, 2, 48, 48, 24),
+    ("split_d128_q33", 2, 33, 2, 128, 128, 8),
+    ("split_d256_q129", 2, 129, 2, 256, 256, 4),
+]
+
 
 def lengths_for(case, pattern, seed):
     _, b, sq, _, _, p, w = case
@@ -96,7 +103,9 @@ def make_inputs(case, seed, dtype, torch):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite", choices=["quick", "standard", "extended", "cube", "general"], default="standard")
+    parser.add_argument("--suite", choices=["quick", "standard", "extended", "cube", "general", "split"], default="standard")
+    parser.add_argument("--num-splits", type=int, choices=[1, 2, 4, 8, 16, 32], default=None,
+                        help="General Cube explicit split count; default automatically fills program parallelism")
     parser.add_argument("--cube-mode", choices=["stable", "general"], default="stable",
                         help="v7: opt in to general Cube QK/PV, with no Vector fallback")
     parser.add_argument("--patterns", nargs="+", choices=["mixed", "full", "empty"])
@@ -110,7 +119,7 @@ def main():
     parser.add_argument("--impl", choices=["v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7"], default="v0")
     parser.add_argument("--output", default=None)
     parser.add_argument("--list-only", action="store_true")
-    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE + GENERAL],
+    parser.add_argument("--cases", nargs="+", choices=[c[0] for c in EXTENDED + CUBE + GENERAL + SPLIT],
                         help="Run only these named cases from the selected suite")
     parser.add_argument("--schedule-mode", choices=["auto", "auto-offset", "manual"], default=None,
                         help="Default: manual for v7, auto for historical implementations")
@@ -118,8 +127,8 @@ def main():
     args = parser.parse_args()
     if args.cube_mode != "stable" and args.impl != "v7":
         parser.error("General Cube requires --impl v7")
-    if args.suite == "general" and args.cube_mode != "general":
-        parser.error("The general suite requires --cube-mode general")
+    if (args.suite in ("general", "split") or args.num_splits is not None) and args.cube_mode != "general":
+        parser.error("General/split suites and explicit split override require --cube-mode general")
     if args.persistent_programs is not None and args.impl != "v7":
         parser.error("Persistent candidate requires --impl v7")
     if args.impl == "v7":
@@ -137,7 +146,7 @@ def main():
         parser.error("Overlap candidates require --impl v7")
     if args.output is None:
         args.output = "mha_paged_accuracy_report.json" if args.impl == "v0" else f"mha_paged_accuracy_{args.impl}_report.json"
-    cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED, "cube": CUBE, "general": GENERAL}[args.suite]
+    cases = {"quick": QUICK, "standard": STANDARD, "extended": EXTENDED, "cube": CUBE, "general": GENERAL, "split": SPLIT}[args.suite]
     if args.cases:
         missing = set(args.cases) - {c[0] for c in cases}
         if missing:
@@ -158,6 +167,7 @@ def main():
               "schedule_mode": "general-auto" if args.cube_mode == "general" else args.schedule_mode,
               "persistent_programs": None if args.cube_mode == "general" else args.persistent_programs,
               "cube_mode": args.cube_mode,
+              "requested_num_splits": args.num_splits,
               "overlap_config": None if args.cube_mode == "general" else {"pipeline_stages": args.pipeline_stages, "kv_versions": args.kv_versions,
                                  "q_resident": args.q_resident, "ub_versions": 2},
               "selected_cases": [c[0] for c in cases], "implementation": args.impl,
@@ -181,7 +191,7 @@ def main():
         if args.impl == "v7":
             import functools
             mha_paged_decode = functools.partial(mha_paged_decode, pipeline_stages=args.pipeline_stages,
-                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode, persistent_programs=args.persistent_programs, cube_mode=args.cube_mode)
+                                                kv_versions=args.kv_versions, q_resident=args.q_resident, schedule_mode=args.schedule_mode, persistent_programs=args.persistent_programs, cube_mode=args.cube_mode, num_splits=args.num_splits)
         torch.npu.set_device(args.device)
         device = f"npu:{args.device}"
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__,
@@ -218,8 +228,15 @@ def main():
                     if args.cube_mode == "general":
                         from operators.mha.kernels.mha_paged_decode_ascend_cube_general import build_kernel as build_general
                         kernel = build_general(b, sq, h, d, k_base.shape[0], w, p, causal,
-                                               "float16" if dtype == torch.float16 else "bfloat16", args.device)
-                        source = kernel.direct_kernel.get_kernel_source()
+                                               "float16" if dtype == torch.float16 else "bfloat16", args.device,
+                                               num_splits=args.num_splits)
+                        device_kernel = kernel.direct_kernel if kernel.num_splits == 1 else kernel.partial_kernel
+                        source = device_kernel.get_kernel_source()
+                        entry["num_splits"] = kernel.num_splits
+                        entry["execution_mode"] = kernel.execution_mode
+                        entry["compute_grid"] = kernel.compute_grid
+                        if kernel.num_splits > 1:
+                            entry["merge_generated_source_sha256"] = hashlib.sha256(kernel.merge_kernel.get_kernel_source().encode()).hexdigest()
                         entry["generated_source_sha256"] = hashlib.sha256(source.encode()).hexdigest()
                         entry["cube_mmad_calls"] = source.count("asc_mmad(")
                         assert entry["cube_mmad_calls"] >= 2, "Generated kernel must contain both Cube GEMMs"

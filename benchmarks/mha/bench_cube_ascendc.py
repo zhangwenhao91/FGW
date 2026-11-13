@@ -1,4 +1,4 @@
-"""Measure unchanged general Cube MFU and paired speedup against native FIA v2."""
+"""General Cube MFU / native FIA, optionally comparing automatic split-KV to split=1."""
 import argparse
 import datetime
 import functools
@@ -42,7 +42,12 @@ def aggregate(results, cases, peak):
                    for label in rows[0]["median_us"]}
         summary = {"key": key, "dtype": info["dtype"], "suite": info["suite"],
                    "rounds": len(rows), "metrics": metrics,
-                   "ascendc_status": info["ascendc_status"]}
+                   "ascendc_status": info["ascendc_status"], "cube_configuration": info.get("cube_configuration")}
+        if "cube_split1" in metrics:
+            ratios = [r["speedup_split_over_split1"] for r in rows]
+            summary.update(speedup_split_over_split1=metrics["cube_split1"]["us"] / metrics[LABELS[0]]["us"],
+                           min_split_round_speedup=min(ratios), max_split_round_speedup=max(ratios),
+                           split_faster_rounds=sum(v > 1 for v in ratios))
         if LABELS[1] in metrics:
             ratios = [r["speedup_cube_over_ascendc"] for r in rows]
             summary.update(speedup_cube_over_ascendc=metrics[LABELS[1]]["us"] / metrics[LABELS[0]]["us"],
@@ -63,6 +68,11 @@ def aggregate(results, cases, peak):
             ratios = [s["speedup_cube_over_ascendc"] for s in paired]
             item.update(geomean_speedup=math.exp(statistics.mean(math.log(v) for v in ratios)),
                         cube_faster_cases=sum(v > 1 for v in ratios), min_speedup=min(ratios), max_speedup=max(ratios))
+        controls = [s for s in selected if "speedup_split_over_split1" in s]
+        if controls:
+            item.update(split1_control_cases=len(controls),
+                        geomean_speedup_vs_split1=math.exp(statistics.mean(math.log(s["speedup_split_over_split1"]) for s in controls)),
+                        split_faster_cases=sum(s["speedup_split_over_split1"] > 1 for s in controls))
         groups[group] = item
     return summaries, groups
 
@@ -77,6 +87,9 @@ def main():
     parser.add_argument("--warmup", type=int, default=20)
     parser.add_argument("--peak-tflops", type=float, default=378.0)
     parser.add_argument("--seed", type=int, default=7)
+    parser.add_argument("--cube-splits", choices=["auto", "1", "2", "4", "8", "16", "32"], default="1",
+                        help="Default1 preserves the original benchmark; auto enables the general task-filling policy")
+    parser.add_argument("--compare-split1", action="store_true", help="Add an explicit split=1 Cube control")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output", default="mha_cube_ascendc_mfu_summary.json")
     parser.add_argument("--save-samples", action="store_true", help="Save optional local per-pair JSONL alongside compact summary")
@@ -85,6 +98,8 @@ def main():
     if (args.rounds < 2 or args.pairs < 3 or args.warmup < 1
             or not math.isfinite(args.peak_tflops) or args.peak_tflops <= 0):
         parser.error("rounds>=2, pairs>=3, warmup>=1, finite positive peak required")
+    if args.compare_split1 and args.cube_splits == "1":
+        parser.error("--compare-split1 requires --cube-splits auto or an explicit split count >1")
     chosen = {"standard": STANDARD, "long-q": LONG_Q, "all": STANDARD+LONG_Q}[args.suite]
     if args.cases and set(args.cases)-{c[0] for c in chosen}:
         parser.error("Selected case is not in this suite")
@@ -98,12 +113,13 @@ def main():
     path.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "running", "phase": "compile_and_accuracy", "settings": vars(args), "cases": {}, "results": [],
               "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-              "implementation": "Unchanged general Cube: BR32/BC32, split=1; not optimized default v7 Cube",
+              "implementation": f"General Cube shared BR32/BC32 computation, splits={args.cube_splits}; not optimized default v7 Cube",
               "baseline": "Installed CANN native FIA v2 via torch_npu, original paged K/V views; no dense gather/repacking, no source rebuild",
               "input_policy": "Identical finite random Q/K/V pool, shuffled/shared/repeated pages and runtime lengths for both variants; correctness uses only logically visible tokens",
               "timing": "Warm-cache NPU Event per prebuilt full device callable; includes allocation effects, all kernels and stream-visible launch gaps. Excludes compile, H2D, CPU reference, API metadata host synchronization, list/mask construction and zero-copy K/V view creation. Not CPU wall time or msprof timing.",
               "flops_policy": "4*H*D*sum_b,sum_q(visible_keys_bq), original unpadded D; causal visible=max(KV_b-Q+q+1,0). Includes useful QK+PV only, no softmax/padding/masked FLOPs. Same numerator and dense FP16/BF16 Cube peak for both variants.",
               "speedup_policy": "AscendC_us / general_Cube_us; >1 means general Cube faster. Unsupported page layouts are Cube-only, excluded from speedup aggregates.",
+              "split_control_policy": "split1_us / selected_Cube_us; >1 means selected split strategy faster; same shared QK/PV body and identical input",
               "fia_documentation": FIA_DOC}
 
     def save():
@@ -128,6 +144,8 @@ def main():
         report["device"] = str(props)
         report["versions"] = {"torch": torch.__version__, "torch_npu": torch_npu.__version__, "tilelang": tilelang.__version__}
         report["kernel_sha256"] = hashlib.sha256(Path(cube.__file__).read_bytes()).hexdigest()
+        from operators.mha import general_split_policy
+        report["split_policy_sha256"] = hashlib.sha256(Path(general_split_policy.__file__).read_bytes()).hexdigest()
         report["benchmark_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
         fia = getattr(torch_npu, "npu_fused_infer_attention_score_v2", None)
         if not callable(fia):
@@ -158,12 +176,25 @@ def main():
             inputs = [x.to(device) for x in (q, k, v, table, lengths)]
             report["active_variant"] = LABELS[0]
             save()
-            program = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name, args.device)
+            requested_splits = None if args.cube_splits == "auto" else int(args.cube_splits)
+            program = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name, args.device,
+                                        num_splits=requested_splits)
             calls = {LABELS[0]: functools.partial(program, *inputs)}
-            source = program.direct_kernel.get_kernel_source()
+            info["cube_configuration"] = {"num_splits": program.num_splits, "compute_grid": program.compute_grid,
+                                          "query_tile_tasks": program.query_tile_tasks, "execution_mode": program.execution_mode}
+            device_kernel = program.direct_kernel if program.num_splits == 1 else program.partial_kernel
+            source = device_kernel.get_kernel_source()
             info["cube_mmad_calls"] = source.count("asc_mmad(")
             assert info["cube_mmad_calls"] >= 2
             info["cube_generated_sha256"] = hashlib.sha256(source.encode()).hexdigest()
+            if program.num_splits > 1:
+                info["merge_generated_sha256"] = hashlib.sha256(program.merge_kernel.get_kernel_source().encode()).hexdigest()
+            if args.compare_split1:
+                control = cube.build_kernel(b, sq, h, d, k.shape[0], w, p, causal, dtype_name, args.device,
+                                            num_splits=1)
+                calls["cube_split1"] = functools.partial(control, *inputs)
+                info["split1_generated_sha256"] = hashlib.sha256(control.direct_kernel.get_kernel_source().encode()).hexdigest()
+                info["compute_sources_identical"] = source == control.direct_kernel.get_kernel_source()
             if not reason:
                 # BnBsH views share the original bytes and physical page IDs.
                 paged_k = inputs[1].view(k.shape[0] // p, p, h*d)
@@ -231,7 +262,9 @@ def main():
                 torch.npu.synchronize()
                 samples = {label: [] for label in labels}
                 for pair in range(args.pairs):
-                    for label in (labels if (pair+round_id) % 2 == 0 else tuple(reversed(labels))):
+                    offset = (pair+round_id) % len(labels)
+                    rotated = labels[offset:]+labels[:offset]
+                    for label in (rotated if ((pair+round_id) // len(labels)) % 2 == 0 else tuple(reversed(rotated))):
                         samples[label].append(measure(calls[label]))
                 medians = {label: statistics.median(values) for label, values in samples.items()}
                 metrics = {label: performance(report["cases"][key]["effective_flops"], us, args.peak_tflops)
@@ -241,11 +274,13 @@ def main():
                 if LABELS[1] in calls:
                     row["speedup_cube_over_ascendc"] = medians[LABELS[1]] / medians[LABELS[0]]
                     row["median_pair_speedup"] = statistics.median(a/c for a, c in zip(samples[LABELS[1]], samples[LABELS[0]]))
+                if "cube_split1" in calls:
+                    row["speedup_split_over_split1"] = medians["cube_split1"] / medians[LABELS[0]]
                 if args.save_samples:
                     with sample_path.open("a", encoding="utf-8") as stream:
                         stream.write(json.dumps({"key": key, "round": round_id+1, "samples_us": samples})+"\n")
                 save()
-                print(f"round={round_id+1} {key}: median_us={medians} Cube_MFU={metrics[LABELS[0]]['mfu_percent']:.6f}% speedup={row.get('speedup_cube_over_ascendc', 'N/A')}", flush=True)
+                print(f"round={round_id+1} {key}: median_us={medians} Cube_MFU={metrics[LABELS[0]]['mfu_percent']:.6f}% vs_AscendC={row.get('speedup_cube_over_ascendc', 'N/A')} vs_split1={row.get('speedup_split_over_split1', 'N/A')}", flush=True)
         report.pop("active_case", None)
         report["phase"] = "complete"
         report["status"] = "passed"

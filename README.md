@@ -1,5 +1,15 @@
 # FGW
 
+## 通用 Cube：同体 split-KV 候选
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_cube_splitkv
+```
+
+共享QK/PV计算体，先精度回归，再比较自动split、split=1及AscendC的耗时/MFU。
+[设计、范围与上传文件](docs/mha_cube_splitkv.md)。
+
 ## 通用 Cube MFU / 原生 AscendC 对照
 
 ```bash

@@ -30,14 +30,15 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                  pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable"):
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
     if selected_route == "cube_general":
-        if num_splits not in (None, 1) or split_policy not in ("auto", "legacy"):
-            raise ValueError("General Cube currently supports split=1 without the D128 cost model")
+        if split_policy not in ("auto", "legacy"):
+            raise ValueError("General Cube uses its own task-filling split policy, not the D128 cost model")
         if (pipeline_stages != 2 or buffer_versions != 2 or not q_resident
                 or kv_versions is not None or dump_ir_dir is not None
                 or schedule_mode != "manual" or persistent_programs != 28):
             raise ValueError("General Cube has its own untuned schedule; v7 tuning overrides are unsupported")
         from operators.mha.kernels.mha_paged_decode_ascend_cube_general import build_kernel as build_general
-        return build_general(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)
+        return build_general(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index,
+                             num_splits=num_splits)
     if persistent_programs is not None and (type(persistent_programs) is not int or persistent_programs != 28):
         raise ValueError("persistent_programs supports None (uncapped grid) or 28 (default cap)")
     requested_split_policy = split_policy
