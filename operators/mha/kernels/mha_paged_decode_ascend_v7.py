@@ -47,8 +47,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         raise ValueError("split_policy must be auto, legacy or cost_model")
     if num_splits is not None and (type(num_splits) is not int or num_splits not in (1, 2, 4, 8, 16)):
         raise ValueError("num_splits supports None (automatic) or 1/2/4/8/16")
-    if schedule_mode not in ("auto", "auto-offset", "manual"):
-        raise ValueError("schedule_mode must be auto, auto-offset or manual")
+    if schedule_mode not in ("auto", "auto-offset", "manual", "nsa"):
+        raise ValueError("schedule_mode must be auto, auto-offset, manual or nsa")
     pipeline_annotations = {} if schedule_mode == "auto" else {"enable_offset": True}
     def dump_configs(name):
         if dump_ir_dir is None:
@@ -250,7 +250,13 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             old_max = T.alloc_shared((ROWS,), accum_dtype)
             row_sum = T.alloc_shared((ROWS,), accum_dtype)
             lse = T.alloc_shared((ROWS,), accum_dtype)
-            if schedule_mode == "manual":
+            if schedule_mode == "nsa":
+                T.annotate_buffer_versions({Q_l1: 1, qa: 1, K_l1: 2, V_l1: 2,
+                                           P_l1: 2, kb: 1, pa: 1, vb: 1, qk: 2, pv: 2,
+                                           scores: 2, probs: 2, current: 2, alpha: 2,
+                                           output: 1, maximum: 1, total: 1,
+                                           old_max: 1, row_sum: 1})
+            elif schedule_mode == "manual":
                 T.annotate_buffer_versions({K_l1: 3, V_l1: 3, qk: 2, pv: 2,
                                            scores: 3, probs: 2, current: 1, alpha: 3})
             else:
@@ -285,7 +291,26 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     for tile in T.Pipelined(count, num_stages=pipeline_stages, annotations=pipeline_annotations):
                         logical = (begin + tile) * BC
                         physical = Table[b, logical // page_size] * page_size + logical % page_size
-                        if schedule_mode == "manual":
+                        if schedule_mode == "nsa":
+                            # NSA-inspired offset pipeline: prepare QK while the preceding
+                            # tile passes through softmax/PV; retain single online state.
+                            with T.Stage(0):
+                                T.copy(K[physical:physical + BC, h, :], K_l1)
+                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                if not q_resident:
+                                    T.copy(Q_l1, qa)
+                                T.copy(K_l1, kb)
+                                T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                                T.dual_copy(qk, scores)
+                            with T.Stage(1):
+                                softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                                T.dual_copy(probs[0:ROWS, :], P_l1)
+                                T.copy(P_l1, pa)
+                                T.copy(V_l1, vb)
+                                T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                                T.dual_copy(pv, current)
+                                accumulate_output(current, output, alpha)
+                        elif schedule_mode == "manual":
                             with T.Stage(0):
                                 T.copy(K[physical:physical + BC, h, :], K_l1)
                             with T.Stage(1):
@@ -429,7 +454,13 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                 alpha = T.alloc_shared((ROWS,), accum_dtype)
                 old_max = T.alloc_shared((ROWS,), accum_dtype)
                 row_sum = T.alloc_shared((ROWS,), accum_dtype)
-                if schedule_mode == "manual":
+                if schedule_mode == "nsa":
+                    T.annotate_buffer_versions({Q_l1: 1, qa: 1, K_l1: 2, V_l1: 2,
+                                               P_l1: 2, kb: 1, pa: 1, vb: 1, qk: 2, pv: 2,
+                                               scores: 2, probs: 2, current: 2, alpha: 2,
+                                               output: 1, maximum: 1, total: 1,
+                                               old_max: 1, row_sum: 1})
+                elif schedule_mode == "manual":
                     T.annotate_buffer_versions({K_l1: 3, V_l1: 3, qk: 2, pv: 2,
                                                scores: 3, probs: 2, current: 1, alpha: 3})
                 else:
@@ -464,7 +495,26 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                         for tile in T.Pipelined(count, num_stages=pipeline_stages, annotations=pipeline_annotations):
                             logical = (begin + tile) * BC
                             physical = Table[b, logical // page_size] * page_size + logical % page_size
-                            if schedule_mode == "manual":
+                            if schedule_mode == "nsa":
+                                # NSA-inspired offset pipeline: prepare QK while the preceding
+                                # tile passes through softmax/PV; retain single online state.
+                                with T.Stage(0):
+                                    T.copy(K[physical:physical + BC, h, :], K_l1)
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                    if not q_resident:
+                                        T.copy(Q_l1, qa)
+                                    T.copy(K_l1, kb)
+                                    T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                                    T.dual_copy(qk, scores)
+                                with T.Stage(1):
+                                    softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                                    T.dual_copy(probs[0:ROWS, :], P_l1)
+                                    T.copy(P_l1, pa)
+                                    T.copy(V_l1, vb)
+                                    T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                                    T.dual_copy(pv, current)
+                                    accumulate_output(current, output, alpha)
+                            elif schedule_mode == "manual":
                                 with T.Stage(0):
                                     T.copy(K[physical:physical + BC, h, :], K_l1)
                                 with T.Stage(1):
