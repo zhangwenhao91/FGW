@@ -490,9 +490,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if runtime_lengths:
         @T.prim_func
         def merge_runtime(
+            # Bind exact Q before checking ceil(Q/BR)-dependent partial shapes.
+            QShape: T.Tensor((sq, D), dtype),
             Parts: T.Tensor((tasks * splits * BR, D), accum_dtype),
             LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
-            QShape: T.Tensor((sq, D), dtype),
             O: T.Tensor((sq, D), dtype),
         ):
             with T.Kernel(merge_grid) as core:
@@ -751,7 +752,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         q_head_major = q.view(-1, D) if runtime_lengths else q.permute(0, 2, 1, 3).contiguous()
         if runtime_lengths:
             parts, lse = partial_kernel(q_head_major, k.view(-1, D), v.view(-1, D), table, lengths)
-            return merge_kernel(parts, lse, q_head_major).view(batch, q.shape[1], heads, D)
+            return merge_kernel(q_head_major, parts, lse).view(batch, q.shape[1], heads, D)
         parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
         return merge_kernel(parts, lse)
     # Expose the exact compiled callables for isolated profiling; launch unchanged.
