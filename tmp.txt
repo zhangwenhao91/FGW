@@ -1,18 +1,63 @@
 (zwh) root@ubuntu162:/home/z30086261/FGW# python fgw.py mha run run_mha_runtime_lengths
-2026-11-16 15:57:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
-[15:57:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
-[15:57:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
-[15:57:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
-[15:57:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
-[15:57:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
-[15:57:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
-[15:57:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
-[15:57:31] /home/z30086261/Q4/third_party/tilelang-950/3rdparty/tvm/src/tirx/script/printer/expr.cc:75: Warning: Didn't find variable definition for: bx
-[15:57:31] /home/z30086261/Q4/third_party/tilelang-950/3rdparty/tvm/src/relax/script/printer/./../../../script/printer/utils.h:53: Warning: TVMScript printer falls back to the basic address printer with the error:
-Variable is not defined in the environment: bx
-[15:57:31] /home/z30086261/Q4/third_party/tilelang-950/3rdparty/tvm/src/tirx/script/printer/expr.cc:75: Warning: Didn't find variable definition for: bx
-[15:57:31] /home/z30086261/Q4/third_party/tilelang-950/3rdparty/tvm/src/relax/script/printer/./../../../script/printer/utils.h:53: Warning: TVMScript printer falls back to the basic address printer with the error:
-Variable is not defined in the environment: bx
+2026-11-16 16:06:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:06:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:06:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:06:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:06:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:06:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:06:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:06:28] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-16 16:06:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+1/4 q129_kv512 round1: {'static': 26.87700092792511, 'dynamic': 24.18000064790249, 'ascendc': 42.479000985622406}
+1/4 q129_kv512 round2: {'static': 24.694999679923058, 'dynamic': 23.32800067961216, 'ascendc': 40.33700004220009}
+2026-11-16 16:06:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:06:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:06:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:06:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:06:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:06:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:06:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:06:37] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-16 16:06:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+2/4 q257_kv2048 round1: {'static': 29.923999682068825, 'dynamic': 37.19700127840042, 'ascendc': 59.28099900484085}
+2/4 q257_kv2048 round2: {'static': 27.840999886393547, 'dynamic': 30.014999210834503, 'ascendc': 55.88499829173088}
+3/4 q4096_kv8192 round1: {'static': 108.31999778747559, 'dynamic': 116.68000370264053, 'ascendc': 108.67399722337723}
+3/4 q4096_kv8192 round2: {'static': 101.94999724626541, 'dynamic': 106.734998524189, 'ascendc': 92.26600080728531}
+2026-11-16 16:06:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `direct` with `out_idx=-1`
+[16:06:43] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:06:43] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:06:43] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:06:43] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[16:06:43] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:06:43] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:06:43] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-16 16:06:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `direct`
+4/4 q8191_kv4096 round1: {'static': 90.34600108861923, 'dynamic': 91.6069969534874, 'ascendc': 109.51100289821625}
+4/4 q8191_kv4096 round2: {'static': 87.51899749040604, 'dynamic': 86.80099993944168, 'ascendc': 99.72800314426422}
+2026-11-16 16:06:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:06:59] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-16 16:07:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-16 16:07:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `partial` with `out_idx=[5, 6]`
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv0 uses a non-affine loop nest.
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs_aiv1 uses a non-affine loop nest.
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv0 uses a non-affine loop nest.
+[16:07:21] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha_aiv1 uses a non-affine loop nest.
+2026-11-16 16:07:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `partial`
+2026-11-16 16:07:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge_runtime` with `out_idx=-1`
+[16:08:00] /home/z30086261/Q4/third_party/tilelang-950/src/transform/tvm_ffi_binder.cc:138: Fatal: TVM is unable to solve variables (q_len,) from equation arith.IntConstraints(variables=(q_len,), ranges={}, relations=((q_len + 128 - 1) // 128 * 4 * 128 == T.if_then_else(not T.bool(False), T.Cast("int32", merge_runtime_Parts_shape[0]), 0),))
 Traceback (most recent call last):
   File "/home/z30086261/FGW/benchmarks/mha/bench_runtime_lengths.py", line 99, in main
     runtime = build_runtime_kernel(1, 1, split, merge_rows, args.device)
@@ -20,9 +65,9 @@ Traceback (most recent call last):
   File "/home/z30086261/FGW/operators/mha/runtime_lengths.py", line 19, in build_runtime_kernel
     program = build_kernel(batch, merge_rows, heads, 128, width*128, width, 128,
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py", line 667, in build_kernel
-    direct_kernel = tilelang.compile(direct, out_idx=-1, target="ascend", execution_backend="auto",
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py", line 745, in build_kernel
+    merge_kernel = tilelang.compile(merge_runtime if runtime_lengths else merge, out_idx=-1, target="ascend", execution_backend="auto",
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 166, in compile
     return cached(
            ^^^^^^^
@@ -59,118 +104,33 @@ Traceback (most recent call last):
   File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/pass_pipeline/pipeline.py", line 31, in lower
     return self._lower(mod, target)
            ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/pipeline.py", line 122, in AscendPassPipelineBody
-    mod = ascend_transform.AscendLowerTileOp()(mod)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/pipeline.py", line 184, in AscendPassPipelineBody
+    mod = tilelang.transform.MakePackedAPI()(mod)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/ir/transform.py", line 171, in __call__
     return _ffi_transform_api.RunPass(self, mod)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
   File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule) const
   File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
-  File "<unknown>", line 0, in tvm::tirx::transform::PrimFuncPassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::Substitute(tvm::tirx::PrimFunc)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#4}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::ForNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::ForNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::ForNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#3}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::IfThenElseNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#10}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::EvaluateNode const*)
-  File "<unknown>", line 0, in tvm::tl::AscendCopyNode::Lower(tvm::tl::LowerArgs const&, tvm::arith::Analyzer*) const
-  File "<unknown>", line 0, in tvm::tl::ascend::AscendCopyImpl::Lower(tvm::tl::AscendCopyNode const&, tvm::tl::LowerArgs const&, tvm::arith::Analyzer*)
-  File "/home/z30086261/Q4/third_party/tilelang-950/src/ascend/op/ascend_mte_plan.h", line 265, in tvm::tl::StridedLayout tvm::tl::NormalizeMTE2DLayout(const tvm::tirx::Buffer&, const tvm::ffi::Array<tvm::Range>&, tvm::arith::Analyzer*, const string&)
-tvm.error.InternalError: Check failed: (layout.has_value()) is false: Ascend GM->L1 copy cannot represent this region with one 2D MTE descriptor: all axes outside one row/inner pair must have extent 1, and the inner axis must be contiguous. Outer-loop lowering is not yet implemented. Buffer Q has shape (1, 1, q_len, 128), strides (128 * q_len, 128 * q_len, 128, 1), and ranges (ir.Range(0x55c314b1b600), I.Range(0, 1), ir.Range(0x55c3169316b0), I.Range(0, 128)).
-run_directory=mha_runtime_lengths.4N37UVn1
+  File "<unknown>", line 0, in tvm::transform::ModulePassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
+  File "<unknown>", line 0, in tvm::tl::MakePackedAPI(tvm::tirx::PrimFunc, std::vector<int, std::allocator<int> > const&)
+  File "<unknown>", line 0, in tvm::tl::TVMFFIABIBuilder::BindDLTensors(std::vector<std::pair<tvm::tirx::Var, tvm::tirx::Buffer>, std::allocator<std::pair<tvm::tirx::Var, tvm::tirx::Buffer> > > const&, tvm::PrimExpr const&, tvm::PrimExpr const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::unordered_set<tvm::tirx::VarNode const*, std::hash<tvm::tirx::VarNode const*>, std::equal_to<tvm::tirx::VarNode const*>, std::allocator<tvm::tirx::VarNode const*> > const&, std::unordered_set<tvm::tirx::VarNode const*, std::hash<tvm::tirx::VarNode const*>, std::equal_to<tvm::tirx::VarNode const*>, std::allocator<tvm::tirx::VarNode const*> > const&)
+  File "<unknown>", line 0, in tvm::tl::TVMFFIABIBuilder::BindNullable(tvm::PrimExpr const&, tvm::PrimExpr const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, tvm::PrimExpr const&)
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+tvm.error.InternalError: TVM is unable to solve variables (q_len,) from equation arith.IntConstraints(variables=(q_len,), ranges={}, relations=((q_len + 128 - 1) // 128 * 4 * 128 == T.if_then_else(not T.bool(False), T.Cast("int32", merge_runtime_Parts_shape[0]), 0),))
+run_directory=mha_runtime_lengths.odAijXpe
 
 phase=smoke_direct
+status=passed phase=complete correctness=passed active=None
+{"key": "q129_kv512", "split": 1, "rounds": 2, "median_us": {"static": 25.786000303924084, "dynamic": 23.754000663757324, "ascendc": 41.40800051391125}, "max_abs_error": {"static": 0.001953125, "dynamic": 0.001953125, "ascendc": 0.001953125}, "family_key": "(1, 1, 1, 8, 0)", "compile_wall_seconds": {"static": 0.22903840901562944, "dynamic_family_lookup_or_compile": 10.269284566980787}, "dynamic_vs_static": {"speedup": 1.0850687669686987, "min_round": 1.0585990638068528, "max_round": 1.1115384701305446, "faster_rounds": 2}, "dynamic_vs_ascendc": {"speedup": 1.742953104848093, "min_round": 1.7291237511602606, "max_round": 1.7567824585359255, "faster_rounds": 2}}
+{"key": "q257_kv2048", "split": 1, "rounds": 2, "median_us": {"static": 28.882499784231186, "dynamic": 33.60600024461746, "ascendc": 57.582998648285866}, "max_abs_error": {"static": 0.0009765625, "dynamic": 0.0009765625, "ascendc": 0.0009765625}, "family_key": "(1, 1, 1, 8, 0)", "compile_wall_seconds": {"static": 4.250430055020843, "dynamic_family_lookup_or_compile": 2.493034116923809e-06}, "dynamic_vs_static": {"speedup": 0.8660215060052028, "min_round": 0.8044734428483382, "max_round": 0.9275695691620672, "faster_rounds": 0}, "dynamic_vs_ascendc": {"speedup": 1.7278030429860771, "min_round": 1.593703711789912, "max_round": 1.861902374182242, "faster_rounds": 2}}
+{"key": "q4096_kv8192", "split": 1, "rounds": 2, "median_us": {"static": 105.1349975168705, "dynamic": 111.70750111341476, "ascendc": 100.46999901533127}, "max_abs_error": {"static": 0.00048828125, "dynamic": 0.00048828125, "ascendc": 0.00048828125}, "family_key": "(1, 1, 1, 8, 0)", "compile_wall_seconds": {"static": 0.11023023299640045, "dynamic_family_lookup_or_compile": 1.0319636203348637e-06}, "dynamic_vs_static": {"speedup": 0.9417601646093438, "min_round": 0.9283509971728279, "max_round": 0.9551693320458596, "faster_rounds": 0}, "dynamic_vs_ascendc": {"speedup": 0.8979124594408692, "min_round": 0.8644399876613609, "max_round": 0.9313849312203774, "faster_rounds": 0}}
+{"key": "q8191_kv4096", "split": 1, "rounds": 2, "median_us": {"static": 88.93249928951263, "dynamic": 89.20399844646454, "ascendc": 104.61950302124023}, "max_abs_error": {"static": 0.0009765625, "dynamic": 0.0009765625, "ascendc": 0.0009765625}, "family_key": "(1, 1, 1, 8, 0)", "compile_wall_seconds": {"static": 6.787143897963688, "dynamic_family_lookup_or_compile": 2.382963430136442e-06}, "dynamic_vs_static": {"speedup": 0.9972532434833208, "min_round": 0.9862347210714874, "max_round": 1.008271765895154, "faster_rounds": 1}, "dynamic_vs_ascendc": {"speedup": 1.1721852718697288, "min_round": 1.148926892706781, "max_round": 1.1954436510326765, "faster_rounds": 2}}
+REUSE: {"dynamic_family_count": 1, "static_shape_count": 4, "family_cache": {"hits": 3, "misses": 1, "maxsize": 64, "currsize": 1}, "families": {"(1, 1, 1, 8, 0)": {"shape_calls": 4, "shapes": [[129, 512], [257, 2048], [4096, 8192], [8191, 4096]]}}}
+GROUPS: {"dynamic_vs_static": {"cases": 4, "geomean_speedup": 0.9692435696477553, "faster_cases": 1, "within_2pct_cases": 1}, "dynamic_vs_ascendc": {"cases": 4, "geomean_speedup": 1.334297120418536, "faster_cases": 3, "within_2pct_cases": 0}}
+
+phase=smoke_split
 status=error phase=compile_accuracy correctness=None active=q129_kv512/compile_dynamic
 Traceback (most recent call last):
   File "/home/z30086261/FGW/benchmarks/mha/bench_runtime_lengths.py", line 99, in main
@@ -179,9 +139,9 @@ Traceback (most recent call last):
   File "/home/z30086261/FGW/operators/mha/runtime_lengths.py", line 19, in build_runtime_kernel
     program = build_kernel(batch, merge_rows, heads, 128, width*128, width, 128,
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py", line 667, in build_kernel
-    direct_kernel = tilelang.compile(direct, out_idx=-1, target="ascend", execution_backend="auto",
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py", line 745, in build_kernel
+    merge_kernel = tilelang.compile(merge_runtime if runtime_lengths else merge, out_idx=-1, target="ascend", execution_backend="auto",
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 166, in compile
     return cached(
            ^^^^^^^
@@ -218,115 +178,21 @@ Traceback (most recent call last):
   File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/pass_pipeline/pipeline.py", line 31, in lower
     return self._lower(mod, target)
            ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/pipeline.py", line 122, in AscendPassPipelineBody
-    mod = ascend_transform.AscendLowerTileOp()(mod)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/pipeline.py", line 184, in AscendPassPipelineBody
+    mod = tilelang.transform.MakePackedAPI()(mod)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/ir/transform.py", line 171, in __call__
     return _ffi_transform_api.RunPass(self, mod)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
   File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule) const
   File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
-  File "<unknown>", line 0, in tvm::tirx::transform::PrimFuncPassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::Substitute(tvm::tirx::PrimFunc)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#13}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockRealizeNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::AttrStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#12}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SBlockNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#4}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::ForNode const*)
-  File "<unknown>", line 0, in tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::ForNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::ForNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#9}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt_(tvm::tirx::SeqStmtNode const*)
-  File "<unknown>", line 0, in tvm::ffi::ObjectPtr<tvm::ffi::Object> tvm::ffi::Array<tvm::tirx::Stmt, void>::MapHelper<tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1}, tvm::tirx::Stmt>(tvm::ffi::ObjectPtr<tvm::ffi::Object>, tvm::tirx::StmtMutator::Internal::Mutate(tvm::tirx::StmtMutator*, tvm::ffi::Array<tvm::tirx::Stmt, void> const&)::{lambda(tvm::tirx::Stmt const&)#1})
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#3}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in non-virtual thunk to tvm::arith::IRMutatorWithAnalyzer::VisitStmt_(tvm::tirx::IfThenElseNode const*)
-  File "<unknown>", line 0, in tvm::tirx::StmtMutator::VisitStmt(tvm::tirx::Stmt const&)
-  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tirx::Stmt (tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*) const
-  File "<unknown>", line 0, in tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)#10}::_FUN(tvm::ffi::ObjectRef const&, tvm::tirx::StmtFunctor<tvm::tirx::Stmt (tvm::tirx::Stmt const&)>*)
-  File "<unknown>", line 0, in tvm::tl::ascend::LowerTileOpPass::VisitStmt_(tvm::tirx::EvaluateNode const*)
-  File "<unknown>", line 0, in tvm::tl::AscendCopyNode::Lower(tvm::tl::LowerArgs const&, tvm::arith::Analyzer*) const
-  File "<unknown>", line 0, in tvm::tl::ascend::AscendCopyImpl::Lower(tvm::tl::AscendCopyNode const&, tvm::tl::LowerArgs const&, tvm::arith::Analyzer*)
-  File "/home/z30086261/Q4/third_party/tilelang-950/src/ascend/op/ascend_mte_plan.h", line 265, in tvm::tl::StridedLayout tvm::tl::NormalizeMTE2DLayout(const tvm::tirx::Buffer&, const tvm::ffi::Array<tvm::Range>&, tvm::arith::Analyzer*, const string&)
-tvm.error.InternalError: Check failed: (layout.has_value()) is false: Ascend GM->L1 copy cannot represent this region with one 2D MTE descriptor: all axes outside one row/inner pair must have extent 1, and the inner axis must be contiguous. Outer-loop lowering is not yet implemented. Buffer Q has shape (1, 1, q_len, 128), strides (128 * q_len, 128 * q_len, 128, 1), and ranges (ir.Range(0x55c314b1b600), I.Range(0, 1), ir.Range(0x55c3169316b0), I.Range(0, 128)).
+  File "<unknown>", line 0, in tvm::transform::ModulePassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
+  File "<unknown>", line 0, in tvm::tl::MakePackedAPI(tvm::tirx::PrimFunc, std::vector<int, std::allocator<int> > const&)
+  File "<unknown>", line 0, in tvm::tl::TVMFFIABIBuilder::BindDLTensors(std::vector<std::pair<tvm::tirx::Var, tvm::tirx::Buffer>, std::allocator<std::pair<tvm::tirx::Var, tvm::tirx::Buffer> > > const&, tvm::PrimExpr const&, tvm::PrimExpr const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::unordered_set<tvm::tirx::VarNode const*, std::hash<tvm::tirx::VarNode const*>, std::equal_to<tvm::tirx::VarNode const*>, std::allocator<tvm::tirx::VarNode const*> > const&, std::unordered_set<tvm::tirx::VarNode const*, std::hash<tvm::tirx::VarNode const*>, std::equal_to<tvm::tirx::VarNode const*>, std::allocator<tvm::tirx::VarNode const*> > const&)
+  File "<unknown>", line 0, in tvm::tl::TVMFFIABIBuilder::BindNullable(tvm::PrimExpr const&, tvm::PrimExpr const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, tvm::PrimExpr const&)
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+tvm.error.InternalError: TVM is unable to solve variables (q_len,) from equation arith.IntConstraints(variables=(q_len,), ranges={}, relations=((q_len + 128 - 1) // 128 * 4 * 128 == T.if_then_else(not T.bool(False), T.Cast("int32", merge_runtime_Parts_shape[0]), 0),))
 
-CASE {"key": "q129_kv512", "Q": 129, "KV": 512, "correctness": {}, "kernels": {}, "compile_wall_seconds": {"static": 0.10850436601322144}}
+CASE {"key": "q129_kv512", "Q": 129, "KV": 512, "correctness": {}, "kernels": {}, "compile_wall_seconds": {"static": 9.876372294034809}}
 (zwh) root@ubuntu162:/home/z30086261/FGW#
