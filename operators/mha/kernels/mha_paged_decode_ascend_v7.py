@@ -27,7 +27,9 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt"):
+    if output_normalization not in ("simt", "simd"):
+        raise ValueError("output_normalization must be simt or simd")
     if runtime_lengths and (batch != 1 or heads != 1 or num_splits is None or causal or dim != 128 or page_size != 128
                             or dtype != "bfloat16" or cube_mode != "stable"):
         raise ValueError("Runtime lengths require B1H1, explicit split, BF16/D128/page128/noncausal restricted Cube")
@@ -36,6 +38,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if fast_math is not None and type(fast_math) is not bool:
         raise ValueError("fast_math must be None (existing default), False or True")
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if output_normalization != "simt" and selected_route != "cube_bf16_d128":
+        raise ValueError("SIMD normalization experiment requires restricted v7 Cube")
     if task_assignment is None:
         task_assignment = "contiguous" if selected_route == "cube_bf16_d128" else "strided"
     if task_assignment != "strided" and selected_route != "cube_bf16_d128":
@@ -135,6 +139,19 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     kv_buffer_shape = (pool_rows, D) if runtime_lengths else (pool_rows, heads, D)
     parts_buffer_shape = (tasks * splits * BR, D) if runtime_lengths else (tasks, splits, BR, D)
     direct_output_shape = (sq, D) if runtime_lengths else (batch, sq, heads * D)
+    @T.macro
+    def normalize_output_simd(output, total):
+        # Reference PR3896's row-broadcast division, retaining v7's denominator
+        # clamp and FP32 storage. BF16 conversion stays a separate operation.
+        with T.SimdVF(latency=1780):
+            mask = S.pset(32, "PAT_ALL")
+            floor = S.vdup(T.float32(1.0e-30), accum_dtype, mask)
+            for r in range(ROWS):
+                denominator = S.vmax(S.vld(total[r], "BRC_B32"), floor, mask)
+                for c in range(0, D, VL):
+                    normalized = S.vdiv(S.vld(output[r, c], "NORM"), denominator, mask)
+                    S.vsts(output[r, c], normalized, mask, "NORM_B32")
+
     @T.macro
     def softmax(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
         with T.SimdVF(latency=735):
@@ -407,14 +424,23 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                             T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                             T.dual_copy(pv, current)
                             accumulate_output(current, output, alpha)
-                    with T.SimtVF(threads=128):
-                        for r, d in T.Parallel(ROWS, D):
-                            output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
-                        for r in T.Parallel(ROWS):
-                            if total[r] > 0:
-                                lse[r] = T.log2(T.max(total[r], 1.0e-30)) * 0.6931471805599453 + maximum[r]
-                            else:
-                                lse[r] = -1.0e30
+                    if output_normalization == "simd":
+                        normalize_output_simd(output, total)
+                        with T.SimtVF(threads=128):
+                            for r in T.Parallel(ROWS):
+                                if total[r] > 0:
+                                    lse[r] = T.log2(T.max(total[r], 1.0e-30)) * 0.6931471805599453 + maximum[r]
+                                else:
+                                    lse[r] = -1.0e30
+                    else:
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(ROWS, D):
+                                output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
+                            for r in T.Parallel(ROWS):
+                                if total[r] > 0:
+                                    lse[r] = T.log2(T.max(total[r], 1.0e-30)) * 0.6931471805599453 + maximum[r]
+                                else:
+                                    lse[r] = -1.0e30
                     if runtime_lengths:
                         T.dual_copy(output, Parts[(task * splits + split) * BR:(task * splits + split + 1) * BR, :])
                     else:
@@ -699,9 +725,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                                 T.dual_copy(pv, current)
                                 accumulate_output(current, output, alpha)
-                        with T.SimtVF(threads=128):
-                            for r, d in T.Parallel(ROWS, D):
-                                output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
+                        if output_normalization == "simd":
+                            normalize_output_simd(output, total)
+                        else:
+                            with T.SimtVF(threads=128):
+                                for r, d in T.Parallel(ROWS, D):
+                                    output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
                         # Reuse FP32 output storage for BF16 conversion, as in upstream.
                         # Sequential SIMD rows ensure a cast store cannot overwrite a future
                         # FP32 source row before it is read.
