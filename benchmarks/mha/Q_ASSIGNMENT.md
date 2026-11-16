@@ -19,7 +19,9 @@ in either mode. The flattened task-to-request/head/query/split mapping is retain
 the B1H1 split1 target is directly a Q-tile distribution comparison. Partial
 tasks use the identical flattened partition convention. No arithmetic, data layout,
 tile dimensions, manual stage arrangement, Fast Math setting, split selection,
-merge or persistent core cap is changed. Strided remains the default. The benchmark
+merge or persistent core cap is changed. After the validated comparison, the user
+chose contiguous as the restricted Cube default despite near-equal performance.
+The benchmark still explicitly requests both modes. The benchmark
 first selects frozen-model splits using default v7, then fixes that same number
 for contiguous. It does not repeat the declined NSA schedule experiment.
 

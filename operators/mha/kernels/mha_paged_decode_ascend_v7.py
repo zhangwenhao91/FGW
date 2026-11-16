@@ -27,12 +27,14 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment="strided"):
-    if task_assignment not in ("strided", "contiguous"):
-        raise ValueError("task_assignment must be strided or contiguous")
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None):
+    if task_assignment not in (None, "strided", "contiguous"):
+        raise ValueError("task_assignment must be None (route default), strided or contiguous")
     if fast_math is not None and type(fast_math) is not bool:
         raise ValueError("fast_math must be None (existing default), False or True")
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if task_assignment is None:
+        task_assignment = "contiguous" if selected_route == "cube_bf16_d128" else "strided"
     if task_assignment != "strided" and selected_route != "cube_bf16_d128":
         raise ValueError("Task assignment experiment requires the restricted v7 Cube route")
     if fast_math is not None and selected_route != "cube_bf16_d128":
