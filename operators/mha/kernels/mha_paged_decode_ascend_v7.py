@@ -27,7 +27,11 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt", v_transpose_stage="gm_l1"):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt", v_transpose_stage="gm_l1", block_q=128):
+    if type(block_q) is not int or block_q not in (64, 128):
+        raise ValueError("block_q must be 64 or 128")
+    if block_q != 128 and (num_splits is None or runtime_lengths):
+        raise ValueError("Q64 experiment requires explicit splits and static lengths; model remains calibrated for Q128 tiles")
     if v_transpose_stage not in ("gm_l1", "l1_l0"):
         raise ValueError("v_transpose_stage must be gm_l1 or l1_l0")
     v_transpose_gm = v_transpose_stage == "gm_l1"
@@ -42,6 +46,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if fast_math is not None and type(fast_math) is not bool:
         raise ValueError("fast_math must be None (existing default), False or True")
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if block_q != 128 and selected_route != "cube_bf16_d128":
+        raise ValueError("Q tile experiment requires restricted v7 Cube")
     if v_transpose_stage != "gm_l1" and selected_route != "cube_bf16_d128":
         raise ValueError("V transpose experiment requires restricted v7 Cube")
     if output_normalization != "simt" and selected_route != "cube_bf16_d128":
@@ -105,7 +111,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             buffer_versions=buffer_versions, kv_versions=kv_versions, q_resident=q_resident,
             schedule_mode=schedule_mode, full_kv_cache=full_kv_cache, cube_cores=cores)
         split_policy = "cost_model" if use_model else "legacy"
-    BR, BC, ROWS, VL, D = 128, 128, 64, 64, 128
+    BR, BC, ROWS, VL, D = block_q, 128, block_q // 2, 64, 128
+    # Statistics use whole 64-lane SIMD loads/stores even when each AIV handles
+    # only 32 rows. Keep padded lanes inside their allocation for Q64 tiles.
+    STATS_ROWS = 64
     dtype, accum_dtype = "bfloat16", "float32"
     scale = D ** -0.5
     q_tiles = (sq + BR - 1) // BR
@@ -312,12 +321,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             T.annotate_layout({probs: make_ascend_compact_nz_layout(probs)})
             current = T.alloc_shared((ROWS, D), accum_dtype)
             output = T.alloc_shared((ROWS, D), accum_dtype)
-            maximum = T.alloc_shared((ROWS,), accum_dtype)
-            total = T.alloc_shared((ROWS,), accum_dtype)
-            alpha = T.alloc_shared((ROWS,), accum_dtype)
-            old_max = T.alloc_shared((ROWS,), accum_dtype)
-            row_sum = T.alloc_shared((ROWS,), accum_dtype)
-            lse = T.alloc_shared((ROWS,), accum_dtype)
+            maximum = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            total = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            alpha = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            old_max = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            row_sum = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            lse = T.alloc_shared((STATS_ROWS,), accum_dtype)
             if schedule_mode == "nsa":
                 T.annotate_buffer_versions({Q_l1: 1, qa: 1, K_l1: 2, V_l1: 2,
                                            P_l1: 2, kb: 1, pa: 1, vb: 1, qk: 2, pv: 2,
@@ -468,7 +477,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     # Integer indices in a multidimensional BufferRegion retain rank.
                     # Flatten LSE so UB[ROWS] -> GM[BR] is an actual 1-D 1:2 copy.
                     lse_offset = (task * splits + split) * BR
-                    T.dual_copy(lse, LSE[lse_offset:lse_offset + BR])
+                    if block_q == 64:
+                        T.dual_copy(lse[:ROWS], LSE[lse_offset:lse_offset + BR])
+                    else:
+                        T.dual_copy(lse, LSE[lse_offset:lse_offset + BR])
 
     merge_rows = runtime_merge_rows if runtime_lengths else min(8, tilelang.next_power_of_2(sq))
     merge_groups = (sq + merge_rows - 1) // merge_rows
@@ -622,11 +634,11 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                 T.annotate_layout({probs: make_ascend_compact_nz_layout(probs)})
                 current = T.alloc_shared((ROWS, D), accum_dtype)
                 output = T.alloc_shared((ROWS, D), accum_dtype)
-                maximum = T.alloc_shared((ROWS,), accum_dtype)
-                total = T.alloc_shared((ROWS,), accum_dtype)
-                alpha = T.alloc_shared((ROWS,), accum_dtype)
-                old_max = T.alloc_shared((ROWS,), accum_dtype)
-                row_sum = T.alloc_shared((ROWS,), accum_dtype)
+                maximum = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                total = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                alpha = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                old_max = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                row_sum = T.alloc_shared((STATS_ROWS,), accum_dtype)
                 if schedule_mode == "nsa":
                     T.annotate_buffer_versions({Q_l1: 1, qa: 1, K_l1: 2, V_l1: 2,
                                                P_l1: 2, kb: 1, pa: 1, vb: 1, qk: 2, pv: 2,
@@ -787,6 +799,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             prepared = q.permute(0, 2, 1, 3).contiguous()
             return direct_kernel(prepared, k, v, table, lengths).view(batch, sq, heads, D)
 
+        launch_direct.block_q = BR
         launch_direct.compute_grid = compute_grid
         launch_direct.task_assignment = task_assignment
         launch_direct.compute_work = compute_work
@@ -815,6 +828,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
         return merge_kernel(parts, lse)
     # Expose the exact compiled callables for isolated profiling; launch unchanged.
+    launch.block_q = BR
     launch.compute_grid = compute_grid
     launch.task_assignment = task_assignment
     launch.compute_work = compute_work
