@@ -27,7 +27,10 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False):
+    if runtime_lengths and (num_splits is None or causal or dim != 128 or page_size != 128
+                            or dtype != "bfloat16" or cube_mode != "stable"):
+        raise ValueError("Runtime lengths require explicit split, BF16/D128/page128/noncausal restricted Cube")
     if task_assignment not in (None, "strided", "contiguous"):
         raise ValueError("task_assignment must be None (route default), strided or contiguous")
     if fast_math is not None and type(fast_math) is not bool:
@@ -116,6 +119,16 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         splits = select_splits(batch, sq, heads, width * page_size // BC)
     compute_work = tasks * splits
     compute_grid = compute_work if persistent_programs is None else min(compute_work, persistent_programs)
+    if runtime_lengths:
+        runtime_merge_rows = min(8, tilelang.next_power_of_2(sq))
+        sq = T.dynamic("q_len")
+        pool_rows = T.dynamic("pool_rows")
+        width = T.dynamic("table_width")
+        q_tiles = (sq + BR - 1) // BR
+        tasks = batch * q_tiles * heads
+        outputs = batch * sq * heads
+        compute_work = tasks * splits
+        compute_grid = compute_work if persistent_programs is None else T.min(compute_work, persistent_programs)
     @T.macro
     def softmax(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
         with T.SimdVF(latency=735):
@@ -381,12 +394,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     lse_offset = (task * splits + split) * BR
                     T.dual_copy(lse, LSE[lse_offset:lse_offset + BR])
 
-    merge_rows = min(8, tilelang.next_power_of_2(sq))
+    merge_rows = runtime_merge_rows if runtime_lengths else min(8, tilelang.next_power_of_2(sq))
     merge_groups = (sq + merge_rows - 1) // merge_rows
     merge_work = batch * heads * merge_groups
     # Keep the grid bounded; large Q uses several work items per program.
     # Workloads below this cap retain their original grid and one iteration.
-    merge_grid = min(merge_work, 32768)
+    merge_grid = T.min(merge_work, 32768) if runtime_lengths else min(merge_work, 32768)
 
     @T.prim_func
     def merge(
@@ -441,6 +454,64 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                             out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
                     # UB->GM uses the same tail-clamping convention as the reference.
                     T.copy(out, O[b, qi:qi + merge_rows, h, :])
+
+    # Parts only encode ceil(Q/BR), which cannot recover the exact Q tail.
+    # Bind q_len from the already prepared Q tensor in the dynamic merge call.
+    if runtime_lengths:
+        @T.prim_func
+        def merge_runtime(
+            Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
+            LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
+            QShape: T.Tensor((batch, heads, sq, D), dtype),
+            O: T.Tensor((batch, sq, heads, D), dtype),
+        ):
+            with T.Kernel(merge_grid) as core:
+                for work in T.serial(T.ceildiv(merge_work, merge_grid)):
+                    program = work * merge_grid + core
+                    if program < merge_work:
+                        b = program // (heads * merge_groups)
+                        h = program // merge_groups % heads
+                        qi = program % merge_groups * merge_rows
+                        group_task = (b * q_tiles + qi // BR) * heads + h
+                        row = qi % BR
+                        part = T.alloc_shared((merge_rows, D), accum_dtype)
+                        score = T.alloc_shared((merge_rows,), accum_dtype)
+                        maximum = T.alloc_shared((merge_rows,), accum_dtype)
+                        total = T.alloc_shared((merge_rows,), accum_dtype)
+                        peak_rows = T.alloc_shared((merge_rows,), accum_dtype)
+                        old_weights = T.alloc_shared((merge_rows,), accum_dtype)
+                        new_weights = T.alloc_shared((merge_rows,), accum_dtype)
+                        acc = T.alloc_shared((merge_rows, D), accum_dtype)
+                        out = T.alloc_shared((merge_rows, D), dtype)
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(merge_rows, D):
+                                acc[r, d] = 0
+                            for r in T.Parallel(merge_rows):
+                                maximum[r] = -1.0e30
+                                total[r] = 0
+                        for split in T.serial(splits):
+                            # merge_rows divides BR, so no chunk crosses a partial Q tile.
+                            T.copy(Parts[group_task, split, row:row + merge_rows, :], part)
+                            offset = (group_task * splits + split) * BR + row
+                            T.copy(LSE[offset:offset + merge_rows], score)
+                            with T.SimtVF(threads=128):
+                                # Compute transcendental expressions per row before their
+                                # broadcast across D; keep old maximum unchanged until used.
+                                for r in T.Parallel(merge_rows):
+                                    peak_rows[r] = T.max(maximum[r], score[r])
+                                    old_weights[r] = T.exp(maximum[r] - peak_rows[r])
+                                    new_weights[r] = T.if_then_else(
+                                        score[r] > -1.0e29, T.exp(score[r] - peak_rows[r]), 0)
+                                for r, d in T.Parallel(merge_rows, D):
+                                    acc[r, d] = acc[r, d] * old_weights[r] + part[r, d] * new_weights[r]
+                                for r in T.Parallel(merge_rows):
+                                    total[r] = total[r] * old_weights[r] + new_weights[r]
+                                    maximum[r] = peak_rows[r]
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(merge_rows, D):
+                                out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
+                        # UB->GM uses the same tail-clamping convention as the reference.
+                        T.copy(out, O[b, qi:qi + merge_rows, h, :])
 
     if splits == 1:
         @T.prim_func
@@ -598,7 +669,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
         def launch_direct(q, k, v, table, lengths):
             prepared = q.permute(0, 2, 1, 3).contiguous()
-            return direct_kernel(prepared, k, v, table, lengths).view(batch, sq, heads, D)
+            return direct_kernel(prepared, k, v, table, lengths).view(batch, q.shape[1] if runtime_lengths else sq, heads, D)
 
         launch_direct.compute_grid = compute_grid
         launch_direct.task_assignment = task_assignment
@@ -615,7 +686,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
     partial_kernel = tilelang.compile(partial, out_idx=[5, 6], target="ascend", execution_backend="auto",
                                      pass_configs=dump_configs("partial"))
-    merge_kernel = tilelang.compile(merge, out_idx=-1, target="ascend", execution_backend="auto",
+    merge_kernel = tilelang.compile(merge_runtime if runtime_lengths else merge, out_idx=-1, target="ascend", execution_backend="auto",
                                    pass_configs=dump_configs("merge"))
 
     def launch(q, k, v, table, lengths):
@@ -623,7 +694,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         # Q-tail DMA geometry as the reference. Include this conversion in timing.
         q_head_major = q.permute(0, 2, 1, 3).contiguous()
         parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
-        return merge_kernel(parts, lse)
+        return merge_kernel(parts, lse, q_head_major) if runtime_lengths else merge_kernel(parts, lse)
     # Expose the exact compiled callables for isolated profiling; launch unchanged.
     launch.compute_grid = compute_grid
     launch.task_assignment = task_assignment
