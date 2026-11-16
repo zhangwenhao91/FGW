@@ -27,7 +27,11 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt"):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt", v_transpose_stage="gm_l1"):
+    if v_transpose_stage not in ("gm_l1", "l1_l0"):
+        raise ValueError("v_transpose_stage must be gm_l1 or l1_l0")
+    v_transpose_gm = v_transpose_stage == "gm_l1"
+    v_transpose_l0 = v_transpose_stage == "l1_l0"
     if output_normalization not in ("simt", "simd", "fused"):
         raise ValueError("output_normalization must be simt, simd or fused")
     if runtime_lengths and (batch != 1 or heads != 1 or num_splits is None or causal or dim != 128 or page_size != 128
@@ -38,6 +42,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if fast_math is not None and type(fast_math) is not bool:
         raise ValueError("fast_math must be None (existing default), False or True")
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if v_transpose_stage != "gm_l1" and selected_route != "cube_bf16_d128":
+        raise ValueError("V transpose experiment requires restricted v7 Cube")
     if output_normalization != "simt" and selected_route != "cube_bf16_d128":
         raise ValueError("SIMD normalization experiment requires restricted v7 Cube")
     if task_assignment is None:
@@ -293,7 +299,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         with T.Kernel(compute_grid) as bx:
             Q_l1 = T.alloc_l1((BR, D), dtype)
             K_l1 = T.alloc_l1((BC, D), dtype)
-            V_l1 = T.alloc_l1((D, BC), dtype)
+            V_l1 = T.alloc_l1((D, BC) if v_transpose_gm else (BC, D), dtype)
             P_l1 = T.alloc_l1((BR, BC), dtype)
             qa = T.alloc_l0a((BR, D), dtype)
             kb = T.alloc_l0b((BC, D), dtype)
@@ -372,9 +378,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 else:
                                     T.copy(K[physical:physical + BC, h, :], K_l1)
                                 if runtime_lengths:
-                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
                                 else:
-                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
                                 if not q_resident:
                                     T.copy(Q_l1, qa)
                                 T.copy(K_l1, kb)
@@ -384,7 +390,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
                                 T.dual_copy(probs[0:ROWS, :], P_l1)
                                 T.copy(P_l1, pa)
-                                T.copy(V_l1, vb)
+                                T.copy(V_l1, vb, transpose=v_transpose_l0)
                                 T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                                 T.dual_copy(pv, current)
                                 accumulate_output(current, output, alpha)
@@ -407,12 +413,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 T.dual_copy(probs[0:ROWS, :], P_l1)
                             with T.Stage(3):
                                 if runtime_lengths:
-                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
                                 else:
-                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
                             with T.Stage(6):
                                 T.copy(P_l1, pa)
-                                T.copy(V_l1, vb)
+                                T.copy(V_l1, vb, transpose=v_transpose_l0)
                                 T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                             with T.Stage(7):
                                 T.dual_copy(pv, current)
@@ -423,9 +429,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                             else:
                                 T.copy(K[physical:physical + BC, h, :], K_l1)
                             if runtime_lengths:
-                                T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
                             else:
-                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
                             if not q_resident:
                                 T.copy(Q_l1, qa)
                             T.copy(K_l1, kb)
@@ -434,7 +440,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                             softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
                             T.dual_copy(probs[0:ROWS, :], P_l1)
                             T.copy(P_l1, pa)
-                            T.copy(V_l1, vb)
+                            T.copy(V_l1, vb, transpose=v_transpose_l0)
                             T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                             T.dual_copy(pv, current)
                             accumulate_output(current, output, alpha)
@@ -603,7 +609,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             with T.Kernel(compute_grid) as bx:
                 Q_l1 = T.alloc_l1((BR, D), dtype)
                 K_l1 = T.alloc_l1((BC, D), dtype)
-                V_l1 = T.alloc_l1((D, BC), dtype)
+                V_l1 = T.alloc_l1((D, BC) if v_transpose_gm else (BC, D), dtype)
                 P_l1 = T.alloc_l1((BR, BC), dtype)
                 qa = T.alloc_l0a((BR, D), dtype)
                 kb = T.alloc_l0b((BC, D), dtype)
@@ -679,9 +685,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                     else:
                                         T.copy(K[physical:physical + BC, h, :], K_l1)
                                     if runtime_lengths:
-                                        T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                        T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
                                     else:
-                                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
                                     if not q_resident:
                                         T.copy(Q_l1, qa)
                                     T.copy(K_l1, kb)
@@ -691,7 +697,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                     softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
                                     T.dual_copy(probs[0:ROWS, :], P_l1)
                                     T.copy(P_l1, pa)
-                                    T.copy(V_l1, vb)
+                                    T.copy(V_l1, vb, transpose=v_transpose_l0)
                                     T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                                     T.dual_copy(pv, current)
                                     accumulate_output(current, output, alpha)
@@ -714,12 +720,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                     T.dual_copy(probs[0:ROWS, :], P_l1)
                                 with T.Stage(3):
                                     if runtime_lengths:
-                                        T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                        T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
                                     else:
-                                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
                                 with T.Stage(6):
                                     T.copy(P_l1, pa)
-                                    T.copy(V_l1, vb)
+                                    T.copy(V_l1, vb, transpose=v_transpose_l0)
                                     T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                                 with T.Stage(7):
                                     T.dual_copy(pv, current)
@@ -730,9 +736,9 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 else:
                                     T.copy(K[physical:physical + BC, h, :], K_l1)
                                 if runtime_lengths:
-                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
                                 else:
-                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
                                 if not q_resident:
                                     T.copy(Q_l1, qa)
                                 T.copy(K_l1, kb)
@@ -741,7 +747,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
                                 T.dual_copy(probs[0:ROWS, :], P_l1)
                                 T.copy(P_l1, pa)
-                                T.copy(V_l1, vb)
+                                T.copy(V_l1, vb, transpose=v_transpose_l0)
                                 T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                                 T.dual_copy(pv, current)
                                 accumulate_output(current, output, alpha)
