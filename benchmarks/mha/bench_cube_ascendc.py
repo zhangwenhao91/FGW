@@ -53,6 +53,11 @@ def aggregate(results, cases, peak):
             summary.update(speedup_cube_over_ascendc=metrics[LABELS[1]]["us"] / metrics[LABELS[0]]["us"],
                            min_round_speedup=min(ratios), max_round_speedup=max(ratios),
                            cube_faster_rounds=sum(v > 1 for v in ratios))
+        if "gather_cube" in metrics:
+            summary["gather_configuration"] = info["gather_configuration"]
+            summary["speedup_gather_over_direct"] = metrics[LABELS[0]]["us"] / metrics["gather_cube"]["us"]
+            if LABELS[1] in metrics:
+                summary["speedup_gather_over_ascendc"] = metrics[LABELS[1]]["us"] / metrics["gather_cube"]["us"]
         summaries.append(summary)
     groups = {}
     for group in ("all", "standard", "long-q", "float16", "bfloat16"):
@@ -68,6 +73,12 @@ def aggregate(results, cases, peak):
             ratios = [s["speedup_cube_over_ascendc"] for s in paired]
             item.update(geomean_speedup=math.exp(statistics.mean(math.log(v) for v in ratios)),
                         cube_faster_cases=sum(v > 1 for v in ratios), min_speedup=min(ratios), max_speedup=max(ratios))
+        gathered = [s for s in selected if "speedup_gather_over_direct" in s]
+        if gathered:
+            item["gather_geomean_speedup_vs_direct"] = math.exp(statistics.mean(math.log(s["speedup_gather_over_direct"]) for s in gathered))
+            native = [s for s in gathered if "speedup_gather_over_ascendc" in s]
+            if native:
+                item["gather_geomean_speedup_vs_ascendc"] = math.exp(statistics.mean(math.log(s["speedup_gather_over_ascendc"]) for s in native))
         controls = [s for s in selected if "speedup_split_over_split1" in s]
         if controls:
             item.update(split1_control_cases=len(controls),
@@ -93,6 +104,7 @@ def main():
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output", default="mha_cube_ascendc_mfu_summary.json")
     parser.add_argument("--save-samples", action="store_true", help="Save optional local per-pair JSONL alongside compact summary")
+    parser.add_argument("--external-gather", action="store_true", help="Validate pinned upstream Gather and time Gather+the same Cube attention")
     parser.add_argument("--list-only", action="store_true")
     args = parser.parse_args()
     if (args.rounds < 2 or args.pairs < 3 or args.warmup < 1
@@ -212,6 +224,12 @@ def main():
                 calls[LABELS[1]] = lambda native=native: native()[0]
                 info["fia_config"] = {"sparse_mode": kwargs["sparse_mode"], "inner_precise": inner_precise,
                                       "input_layout": "BSND", "block_size": p, "mask_shape": [2048, 2048] if causal else None}
+            if args.external_gather:
+                report["active_variant"] = "external_gather_compile_and_exact_cache_check"
+                save()
+                from benchmarks.mha.external_cache_gather import build_gather_attention
+                calls["gather_cube"], info["gather_configuration"] = build_gather_attention(
+                    case, dtype_name, inputs, cube, program.num_splits, args.device)
             visible = lengths[:, None].expand(b, sq)
             if causal:
                 visible = (visible-sq+torch.arange(sq)[None, :]+1).clamp_min(0)
