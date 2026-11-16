@@ -27,7 +27,17 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt", v_transpose_stage="gm_l1", block_q=128):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt", v_transpose_stage="gm_l1", block_q=128, kv_prefetch="baseline"):
+    if kv_prefetch not in ("baseline", "k_early", "v_buffer4", "v_early"):
+        raise ValueError("Unknown KV prefetch experiment")
+    if kv_prefetch != "baseline" and (schedule_mode != "manual" or runtime_lengths or block_q != 128
+            or cube_mode != "stable" or v_transpose_stage != "gm_l1"):
+        raise ValueError("KV prefetch requires static Q128/manual restricted Cube")
+    # A common stage shift leaves all non-K relative timings unchanged.
+    stage_shift = 1 if kv_prefetch == "k_early" else 0
+    v_load_stage = 2 if kv_prefetch == "v_early" else 3
+    # V stage2->6 spans four iterations. Separate capacity control isolates it.
+    v_l1_versions = 4 if kv_prefetch in ("v_buffer4", "v_early") else 3
     if type(block_q) is not int or block_q not in (64, 128):
         raise ValueError("block_q must be 64 or 128")
     if block_q != 128 and (num_splits is None or runtime_lengths):
@@ -46,6 +56,8 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if fast_math is not None and type(fast_math) is not bool:
         raise ValueError("fast_math must be None (existing default), False or True")
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if kv_prefetch != "baseline" and selected_route != "cube_bf16_d128":
+        raise ValueError("KV prefetch requires restricted Cube")
     if block_q != 128 and selected_route != "cube_bf16_d128":
         raise ValueError("Q tile experiment requires restricted v7 Cube")
     if v_transpose_stage != "gm_l1" and selected_route != "cube_bf16_d128":
@@ -334,7 +346,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                            output: 1, maximum: 1, total: 1,
                                            old_max: 1, row_sum: 1})
             elif schedule_mode == "manual":
-                T.annotate_buffer_versions({K_l1: 3, V_l1: 3, qk: 2, pv: 2,
+                T.annotate_buffer_versions({K_l1: 3, V_l1: v_l1_versions, qk: 2, pv: 2,
                                            scores: 3, probs: 2, current: 1, alpha: 3})
             else:
                 T.annotate_buffer_versions({K_l1: kv_versions, V_l1: kv_versions,
@@ -409,27 +421,27 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                     T.copy(K[physical:physical + BC, :], K_l1)
                                 else:
                                     T.copy(K[physical:physical + BC, h, :], K_l1)
-                            with T.Stage(1):
+                            with T.Stage(1 + stage_shift):
                                 if not q_resident:
                                     T.copy(Q_l1, qa)
                                 T.copy(K_l1, kb)
                                 T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
-                            with T.Stage(3):
+                            with T.Stage(3 + stage_shift):
                                 T.dual_copy(qk, scores)
-                            with T.Stage(5):
+                            with T.Stage(5 + stage_shift):
                                 softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
-                            with T.Stage(6):
+                            with T.Stage(6 + stage_shift):
                                 T.dual_copy(probs[0:ROWS, :], P_l1)
-                            with T.Stage(3):
+                            with T.Stage(v_load_stage + stage_shift):
                                 if runtime_lengths:
                                     T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
                                 else:
                                     T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
-                            with T.Stage(6):
+                            with T.Stage(6 + stage_shift):
                                 T.copy(P_l1, pa)
                                 T.copy(V_l1, vb, transpose=v_transpose_l0)
                                 T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
-                            with T.Stage(7):
+                            with T.Stage(7 + stage_shift):
                                 T.dual_copy(pv, current)
                                 accumulate_output(current, output, alpha)
                         else:
@@ -646,7 +658,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                                output: 1, maximum: 1, total: 1,
                                                old_max: 1, row_sum: 1})
                 elif schedule_mode == "manual":
-                    T.annotate_buffer_versions({K_l1: 3, V_l1: 3, qk: 2, pv: 2,
+                    T.annotate_buffer_versions({K_l1: 3, V_l1: v_l1_versions, qk: 2, pv: 2,
                                                scores: 3, probs: 2, current: 1, alpha: 3})
                 else:
                     T.annotate_buffer_versions({K_l1: kv_versions, V_l1: kv_versions,
@@ -719,27 +731,27 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                         T.copy(K[physical:physical + BC, :], K_l1)
                                     else:
                                         T.copy(K[physical:physical + BC, h, :], K_l1)
-                                with T.Stage(1):
+                                with T.Stage(1 + stage_shift):
                                     if not q_resident:
                                         T.copy(Q_l1, qa)
                                     T.copy(K_l1, kb)
                                     T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
-                                with T.Stage(3):
+                                with T.Stage(3 + stage_shift):
                                     T.dual_copy(qk, scores)
-                                with T.Stage(5):
+                                with T.Stage(5 + stage_shift):
                                     softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
-                                with T.Stage(6):
+                                with T.Stage(6 + stage_shift):
                                     T.dual_copy(probs[0:ROWS, :], P_l1)
-                                with T.Stage(3):
+                                with T.Stage(v_load_stage + stage_shift):
                                     if runtime_lengths:
                                         T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
                                     else:
                                         T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
-                                with T.Stage(6):
+                                with T.Stage(6 + stage_shift):
                                     T.copy(P_l1, pa)
                                     T.copy(V_l1, vb, transpose=v_transpose_l0)
                                     T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
-                                with T.Stage(7):
+                                with T.Stage(7 + stage_shift):
                                     T.dual_copy(pv, current)
                                     accumulate_output(current, output, alpha)
                             else:
