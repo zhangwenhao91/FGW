@@ -27,10 +27,14 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment="strided"):
+    if task_assignment not in ("strided", "contiguous"):
+        raise ValueError("task_assignment must be strided or contiguous")
     if fast_math is not None and type(fast_math) is not bool:
         raise ValueError("fast_math must be None (existing default), False or True")
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if task_assignment != "strided" and selected_route != "cube_bf16_d128":
+        raise ValueError("Task assignment experiment requires the restricted v7 Cube route")
     if fast_math is not None and selected_route != "cube_bf16_d128":
         raise ValueError("Fast Math experiment requires the restricted v7 Cube route")
     if selected_route == "cube_general":
@@ -271,8 +275,15 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                            scores: buffer_versions, probs: buffer_versions,
                                            current: buffer_versions, alpha: buffer_versions})
             for work in T.serial(T.ceildiv(compute_work, compute_grid)):
-                work_id = bx + work * compute_grid
-                if work_id < compute_work:
+                if task_assignment == "contiguous":
+                    # Balanced contiguous ranges: first remainder blocks get
+                    # one extra task, exactly as in the strided assignment.
+                    work_id = bx * (compute_work // compute_grid) + T.min(bx, compute_work % compute_grid) + work
+                    valid_work = work < compute_work // compute_grid + T.cast(bx < compute_work % compute_grid, "int32")
+                else:
+                    work_id = bx + work * compute_grid
+                    valid_work = work_id < compute_work
+                if valid_work:
                     task = work_id // splits
                     split = work_id % splits
                     b = task // (q_tiles * heads)
@@ -475,8 +486,13 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                                scores: buffer_versions, probs: buffer_versions,
                                                current: buffer_versions, alpha: buffer_versions})
                 for work in T.serial(T.ceildiv(compute_work, compute_grid)):
-                    work_id = bx + work * compute_grid
-                    if work_id < compute_work:
+                    if task_assignment == "contiguous":
+                        work_id = bx * (compute_work // compute_grid) + T.min(bx, compute_work % compute_grid) + work
+                        valid_work = work < compute_work // compute_grid + T.cast(bx < compute_work % compute_grid, "int32")
+                    else:
+                        work_id = bx + work * compute_grid
+                        valid_work = work_id < compute_work
+                    if valid_work:
                         task = work_id // splits
                         split = work_id % splits
                         b = task // (q_tiles * heads)
@@ -583,6 +599,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
             return direct_kernel(prepared, k, v, table, lengths).view(batch, sq, heads, D)
 
         launch_direct.compute_grid = compute_grid
+        launch_direct.task_assignment = task_assignment
         launch_direct.compute_work = compute_work
         launch_direct.persistent_programs = persistent_programs
         launch_direct.requested_split_policy = requested_split_policy
@@ -607,6 +624,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         return merge_kernel(parts, lse)
     # Expose the exact compiled callables for isolated profiling; launch unchanged.
     launch.compute_grid = compute_grid
+    launch.task_assignment = task_assignment
     launch.compute_work = compute_work
     launch.persistent_programs = persistent_programs
     launch.requested_split_policy = requested_split_policy
