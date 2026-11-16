@@ -28,8 +28,8 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
                  pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt"):
-    if output_normalization not in ("simt", "simd"):
-        raise ValueError("output_normalization must be simt or simd")
+    if output_normalization not in ("simt", "simd", "fused"):
+        raise ValueError("output_normalization must be simt, simd or fused")
     if runtime_lengths and (batch != 1 or heads != 1 or num_splits is None or causal or dim != 128 or page_size != 128
                             or dtype != "bfloat16" or cube_mode != "stable"):
         raise ValueError("Runtime lengths require B1H1, explicit split, BF16/D128/page128/noncausal restricted Cube")
@@ -151,6 +151,20 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                 for c in range(0, D, VL):
                     normalized = S.vdiv(S.vld(output[r, c], "NORM"), denominator, mask)
                     S.vsts(output[r, c], normalized, mask, "NORM_B32")
+
+    @T.macro
+    def normalize_cast_simd(source, destination, total, rows):
+        # A separate BF16 destination avoids overlapping FP32/BF16 alias hazards.
+        # No normalized FP32 matrix is written and reloaded before conversion.
+        with T.SimdVF(latency=1780):
+            mask = S.pset(32, "PAT_ALL")
+            floor = S.vdup(T.float32(1.0e-30), accum_dtype, mask)
+            for r in range(rows):
+                denominator = S.vmax(S.vld(total[r], "BRC_B32"), floor, mask)
+                for c in range(0, D, VL):
+                    normalized = S.vdiv(S.vld(source[r, c], "NORM"), denominator, mask)
+                    narrowed = S.vcvt(normalized, dtype, mask)
+                    S.vsts(destination[r, c], narrowed, mask, "PK_B32")
 
     @T.macro
     def softmax(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
@@ -505,9 +519,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                             for r in T.Parallel(merge_rows):
                                 total[r] = total[r] * old_weights[r] + new_weights[r]
                                 maximum[r] = peak_rows[r]
-                    with T.SimtVF(threads=128):
-                        for r, d in T.Parallel(merge_rows, D):
-                            out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
+                    if output_normalization == "fused":
+                        normalize_cast_simd(acc, out, total, merge_rows)
+                    else:
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(merge_rows, D):
+                                out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
                     # UB->GM uses the same tail-clamping convention as the reference.
                     T.copy(out, O[b, qi:qi + merge_rows, h, :])
 
@@ -564,9 +581,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 for r in T.Parallel(merge_rows):
                                     total[r] = total[r] * old_weights[r] + new_weights[r]
                                     maximum[r] = peak_rows[r]
-                        with T.SimtVF(threads=128):
-                            for r, d in T.Parallel(merge_rows, D):
-                                out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
+                        if output_normalization == "fused":
+                            normalize_cast_simd(acc, out, total, merge_rows)
+                        else:
+                            with T.SimtVF(threads=128):
+                                for r, d in T.Parallel(merge_rows, D):
+                                    out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
                         # UB->GM uses the same tail-clamping convention as the reference.
                         T.copy(out, O[qi:qi + merge_rows, :])
 
@@ -725,22 +745,26 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                                 T.dual_copy(pv, current)
                                 accumulate_output(current, output, alpha)
-                        if output_normalization == "simd":
-                            normalize_output_simd(output, total)
+                        if output_normalization == "fused":
+                            cast_view = T.alloc_shared((ROWS, D), dtype)
+                            normalize_cast_simd(output, cast_view, total, ROWS)
                         else:
-                            with T.SimtVF(threads=128):
-                                for r, d in T.Parallel(ROWS, D):
-                                    output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
-                        # Reuse FP32 output storage for BF16 conversion, as in upstream.
-                        # Sequential SIMD rows ensure a cast store cannot overwrite a future
-                        # FP32 source row before it is read.
-                        cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
-                        with T.SimdVF(latency=193):
-                            mask = S.pset(32, "PAT_ALL")
-                            for r in range(ROWS):
-                                for c in range(0, D, VL):
-                                    value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
-                                    S.vsts(cast_view[r, c], value, mask, "PK_B32")
+                            if output_normalization == "simd":
+                                normalize_output_simd(output, total)
+                            else:
+                                with T.SimtVF(threads=128):
+                                    for r, d in T.Parallel(ROWS, D):
+                                        output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
+                            # Reuse FP32 output storage for BF16 conversion, as in upstream.
+                            # Sequential SIMD rows ensure a cast store cannot overwrite a future
+                            # FP32 source row before it is read.
+                            cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
+                            with T.SimdVF(latency=193):
+                                mask = S.pset(32, "PAT_ALL")
+                                for r in range(ROWS):
+                                    for c in range(0, D, VL):
+                                        value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
+                                        S.vsts(cast_view[r, c], value, mask, "PK_B32")
                         # Keep Sq as its own bounded axis for Q-tail clamping, and expose
                         # query/D as the trailing two region axes for dual-copy inference.
                         if runtime_lengths:
