@@ -9,8 +9,8 @@ from functools import lru_cache
 
 @lru_cache(maxsize=64)
 def build_runtime_kernel(batch, heads, num_splits, merge_rows=8, device_index=0):
-    if min(batch, heads) <= 0 or num_splits not in (1, 2, 4, 8, 16):
-        raise ValueError("Positive B/H and split1/2/4/8/16 required")
+    if batch != 1 or heads != 1 or num_splits not in (1, 2, 4, 8, 16):
+        raise ValueError("Runtime candidate requires B1H1 and split1/2/4/8/16")
     if merge_rows not in (1, 2, 4, 8):
         raise ValueError("merge_rows must be 1/2/4/8")
     from operators.mha.kernels.mha_paged_decode_ascend_v7 import build_kernel

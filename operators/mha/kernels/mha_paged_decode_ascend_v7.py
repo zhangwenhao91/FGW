@@ -28,9 +28,9 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
                  pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False):
-    if runtime_lengths and (num_splits is None or causal or dim != 128 or page_size != 128
+    if runtime_lengths and (batch != 1 or heads != 1 or num_splits is None or causal or dim != 128 or page_size != 128
                             or dtype != "bfloat16" or cube_mode != "stable"):
-        raise ValueError("Runtime lengths require explicit split, BF16/D128/page128/noncausal restricted Cube")
+        raise ValueError("Runtime lengths require B1H1, explicit split, BF16/D128/page128/noncausal restricted Cube")
     if task_assignment not in (None, "strided", "contiguous"):
         raise ValueError("task_assignment must be None (route default), strided or contiguous")
     if fast_math is not None and type(fast_math) is not bool:
@@ -129,6 +129,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         outputs = batch * sq * heads
         compute_work = tasks * splits
         compute_grid = compute_work if persistent_programs is None else T.min(compute_work, persistent_programs)
+    # Dynamic B1H1 uses rank-2 GM regions, matching PR3896. Symbolic
+    # outer-axis slice clamps cannot always be reduced to unit extent by MTE.
+    q_buffer_shape = (sq, D) if runtime_lengths else (batch, heads, sq, D)
+    kv_buffer_shape = (pool_rows, D) if runtime_lengths else (pool_rows, heads, D)
+    parts_buffer_shape = (tasks * splits * BR, D) if runtime_lengths else (tasks, splits, BR, D)
+    direct_output_shape = (sq, D) if runtime_lengths else (batch, sq, heads * D)
     @T.macro
     def softmax(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
         with T.SimdVF(latency=735):
@@ -245,12 +251,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
 
     @T.prim_func
     def partial(
-        Q: T.Tensor((batch, heads, sq, D), dtype),
-        K: T.Tensor((pool_rows, heads, D), dtype),
-        V: T.Tensor((pool_rows, heads, D), dtype),
+        Q: T.Tensor(q_buffer_shape, dtype),
+        K: T.Tensor(kv_buffer_shape, dtype),
+        V: T.Tensor(kv_buffer_shape, dtype),
         Table: T.Tensor((batch, width), "int32"),
         Lengths: T.Tensor((batch,), "int32"),
-        Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
+        Parts: T.Tensor(parts_buffer_shape, accum_dtype),
         LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
     ):
         with T.Kernel(compute_grid) as bx:
@@ -306,7 +312,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                     h = task % heads
                     # As in the reference PR, GM->L1 clamps a partial query tile
                     # and zero-pads its missing rows. Only valid rows are merged out.
-                    T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
+                    if runtime_lengths:
+                        T.copy(Q[qi:qi + BR, 0:D], Q_l1)
+                    else:
+                        T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
                     init_m_l(maximum, total)
                     clear_O_ub(output)
                     end = Lengths[b]
@@ -327,8 +336,14 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                             # NSA-inspired offset pipeline: prepare QK while the preceding
                             # tile passes through softmax/PV; retain single online state.
                             with T.Stage(0):
-                                T.copy(K[physical:physical + BC, h, :], K_l1)
-                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                if runtime_lengths:
+                                    T.copy(K[physical:physical + BC, :], K_l1)
+                                else:
+                                    T.copy(K[physical:physical + BC, h, :], K_l1)
+                                if runtime_lengths:
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                else:
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
                                 if not q_resident:
                                     T.copy(Q_l1, qa)
                                 T.copy(K_l1, kb)
@@ -344,7 +359,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 accumulate_output(current, output, alpha)
                         elif schedule_mode == "manual":
                             with T.Stage(0):
-                                T.copy(K[physical:physical + BC, h, :], K_l1)
+                                if runtime_lengths:
+                                    T.copy(K[physical:physical + BC, :], K_l1)
+                                else:
+                                    T.copy(K[physical:physical + BC, h, :], K_l1)
                             with T.Stage(1):
                                 if not q_resident:
                                     T.copy(Q_l1, qa)
@@ -357,7 +375,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                             with T.Stage(6):
                                 T.dual_copy(probs[0:ROWS, :], P_l1)
                             with T.Stage(3):
-                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                if runtime_lengths:
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                else:
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
                             with T.Stage(6):
                                 T.copy(P_l1, pa)
                                 T.copy(V_l1, vb)
@@ -366,8 +387,14 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 T.dual_copy(pv, current)
                                 accumulate_output(current, output, alpha)
                         else:
-                            T.copy(K[physical:physical + BC, h, :], K_l1)
-                            T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                            if runtime_lengths:
+                                T.copy(K[physical:physical + BC, :], K_l1)
+                            else:
+                                T.copy(K[physical:physical + BC, h, :], K_l1)
+                            if runtime_lengths:
+                                T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                            else:
+                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
                             if not q_resident:
                                 T.copy(Q_l1, qa)
                             T.copy(K_l1, kb)
@@ -388,7 +415,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 lse[r] = T.log2(T.max(total[r], 1.0e-30)) * 0.6931471805599453 + maximum[r]
                             else:
                                 lse[r] = -1.0e30
-                    T.dual_copy(output, Parts[task, split, :, :])
+                    if runtime_lengths:
+                        T.dual_copy(output, Parts[(task * splits + split) * BR:(task * splits + split + 1) * BR, :])
+                    else:
+                        T.dual_copy(output, Parts[task, split, :, :])
                     # Integer indices in a multidimensional BufferRegion retain rank.
                     # Flatten LSE so UB[ROWS] -> GM[BR] is an actual 1-D 1:2 copy.
                     lse_offset = (task * splits + split) * BR
@@ -460,10 +490,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     if runtime_lengths:
         @T.prim_func
         def merge_runtime(
-            Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
+            Parts: T.Tensor((tasks * splits * BR, D), accum_dtype),
             LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
-            QShape: T.Tensor((batch, heads, sq, D), dtype),
-            O: T.Tensor((batch, sq, heads, D), dtype),
+            QShape: T.Tensor((sq, D), dtype),
+            O: T.Tensor((sq, D), dtype),
         ):
             with T.Kernel(merge_grid) as core:
                 for work in T.serial(T.ceildiv(merge_work, merge_grid)):
@@ -491,7 +521,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 total[r] = 0
                         for split in T.serial(splits):
                             # merge_rows divides BR, so no chunk crosses a partial Q tile.
-                            T.copy(Parts[group_task, split, row:row + merge_rows, :], part)
+                            T.copy(Parts[(group_task * splits + split) * BR + row:(group_task * splits + split) * BR + row + merge_rows, :], part)
                             offset = (group_task * splits + split) * BR + row
                             T.copy(LSE[offset:offset + merge_rows], score)
                             with T.SimtVF(threads=128):
@@ -511,17 +541,17 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                             for r, d in T.Parallel(merge_rows, D):
                                 out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
                         # UB->GM uses the same tail-clamping convention as the reference.
-                        T.copy(out, O[b, qi:qi + merge_rows, h, :])
+                        T.copy(out, O[qi:qi + merge_rows, :])
 
     if splits == 1:
         @T.prim_func
         def direct(
-            Q: T.Tensor((batch, heads, sq, D), dtype),
-            K: T.Tensor((pool_rows, heads, D), dtype),
-            V: T.Tensor((pool_rows, heads, D), dtype),
+            Q: T.Tensor(q_buffer_shape, dtype),
+            K: T.Tensor(kv_buffer_shape, dtype),
+            V: T.Tensor(kv_buffer_shape, dtype),
             Table: T.Tensor((batch, width), "int32"),
             Lengths: T.Tensor((batch,), "int32"),
-            O: T.Tensor((batch, sq, heads * D), dtype),
+            O: T.Tensor(direct_output_shape, dtype),
         ):
             with T.Kernel(compute_grid) as bx:
                 Q_l1 = T.alloc_l1((BR, D), dtype)
@@ -573,7 +603,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                         h = task % heads
                         # As in the reference PR, GM->L1 clamps a partial query tile
                         # and zero-pads its missing rows. Only valid rows are merged out.
-                        T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
+                        if runtime_lengths:
+                            T.copy(Q[qi:qi + BR, 0:D], Q_l1)
+                        else:
+                            T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
                         init_m_l(maximum, total)
                         clear_O_ub(output)
                         end = Lengths[b]
@@ -594,8 +627,14 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 # NSA-inspired offset pipeline: prepare QK while the preceding
                                 # tile passes through softmax/PV; retain single online state.
                                 with T.Stage(0):
-                                    T.copy(K[physical:physical + BC, h, :], K_l1)
-                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                    if runtime_lengths:
+                                        T.copy(K[physical:physical + BC, :], K_l1)
+                                    else:
+                                        T.copy(K[physical:physical + BC, h, :], K_l1)
+                                    if runtime_lengths:
+                                        T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                    else:
+                                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
                                     if not q_resident:
                                         T.copy(Q_l1, qa)
                                     T.copy(K_l1, kb)
@@ -611,7 +650,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                     accumulate_output(current, output, alpha)
                             elif schedule_mode == "manual":
                                 with T.Stage(0):
-                                    T.copy(K[physical:physical + BC, h, :], K_l1)
+                                    if runtime_lengths:
+                                        T.copy(K[physical:physical + BC, :], K_l1)
+                                    else:
+                                        T.copy(K[physical:physical + BC, h, :], K_l1)
                                 with T.Stage(1):
                                     if not q_resident:
                                         T.copy(Q_l1, qa)
@@ -624,7 +666,10 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                 with T.Stage(6):
                                     T.dual_copy(probs[0:ROWS, :], P_l1)
                                 with T.Stage(3):
-                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                    if runtime_lengths:
+                                        T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                    else:
+                                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
                                 with T.Stage(6):
                                     T.copy(P_l1, pa)
                                     T.copy(V_l1, vb)
@@ -633,8 +678,14 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                     T.dual_copy(pv, current)
                                     accumulate_output(current, output, alpha)
                             else:
-                                T.copy(K[physical:physical + BC, h, :], K_l1)
-                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
+                                if runtime_lengths:
+                                    T.copy(K[physical:physical + BC, :], K_l1)
+                                else:
+                                    T.copy(K[physical:physical + BC, h, :], K_l1)
+                                if runtime_lengths:
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=True)
+                                else:
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=True)
                                 if not q_resident:
                                     T.copy(Q_l1, qa)
                                 T.copy(K_l1, kb)
@@ -662,14 +713,19 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
                                     S.vsts(cast_view[r, c], value, mask, "PK_B32")
                         # Keep Sq as its own bounded axis for Q-tail clamping, and expose
                         # query/D as the trailing two region axes for dual-copy inference.
-                        T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi:qi + BR, h * D:(h + 1) * D])
+                        if runtime_lengths:
+                            T.dual_copy(cast_view[0:ROWS, 0:D], O[qi:qi + BR, :])
+                        else:
+                            T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi:qi + BR, h * D:(h + 1) * D])
 
         direct_kernel = tilelang.compile(direct, out_idx=-1, target="ascend", execution_backend="auto",
                                         pass_configs=dump_configs("direct"))
 
         def launch_direct(q, k, v, table, lengths):
+            if runtime_lengths:
+                return direct_kernel(q.view(-1, D), k.view(-1, D), v.view(-1, D), table, lengths).view(batch, q.shape[1], heads, D)
             prepared = q.permute(0, 2, 1, 3).contiguous()
-            return direct_kernel(prepared, k, v, table, lengths).view(batch, q.shape[1] if runtime_lengths else sq, heads, D)
+            return direct_kernel(prepared, k, v, table, lengths).view(batch, sq, heads, D)
 
         launch_direct.compute_grid = compute_grid
         launch_direct.task_assignment = task_assignment
@@ -681,7 +737,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         launch_direct.query_tile_tasks = tasks
         launch_direct.execution_mode = "direct_single_split"
         launch_direct.direct_kernel = direct_kernel
-        launch_direct.prepare_q = lambda q: q.permute(0, 2, 1, 3).contiguous()
+        launch_direct.prepare_q = lambda q: q.view(-1, D) if runtime_lengths else q.permute(0, 2, 1, 3).contiguous()
         return launch_direct
 
     partial_kernel = tilelang.compile(partial, out_idx=[5, 6], target="ascend", execution_backend="auto",
@@ -692,9 +748,12 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     def launch(q, k, v, table, lengths):
         # Put each head's query rows on the last two axes for the same
         # Q-tail DMA geometry as the reference. Include this conversion in timing.
-        q_head_major = q.permute(0, 2, 1, 3).contiguous()
+        q_head_major = q.view(-1, D) if runtime_lengths else q.permute(0, 2, 1, 3).contiguous()
+        if runtime_lengths:
+            parts, lse = partial_kernel(q_head_major, k.view(-1, D), v.view(-1, D), table, lengths)
+            return merge_kernel(parts, lse, q_head_major).view(batch, q.shape[1], heads, D)
         parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
-        return merge_kernel(parts, lse, q_head_major) if runtime_lengths else merge_kernel(parts, lse)
+        return merge_kernel(parts, lse)
     # Expose the exact compiled callables for isolated profiling; launch unchanged.
     launch.compute_grid = compute_grid
     launch.task_assignment = task_assignment
@@ -707,7 +766,7 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
     launch.execution_mode = "split_and_merge"
     launch.partial_kernel = partial_kernel
     launch.merge_kernel = merge_kernel
-    launch.prepare_q = lambda q: q.permute(0, 2, 1, 3).contiguous()
+    launch.prepare_q = lambda q: q.view(-1, D) if runtime_lengths else q.permute(0, 2, 1, 3).contiguous()
     return launch
 
 def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,

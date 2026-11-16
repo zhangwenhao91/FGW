@@ -1,5 +1,19 @@
 # Runtime Q/KV-shape experiment
 
+## Dynamic DMA descriptor repair
+
+The first NPU attempt failed during `AscendLowerTileOp`, before correctness or
+timing: the compiler could not normalize the dynamic rank4 Q slice to one 2D MTE
+descriptor (`all axes outside one row/inner pair must have extent 1`).
+The B1H1 candidate now uses zero-copy rank2 views for Q, K/V, output and partial
+payloads, matching the reference's Q/K/V rank. Q-tail clamping remains on the
+bounded Q row axis; flattened partial storage has the same padded tile extent.
+Dynamic merge receives rank2 Q as its exact-shape anchor. No Gather, extra
+payload copies, synchronization, arithmetic or split-policy change is added.
+The runtime factory explicitly requires B1H1 for this experiment. Static routes
+retain their original tensor shapes and DMA regions. Rerun the same script;
+the split1 and split4 gates both must pass before the full comparison.
+
 Reference: [PR3896's runtime length example](https://github.com/tile-ai/tilelang/blob/49a51226eb4068d5c0bf205cee886d2a7dcf0b05/examples/ascend/flash_attention/example_mha.py).
 
 Run `python fgw.py mha run run_mha_runtime_lengths`. Return
