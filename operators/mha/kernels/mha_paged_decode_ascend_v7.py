@@ -27,8 +27,12 @@ def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
 
 @lru_cache(maxsize=128)
 def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
-                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1):
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None):
+    if fast_math is not None and type(fast_math) is not bool:
+        raise ValueError("fast_math must be None (existing default), False or True")
     selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if fast_math is not None and selected_route != "cube_bf16_d128":
+        raise ValueError("Fast Math experiment requires the restricted v7 Cube route")
     if selected_route == "cube_general":
         if split_policy not in ("auto", "legacy", "cost_model"):
             raise ValueError("General Cube split_policy must be auto, legacy or cost_model")
@@ -51,13 +55,15 @@ def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dty
         raise ValueError("schedule_mode must be auto, auto-offset, manual or nsa")
     pipeline_annotations = {} if schedule_mode == "auto" else {"enable_offset": True}
     def dump_configs(name):
+        configs = {} if fast_math is None else {tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: fast_math}
         if dump_ir_dir is None:
-            return {}
+            return configs
         from pathlib import Path
         directory = Path(dump_ir_dir) / name
         directory.mkdir(parents=True, exist_ok=True)
-        return {tilelang.PassConfigKey.TL_ENABLE_DUMP_IR: True,
-                tilelang.PassConfigKey.TL_DUMP_IR_DIR: str(directory.resolve())}
+        configs.update({tilelang.PassConfigKey.TL_ENABLE_DUMP_IR: True,
+                        tilelang.PassConfigKey.TL_DUMP_IR_DIR: str(directory.resolve())})
+        return configs
     kv_versions = buffer_versions if kv_versions is None else kv_versions
     if kv_versions not in (1, 2, 3):
         raise ValueError("K/V L1 versions must be 1, 2 or 3")
