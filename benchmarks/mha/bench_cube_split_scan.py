@@ -24,6 +24,12 @@ COMPONENT_CASES = {
 }
 
 
+def round_stats(values):
+    center = statistics.median(values)
+    return {"median": center, "min": min(values), "max": max(values),
+            "mad": statistics.median(abs(v-center) for v in values)}
+
+
 def plan(case, requested, evaluate_model=False, model_version=1, compare_v1=False):
     _, b, sq, h, _, page, width, _, _ = case
     tasks = b*h*((sq+31)//32)
@@ -66,10 +72,30 @@ def aggregate(results, cases, components, peak):
             variant.update(speedup_vs_auto=auto_us/medians[label],
                            faster_than_auto_rounds=sum(v > 1 for v in speedups),
                            min_round_speedup_vs_auto=min(speedups), max_round_speedup_vs_auto=max(speedups))
+            variant["full_round_us"] = round_stats([r["median_us"][label] for r in rows])
+            if "model_splits" in info:
+                model_label = str(info["model_splits"])
+                ratios = [r["median_us"][model_label]/r["median_us"][label] for r in rows]
+                variant.update(speedup_vs_model=medians[model_label]/medians[label],
+                               faster_than_model_rounds=sum(v > 1 for v in ratios),
+                               round_speedup_vs_model=round_stats(ratios))
+                paired = [r["paired_speedup_vs_model"][label] for r in rows if "paired_speedup_vs_model" in r]
+                if paired:
+                    variant["median_round_pair_speedup_vs_model"] = statistics.median(paired)
             comp = [c for c in components if c["key"] == key and c["num_splits"] == s and c["status"] == "passed"]
             if comp:
+                variant["component_rounds"] = len(comp)
                 variant["components_us"] = {part: statistics.median(c["median_us"][part] for c in comp)
                                              for part in ("partial", "merge")}
+                variant["component_round_us"] = {part: round_stats([c["median_us"][part] for c in comp])
+                                                  for part in ("partial", "merge")}
+                if "model_splits" in info and info["model_splits"] > 1:
+                    baseline = {c["round"]: c for c in components if c["key"] == key
+                                and c["num_splits"] == info["model_splits"] and c["status"] == "passed"}
+                    variant["component_faster_than_model_rounds"] = {
+                        part: sum(c["median_us"][part] < baseline[c["round"]]["median_us"][part]
+                                  for c in comp if c["round"] in baseline)
+                        for part in ("partial", "merge")}
             variants[label] = variant
         summary = {"key": key, "dtype": info["dtype"], "auto_splits": info["auto_splits"],
                           "best_split": best, "near_best_2pct": near, "smallest_near_best_2pct": min(near),
@@ -125,6 +151,8 @@ def main():
     parser.add_argument("--component-pairs", type=int, default=11)
     parser.add_argument("--component-warmup", type=int, default=5)
     parser.add_argument("--components", choices=["focus", "all", "none"], default="focus")
+    parser.add_argument("--paired-components", action="store_true",
+                        help="Interleave partial/merge calls for all splits within each component sample group")
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--peak-tflops", type=float, default=378.0)
@@ -179,6 +207,23 @@ def main():
                 lines.append(f"  model={s['model_splits']} model_regret={s['model_regret_percent']:.2f}% model_vs_auto={s['model_speedup_vs_auto']:.4f}x")
                 if "v1_model_splits" in s:
                     lines.append(f"  v1_model={s['v1_model_splits']} v2_vs_v1={s['model_speedup_vs_v1']:.4f}x")
+            if args.paired_components:
+                for label, v in s["variants"].items():
+                    stats = v["full_round_us"]
+                    line = f"  S{label} full_round_us={stats}"
+                    if "faster_than_model_rounds" in v:
+                        ratios = v["round_speedup_vs_model"]
+                        line += (f" faster_than_v2={v['faster_than_model_rounds']}/{s['rounds']} "
+                                 f"vs_v2_range=[{ratios['min']:.4f},{ratios['max']:.4f}]")
+                    lines.append(line)
+                    if "component_round_us" in v:
+                        lines.append("    separate_component_round_us: "+json.dumps(v["component_round_us"]))
+                        if "component_faster_than_model_rounds" in v:
+                            lines.append(f"    component_wins_vs_v2={v['component_faster_than_model_rounds']} component_rounds={v['component_rounds']}")
+            if args.paired_components:
+                info = report["cases"][s["key"]]
+                if info.get("model_predictions_us"):
+                    lines.append("  frozen_v2_predicted_us: "+json.dumps(info["model_predictions_us"]))
             components = {k: {part: round(us, 3) for part, us in v["components_us"].items()}
                           for k, v in s["variants"].items() if "components_us" in v}
             if components:
@@ -209,7 +254,8 @@ def main():
             report["general_model_sha256"] = hashlib.sha256(model_path(args.general_model_version).read_bytes()).hexdigest()
             if args.compare_model_v1:
                 report["v1_model_sha256"] = hashlib.sha256(model_path(1).read_bytes()).hexdigest()
-            report["model_validation_scope"] = ("Fresh independent v2 holdout" if args.suite == "holdout-v2" else
+            report["model_validation_scope"] = ("Targeted diagnostic repeat; not a new independent set" if args.paired_components else
+                                                "Fresh independent v2 holdout" if args.suite == "holdout-v2" else
                                                 "Independent v1 holdout" if args.suite == "holdout" and args.general_model_version == 1 else
                                                 "Calibration replay or development data; not independent validation")
         bundles = []
@@ -223,6 +269,19 @@ def main():
                     "effective_flops": useful_flops(lengths_list, sq, h, d, causal),
                     **plan(case, args.splits, args.evaluate_cost_model, args.general_model_version, args.compare_model_v1), "correctness": {}, "geometry": {}}
             report["cases"][key] = info
+            if args.evaluate_cost_model and args.paired_components:
+                from operators.mha.general_split_cost_model import predict_us
+                info["model_predictions_us"] = {
+                    str(s): predict_us(b, sq, h, d, lengths_list, s, version=args.general_model_version)
+                    for s in info["splits"]}
+                tile_counts = [(n+31)//32 for n in lengths_list]
+                info["analytical_split_work"] = {
+                    str(s): {"programs": info["query_tile_tasks"]*s,
+                             "waves_28": (info["query_tile_tasks"]*s+27)//28,
+                             "kv_tiles_by_request": tile_counts,
+                             "max_tiles_per_partition_by_request": [(n+s-1)//s for n in tile_counts],
+                             "empty_split_programs": h*((sq+31)//32)*sum(max(0, s-n) for n in tile_counts)}
+                    for s in info["splits"]}
             print(f"Preparing {key}: auto={info['auto_splits']} candidates={info['splits']}", flush=True)
             save()
             q, k, v, table = make_inputs((name, b, sq, h, d, p, w), args.seed, dtype, torch)
@@ -301,7 +360,12 @@ def main():
             return values
 
         if args.save_samples:
-            sample_path.write_text("", encoding="utf-8")
+            manifest = {"phase": "manifest", "started_utc": report["started_utc"], "settings": vars(args),
+                        "kernel_sha256": report["kernel_sha256"],
+                        "general_model_sha256": report.get("general_model_sha256"),
+                        "v1_model_sha256": report.get("v1_model_sha256")}
+            sample_path.write_text(json.dumps(manifest)+"\n", encoding="utf-8")
+            report["local_samples_file"] = sample_path.name
 
         def record_samples(payload):
             if args.save_samples:
@@ -318,6 +382,11 @@ def main():
                 values = sample(calls, round_id, args.warmup, args.pairs)
                 row.update(status="passed", median_us={label: statistics.median(v) for label, v in values.items()},
                            p90_us={label: sorted(v)[int(0.9*(len(v)-1))] for label, v in values.items()})
+                if "model_splits" in report["cases"][key]:
+                    reference = values[str(report["cases"][key]["model_splits"])]
+                    row["paired_speedup_vs_model"] = {
+                        label: statistics.median(a/b for a, b in zip(reference, samples))
+                        for label, samples in values.items()}
                 record_samples({"phase": "full", "key": key, "round": round_id+1, "samples_us": values})
                 save()
                 print(f"round={round_id+1} {key}: full_us={row['median_us']}", flush=True)
@@ -329,6 +398,35 @@ def main():
                 if args.components == "none" or (args.components == "focus" and name not in COMPONENT_CASES):
                     continue
                 report["active_case"] = key
+                if args.paired_components:
+                    calls, component_rows = {}, {}
+                    for label, program in programs.items():
+                        splits = int(label)
+                        if splits == 1:
+                            continue
+                        report["active_split"] = splits
+                        row = {"key": key, "num_splits": splits, "round": round_id+1, "status": "running"}
+                        report["components"].append(row)
+                        component_rows[label] = row
+                        save()
+                        partial_call = functools.partial(program.partial_kernel, *inputs)
+                        parts, lse = partial_call()
+                        calls[label+"/partial"] = partial_call
+                        calls[label+"/merge"] = functools.partial(program.merge_kernel, parts, lse)
+                    if not calls:
+                        continue
+                    report.pop("active_split", None)
+                    values = sample(calls, round_id, args.component_warmup, args.component_pairs)
+                    for label, row in component_rows.items():
+                        row.update(status="passed",
+                                   median_us={part: statistics.median(values[label+"/"+part]) for part in ("partial", "merge")},
+                                   p90_us={part: sorted(values[label+"/"+part])[int(0.9*(len(values[label+"/"+part])-1))]
+                                           for part in ("partial", "merge")})
+                        print(f"paired components round={round_id+1} {key} S={label}: {row['median_us']}", flush=True)
+                    record_samples({"phase": "paired_components", "key": key, "round": round_id+1, "samples_us": values})
+                    save()
+                    del calls, component_rows, parts, lse, partial_call
+                    continue
                 for label, program in programs.items():
                     splits = int(label)
                     if splits == 1:

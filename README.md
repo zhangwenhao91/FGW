@@ -1,5 +1,15 @@
 # FGW
 
+## 冻结V2：四种误选定向复测
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_cube_model_v2_residuals
+```
+
+FP16/BF16、12轮交替计时，完整调用及所有split的partial/merge同场对照。
+自动保存原始样本和可粘贴摘要。[范围与口径](docs/mha_cube_model_v2_residuals.md)。
+
 ## 通用 Cube 模型v2：长度不均衡候选
 
 ```bash
