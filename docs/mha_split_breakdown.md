@@ -41,3 +41,25 @@ the automatic default and AscendC, and the best full-call median split per case.
 Source C++ and full JSON remain in a fresh run directory. The compact paste
 preserves partial progress and traceback on failure. Two rounds are a targeted
 check; close performance differences need more repeats before changing defaults.
+
+## Compiler scratch and continuation
+
+Compiler temporary files now use each fresh run's `compiler_tmp` directory,
+with TMPDIR/TMP/TEMP and Python's cached tempfile directory set before importing
+the compiler. A create/remove probe verifies the directory, and it is checked
+again before each build. This avoids dependency on global `/tmp`, whose absence
+caused the reported ENOENT in tempfile.mkdtemp(). This identifies the failing
+filesystem operation, not what removed the original `/tmp` path.
+
+To continue the reported failed run, from the FGW repository root:
+
+```bash
+bash scripts/mha/run_mha_split_breakdown.sh --resume reports/mha/latest/mha_split_breakdown.0jJvDJl2/full.json
+```
+
+The runner resolves the previous path before changing directories, writes a new
+run folder and preserves the original report. Resume validates kernel/model
+hashes, versions, device, warmup and sample settings; completed cases/rounds are
+kept, while unfinished-round build and accuracy records are discarded and that
+round is rerun. This run retains Q8192/KV32768 and Q4096/KV8192 round1, so only
+the remaining three successful build rounds (12 variants) need executing.

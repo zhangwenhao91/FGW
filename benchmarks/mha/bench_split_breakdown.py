@@ -8,9 +8,47 @@ from pathlib import Path
 import statistics
 import traceback
 import os
+import tempfile
+import copy
 
 CASES = ((8192, 32768), (4096, 8192), (2048, 24576))
 SPLITS = (1, 2, 4, 8)
+
+
+def compiler_temp(path):
+    """Keep compiler scratch under this run, independent of global /tmp."""
+    directory = path.parent.resolve()/"compiler_tmp"
+    directory.mkdir(parents=True, exist_ok=True)
+    for key in ("TMPDIR", "TMP", "TEMP"):
+        os.environ[key] = str(directory)
+    # tempfile caches its selected directory; environment alone is insufficient
+    # when another imported module has already called gettempdir().
+    tempfile.tempdir = str(directory)
+    with tempfile.TemporaryDirectory(prefix="probe-") as probe:
+        assert Path(probe).parent == directory
+    return str(directory)
+
+
+def resume_records(previous, current):
+    for field in ("source_sha256", "model_sha256", "versions", "device"):
+        if previous.get(field) != current.get(field):
+            raise ValueError(f"Cannot resume: {field} changed or missing")
+    for field in ("pairs", "warmup", "device"):
+        if previous["settings"].get(field) != current["settings"].get(field):
+            raise ValueError(f"Cannot resume: setting {field} changed")
+    summaries = copy.deepcopy(previous["summary"])
+    completed = {row["key"] for row in summaries}
+    cases = copy.deepcopy(previous["cases"])
+    rounds = copy.deepcopy(previous["rounds"])
+    for case in cases:
+        valid = {r["round"] for r in rounds if r["key"] == case["key"]}
+        if not valid <= {1, 2} or len(valid) != sum(r["key"] == case["key"] for r in rounds):
+            raise ValueError("Invalid or duplicate saved timing rounds")
+        if case["key"] in completed and valid != {1, 2}:
+            raise ValueError("Completed case is missing timing rounds")
+        case["builds"] = [b for b in case["builds"] if b["round"] in valid]
+        case["accuracy"] = [a for a in case["accuracy"] if a["round"] in valid]
+    return cases, rounds, summaries
 
 
 def geometry(q, kv, split):
@@ -52,6 +90,7 @@ def main():
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output", default="mha_split_breakdown.json")
     parser.add_argument("--list-only", action="store_true")
+    parser.add_argument("--resume", help="Previous full.json; keep completed rounds after validating identity")
     args = parser.parse_args()
     if args.pairs < 3 or args.warmup < 1:
         parser.error("pairs>=3 and warmup>=1 required")
@@ -61,6 +100,8 @@ def main():
                           "geometry": {f"q{q}_kv{kv}": {s: geometry(q, kv, s) for s in SPLITS} for q, kv in CASES}}))
         return 0
     path = Path(args.output)
+    if args.resume and Path(args.resume).resolve() == path.resolve():
+        parser.error("Use a new output path when resuming; preserve the original report")
     path.parent.mkdir(parents=True, exist_ok=True)
     report = dict(status="running", phase="setup", settings=vars(args), active=None,
                   cases=[], rounds=[], summary=[], policy=(
@@ -86,6 +127,7 @@ def main():
 
     save()
     try:
+        report["compiler_tmp"] = compiler_temp(path)
         os.environ["TILELANG_DISABLE_CACHE"] = "1"
         import torch
         import torch_npu
@@ -103,6 +145,11 @@ def main():
         report.update(device=str(props), versions=dict(torch=torch.__version__, torch_npu=torch_npu.__version__, tilelang=tilelang.__version__),
                       source_sha256=hashlib.sha256(Path(impl.__file__).read_bytes()).hexdigest(),
                       model_sha256=hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest())
+        if args.resume:
+            previous = json.loads(Path(args.resume).read_text(encoding="utf-8"))
+            report["cases"], report["rounds"], report["summary"] = resume_records(previous, report)
+            report["resume_from"] = str(Path(args.resume).resolve())
+            save()
         begin, end = torch.npu.Event(enable_timing=True), torch.npu.Event(enable_timing=True)
 
         def measure(call):
@@ -119,8 +166,13 @@ def main():
 
         for qlen, kv in CASES:
             key = f"q{qlen}_kv{kv}"
-            case = dict(key=key, geometry={str(s): geometry(qlen, kv, s) for s in SPLITS}, accuracy=[], builds=[])
-            report["cases"].append(case)
+            if any(row["key"] == key for row in report["summary"]):
+                print("Keeping completed case", key, flush=True)
+                continue
+            case = next((c for c in report["cases"] if c["key"] == key), None)
+            if case is None:
+                case = dict(key=key, geometry={str(s): geometry(qlen, kv, s) for s in SPLITS}, accuracy=[], builds=[])
+                report["cases"].append(case)
             fixtures = {}
             for seed in (7, 19):
                 report.update(phase="reference", active=f"{key}/seed{seed}"); save()
@@ -130,10 +182,17 @@ def main():
                 inputs = [t.to("npu") for t in (q, k, v, table, lengths)]
                 fixtures[seed] = (inputs, expected)
             pool_rows = fixtures[7][0][1].shape[0]
-            rows = []
+            saved = sorted((r for r in report["rounds"] if r["key"] == key), key=lambda r:r["round"])
+            rows = [r["median_us"] for r in saved]
+            done_rounds = {r["round"] for r in saved}
+            auto_split = case.get("auto_split")
             for rd in range(2):
+                if rd+1 in done_rounds:
+                    print("Keeping completed round", key, rd+1, flush=True)
+                    continue
                 programs = {}
                 report.update(phase="compile_accuracy", active=f"{key}/round{rd+1}/auto"); save()
+                compiler_temp(path)
                 impl.build_kernel.cache_clear()
                 auto = impl.build_kernel(1, qlen, 1, 128, pool_rows, kv//128, 128, False,
                     "bfloat16", args.device, full_kv_cache=True)
@@ -144,6 +203,7 @@ def main():
                 calls = {}
                 for split in SPLITS:
                     report["active"] = f"{key}/round{rd+1}/S{split}"; save()
+                    compiler_temp(path)
                     impl.build_kernel.cache_clear()
                     program = auto if split == auto_split else impl.build_kernel(
                         1, qlen, 1, 128, pool_rows, kv//128, 128, False, "bfloat16", args.device,
