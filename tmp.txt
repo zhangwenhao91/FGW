@@ -1,35 +1,86 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# cat reports/mha/latest/mha_static_host_paste.txt 
-run_directory=mha_static_host.XvnwOSvM
-
-phase=smoke
-status=passed phase=complete active=None completed=5/5
-CASE {"key": "q1_kv512", "plan": {"Q": 1, "KV": 512, "programs": 4, "q_tiles": 1, "min_kv_blocks": 1, "max_kv_blocks": 1, "segments": 4, "max_segments": 1, "partial_count": 4, "merge_q_tiles": 1, "direct_q_tiles": 0, "max_parts": 4, "partial_bytes": 262144, "lse_bytes": 2048}, "uniform_split": 1, "default_split": 1, "accuracy_checks": 10, "max_abs_error": 0.001953125}
-CASE {"key": "q17_kv512", "plan": {"Q": 17, "KV": 512, "programs": 4, "q_tiles": 1, "min_kv_blocks": 1, "max_kv_blocks": 1, "segments": 4, "max_segments": 1, "partial_count": 4, "merge_q_tiles": 1, "direct_q_tiles": 0, "max_parts": 4, "partial_bytes": 262144, "lse_bytes": 2048}, "uniform_split": 1, "default_split": 1, "accuracy_checks": 10, "max_abs_error": 0.0009765625}
-CASE {"key": "q129_kv512", "plan": {"Q": 129, "KV": 512, "programs": 8, "q_tiles": 2, "min_kv_blocks": 1, "max_kv_blocks": 1, "segments": 8, "max_segments": 1, "partial_count": 8, "merge_q_tiles": 2, "direct_q_tiles": 0, "max_parts": 4, "partial_bytes": 524288, "lse_bytes": 4096}, "uniform_split": 1, "default_split": 1, "accuracy_checks": 10, "max_abs_error": 0.001953125}
-CASE {"key": "q3712_kv512", "plan": {"Q": 3712, "KV": 512, "programs": 28, "q_tiles": 29, "min_kv_blocks": 4, "max_kv_blocks": 5, "segments": 32, "max_segments": 2, "partial_count": 6, "merge_q_tiles": 3, "direct_q_tiles": 26, "max_parts": 2, "partial_bytes": 393216, "lse_bytes": 3072}, "uniform_split": 1, "default_split": 1, "accuracy_checks": 10, "max_abs_error": 0.001953125}
-CASE {"key": "q3584_kv512", "plan": {"Q": 3584, "KV": 512, "programs": 28, "q_tiles": 28, "min_kv_blocks": 4, "max_kv_blocks": 4, "segments": 28, "max_segments": 1, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 28, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}, "uniform_split": 1, "default_split": 1, "accuracy_checks": 6, "max_abs_error": 0.00390625}
-RESULT {"key": "q1_kv512", "status": "accuracy_passed", "plan": {"Q": 1, "KV": 512, "programs": 4, "q_tiles": 1, "min_kv_blocks": 1, "max_kv_blocks": 1, "segments": 4, "max_segments": 1, "partial_count": 4, "merge_q_tiles": 1, "direct_q_tiles": 0, "max_parts": 4, "partial_bytes": 262144, "lse_bytes": 2048}}
-RESULT {"key": "q17_kv512", "status": "accuracy_passed", "plan": {"Q": 17, "KV": 512, "programs": 4, "q_tiles": 1, "min_kv_blocks": 1, "max_kv_blocks": 1, "segments": 4, "max_segments": 1, "partial_count": 4, "merge_q_tiles": 1, "direct_q_tiles": 0, "max_parts": 4, "partial_bytes": 262144, "lse_bytes": 2048}}
-RESULT {"key": "q129_kv512", "status": "accuracy_passed", "plan": {"Q": 129, "KV": 512, "programs": 8, "q_tiles": 2, "min_kv_blocks": 1, "max_kv_blocks": 1, "segments": 8, "max_segments": 1, "partial_count": 8, "merge_q_tiles": 2, "direct_q_tiles": 0, "max_parts": 4, "partial_bytes": 524288, "lse_bytes": 4096}}
-RESULT {"key": "q3712_kv512", "status": "accuracy_passed", "plan": {"Q": 3712, "KV": 512, "programs": 28, "q_tiles": 29, "min_kv_blocks": 4, "max_kv_blocks": 5, "segments": 32, "max_segments": 2, "partial_count": 6, "merge_q_tiles": 3, "direct_q_tiles": 26, "max_parts": 2, "partial_bytes": 393216, "lse_bytes": 3072}}
-RESULT {"key": "q3584_kv512", "status": "accuracy_passed", "plan": {"Q": 3584, "KV": 512, "programs": 28, "q_tiles": 28, "min_kv_blocks": 4, "max_kv_blocks": 4, "segments": 28, "max_segments": 1, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 28, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}}
-
-phase=full
-status=passed phase=complete active=None completed=5/5
-CASE {"key": "q8192_kv32768", "plan": {"Q": 8192, "KV": 32768, "programs": 28, "q_tiles": 64, "min_kv_blocks": 585, "max_kv_blocks": 586, "segments": 91, "max_segments": 4, "partial_count": 54, "merge_q_tiles": 27, "direct_q_tiles": 37, "max_parts": 2, "partial_bytes": 3538944, "lse_bytes": 27648}, "uniform_split": 2, "default_split": 1, "accuracy_checks": 24, "max_abs_error": 0.000244140625}
-CASE {"key": "q4096_kv8192", "plan": {"Q": 4096, "KV": 8192, "programs": 28, "q_tiles": 32, "min_kv_blocks": 73, "max_kv_blocks": 74, "segments": 59, "max_segments": 3, "partial_count": 54, "merge_q_tiles": 27, "direct_q_tiles": 5, "max_parts": 2, "partial_bytes": 3538944, "lse_bytes": 27648}, "uniform_split": 1, "default_split": 1, "accuracy_checks": 20, "max_abs_error": 0.00048828125}
-CASE {"key": "q2048_kv24576", "plan": {"Q": 2048, "KV": 24576, "programs": 28, "q_tiles": 16, "min_kv_blocks": 109, "max_kv_blocks": 110, "segments": 43, "max_segments": 2, "partial_count": 43, "merge_q_tiles": 16, "direct_q_tiles": 0, "max_parts": 3, "partial_bytes": 2818048, "lse_bytes": 22016}, "uniform_split": 4, "default_split": 1, "accuracy_checks": 24, "max_abs_error": 0.000244140625}
-CASE {"key": "q3584_kv32768", "plan": {"Q": 3584, "KV": 32768, "programs": 28, "q_tiles": 28, "min_kv_blocks": 256, "max_kv_blocks": 256, "segments": 28, "max_segments": 1, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 28, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}, "uniform_split": 1, "default_split": 1, "accuracy_checks": 12, "max_abs_error": 0.000244140625}
-CASE {"key": "q7168_kv32768", "plan": {"Q": 7168, "KV": 32768, "programs": 28, "q_tiles": 56, "min_kv_blocks": 512, "max_kv_blocks": 512, "segments": 56, "max_segments": 2, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 56, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}, "uniform_split": 1, "default_split": 1, "accuracy_checks": 12, "max_abs_error": 0.000244140625}
-RESULT {"key": "q8192_kv32768", "median_us": {"default": 553.8285076618195, "static": 455.4075002670288, "uniform_best": 512.6975178718567, "static/merge": 26.91149991005659, "static/chain": 456.45299553871155, "ascendc": 462.5535011291504, "static/local": 441.198006272316}, "round_us": [{"default": 559.3259930610657, "static": 458.12100172042847, "uniform_best": 512.7900242805481, "static/merge": 26.597000658512115, "static/chain": 452.50800251960754, "ascendc": 464.9359881877899, "static/local": 440.91200828552246}, {"default": 548.3310222625732, "static": 452.69399881362915, "uniform_best": 512.6050114631653, "static/merge": 27.225999161601067, "static/chain": 460.39798855781555, "ascendc": 460.17101407051086, "static/local": 441.4840042591095}], "static_builds": 2, "plan": {"Q": 8192, "KV": 32768, "programs": 28, "q_tiles": 64, "min_kv_blocks": 585, "max_kv_blocks": 586, "segments": 91, "max_segments": 4, "partial_count": 54, "merge_q_tiles": 27, "direct_q_tiles": 37, "max_parts": 2, "partial_bytes": 3538944, "lse_bytes": 27648}, "static_vs_default": {"speedup": 1.2160875984082806, "min_round": 1.2112619643723557, "max_round": 1.2209132324442054, "faster_rounds": 2}, "static_vs_uniform_best": {"speedup": 1.1258382198043697, "min_round": 1.1193331507501632, "max_round": 1.1323432888585763, "faster_rounds": 2}, "static_vs_ascendc": {"speedup": 1.015696331210024, "min_round": 1.0148759529507891, "max_round": 1.0165167094692589, "faster_rounds": 2}}
-RESULT {"key": "q4096_kv8192", "median_us": {"default": 107.29499906301498, "static": 93.90649944543839, "static/merge": 26.359000243246555, "static/chain": 93.27699989080429, "ascendc": 97.83000126481056, "static/local": 75.50850138068199}, "round_us": [{"default": 107.51499980688095, "static": 93.76300126314163, "static/merge": 26.221999898552895, "static/chain": 93.45600008964539, "ascendc": 97.58300334215164, "static/local": 75.79100131988525}, {"default": 107.07499831914902, "static": 94.04999762773514, "static/merge": 26.496000587940216, "static/chain": 93.0979996919632, "ascendc": 98.07699918746948, "static/local": 75.22600144147873}], "static_builds": 2, "plan": {"Q": 4096, "KV": 8192, "programs": 28, "q_tiles": 32, "min_kv_blocks": 73, "max_kv_blocks": 74, "segments": 59, "max_segments": 3, "partial_count": 54, "merge_q_tiles": 27, "direct_q_tiles": 5, "max_parts": 2, "partial_bytes": 3538944, "lse_bytes": 27648}, "static_vs_default": {"speedup": 1.1425789101138766, "min_round": 1.1384901756507098, "max_round": 1.1466676445770434, "faster_rounds": 2}, "static_vs_ascendc": {"speedup": 1.0417793533599848, "min_round": 1.040741038869792, "max_round": 1.0428176678501775, "faster_rounds": 2}}
-RESULT {"key": "q2048_kv24576", "median_us": {"default": 148.0404958128929, "static": 111.59300059080124, "uniform_best": 139.87649977207184, "static/merge": 23.33000022917986, "static/chain": 112.82849684357643, "ascendc": 124.50600042939186, "static/local": 98.29549863934517}, "round_us": [{"default": 148.85899424552917, "static": 112.06000298261642, "uniform_best": 140.21800458431244, "static/merge": 23.377999663352966, "static/chain": 113.49199712276459, "ascendc": 127.07400321960449, "static/local": 98.8679975271225}, {"default": 147.22199738025665, "static": 111.12599819898605, "uniform_best": 139.53499495983124, "static/merge": 23.282000795006752, "static/chain": 112.16499656438828, "ascendc": 121.93799763917923, "static/local": 97.72299975156784}], "static_builds": 2, "plan": {"Q": 2048, "KV": 24576, "programs": 28, "q_tiles": 16, "min_kv_blocks": 109, "max_kv_blocks": 110, "segments": 43, "max_segments": 2, "partial_count": 43, "merge_q_tiles": 16, "direct_q_tiles": 0, "max_parts": 3, "partial_bytes": 2818048, "lse_bytes": 22016}, "static_vs_default": {"speedup": 1.326603481931746, "min_round": 1.3248204719532495, "max_round": 1.3283864919102428, "faster_rounds": 2}, "static_vs_uniform_best": {"speedup": 1.2534614140122504, "min_round": 1.2512761096933407, "max_round": 1.25564671833116, "faster_rounds": 2}, "static_vs_ascendc": {"speedup": 1.1156383765148754, "min_round": 1.0972949590142969, "max_round": 1.133981794015454, "faster_rounds": 2}}
-RESULT {"key": "q3584_kv32768", "median_us": {"default": 192.5100013613701, "static": 194.80450451374054, "ascendc": 222.87999838590622, "static/local": 194.3335011601448}, "round_us": [{"default": 193.1300014257431, "static": 195.97500562667847, "ascendc": 224.13299977779388, "static/local": 195.3659951686859}, {"default": 191.89000129699707, "static": 193.6340034008026, "ascendc": 221.62699699401855, "static/local": 193.3010071516037}], "static_builds": 2, "plan": {"Q": 3584, "KV": 32768, "programs": 28, "q_tiles": 28, "min_kv_blocks": 256, "max_kv_blocks": 256, "segments": 28, "max_segments": 1, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 28, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}, "static_vs_default": {"speedup": 0.988238063881318, "min_round": 0.985482821179988, "max_round": 0.990993306582648, "faster_rounds": 0}, "static_vs_ascendc": {"speedup": 1.144124037918957, "min_round": 1.1436815580694757, "max_round": 1.144566517768438, "faster_rounds": 2}}
-RESULT {"key": "q7168_kv32768", "median_us": {"default": 377.09149718284607, "static": 377.9360055923462, "ascendc": 406.55601024627686, "static/local": 374.87299740314484}, "round_us": [{"default": 377.0430088043213, "static": 378.09500098228455, "ascendc": 407.0180058479309, "static/local": 374.6179938316345}, {"default": 377.13998556137085, "static": 377.77701020240784, "ascendc": 406.0940146446228, "static/local": 375.12800097465515}], "static_builds": 2, "plan": {"Q": 7168, "KV": 32768, "programs": 28, "q_tiles": 56, "min_kv_blocks": 512, "max_kv_blocks": 512, "segments": 56, "max_segments": 2, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 56, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}, "static_vs_default": {"speedup": 0.9977657030309677, "min_round": 0.9972176511849398, "max_round": 0.9983137548769956, "faster_rounds": 0}, "static_vs_ascendc": {"speedup": 1.0757267945507418, "min_round": 1.0749569287634604, "max_round": 1.0764966603380233, "faster_rounds": 2}}
-
-guard=mha_static_host.XvnwOSvM/guard_full.jsonl
-{"event": "end", "returncode": 0, "reason": null, "utc": "2026-11-17T19:16:08.471448+00:00", "mem_available_mb": 1510628.3984375, "swap_free_mb": 8191.99609375}
-
-guard=mha_static_host.XvnwOSvM/guard_smoke.jsonl
-{"event": "end", "returncode": 0, "reason": null, "utc": "2026-11-17T19:12:05.014960+00:00", "mem_available_mb": 1509789.265625, "swap_free_mb": 8191.99609375}
+(zwh) root@ubuntu162:/home/z30086261/FGW# cat reports/mha/latest/mha_static_host_grid_paste.txt 
+status=passed completed=80/80
+B1H1 BF16 D128 page128 noncausal; 2 correctness seeds; timing policy (compile_rounds, pairs, immediate_warmups)=[(1, 3, 5)]
+Full-call Event timing excludes compilation and one-time host plan/H2D preparation.
+Q KV v7_us static_us AscendC_us v7/static AscendC/static round_AC_min round_AC_max parts merge_tiles builds
+64 512 29.919 40.367 51.514 0.7412 1.2761 1.2761 1.2761 4 1 1
+128 512 18.044 28.836 31.248 0.6257 1.0836 1.0836 1.0836 4 1 1
+256 512 31.524 40.625 45.638 0.7760 1.1234 1.1234 1.1234 8 2 1
+512 512 28.943 39.430 46.202 0.7340 1.1717 1.1717 1.1717 16 4 1
+1024 512 25.092 36.287 41.064 0.6915 1.1316 1.1316 1.1316 28 8 1
+2048 512 28.814 40.149 45.681 0.7177 1.1378 1.1378 1.1378 32 16 1
+4096 512 25.124 36.583 44.343 0.6868 1.2121 1.2121 1.2121 24 12 1
+8192 512 26.817 44.005 42.952 0.6094 0.9761 0.9761 0.9761 40 20 1
+16384 512 39.626 53.673 48.981 0.7383 0.9126 0.9126 0.9126 32 16 1
+32768 512 71.957 81.518 70.886 0.8827 0.8696 0.8696 0.8696 24 12 1
+64 1024 33.136 45.533 56.174 0.7277 1.2337 1.2337 1.2337 8 1 1
+128 1024 28.028 41.891 47.543 0.6691 1.1349 1.1349 1.1349 8 1 1
+256 1024 31.253 43.306 53.090 0.7217 1.2259 1.2259 1.2259 16 2 1
+512 1024 25.904 37.087 42.092 0.6985 1.1350 1.1350 1.1350 28 4 1
+1024 1024 29.144 41.950 53.706 0.6947 1.2802 1.2802 1.2802 30 8 1
+2048 1024 29.282 40.438 45.517 0.7241 1.1256 1.1256 1.1256 36 16 1
+4096 1024 32.500 45.720 55.359 0.7108 1.2108 1.2108 1.2108 48 24 1
+8192 1024 40.420 56.511 58.800 0.7153 1.0405 1.0405 1.0405 44 22 1
+16384 1024 58.955 72.786 69.638 0.8100 0.9567 0.9567 0.9567 40 20 1
+32768 1024 93.751 108.423 92.139 0.8647 0.8498 0.8498 0.8498 48 24 1
+64 2048 37.454 41.174 44.984 0.9097 1.0925 1.0925 1.0925 16 1 1
+128 2048 39.238 42.572 53.135 0.9217 1.2481 1.2481 1.2481 16 1 1
+256 2048 36.303 39.469 41.839 0.9198 1.0600 1.0600 1.0600 28 2 1
+512 2048 28.297 44.070 47.375 0.6421 1.0750 1.0750 1.0750 29 4 1
+1024 2048 42.647 32.450 38.421 1.3142 1.1840 1.1840 1.1840 32 8 1
+2048 2048 29.706 43.693 49.686 0.6799 1.1372 1.1372 1.1372 42 16 1
+4096 2048 43.132 54.163 60.897 0.7963 1.1243 1.1243 1.1243 50 25 1
+8192 2048 56.954 69.227 72.622 0.8227 1.0490 1.0490 1.0490 48 24 1
+16384 2048 83.668 99.564 98.175 0.8403 0.9860 0.9860 0.9860 52 26 1
+32768 2048 154.025 164.759 151.518 0.9349 0.9196 0.9196 0.9196 50 25 1
+64 4096 37.012 42.807 52.742 0.8646 1.2321 1.2321 1.2321 28 1 1
+128 4096 59.603 43.339 41.993 1.3753 0.9689 0.9689 0.9689 28 1 1
+256 4096 42.410 43.788 52.233 0.9685 1.1929 1.1929 1.1929 28 2 1
+512 4096 38.092 43.921 48.212 0.8673 1.0977 1.0977 1.0977 30 4 1
+1024 4096 39.521 44.107 52.112 0.8960 1.1815 1.1815 1.1815 35 8 1
+2048 4096 42.287 52.183 71.797 0.8104 1.3759 1.3759 1.3759 42 16 1
+4096 4096 64.431 68.436 71.685 0.9415 1.0475 1.0475 1.0475 52 26 1
+8192 4096 88.198 97.389 99.739 0.9056 1.0241 1.0241 1.0241 54 27 1
+16384 4096 140.202 152.698 153.863 0.9182 1.0076 1.0076 1.0076 52 26 1
+32768 4096 258.044 260.113 245.910 0.9920 0.9454 0.9454 0.9454 52 26 1
+64 8192 27.360 38.090 36.472 0.7183 0.9575 0.9575 0.9575 28 1 1
+128 8192 38.504 43.345 56.125 0.8883 1.2948 1.2948 1.2948 28 1 1
+256 8192 36.418 39.568 50.159 0.9204 1.2677 1.2677 1.2677 29 2 1
+512 8192 96.173 53.481 60.148 1.7983 1.1247 1.1247 1.1247 31 4 1
+1024 8192 41.906 45.070 51.340 0.9298 1.1391 1.1391 1.1391 35 8 1
+2048 8192 61.214 62.083 72.080 0.9860 1.1610 1.1610 1.1610 43 16 1
+4096 8192 108.077 93.967 97.027 1.1502 1.0326 1.0326 1.0326 54 27 1
+8192 8192 155.580 147.785 149.544 1.0527 1.0119 1.0119 1.0119 54 27 1
+16384 8192 246.312 248.353 246.433 0.9918 0.9923 0.9923 0.9923 54 27 1
+32768 8192 477.860 465.420 455.157 1.0267 0.9779 0.9779 0.9779 54 27 1
+64 16384 31.159 39.390 38.815 0.7910 0.9854 0.9854 0.9854 28 1 1
+128 16384 34.842 44.397 47.787 0.7848 1.0764 1.0764 1.0764 28 1 1
+256 16384 52.206 42.983 57.883 1.2146 1.3466 1.3466 1.3466 29 2 1
+512 16384 53.157 49.023 66.041 1.0843 1.3471 1.3471 1.3471 31 4 1
+1024 16384 69.747 61.975 74.570 1.1254 1.2032 1.2032 1.2032 35 8 1
+2048 16384 104.117 88.139 101.821 1.1813 1.1552 1.1552 1.1552 43 16 1
+4096 16384 176.558 145.685 153.785 1.2119 1.0556 1.0556 1.0556 54 27 1
+8192 16384 285.448 246.795 251.858 1.1566 1.0205 1.0205 1.0205 54 27 1
+16384 16384 473.207 452.118 456.856 1.0466 1.0105 1.0105 1.0105 54 27 1
+32768 16384 927.683 891.408 875.352 1.0407 0.9820 0.9820 0.9820 54 27 1
+64 24576 38.064 45.634 47.641 0.8341 1.0440 1.0440 1.0440 28 1 1
+128 24576 39.831 47.021 54.947 0.8471 1.1686 1.1686 1.1686 28 1 1
+256 24576 45.044 48.807 71.386 0.9229 1.4626 1.4626 1.4626 29 2 1
+512 24576 66.344 56.123 64.809 1.1821 1.1548 1.1548 1.1548 31 4 1
+1024 24576 90.421 72.635 81.636 1.2449 1.1239 1.1239 1.1239 35 8 1
+2048 24576 144.313 108.758 116.491 1.3269 1.0711 1.0711 1.0711 43 16 1
+4096 24576 228.101 195.406 208.564 1.1673 1.0673 1.0673 1.0673 54 27 1
+8192 24576 416.886 346.426 355.483 1.2034 1.0261 1.0261 1.0261 54 27 1
+16384 24576 693.468 676.394 679.220 1.0252 1.0042 1.0042 1.0042 54 27 1
+32768 24576 1391.199 1281.367 1377.902 1.0857 1.0753 1.0753 1.0753 54 27 1
+64 32768 36.018 43.437 42.235 0.8292 0.9723 0.9723 0.9723 28 1 1
+128 32768 40.772 44.973 52.525 0.9066 1.1679 1.1679 1.1679 28 1 1
+256 32768 47.784 47.651 64.070 1.0028 1.3446 1.3446 1.3446 29 2 1
+512 32768 68.343 59.839 70.683 1.1421 1.1812 1.1812 1.1812 31 4 1
+1024 32768 107.976 85.575 99.518 1.2618 1.1629 1.1629 1.1629 35 8 1
+2048 32768 171.197 136.725 149.661 1.2521 1.0946 1.0946 1.0946 43 16 1
+4096 32768 281.513 245.251 252.806 1.1479 1.0308 1.0308 1.0308 54 27 1
+8192 32768 556.720 446.844 459.619 1.2459 1.0286 1.0286 1.0286 54 27 1
+16384 32768 931.511 890.425 873.458 1.0461 0.9809 0.9809 0.9809 54 27 1
+32768 32768 1900.347 1756.765 1820.890 1.0817 1.0365 1.0365 1.0365 54 27 1
 (zwh) root@ubuntu162:/home/z30086261/FGW#
