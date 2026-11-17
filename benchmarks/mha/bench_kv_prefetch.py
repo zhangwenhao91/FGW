@@ -28,15 +28,25 @@ def main():
                         help="Only two slow-vs-AscendC cases; two builds total per candidate including accuracy build")
     parser.add_argument("--baseline-only", action="store_true",
                         help="Only original TL and AscendC, with immediate equal warmup before each Event sample")
+    parser.add_argument("--clean-grid", action="store_true",
+                        help="Requested 80-shape clean-v7/FIA grid, two builds per shape, one per round")
     args = parser.parse_args()
     if args.quick_regressions:
         args.recompile_each_sample = True
         args.rounds, args.pairs = 2, 1
+    if args.clean_grid:
+        args.baseline_only = args.recompile_each_sample = True
+        args.rounds = 2
+        if args.quick_regressions or args.smoke:
+            parser.error("--clean-grid cannot be combined with --quick-regressions or --smoke")
     if args.rounds < 2 or args.pairs < (1 if args.quick_regressions else 3) or args.warmup < 1:
         parser.error("rounds>=2, pairs>=3 (quick:1), warmup>=1 required")
     cases = [(129, 2048), (4096, 8192)] if args.smoke else [(q, kv) for kv in KVS for q in QS]
     if args.quick_regressions:
         cases = [(4096, 8192), (8192, 8192)]
+    if args.clean_grid:
+        cases = [(q, kv) for kv in (512,1024,2048,4096,8192,16384,24576,32768)
+                 for q in (64,128,256,512,1024,2048,4096,8192,16384,32768)]
     variants = ("baseline",) if args.baseline_only else ("baseline", "k_early", "v_buffer4", "v_early")
     comparisons = (("baseline", "ascendc"),) if args.baseline_only else (
         ("k_early", "baseline"), ("v_buffer4", "baseline"), ("v_early", "baseline"),
@@ -93,6 +103,12 @@ def main():
                     " Quick mode: round1 uses the initial fresh accuracy build; round2 rebuilds. "
                     "Exactly two builds per candidate per shape, two Event samples. "
                     "Initial build+first-call wall is the sum of separately measured build and first call.")
+            if args.clean_grid:
+                report["recompile_policy"] = (
+                    "Two independent TL builds per shape, cache disabled. Round1 reuses accuracy build; "
+                    "round2 rebuilds once, then reuses it for all paired samples in that round. "
+                    "Equal immediate warmup for each TL/FIA Event sample; compile excluded. "
+                    "AscendC is precompiled. Initial build+first-call wall sums separate intervals.")
         if args.baseline_only:
             from operators.mha.kernels import mha_paged_decode_ascend_v7 as impl
         else:
@@ -196,19 +212,21 @@ def main():
                 torch.npu.synchronize()
                 samples = {label: [] for label in labels}
                 fresh_samples = {label: [] for label in labels if label != "ascendc"}
+                round_calls = dict(timed_calls)
                 for pair in range(args.pairs):
                     offset = (pair+rd) % len(labels)
                     order = labels[offset:] + labels[:offset]
                     if ((pair+rd)//len(labels)) % 2:
                         order = tuple(reversed(order))
                     for label in order:
-                        call = timed_calls[label]
-                        reuse_initial = args.quick_regressions and rd == 0 and pair == 0
+                        call = round_calls[label] if args.clean_grid else timed_calls[label]
+                        reuse_initial = (args.quick_regressions or args.clean_grid) and rd == 0 and pair == 0
                         if args.recompile_each_sample and label != "ascendc" and reuse_initial:
                             fresh_samples[label].append({**initial_builds[label],
                                 "source_sha256": list(info["kernels"][label].values()),
                                 "accuracy_build_reused": True})
-                        if args.recompile_each_sample and label != "ascendc" and not reuse_initial:
+                        if (args.recompile_each_sample and label != "ascendc" and not reuse_initial
+                                and (not args.clean_grid or pair == 0)):
                             report.update(active=f"{key}/round{rd+1}/sample{pair+1}/recompile_{label}")
                             save()
                             torch.npu.synchronize()
@@ -231,6 +249,7 @@ def main():
                             fresh_samples[label].append({"build_ms": build_ms,
                                 "build_first_call_wall_ms": total_ms,
                                 "source_sha256": [hashlib.sha256(k.get_kernel_source().encode()).hexdigest() for k in components]})
+                            round_calls[label] = call
                         samples[label].append(measure(call))
                 medians = {label: statistics.median(v) for label, v in samples.items()}
                 row = {"key": key, "round": rd+1, "median_us": medians, "samples_us": samples}
