@@ -16,8 +16,8 @@ D128, page128, noncausal, full live KV. Default v7 remains unchanged.
 Host unit checks and the existing five-case accuracy smoke precede the grid.
 Each shape runs in its own supervised process with the existing thread/RSS/time
 budgets. Failure stops subsequent shapes; completed per-shape reports remain.
-No old reports are reused. Each shape has two independently compiled rounds,
-two correctness seeds (7/19), seven rotated timing pairs per round and five
+No old reports are reused. Each shape has one compiled round,
+two correctness seeds (7/19), three rotated timing pairs and five
 immediate warmups for every sample, including native AscendC FIA. Compilation
 is excluded from timing; timed calls reuse their compiled kernels. Static host
 plan creation and one-time metadata upload are also excluded. Calls include
@@ -29,7 +29,8 @@ chain timing is also recorded when applicable. Per-shape JSON, generated C++,
 plans, guard logs and timing samples live in the printed unique run directory.
 The compact paste file updates after every completed shape and on exit;
 missing/failed shapes are never reported as passed. Ratios are medians of the
-two per-round speedups, with the AscendC ratio range retained.
+per-round speedups, with the AscendC ratio range retained (one round gives an identical min/max).
+Terminal output shows shape index out of 80, compilation/accuracy stages, and each timing sample.
 
 Local checks validate exact grid coverage, argument selection, summary handling
 and shell syntax. NPU correctness/performance require running the command above.

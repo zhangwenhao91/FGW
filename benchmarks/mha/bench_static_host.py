@@ -24,14 +24,15 @@ def main():
     )
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
+    parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
     parser.add_argument("--pairs", type=int, default=7)
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output", default="mha_static_host.json")
     parser.add_argument("--list-only", action="store_true")
     args = parser.parse_args()
-    if args.pairs < 3 or args.warmup < 1:
-        parser.error("pairs>=3, warmup>=1 required")
+    if args.rounds < 1 or args.pairs < 3 or args.warmup < 1:
+        parser.error("rounds>=1, pairs>=3, warmup>=1 required")
     if args.smoke and (args.grid or args.shape):
         parser.error("--smoke cannot be combined with --grid/--shape")
     from benchmarks.mha.summarize_clean_grid import QS, KVS
@@ -155,14 +156,16 @@ def main():
                 expected = chunked_cpu_reference(q, k, v, table, lengths, 128, False, 128)
                 fixtures[seed] = ([x.to("npu") for x in (q, k, v, table, lengths)], expected)
             rows = []
-            for rd in range(1 if args.smoke else 2):
+            for rd in range(1 if args.smoke else args.rounds):
                 report.update(phase="compile_accuracy", active=f"{key}/round{rd+1}")
                 save()
                 compiler_temp(path)
                 candidate.build_kernel.cache_clear()
                 default.build_kernel.cache_clear()
                 pool = fixtures[7][0][1].shape[0]
+                print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
                 static = candidate.build_kernel(qlen, kv, pool)
+                print(f"[FGW compile] {key} round={rd+1}/{args.rounds} default v7", flush=True)
                 base = default.build_kernel(
                     1, qlen, 1, 128, pool, kv // 128, 128, False, "bfloat16", args.device, full_kv_cache=True
                 )
@@ -250,6 +253,7 @@ def main():
                     )
                     calls["ascendc"] = lambda native=native: native()[0]
                     for label, call in calls.items():
+                        print(f"[FGW accuracy] {key} round={rd+1} seed={seed} {label}", flush=True)
                         got = call().cpu()
                         assert (
                             got.shape == expected.shape
@@ -280,7 +284,10 @@ def main():
                     if (pair + rd) % 2:
                         order = tuple(reversed(order))
                     for label in order:
-                        samples[label].append(measure(timed_calls[label]))
+                        print(f"[FGW timing] {key} round={rd+1}/{args.rounds} pair={pair+1}/{args.pairs} {label} starting", flush=True)
+                        us = measure(timed_calls[label])
+                        samples[label].append(us)
+                        print(f"[FGW timing] {key} pair={pair+1}/{args.pairs} {label}={us:.3f} us", flush=True)
                 medians = {k: statistics.median(v) for k, v in samples.items()}
                 rows.append(medians)
                 report["rounds"].append(dict(key=key, round=rd + 1, median_us=medians, samples_us=samples))

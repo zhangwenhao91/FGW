@@ -9,6 +9,7 @@ from benchmarks.mha.summarize_clean_grid import QS, KVS
 def summarize(directory):
     rows = []
     failures = []
+    policies = set()
     for kv in KVS:
         for q in QS:
             key = f"q{q}_kv{kv}"
@@ -19,13 +20,15 @@ def summarize(directory):
                 report = json.loads(path.read_text())
                 if report['status'] == 'passed' and len(report['summary']) == 1:
                     rows.append(report['summary'][0])
+                    settings = report.get('settings', {})
+                    policies.add((settings.get('rounds', 2), settings.get('pairs', 7), settings.get('warmup', 5)))
                 else:
                     failures.append(f"{key}: {report['status']} phase={report.get('phase')} active={report.get('active')}")
             except (ValueError, KeyError) as exc:
                 failures.append(f"{key}: unreadable report {exc}")
     passed = len(rows) == len(QS) * len(KVS) and not failures
     lines = [f"status={'passed' if passed else 'incomplete_or_error'} completed={len(rows)}/80",
-             'B1H1 BF16 D128 page128 noncausal; 2 independent builds, 2 seeds, 7 pairs/round, 5 immediate warmups/sample.',
+             'B1H1 BF16 D128 page128 noncausal; 2 correctness seeds; timing policy (compile_rounds, pairs, immediate_warmups)=' + str(sorted(policies)),
              'Full-call Event timing excludes compilation and one-time host plan/H2D preparation.',
              'Q KV v7_us static_us AscendC_us v7/static AscendC/static round_AC_min round_AC_max parts merge_tiles builds']
     for row in rows:
