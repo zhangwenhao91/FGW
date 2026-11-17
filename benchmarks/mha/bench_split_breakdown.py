@@ -15,6 +15,14 @@ CASES = ((8192, 32768), (4096, 8192), (2048, 24576))
 SPLITS = (1, 2, 4, 8)
 
 
+def variant_specs(granularity):
+    return [(s, r) for s in SPLITS for r in ((8, 16, 32) if granularity and s > 1 else (8,))]
+
+
+def variant_label(split, rows, granularity):
+    return f"S{split}/R{rows}" if granularity else f"S{split}"
+
+
 def compiler_temp(path):
     """Keep compiler scratch under this run, independent of global /tmp."""
     directory = path.parent.resolve()/"compiler_tmp"
@@ -33,8 +41,8 @@ def resume_records(previous, current):
     for field in ("source_sha256", "model_sha256", "versions", "device"):
         if previous.get(field) != current.get(field):
             raise ValueError(f"Cannot resume: {field} changed or missing")
-    for field in ("pairs", "warmup", "device"):
-        if previous["settings"].get(field) != current["settings"].get(field):
+    for field in ("pairs", "warmup", "device", "merge_granularity"):
+        if previous["settings"].get(field, False) != current["settings"].get(field, False):
             raise ValueError(f"Cannot resume: setting {field} changed")
     summaries = copy.deepcopy(previous["summary"])
     completed = {row["key"] for row in summaries}
@@ -48,6 +56,10 @@ def resume_records(previous, current):
             raise ValueError("Completed case is missing timing rounds")
         case["builds"] = [b for b in case["builds"] if b["round"] in valid]
         case["accuracy"] = [a for a in case["accuracy"] if a["round"] in valid]
+        if "merge_builds" in case:
+            case["merge_builds"] = [a for a in case["merge_builds"] if a["round"] in valid]
+    if current["settings"].get("merge_granularity") and previous.get("candidate_sha256") != current.get("candidate_sha256"):
+        raise ValueError("Cannot resume: merge candidate changed")
     return cases, rounds, summaries
 
 
@@ -91,11 +103,13 @@ def main():
     parser.add_argument("--output", default="mha_split_breakdown.json")
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--resume", help="Previous full.json; keep completed rounds after validating identity")
+    parser.add_argument("--merge-granularity", action="store_true", help="Compare merge rows8/16/32 with identical shared partial kernels")
     args = parser.parse_args()
     if args.pairs < 3 or args.warmup < 1:
         parser.error("pairs>=3 and warmup>=1 required")
     if args.list_only:
         print(json.dumps({"cases": CASES, "splits": SPLITS, "builds_per_split": 2,
+                          "variants": variant_specs(args.merge_granularity),
                           "pairs_per_round": args.pairs,
                           "geometry": {f"q{q}_kv{kv}": {s: geometry(q, kv, s) for s in SPLITS} for q, kv in CASES}}))
         return 0
@@ -119,7 +133,13 @@ def main():
         lines = [f"status={report['status']} phase={report['phase']} active={report['active']} "
                  f"completed={len(report['summary'])}/3"]
         for case in report["cases"]:
-            lines.append("CASE " + json.dumps(case))
+            compact = case
+            if args.merge_granularity:
+                compact = {k:v for k,v in case.items() if k not in ("accuracy", "builds", "merge_builds")}
+                compact["accuracy_checks"] = len(case["accuracy"])
+                compact["max_abs_error"] = max((a["max_abs_error"] for a in case["accuracy"]), default=None)
+                compact["merge_builds"] = [{k:v for k,v in b.items() if k != "sha256"} for b in case.get("merge_builds",[])]
+            lines.append("CASE " + json.dumps(compact))
         lines.extend("RESULT " + json.dumps(row) for row in report["summary"])
         if report.get("error"):
             lines.append(report["error"])
@@ -137,6 +157,10 @@ def main():
         from operators.mha.split_cost_model import MODEL_PATH
         from tests.mha.test_mha_paged_accuracy import make_inputs
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
+        if args.merge_granularity:
+            from operators.mha.kernels import mha_merge_rows_candidate as candidate
+            report["candidate_sha256"] = hashlib.sha256(Path(candidate.__file__).read_bytes()).hexdigest()
+            report["merge_experiment"] = "Rows8 is original default; rows16/32 share the SAME partial kernel within each split/round. Split1 remains direct. No default promotion."
         env.disable_cache()
         assert not env.is_cache_enabled()
         torch.npu.set_device(args.device)
@@ -217,16 +241,32 @@ def main():
                         hashes[name] = hashlib.sha256(source.encode()).hexdigest()
                         path.with_name(f"{path.stem}_{key}_r{rd+1}_S{split}_{name}.cpp").write_text(source, encoding="utf-8")
                     case["builds"].append(dict(round=rd+1, split=split, hashes=hashes))
-                    for seed, (inputs, expected) in fixtures.items():
-                        components = component_calls(program, inputs)
-                        for name in ("full", "merge", "chain") if split > 1 else ("full", "local"):
-                            got = components[name]().cpu().reshape(expected.shape)
-                            assert got.dtype == expected.dtype and torch.isfinite(got).all()
-                            torch.testing.assert_close(got, expected, rtol=.01, atol=.004)
-                            case["accuracy"].append(dict(round=rd+1, split=split, seed=seed, component=name,
-                                max_abs_error=(got.float()-expected.float()).abs().max().item()))
-                        if seed == 7:
-                            calls.update({f"S{split}/{name}": call for name, call in components.items()})
+                    for _, merge_rows in [spec for spec in variant_specs(args.merge_granularity) if spec[0] == split]:
+                        label = variant_label(split, merge_rows, args.merge_granularity)
+                        variant = program
+                        if merge_rows != 8:
+                            report["active"] = f"{key}/round{rd+1}/{label}/compile_merge"; save()
+                            compiler_temp(path)
+                            candidate.build_merge.cache_clear()
+                            merger = candidate.build_merge(1, qlen, 1, split, merge_rows)
+                            variant = candidate.replace_merge(program, merger, merge_rows)
+                            source = merger.get_kernel_source()
+                            path.with_name(f"{path.stem}_{key}_r{rd+1}_S{split}_R{merge_rows}_merge.cpp").write_text(source, encoding="utf-8")
+                            case.setdefault("merge_builds", []).append(dict(round=rd+1, split=split, rows=merge_rows,
+                                grid=math.ceil(qlen/merge_rows), sha256=hashlib.sha256(source.encode()).hexdigest(),
+                                shared_partial=variant.partial_kernel is program.partial_kernel))
+                        for seed, (inputs, expected) in fixtures.items():
+                            report["active"] = f"{key}/round{rd+1}/{label}/accuracy_seed{seed}"; save()
+                            components = component_calls(variant, inputs)
+                            for name in ("full", "merge", "chain") if split > 1 else ("full", "local"):
+                                got = components[name]().cpu().reshape(expected.shape)
+                                assert got.dtype == expected.dtype and torch.isfinite(got).all()
+                                torch.testing.assert_close(got, expected, rtol=.01, atol=.004)
+                                case["accuracy"].append(dict(round=rd+1, split=split, merge_rows=merge_rows, seed=seed, component=name,
+                                    max_abs_error=(got.float()-expected.float()).abs().max().item()))
+                            if seed == 7:
+                                calls.update({f"{label}/{name}": call for name, call in components.items()
+                                              if not (args.merge_granularity and merge_rows != 8 and name == "local")})
                 for seed, (inputs, expected) in fixtures.items():
                     native = functools.partial(torch_npu.npu_fused_infer_attention_score_v2,
                         inputs[0], inputs[1].view(-1,128,128), inputs[2].view(-1,128,128),
@@ -252,20 +292,31 @@ def main():
                 report["rounds"].append(row); rows.append(medians); save()
                 print(key, "round", rd+1, medians, flush=True)
             results = []
-            for split in SPLITS:
-                prefix = f"S{split}/"
+            for split, merge_rows in variant_specs(args.merge_granularity):
+                prefix = variant_label(split, merge_rows, args.merge_granularity)+"/"
                 times = {label[len(prefix):]: statistics.median(r[label] for r in rows) for label in rows[0] if label.startswith(prefix)}
-                ratios = [r[f"S{auto_split}/full"]/r[prefix+"full"] for r in rows]
+                local_label = variant_label(split, 8, args.merge_granularity)+"/local"
+                times["local"] = statistics.median(r[local_label] for r in rows)
+                auto_label = variant_label(auto_split, 8, args.merge_granularity)+"/full"
+                ratios = [r[auto_label]/r[prefix+"full"] for r in rows]
                 native_ratios = [r["ascendc"]/r[prefix+"full"] for r in rows]
-                results.append(dict(split=split, median_us=times, speedup_vs_auto=statistics.median(ratios),
+                results.append(dict(split=split, merge_rows=merge_rows, has_merge=split>1, median_us=times, speedup_vs_auto=statistics.median(ratios),
                     speedup_vs_ascendc=statistics.median(native_ratios), round_speedup_vs_auto=ratios,
                     round_speedup_vs_ascendc=native_ratios,
                     isolated_local_plus_merge_us=times["local"]+times.get("merge",0),
                     build_count=sum(b["split"]==split for b in case["builds"])))
+                if args.merge_granularity:
+                    baseline = variant_label(split, 8, True)+"/"
+                    results[-1]["full_speedup_vs_rows8"] = [r[baseline+"full"]/r[prefix+"full"] for r in rows]
+                    if split > 1:
+                        results[-1]["merge_speedup_vs_rows8"] = [r[baseline+"merge"]/r[prefix+"merge"] for r in rows]
+                        results[-1]["merge_grid"] = math.ceil(qlen/merge_rows)
+                    results[-1]["merge_build_count"] = sum(b["split"]==split and b["rows"]==merge_rows for b in case.get("merge_builds",[])) if merge_rows!=8 else (2 if split>1 else 0)
             report["summary"].append(dict(key=key, auto_split=auto_split,
                 ascendc_us=statistics.median(r["ascendc"] for r in rows), results=results,
                 round_median_us=rows,
-                best_split=min(results,key=lambda r:r["median_us"]["full"])["split"]))
+                best_split=min(results,key=lambda r:r["median_us"]["full"])["split"],
+                best_merge_rows=min(results,key=lambda r:r["median_us"]["full"])["merge_rows"]))
             save()
         report.update(status="passed", phase="complete", active=None, correctness="passed")
     except Exception:
