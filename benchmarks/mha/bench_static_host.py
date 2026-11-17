@@ -22,6 +22,8 @@ def main():
     parser.add_argument(
         "--smoke", action="store_true", help="Accuracy only, including tails/mixed/direct/no-merge"
     )
+    parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
+    parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
     parser.add_argument("--pairs", type=int, default=7)
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--device", type=int, default=0)
@@ -30,7 +32,17 @@ def main():
     args = parser.parse_args()
     if args.pairs < 3 or args.warmup < 1:
         parser.error("pairs>=3, warmup>=1 required")
+    if args.smoke and (args.grid or args.shape):
+        parser.error("--smoke cannot be combined with --grid/--shape")
+    from benchmarks.mha.summarize_clean_grid import QS, KVS
     cases = SMOKE if args.smoke else CASES
+    if args.grid:
+        cases = tuple((q, kv, None) for kv in KVS for q in QS)
+    if args.shape:
+        q, kv = args.shape
+        if q not in QS or kv not in KVS:
+            parser.error("--shape must belong to the original 80-shape grid")
+        cases = ((q, kv, None),)
     if args.list_only:
         print(json.dumps([dict(**make_plan(q, kv).describe(), uniform_split=s) for q, kv, s in cases]))
         return 0
@@ -158,7 +170,7 @@ def main():
                 compiler_temp(path)
                 uniform = (
                     base
-                    if base.num_splits == best
+                    if best is None or base.num_splits == best
                     else default.build_kernel(
                         1,
                         qlen,
