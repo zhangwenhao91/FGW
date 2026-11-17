@@ -4,9 +4,11 @@ import functools
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import statistics
 import traceback
+import time
 
 from benchmarks.mha.summarize_v7_b1h1_grid import QS, KVS
 
@@ -20,6 +22,8 @@ def main():
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--output", default="mha_kv_prefetch.json")
     parser.add_argument("--list-only", action="store_true")
+    parser.add_argument("--recompile-each-sample", action="store_true",
+                        help="Disable TileLang cache and rebuild before every timed candidate sample")
     args = parser.parse_args()
     if args.rounds < 2 or args.pairs < 3 or args.warmup < 1:
         parser.error("rounds>=2, pairs>=3, warmup>=1 required")
@@ -52,9 +56,20 @@ def main():
 
     save()
     try:
+        if args.recompile_each_sample:
+            os.environ["TILELANG_DISABLE_CACHE"] = "1"
         import torch
         import torch_npu
         import tilelang
+        if args.recompile_each_sample:
+            from tilelang.env import env
+            env.disable_cache()
+            assert not env.is_cache_enabled(), "TileLang cache must be disabled"
+            report["recompile_policy"] = (
+                "Every non-AscendC sample clears builder LRU and rebuilds with TileLang cache disabled. "
+                "Records build_ms and synchronized build+first_call wall ms separately. "
+                "Validates every fresh first output, warms it, then measures one Event execution. "
+                "AscendC is prebuilt vendor code; no native recompilation is claimed.")
         from operators.mha.kernels import mha_paged_decode_ascend_v7 as impl
         from operators.mha.split_cost_model import MODEL_PATH
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
@@ -114,6 +129,8 @@ def main():
                         "status": "passed", "max_abs_error": (got.float()-expected.float()).abs().max().item()}
                 if seed == 7:
                     timed_calls = calls
+                    timed_inputs = inputs
+                    timed_expected = expected
             report["phase"] = "timing"
             start, end = torch.npu.Event(enable_timing=True), torch.npu.Event(enable_timing=True)
 
@@ -136,15 +153,41 @@ def main():
                         timed_calls[label]()
                 torch.npu.synchronize()
                 samples = {label: [] for label in labels}
+                fresh_samples = {label: [] for label in labels if label != "ascendc"}
                 for pair in range(args.pairs):
                     offset = (pair+rd) % len(labels)
                     order = labels[offset:] + labels[:offset]
                     if ((pair+rd)//len(labels)) % 2:
                         order = tuple(reversed(order))
                     for label in order:
-                        samples[label].append(measure(timed_calls[label]))
+                        call = timed_calls[label]
+                        if args.recompile_each_sample and label != "ascendc":
+                            report.update(active=f"{key}/round{rd+1}/sample{pair+1}/recompile_{label}")
+                            save()
+                            torch.npu.synchronize()
+                            impl.build_kernel.cache_clear()
+                            wall_start = time.perf_counter()
+                            fresh = impl.build_kernel(1, sq, 1, 128, pool_rows, kv//128, 128, False,
+                                "bfloat16", args.device, full_kv_cache=True,
+                                num_splits=info["split"], kv_prefetch=label)
+                            build_ms = (time.perf_counter()-wall_start)*1000
+                            call = functools.partial(fresh, *timed_inputs)
+                            first_output = call()
+                            torch.npu.synchronize()
+                            total_ms = (time.perf_counter()-wall_start)*1000
+                            torch.testing.assert_close(first_output.cpu(), timed_expected, rtol=1e-2, atol=4e-3)
+                            for _ in range(args.warmup):
+                                call()
+                            torch.npu.synchronize()
+                            components = [fresh.direct_kernel] if info["split"] == 1 else [fresh.partial_kernel, fresh.merge_kernel]
+                            fresh_samples[label].append({"build_ms": build_ms,
+                                "build_first_call_wall_ms": total_ms,
+                                "source_sha256": [hashlib.sha256(k.get_kernel_source().encode()).hexdigest() for k in components]})
+                        samples[label].append(measure(call))
                 medians = {label: statistics.median(v) for label, v in samples.items()}
                 row = {"key": key, "round": rd+1, "median_us": medians, "samples_us": samples}
+                if args.recompile_each_sample:
+                    row["fresh_compiles"] = fresh_samples
                 report["results"].append(row)
                 rows.append(medians)
                 print(f"{index+1}/{len(cases)} {key} round{rd+1}: {medians}", flush=True)
@@ -159,6 +202,17 @@ def main():
                 item[f"{candidate}_vs_{control}"] = {"speedup": statistics.median(ratios),
                     "min_round": min(ratios), "max_round": max(ratios), "faster_rounds": sum(v > 1 for v in ratios)}
             report["summary"].append(item)
+            if args.recompile_each_sample:
+                records = [r["fresh_compiles"] for r in report["results"] if r["key"] == key]
+                item["fresh_compile"] = {label: {
+                    metric: statistics.median(s[metric] for record in records for s in record[label])
+                    for metric in ("build_ms", "build_first_call_wall_ms")}
+                    for label in fresh_samples}
+                item["fresh_compile_count"] = {label: sum(len(r[label]) for r in records) for label in fresh_samples}
+                item["build_first_call_speedup_vs_baseline"] = {label:
+                    item["fresh_compile"]["baseline"]["build_first_call_wall_ms"] /
+                    item["fresh_compile"][label]["build_first_call_wall_ms"]
+                    for label in fresh_samples if label != "baseline"}
             save()
         report["groups"] = {}
         for comparison in ("k_early_vs_baseline", "v_buffer4_vs_baseline", "v_early_vs_baseline",
@@ -167,6 +221,12 @@ def main():
             report["groups"][comparison] = {"cases": len(values),
                 "geomean_speedup": math.exp(statistics.mean(math.log(v) for v in values)),
                 "faster_cases": sum(v > 1 for v in values)}
+        if args.recompile_each_sample:
+            for label in ("k_early", "v_buffer4", "v_early"):
+                values = [r["build_first_call_speedup_vs_baseline"][label] for r in report["summary"]]
+                report["groups"][f"build_first_call_{label}_vs_baseline"] = {
+                    "cases": len(values), "geomean_speedup": math.exp(statistics.mean(map(math.log, values))),
+                    "faster_cases": sum(v > 1 for v in values)}
         report.update(status="passed", phase="complete", correctness="passed", active=None)
     except Exception:
         report.update(status="error", error=traceback.format_exc())

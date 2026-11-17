@@ -54,3 +54,26 @@ Full calls include Q preparation, allocations and all kernels. Source hashes,
 generated C++, raw samples and failure phase are retained in a fresh run folder.
 Speedup fields use control latency / candidate latency; values above one mean
 the candidate is faster. No candidate is promoted automatically.
+
+## Fresh compilation per sample
+
+Run `python fgw.py mha run run_mha_kv_prefetch_recompile` for the same candidates
+and shapes with TileLang caching disabled (environment flag and runtime API,
+asserted) and the builder LRU cleared before every measured candidate sample.
+No existing user cache files are deleted. Each fresh build is launched once,
+synchronized and checked against CPU reference; it is then warmed before one
+Event sample. The full sweep uses three rounds of three independent builds per
+candidate per shape (2016 fresh candidate builds, plus initial accuracy builds).
+The smoke gate uses two rounds of three builds on two shapes.
+
+Execution speedup fields keep their original meaning and exclude compilation.
+`fresh_compile` separately reports median build milliseconds and synchronized
+build-plus-first-call wall milliseconds. `build_first_call_speedup_vs_baseline`
+compares the latter among TileLang candidates, using ratios of medians.
+Per-build source hashes and timings are retained in raw JSON. AscendC remains a
+precompiled vendor operator; no comparable AscendC source compilation time is
+available. This measures fresh TileLang compilation in a reused Python process,
+not Python startup or a cold compiler process environment. Repeated compilation
+introduces longer gaps between Event samples than the original benchmark.
+
+Paste output: `reports/mha/latest/mha_kv_prefetch_recompile_paste.txt`.
