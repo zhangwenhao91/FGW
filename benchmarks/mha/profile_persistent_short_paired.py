@@ -51,7 +51,7 @@ def main():
         import torch
         import torch_npu
         import tilelang
-        import operators.mha.kernels.mha_paged_decode_ascend_v7 as implementation
+        import operators.mha.kernels.mha_paged_decode_ascend_v7_experimental as implementation
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
         from operators.mha.split_cost_model import MODEL_PATH
         torch.npu.set_device(args.device)

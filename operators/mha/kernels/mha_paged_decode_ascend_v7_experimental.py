@@ -1,0 +1,897 @@
+"""Experimental BF16/D128 Cube QK/PV path, with v2 fallback elsewhere.
+
+SIMD softmax/NZ packing macros adapted from tile-ai/tilelang core.py at
+a7cb753dafc6b2514cbbd7c8431260c9d05e7df0; see third_party/licenses/TILELANG_LICENSE.
+Single-split direct output; multi-split batched merge with per-row weights; Q tiles contain up to 128 distinct query rows; partial Q tiles are zero-padded.
+KV lengths must remain positive multiples of 128. NPU validation required.
+"""
+from functools import lru_cache
+import torch
+import torch_npu
+import tilelang
+import tilelang.ascend.language as T
+from tilelang.ascend.language import simd as S
+from tilelang.layout import make_ascend_compact_nz_layout
+from operators.mha.kernels.mha_paged_decode_ascend_v2 import build_kernel as build_v2
+
+
+def route(dtype, dim, page_size, sq=1, causal=False, cube_mode="stable"):
+    if cube_mode not in ("stable", "general"):
+        raise ValueError("cube_mode must be stable or general")
+    if cube_mode == "general":
+        if str(dtype) not in ("float16", "torch.float16", "bfloat16", "torch.bfloat16") or dim < 16 or dim > 256 or dim % 16 or page_size <= 0 or page_size % 16:
+            raise ValueError("General Cube supports FP16/BF16, D16..256 step16, page_size divisible by16")
+        return "cube_general"
+    return "cube_bf16_d128" if str(dtype) in ("bfloat16", "torch.bfloat16") and dim == 128 and (not causal or sq == 1) and page_size > 0 and page_size % 128 == 0 else "fallback_v2"
+
+
+@lru_cache(maxsize=128)
+def build_kernel(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index=None,
+                 pipeline_stages=2, buffer_versions=2, q_resident=True, kv_versions=None, dump_ir_dir=None, schedule_mode="manual", num_splits=None, split_policy="auto", full_kv_cache=False, persistent_programs=28, cube_mode="stable", cache_lengths=None, general_model_version=1, fast_math=None, task_assignment=None, runtime_lengths=False, output_normalization="simt", v_transpose_stage="gm_l1", block_q=128, kv_prefetch="baseline"):
+    if kv_prefetch not in ("baseline", "k_early", "v_buffer4", "v_early"):
+        raise ValueError("Unknown KV prefetch experiment")
+    if kv_prefetch != "baseline" and (schedule_mode != "manual" or runtime_lengths or block_q != 128
+            or cube_mode != "stable" or v_transpose_stage != "gm_l1"):
+        raise ValueError("KV prefetch requires static Q128/manual restricted Cube")
+    # A common stage shift leaves all non-K relative timings unchanged.
+    stage_shift = 1 if kv_prefetch == "k_early" else 0
+    v_load_stage = 2 if kv_prefetch == "v_early" else 3
+    # V stage2->6 spans four iterations. Separate capacity control isolates it.
+    v_l1_versions = 4 if kv_prefetch in ("v_buffer4", "v_early") else 3
+    if type(block_q) is not int or block_q not in (64, 128):
+        raise ValueError("block_q must be 64 or 128")
+    if block_q != 128 and (num_splits is None or runtime_lengths):
+        raise ValueError("Q64 experiment requires explicit splits and static lengths; model remains calibrated for Q128 tiles")
+    if v_transpose_stage not in ("gm_l1", "l1_l0"):
+        raise ValueError("v_transpose_stage must be gm_l1 or l1_l0")
+    v_transpose_gm = v_transpose_stage == "gm_l1"
+    v_transpose_l0 = v_transpose_stage == "l1_l0"
+    if output_normalization not in ("simt", "simd", "fused"):
+        raise ValueError("output_normalization must be simt, simd or fused")
+    if runtime_lengths and (batch != 1 or heads != 1 or num_splits is None or causal or dim != 128 or page_size != 128
+                            or dtype != "bfloat16" or cube_mode != "stable"):
+        raise ValueError("Runtime lengths require B1H1, explicit split, BF16/D128/page128/noncausal restricted Cube")
+    if task_assignment not in (None, "strided", "contiguous"):
+        raise ValueError("task_assignment must be None (route default), strided or contiguous")
+    if fast_math is not None and type(fast_math) is not bool:
+        raise ValueError("fast_math must be None (existing default), False or True")
+    selected_route = route(dtype, dim, page_size, sq, causal, cube_mode)
+    if kv_prefetch != "baseline" and selected_route != "cube_bf16_d128":
+        raise ValueError("KV prefetch requires restricted Cube")
+    if block_q != 128 and selected_route != "cube_bf16_d128":
+        raise ValueError("Q tile experiment requires restricted v7 Cube")
+    if v_transpose_stage != "gm_l1" and selected_route != "cube_bf16_d128":
+        raise ValueError("V transpose experiment requires restricted v7 Cube")
+    if output_normalization != "simt" and selected_route != "cube_bf16_d128":
+        raise ValueError("SIMD normalization experiment requires restricted v7 Cube")
+    if task_assignment is None:
+        task_assignment = "contiguous" if selected_route == "cube_bf16_d128" else "strided"
+    if task_assignment != "strided" and selected_route != "cube_bf16_d128":
+        raise ValueError("Task assignment experiment requires the restricted v7 Cube route")
+    if fast_math is not None and selected_route != "cube_bf16_d128":
+        raise ValueError("Fast Math experiment requires the restricted v7 Cube route")
+    if selected_route == "cube_general":
+        if split_policy not in ("auto", "legacy", "cost_model"):
+            raise ValueError("General Cube split_policy must be auto, legacy or cost_model")
+        if (pipeline_stages != 2 or buffer_versions != 2 or not q_resident
+                or kv_versions is not None or dump_ir_dir is not None
+                or schedule_mode != "manual" or persistent_programs != 28):
+            raise ValueError("General Cube has its own untuned schedule; v7 tuning overrides are unsupported")
+        from operators.mha.kernels.mha_paged_decode_ascend_cube_general import build_kernel as build_general
+        return build_general(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index,
+                             num_splits=num_splits, split_policy=split_policy, cache_lengths=cache_lengths,
+                             model_version=general_model_version)
+    if persistent_programs is not None and (type(persistent_programs) is not int or persistent_programs != 28):
+        raise ValueError("persistent_programs supports None (uncapped grid) or 28 (default cap)")
+    requested_split_policy = split_policy
+    if split_policy not in ("auto", "legacy", "cost_model"):
+        raise ValueError("split_policy must be auto, legacy or cost_model")
+    if num_splits is not None and (type(num_splits) is not int or num_splits not in (1, 2, 4, 8, 16)):
+        raise ValueError("num_splits supports None (automatic) or 1/2/4/8/16")
+    if schedule_mode not in ("auto", "auto-offset", "manual", "nsa"):
+        raise ValueError("schedule_mode must be auto, auto-offset, manual or nsa")
+    pipeline_annotations = {} if schedule_mode == "auto" else {"enable_offset": True}
+    def dump_configs(name):
+        configs = {} if fast_math is None else {tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: fast_math}
+        if dump_ir_dir is None:
+            return configs
+        from pathlib import Path
+        directory = Path(dump_ir_dir) / name
+        directory.mkdir(parents=True, exist_ok=True)
+        configs.update({tilelang.PassConfigKey.TL_ENABLE_DUMP_IR: True,
+                        tilelang.PassConfigKey.TL_DUMP_IR_DIR: str(directory.resolve())})
+        return configs
+    kv_versions = buffer_versions if kv_versions is None else kv_versions
+    if kv_versions not in (1, 2, 3):
+        raise ValueError("K/V L1 versions must be 1, 2 or 3")
+    if pipeline_stages not in (1, 2, 3) or buffer_versions not in (1, 2, 3):
+        raise ValueError("Experimental pipeline stages and buffer versions must be 1, 2 or 3")
+    if page_size <= 0 or pool_rows <= 0 or pool_rows % page_size or width <= 0:
+        raise ValueError("positive page size, whole pool pages and positive table width required")
+    if route(dtype, dim, page_size, sq, causal) != "cube_bf16_d128":
+        if num_splits is not None or split_policy == "cost_model":
+            raise ValueError("split override/policy requires the v7 Cube path")
+        return build_v2(batch, sq, heads, dim, pool_rows, width, page_size, causal, dtype, device_index)
+    if split_policy == "auto":
+        from operators.mha.split_cost_model import eligible_config
+        cores = None
+        if full_kv_cache:
+            props = torch.npu.get_device_properties(device_index if device_index is not None else torch.npu.current_device())
+            cores = getattr(props, "cube_core_num", None)
+        use_model = eligible_config(batch, sq, heads, width * page_size, dtype=dtype, dim=dim,
+            page_size=page_size, causal=causal, pipeline_stages=pipeline_stages,
+            buffer_versions=buffer_versions, kv_versions=kv_versions, q_resident=q_resident,
+            schedule_mode=schedule_mode, full_kv_cache=full_kv_cache, cube_cores=cores)
+        split_policy = "cost_model" if use_model else "legacy"
+    BR, BC, ROWS, VL, D = block_q, 128, block_q // 2, 64, 128
+    # Statistics use whole 64-lane SIMD loads/stores even when each AIV handles
+    # only 32 rows. Keep padded lanes inside their allocation for Q64 tiles.
+    STATS_ROWS = 64
+    dtype, accum_dtype = "bfloat16", "float32"
+    scale = D ** -0.5
+    q_tiles = (sq + BR - 1) // BR
+    tasks = batch * q_tiles * heads
+    outputs = batch * sq * heads
+    splits = 1
+    while splits < 16 and splits * 2 <= width * page_size // BC and tasks * splits < 128:
+        splits *= 2
+    if num_splits is not None:
+        if num_splits > width * page_size // BC:
+            raise ValueError("num_splits must not exceed the number of KV tiles in table capacity")
+        splits = num_splits
+    elif split_policy == "cost_model":
+        if (causal or page_size != 128 or pipeline_stages != 2 or buffer_versions != 2
+                or kv_versions != 2 or not q_resident or schedule_mode != "manual"):
+            raise ValueError("Experimental cost model requires noncausal page128/manual/stages2/buffers2/Q resident")
+        props = torch.npu.get_device_properties(device_index if device_index is not None else torch.npu.current_device())
+        if getattr(props, "cube_core_num", None) != 28:
+            raise ValueError("Experimental cost model is calibrated for 28 Cube cores")
+        from operators.mha.split_cost_model import select_splits
+        splits = select_splits(batch, sq, heads, width * page_size // BC)
+    compute_work = tasks * splits
+    compute_grid = compute_work if persistent_programs is None else min(compute_work, persistent_programs)
+    if runtime_lengths:
+        runtime_merge_rows = min(8, tilelang.next_power_of_2(sq))
+        sq = T.dynamic("q_len")
+        pool_rows = T.dynamic("pool_rows")
+        width = T.dynamic("table_width")
+        q_tiles = (sq + BR - 1) // BR
+        tasks = batch * q_tiles * heads
+        outputs = batch * sq * heads
+        compute_work = tasks * splits
+        compute_grid = compute_work if persistent_programs is None else T.min(compute_work, persistent_programs)
+    # Dynamic B1H1 uses rank-2 GM regions, matching PR3896. Symbolic
+    # outer-axis slice clamps cannot always be reduced to unit extent by MTE.
+    q_buffer_shape = (sq, D) if runtime_lengths else (batch, heads, sq, D)
+    kv_buffer_shape = (pool_rows, D) if runtime_lengths else (pool_rows, heads, D)
+    parts_buffer_shape = (tasks * splits * BR, D) if runtime_lengths else (tasks, splits, BR, D)
+    direct_output_shape = (sq, D) if runtime_lengths else (batch, sq, heads * D)
+    @T.macro
+    def normalize_output_simd(output, total):
+        # Reference PR3896's row-broadcast division, retaining v7's denominator
+        # clamp and FP32 storage. BF16 conversion stays a separate operation.
+        with T.SimdVF(latency=1780):
+            mask = S.pset(32, "PAT_ALL")
+            floor = S.vdup(T.float32(1.0e-30), accum_dtype, mask)
+            for r in range(ROWS):
+                denominator = S.vmax(S.vld(total[r], "BRC_B32"), floor, mask)
+                for c in range(0, D, VL):
+                    normalized = S.vdiv(S.vld(output[r, c], "NORM"), denominator, mask)
+                    S.vsts(output[r, c], normalized, mask, "NORM_B32")
+
+    @T.macro
+    def normalize_cast_simd(source, destination, total, rows):
+        # A separate BF16 destination avoids overlapping FP32/BF16 alias hazards.
+        # No normalized FP32 matrix is written and reloaded before conversion.
+        with T.SimdVF(latency=1780):
+            mask = S.pset(32, "PAT_ALL")
+            floor = S.vdup(T.float32(1.0e-30), accum_dtype, mask)
+            for r in range(rows):
+                denominator = S.vmax(S.vld(total[r], "BRC_B32"), floor, mask)
+                for c in range(0, D, VL):
+                    normalized = S.vdiv(S.vld(source[r, c], "NORM"), denominator, mask)
+                    narrowed = S.vcvt(normalized, dtype, mask)
+                    S.vsts(destination[r, c], narrowed, mask, "PK_B32")
+
+    @T.macro
+    def softmax(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
+        with T.SimdVF(latency=735):
+            softmax_full = S.pset(32, "PAT_ALL")
+            softmax_one = S.pset(32, "PAT_VL1")
+            softmax_b16 = S.pset(16, "PAT_VL128")
+            dst_nz_ptr = S.make_ubuf_ptr(
+                T.access_ptr(P_nz_ub[0, 0], "w", ROWS + 1, BC),
+                "bfloat16",
+            )
+
+            S.vsts(old_m_ub[0], S.vld(m_ub[0], "NORM"), softmax_full, "NORM_B32")
+
+            for r in range(0, ROWS, 2):
+                s00 = S.vmuls(S.vld(S_ub[r, 0], "NORM"), T.float32(scale), softmax_full)
+                s01 = S.vmuls(S.vld(S_ub[r, VL], "NORM"), T.float32(scale), softmax_full)
+                s10 = S.vmuls(S.vld(S_ub[r + 1, 0], "NORM"), T.float32(scale), softmax_full)
+                s11 = S.vmuls(S.vld(S_ub[r + 1, VL], "NORM"), T.float32(scale), softmax_full)
+                S.vsts(S_ub[r, 0], s00, softmax_full, "NORM_B32")
+                S.vsts(S_ub[r, VL], s01, softmax_full, "NORM_B32")
+                S.vsts(S_ub[r + 1, 0], s10, softmax_full, "NORM_B32")
+                S.vsts(S_ub[r + 1, VL], s11, softmax_full, "NORM_B32")
+
+                max0 = S.vcmax(S.vmax(s00, s01, softmax_full), softmax_full)
+                max1 = S.vcmax(S.vmax(s10, s11, softmax_full), softmax_full)
+                S.vsts(m_ub[r], max0, softmax_one, "ONEPT_B32")
+                S.vsts(m_ub[r + 1], max1, softmax_one, "ONEPT_B32")
+
+            S.mem_bar("VST_VLD")
+            merged_max = S.vmax(S.vld(m_ub[0], "NORM"), S.vld(old_m_ub[0], "NORM"), softmax_full)
+            S.vsts(m_ub[0], merged_max, softmax_full, "NORM_B32")
+            S.mem_bar("VST_VLD")
+
+            for r in range(0, ROWS, 2):
+                max0 = S.vld(m_ub[r], "BRC_B32")
+                max1 = S.vld(m_ub[r + 1], "BRC_B32")
+                p00, p01 = S.vld2(S_ub[r, 0], "DINTLV_B32")
+                p10, p11 = S.vld2(S_ub[r + 1, 0], "DINTLV_B32")
+                e00 = S.vexpdif(p00, max0, softmax_full)
+                e10 = S.vexpdif(p10, max1, softmax_full)
+                e01 = S.vexpdif(p01, max0, softmax_full)
+                e11 = S.vexpdif(p11, max1, softmax_full)
+                row_sum0 = S.vcadd(S.vadd(e00, e01, softmax_full), softmax_full)
+                row_sum1 = S.vcadd(S.vadd(e10, e11, softmax_full), softmax_full)
+                S.vsts(row_sum_ub[r], row_sum0, softmax_one, "ONEPT_B32")
+                S.vsts(row_sum_ub[r + 1], row_sum1, softmax_one, "ONEPT_B32")
+
+                even_bf16_0 = S.vcvt(e00, "bfloat16", softmax_full, sat=False, part=0)
+                even_bf16_1 = S.vcvt(e10, "bfloat16", softmax_full, sat=False, part=0)
+                odd_bf16_0 = S.vcvt(e01, "bfloat16", softmax_full, sat=False, part=1)
+                odd_bf16_1 = S.vcvt(e11, "bfloat16", softmax_full, sat=False, part=1)
+                merged_bits0 = S.vor(
+                    T.reinterpret(even_bf16_0, "uint16x128"),
+                    T.reinterpret(odd_bf16_0, "uint16x128"),
+                    softmax_b16,
+                )
+                merged_bits1 = S.vor(
+                    T.reinterpret(even_bf16_1, "uint16x128"),
+                    T.reinterpret(odd_bf16_1, "uint16x128"),
+                    softmax_b16,
+                )
+                dst_nz_ptr = S.vsstb(
+                    T.reinterpret(merged_bits0, "bfloat16x128"),
+                    dst_nz_ptr,
+                    T.int32(((ROWS + 1) << 16) | 1),
+                    softmax_b16,
+                    update=True,
+                )
+                dst_nz_ptr = S.vsstb(
+                    T.reinterpret(merged_bits1, "bfloat16x128"),
+                    dst_nz_ptr,
+                    T.int32(((ROWS + 1) << 16) | 1),
+                    softmax_b16,
+                    update=True,
+                )
+
+            S.mem_bar("VST_VLD")
+            alpha_reg = S.vexpdif(S.vld(old_m_ub[0], "NORM"), S.vld(m_ub[0], "NORM"), softmax_full)
+            S.vsts(alpha_ub[0], alpha_reg, softmax_full, "NORM_B32")
+            l_scaled = S.vmul(S.vld(l_ub[0], "NORM"), alpha_reg, softmax_full)
+            l_updated = S.vadd(l_scaled, S.vld(row_sum_ub[0], "NORM"), softmax_full)
+            S.vsts(l_ub[0], l_updated, softmax_full, "NORM_B32")
+
+    @T.macro
+    def accumulate_output(O_tmp_ub, O_ub, alpha_ub):
+        with T.SimdVF(latency=318):
+            rescale_mask = S.pset(32, "PAT_ALL")
+            for i in range(ROWS):
+                alpha = S.vld(alpha_ub[i], "BRC_B32")
+                for c in range(0, D, VL):
+                    prev = S.vld(O_ub[i, c], "NORM")
+                    cur = S.vld(O_tmp_ub[i, c], "NORM")
+                    updated = S.vadd(S.vmul(alpha, prev, rescale_mask), cur, rescale_mask)
+                    S.vsts(O_ub[i, c], updated, rescale_mask, "NORM_B32")
+
+    @T.macro
+    def init_m_l(m_ub, l_ub):
+        with T.SimdVF(latency=400):
+            init_mask = S.pset(32, "PAT_ALL")
+            zero = S.vdup(T.float32(0.0), accum_dtype, init_mask)
+            initial_m = S.vdup(-T.infinity(accum_dtype), accum_dtype, init_mask)
+            S.vsts(l_ub[0], zero, init_mask, "NORM_B32")
+            S.vsts(m_ub[0], initial_m, init_mask, "NORM_B32")
+
+    @T.macro
+    def clear_O_ub(O_ub):
+        with T.SimdVF(latency=142):
+            clear_mask = S.pset(32, "PAT_ALL")
+            output_zero = S.vdup(T.float32(0.0), accum_dtype, clear_mask)
+            for i in range(ROWS):
+                for c in range(0, D, VL):
+                    S.vsts(O_ub[i, c], output_zero, clear_mask, "NORM_B32")
+
+
+    @T.prim_func
+    def partial(
+        Q: T.Tensor(q_buffer_shape, dtype),
+        K: T.Tensor(kv_buffer_shape, dtype),
+        V: T.Tensor(kv_buffer_shape, dtype),
+        Table: T.Tensor((batch, width), "int32"),
+        Lengths: T.Tensor((batch,), "int32"),
+        Parts: T.Tensor(parts_buffer_shape, accum_dtype),
+        LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
+    ):
+        with T.Kernel(compute_grid) as bx:
+            Q_l1 = T.alloc_l1((BR, D), dtype)
+            K_l1 = T.alloc_l1((BC, D), dtype)
+            V_l1 = T.alloc_l1((D, BC) if v_transpose_gm else (BC, D), dtype)
+            P_l1 = T.alloc_l1((BR, BC), dtype)
+            qa = T.alloc_l0a((BR, D), dtype)
+            kb = T.alloc_l0b((BC, D), dtype)
+            pa = T.alloc_l0a((BR, BC), dtype)
+            vb = T.alloc_l0b((D, BC), dtype)
+            qk = T.alloc_l0c((BR, BC), accum_dtype)
+            pv = T.alloc_l0c((BR, D), accum_dtype)
+            scores = T.alloc_shared((ROWS, BC), accum_dtype)
+            probs = T.alloc_shared((ROWS + 1, BC), dtype)
+            T.annotate_layout({probs: make_ascend_compact_nz_layout(probs)})
+            current = T.alloc_shared((ROWS, D), accum_dtype)
+            output = T.alloc_shared((ROWS, D), accum_dtype)
+            maximum = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            total = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            alpha = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            old_max = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            row_sum = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            lse = T.alloc_shared((STATS_ROWS,), accum_dtype)
+            if schedule_mode == "nsa":
+                T.annotate_buffer_versions({Q_l1: 1, qa: 1, K_l1: 2, V_l1: 2,
+                                           P_l1: 2, kb: 1, pa: 1, vb: 1, qk: 2, pv: 2,
+                                           scores: 2, probs: 2, current: 2, alpha: 2,
+                                           output: 1, maximum: 1, total: 1,
+                                           old_max: 1, row_sum: 1})
+            elif schedule_mode == "manual":
+                T.annotate_buffer_versions({K_l1: 3, V_l1: v_l1_versions, qk: 2, pv: 2,
+                                           scores: 3, probs: 2, current: 1, alpha: 3})
+            else:
+                T.annotate_buffer_versions({K_l1: kv_versions, V_l1: kv_versions,
+                                           qk: buffer_versions, pv: buffer_versions,
+                                           scores: buffer_versions, probs: buffer_versions,
+                                           current: buffer_versions, alpha: buffer_versions})
+            for work in T.serial(T.ceildiv(compute_work, compute_grid)):
+                if task_assignment == "contiguous":
+                    # Balanced contiguous ranges: first remainder blocks get
+                    # one extra task, exactly as in the strided assignment.
+                    work_id = bx * (compute_work // compute_grid) + T.min(bx, compute_work % compute_grid) + work
+                    valid_work = work < compute_work // compute_grid + T.cast(bx < compute_work % compute_grid, "int32")
+                else:
+                    work_id = bx + work * compute_grid
+                    valid_work = work_id < compute_work
+                if valid_work:
+                    task = work_id // splits
+                    split = work_id % splits
+                    b = task // (q_tiles * heads)
+                    qi = (task // heads % q_tiles) * BR
+                    h = task % heads
+                    # As in the reference PR, GM->L1 clamps a partial query tile
+                    # and zero-pads its missing rows. Only valid rows are merged out.
+                    if runtime_lengths:
+                        T.copy(Q[qi:qi + BR, 0:D], Q_l1)
+                    else:
+                        T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
+                    init_m_l(maximum, total)
+                    clear_O_ub(output)
+                    end = Lengths[b]
+                    if causal:
+                        end = T.max(end - sq + qi + 1, 0)
+                    tiles = end // BC
+                    per_split = T.ceildiv(tiles, splits)
+                    begin = split * per_split
+                    count = T.max(T.min(begin + per_split, tiles) - begin, 0)
+                    # Keep automatic stage assignment. Multi-version only the streamed
+                    # operands/results; online row statistics remain loop-carried state.
+                    if q_resident:
+                        T.copy(Q_l1, qa)
+                    for tile in T.Pipelined(count, num_stages=pipeline_stages, annotations=pipeline_annotations):
+                        logical = (begin + tile) * BC
+                        physical = Table[b, logical // page_size] * page_size + logical % page_size
+                        if schedule_mode == "nsa":
+                            # NSA-inspired offset pipeline: prepare QK while the preceding
+                            # tile passes through softmax/PV; retain single online state.
+                            with T.Stage(0):
+                                if runtime_lengths:
+                                    T.copy(K[physical:physical + BC, :], K_l1)
+                                else:
+                                    T.copy(K[physical:physical + BC, h, :], K_l1)
+                                if runtime_lengths:
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
+                                else:
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
+                                if not q_resident:
+                                    T.copy(Q_l1, qa)
+                                T.copy(K_l1, kb)
+                                T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                                T.dual_copy(qk, scores)
+                            with T.Stage(1):
+                                softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                                T.dual_copy(probs[0:ROWS, :], P_l1)
+                                T.copy(P_l1, pa)
+                                T.copy(V_l1, vb, transpose=v_transpose_l0)
+                                T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                                T.dual_copy(pv, current)
+                                accumulate_output(current, output, alpha)
+                        elif schedule_mode == "manual":
+                            with T.Stage(0):
+                                if runtime_lengths:
+                                    T.copy(K[physical:physical + BC, :], K_l1)
+                                else:
+                                    T.copy(K[physical:physical + BC, h, :], K_l1)
+                            with T.Stage(1 + stage_shift):
+                                if not q_resident:
+                                    T.copy(Q_l1, qa)
+                                T.copy(K_l1, kb)
+                                T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                            with T.Stage(3 + stage_shift):
+                                T.dual_copy(qk, scores)
+                            with T.Stage(5 + stage_shift):
+                                softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                            with T.Stage(6 + stage_shift):
+                                T.dual_copy(probs[0:ROWS, :], P_l1)
+                            with T.Stage(v_load_stage + stage_shift):
+                                if runtime_lengths:
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
+                                else:
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
+                            with T.Stage(6 + stage_shift):
+                                T.copy(P_l1, pa)
+                                T.copy(V_l1, vb, transpose=v_transpose_l0)
+                                T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                            with T.Stage(7 + stage_shift):
+                                T.dual_copy(pv, current)
+                                accumulate_output(current, output, alpha)
+                        else:
+                            if runtime_lengths:
+                                T.copy(K[physical:physical + BC, :], K_l1)
+                            else:
+                                T.copy(K[physical:physical + BC, h, :], K_l1)
+                            if runtime_lengths:
+                                T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
+                            else:
+                                T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
+                            if not q_resident:
+                                T.copy(Q_l1, qa)
+                            T.copy(K_l1, kb)
+                            T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                            T.dual_copy(qk, scores)
+                            softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                            T.dual_copy(probs[0:ROWS, :], P_l1)
+                            T.copy(P_l1, pa)
+                            T.copy(V_l1, vb, transpose=v_transpose_l0)
+                            T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                            T.dual_copy(pv, current)
+                            accumulate_output(current, output, alpha)
+                    if output_normalization == "simd":
+                        normalize_output_simd(output, total)
+                        with T.SimtVF(threads=128):
+                            for r in T.Parallel(ROWS):
+                                if total[r] > 0:
+                                    lse[r] = T.log2(T.max(total[r], 1.0e-30)) * 0.6931471805599453 + maximum[r]
+                                else:
+                                    lse[r] = -1.0e30
+                    else:
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(ROWS, D):
+                                output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
+                            for r in T.Parallel(ROWS):
+                                if total[r] > 0:
+                                    lse[r] = T.log2(T.max(total[r], 1.0e-30)) * 0.6931471805599453 + maximum[r]
+                                else:
+                                    lse[r] = -1.0e30
+                    if runtime_lengths:
+                        T.dual_copy(output, Parts[(task * splits + split) * BR:(task * splits + split + 1) * BR, :])
+                    else:
+                        T.dual_copy(output, Parts[task, split, :, :])
+                    # Integer indices in a multidimensional BufferRegion retain rank.
+                    # Flatten LSE so UB[ROWS] -> GM[BR] is an actual 1-D 1:2 copy.
+                    lse_offset = (task * splits + split) * BR
+                    if block_q == 64:
+                        T.dual_copy(lse[:ROWS], LSE[lse_offset:lse_offset + BR])
+                    else:
+                        T.dual_copy(lse, LSE[lse_offset:lse_offset + BR])
+
+    merge_rows = runtime_merge_rows if runtime_lengths else min(8, tilelang.next_power_of_2(sq))
+    merge_groups = (sq + merge_rows - 1) // merge_rows
+    merge_work = batch * heads * merge_groups
+    # Keep the grid bounded; large Q uses several work items per program.
+    # Workloads below this cap retain their original grid and one iteration.
+    merge_grid = T.min(merge_work, 32768) if runtime_lengths else min(merge_work, 32768)
+
+    @T.prim_func
+    def merge(
+        Parts: T.Tensor((tasks, splits, BR, D), accum_dtype),
+        LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
+        O: T.Tensor((batch, sq, heads, D), dtype),
+    ):
+        with T.Kernel(merge_grid) as core:
+            for work in T.serial(T.ceildiv(merge_work, merge_grid)):
+                program = work * merge_grid + core
+                if program < merge_work:
+                    b = program // (heads * merge_groups)
+                    h = program // merge_groups % heads
+                    qi = program % merge_groups * merge_rows
+                    group_task = (b * q_tiles + qi // BR) * heads + h
+                    row = qi % BR
+                    part = T.alloc_shared((merge_rows, D), accum_dtype)
+                    score = T.alloc_shared((merge_rows,), accum_dtype)
+                    maximum = T.alloc_shared((merge_rows,), accum_dtype)
+                    total = T.alloc_shared((merge_rows,), accum_dtype)
+                    peak_rows = T.alloc_shared((merge_rows,), accum_dtype)
+                    old_weights = T.alloc_shared((merge_rows,), accum_dtype)
+                    new_weights = T.alloc_shared((merge_rows,), accum_dtype)
+                    acc = T.alloc_shared((merge_rows, D), accum_dtype)
+                    out = T.alloc_shared((merge_rows, D), dtype)
+                    with T.SimtVF(threads=128):
+                        for r, d in T.Parallel(merge_rows, D):
+                            acc[r, d] = 0
+                        for r in T.Parallel(merge_rows):
+                            maximum[r] = -1.0e30
+                            total[r] = 0
+                    for split in T.serial(splits):
+                        # merge_rows divides BR, so no chunk crosses a partial Q tile.
+                        T.copy(Parts[group_task, split, row:row + merge_rows, :], part)
+                        offset = (group_task * splits + split) * BR + row
+                        T.copy(LSE[offset:offset + merge_rows], score)
+                        with T.SimtVF(threads=128):
+                            # Compute transcendental expressions per row before their
+                            # broadcast across D; keep old maximum unchanged until used.
+                            for r in T.Parallel(merge_rows):
+                                peak_rows[r] = T.max(maximum[r], score[r])
+                                old_weights[r] = T.exp(maximum[r] - peak_rows[r])
+                                new_weights[r] = T.if_then_else(
+                                    score[r] > -1.0e29, T.exp(score[r] - peak_rows[r]), 0)
+                            for r, d in T.Parallel(merge_rows, D):
+                                acc[r, d] = acc[r, d] * old_weights[r] + part[r, d] * new_weights[r]
+                            for r in T.Parallel(merge_rows):
+                                total[r] = total[r] * old_weights[r] + new_weights[r]
+                                maximum[r] = peak_rows[r]
+                    if output_normalization == "fused":
+                        normalize_cast_simd(acc, out, total, merge_rows)
+                    else:
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(merge_rows, D):
+                                out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
+                    # UB->GM uses the same tail-clamping convention as the reference.
+                    T.copy(out, O[b, qi:qi + merge_rows, h, :])
+
+    # Parts only encode ceil(Q/BR), which cannot recover the exact Q tail.
+    # Bind q_len from the already prepared Q tensor in the dynamic merge call.
+    if runtime_lengths:
+        @T.prim_func
+        def merge_runtime(
+            # Bind exact Q before checking ceil(Q/BR)-dependent partial shapes.
+            QShape: T.Tensor((sq, D), dtype),
+            Parts: T.Tensor((tasks * splits * BR, D), accum_dtype),
+            LSE: T.Tensor((tasks * splits * BR,), accum_dtype),
+            O: T.Tensor((sq, D), dtype),
+        ):
+            with T.Kernel(merge_grid) as core:
+                for work in T.serial(T.ceildiv(merge_work, merge_grid)):
+                    program = work * merge_grid + core
+                    if program < merge_work:
+                        b = program // (heads * merge_groups)
+                        h = program // merge_groups % heads
+                        qi = program % merge_groups * merge_rows
+                        group_task = (b * q_tiles + qi // BR) * heads + h
+                        row = qi % BR
+                        part = T.alloc_shared((merge_rows, D), accum_dtype)
+                        score = T.alloc_shared((merge_rows,), accum_dtype)
+                        maximum = T.alloc_shared((merge_rows,), accum_dtype)
+                        total = T.alloc_shared((merge_rows,), accum_dtype)
+                        peak_rows = T.alloc_shared((merge_rows,), accum_dtype)
+                        old_weights = T.alloc_shared((merge_rows,), accum_dtype)
+                        new_weights = T.alloc_shared((merge_rows,), accum_dtype)
+                        acc = T.alloc_shared((merge_rows, D), accum_dtype)
+                        out = T.alloc_shared((merge_rows, D), dtype)
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(merge_rows, D):
+                                acc[r, d] = 0
+                            for r in T.Parallel(merge_rows):
+                                maximum[r] = -1.0e30
+                                total[r] = 0
+                        for split in T.serial(splits):
+                            # merge_rows divides BR, so no chunk crosses a partial Q tile.
+                            T.copy(Parts[(group_task * splits + split) * BR + row:(group_task * splits + split) * BR + row + merge_rows, :], part)
+                            offset = (group_task * splits + split) * BR + row
+                            T.copy(LSE[offset:offset + merge_rows], score)
+                            with T.SimtVF(threads=128):
+                                # Compute transcendental expressions per row before their
+                                # broadcast across D; keep old maximum unchanged until used.
+                                for r in T.Parallel(merge_rows):
+                                    peak_rows[r] = T.max(maximum[r], score[r])
+                                    old_weights[r] = T.exp(maximum[r] - peak_rows[r])
+                                    new_weights[r] = T.if_then_else(
+                                        score[r] > -1.0e29, T.exp(score[r] - peak_rows[r]), 0)
+                                for r, d in T.Parallel(merge_rows, D):
+                                    acc[r, d] = acc[r, d] * old_weights[r] + part[r, d] * new_weights[r]
+                                for r in T.Parallel(merge_rows):
+                                    total[r] = total[r] * old_weights[r] + new_weights[r]
+                                    maximum[r] = peak_rows[r]
+                        if output_normalization == "fused":
+                            normalize_cast_simd(acc, out, total, merge_rows)
+                        else:
+                            with T.SimtVF(threads=128):
+                                for r, d in T.Parallel(merge_rows, D):
+                                    out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1.0e-30), dtype)
+                        # UB->GM uses the same tail-clamping convention as the reference.
+                        T.copy(out, O[qi:qi + merge_rows, :])
+
+    if splits == 1:
+        @T.prim_func
+        def direct(
+            Q: T.Tensor(q_buffer_shape, dtype),
+            K: T.Tensor(kv_buffer_shape, dtype),
+            V: T.Tensor(kv_buffer_shape, dtype),
+            Table: T.Tensor((batch, width), "int32"),
+            Lengths: T.Tensor((batch,), "int32"),
+            O: T.Tensor(direct_output_shape, dtype),
+        ):
+            with T.Kernel(compute_grid) as bx:
+                Q_l1 = T.alloc_l1((BR, D), dtype)
+                K_l1 = T.alloc_l1((BC, D), dtype)
+                V_l1 = T.alloc_l1((D, BC) if v_transpose_gm else (BC, D), dtype)
+                P_l1 = T.alloc_l1((BR, BC), dtype)
+                qa = T.alloc_l0a((BR, D), dtype)
+                kb = T.alloc_l0b((BC, D), dtype)
+                pa = T.alloc_l0a((BR, BC), dtype)
+                vb = T.alloc_l0b((D, BC), dtype)
+                qk = T.alloc_l0c((BR, BC), accum_dtype)
+                pv = T.alloc_l0c((BR, D), accum_dtype)
+                scores = T.alloc_shared((ROWS, BC), accum_dtype)
+                probs = T.alloc_shared((ROWS + 1, BC), dtype)
+                T.annotate_layout({probs: make_ascend_compact_nz_layout(probs)})
+                current = T.alloc_shared((ROWS, D), accum_dtype)
+                output = T.alloc_shared((ROWS, D), accum_dtype)
+                maximum = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                total = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                alpha = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                old_max = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                row_sum = T.alloc_shared((STATS_ROWS,), accum_dtype)
+                if schedule_mode == "nsa":
+                    T.annotate_buffer_versions({Q_l1: 1, qa: 1, K_l1: 2, V_l1: 2,
+                                               P_l1: 2, kb: 1, pa: 1, vb: 1, qk: 2, pv: 2,
+                                               scores: 2, probs: 2, current: 2, alpha: 2,
+                                               output: 1, maximum: 1, total: 1,
+                                               old_max: 1, row_sum: 1})
+                elif schedule_mode == "manual":
+                    T.annotate_buffer_versions({K_l1: 3, V_l1: v_l1_versions, qk: 2, pv: 2,
+                                               scores: 3, probs: 2, current: 1, alpha: 3})
+                else:
+                    T.annotate_buffer_versions({K_l1: kv_versions, V_l1: kv_versions,
+                                               qk: buffer_versions, pv: buffer_versions,
+                                               scores: buffer_versions, probs: buffer_versions,
+                                               current: buffer_versions, alpha: buffer_versions})
+                for work in T.serial(T.ceildiv(compute_work, compute_grid)):
+                    if task_assignment == "contiguous":
+                        work_id = bx * (compute_work // compute_grid) + T.min(bx, compute_work % compute_grid) + work
+                        valid_work = work < compute_work // compute_grid + T.cast(bx < compute_work % compute_grid, "int32")
+                    else:
+                        work_id = bx + work * compute_grid
+                        valid_work = work_id < compute_work
+                    if valid_work:
+                        task = work_id // splits
+                        split = work_id % splits
+                        b = task // (q_tiles * heads)
+                        qi = (task // heads % q_tiles) * BR
+                        h = task % heads
+                        # As in the reference PR, GM->L1 clamps a partial query tile
+                        # and zero-pads its missing rows. Only valid rows are merged out.
+                        if runtime_lengths:
+                            T.copy(Q[qi:qi + BR, 0:D], Q_l1)
+                        else:
+                            T.copy(Q[b, h, qi:qi + BR, 0:D], Q_l1)
+                        init_m_l(maximum, total)
+                        clear_O_ub(output)
+                        end = Lengths[b]
+                        if causal:
+                            end = T.max(end - sq + qi + 1, 0)
+                        tiles = end // BC
+                        per_split = T.ceildiv(tiles, splits)
+                        begin = split * per_split
+                        count = T.max(T.min(begin + per_split, tiles) - begin, 0)
+                        # Keep automatic stage assignment. Multi-version only the streamed
+                        # operands/results; online row statistics remain loop-carried state.
+                        if q_resident:
+                            T.copy(Q_l1, qa)
+                        for tile in T.Pipelined(count, num_stages=pipeline_stages, annotations=pipeline_annotations):
+                            logical = (begin + tile) * BC
+                            physical = Table[b, logical // page_size] * page_size + logical % page_size
+                            if schedule_mode == "nsa":
+                                # NSA-inspired offset pipeline: prepare QK while the preceding
+                                # tile passes through softmax/PV; retain single online state.
+                                with T.Stage(0):
+                                    if runtime_lengths:
+                                        T.copy(K[physical:physical + BC, :], K_l1)
+                                    else:
+                                        T.copy(K[physical:physical + BC, h, :], K_l1)
+                                    if runtime_lengths:
+                                        T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
+                                    else:
+                                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
+                                    if not q_resident:
+                                        T.copy(Q_l1, qa)
+                                    T.copy(K_l1, kb)
+                                    T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                                    T.dual_copy(qk, scores)
+                                with T.Stage(1):
+                                    softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                                    T.dual_copy(probs[0:ROWS, :], P_l1)
+                                    T.copy(P_l1, pa)
+                                    T.copy(V_l1, vb, transpose=v_transpose_l0)
+                                    T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                                    T.dual_copy(pv, current)
+                                    accumulate_output(current, output, alpha)
+                            elif schedule_mode == "manual":
+                                with T.Stage(0):
+                                    if runtime_lengths:
+                                        T.copy(K[physical:physical + BC, :], K_l1)
+                                    else:
+                                        T.copy(K[physical:physical + BC, h, :], K_l1)
+                                with T.Stage(1 + stage_shift):
+                                    if not q_resident:
+                                        T.copy(Q_l1, qa)
+                                    T.copy(K_l1, kb)
+                                    T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                                with T.Stage(3 + stage_shift):
+                                    T.dual_copy(qk, scores)
+                                with T.Stage(5 + stage_shift):
+                                    softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                                with T.Stage(6 + stage_shift):
+                                    T.dual_copy(probs[0:ROWS, :], P_l1)
+                                with T.Stage(v_load_stage + stage_shift):
+                                    if runtime_lengths:
+                                        T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
+                                    else:
+                                        T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
+                                with T.Stage(6 + stage_shift):
+                                    T.copy(P_l1, pa)
+                                    T.copy(V_l1, vb, transpose=v_transpose_l0)
+                                    T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                                with T.Stage(7 + stage_shift):
+                                    T.dual_copy(pv, current)
+                                    accumulate_output(current, output, alpha)
+                            else:
+                                if runtime_lengths:
+                                    T.copy(K[physical:physical + BC, :], K_l1)
+                                else:
+                                    T.copy(K[physical:physical + BC, h, :], K_l1)
+                                if runtime_lengths:
+                                    T.copy(V[physical:physical + BC, :], V_l1, transpose=v_transpose_gm)
+                                else:
+                                    T.copy(V[physical:physical + BC, h, :], V_l1, transpose=v_transpose_gm)
+                                if not q_resident:
+                                    T.copy(Q_l1, qa)
+                                T.copy(K_l1, kb)
+                                T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+                                T.dual_copy(qk, scores)
+                                softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                                T.dual_copy(probs[0:ROWS, :], P_l1)
+                                T.copy(P_l1, pa)
+                                T.copy(V_l1, vb, transpose=v_transpose_l0)
+                                T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                                T.dual_copy(pv, current)
+                                accumulate_output(current, output, alpha)
+                        if output_normalization == "fused":
+                            cast_view = T.alloc_shared((ROWS, D), dtype)
+                            normalize_cast_simd(output, cast_view, total, ROWS)
+                        else:
+                            if output_normalization == "simd":
+                                normalize_output_simd(output, total)
+                            else:
+                                with T.SimtVF(threads=128):
+                                    for r, d in T.Parallel(ROWS, D):
+                                        output[r, d] = output[r, d] / T.max(total[r], 1.0e-30)
+                            # Reuse FP32 output storage for BF16 conversion, as in upstream.
+                            # Sequential SIMD rows ensure a cast store cannot overwrite a future
+                            # FP32 source row before it is read.
+                            cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
+                            with T.SimdVF(latency=193):
+                                mask = S.pset(32, "PAT_ALL")
+                                for r in range(ROWS):
+                                    for c in range(0, D, VL):
+                                        value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
+                                        S.vsts(cast_view[r, c], value, mask, "PK_B32")
+                        # Keep Sq as its own bounded axis for Q-tail clamping, and expose
+                        # query/D as the trailing two region axes for dual-copy inference.
+                        if runtime_lengths:
+                            T.dual_copy(cast_view[0:ROWS, 0:D], O[qi:qi + BR, :])
+                        else:
+                            T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi:qi + BR, h * D:(h + 1) * D])
+
+        direct_kernel = tilelang.compile(direct, out_idx=-1, target="ascend", execution_backend="auto",
+                                        pass_configs=dump_configs("direct"))
+
+        def launch_direct(q, k, v, table, lengths):
+            if runtime_lengths:
+                return direct_kernel(q.view(-1, D), k.view(-1, D), v.view(-1, D), table, lengths).view(batch, q.shape[1], heads, D)
+            prepared = q.permute(0, 2, 1, 3).contiguous()
+            return direct_kernel(prepared, k, v, table, lengths).view(batch, sq, heads, D)
+
+        launch_direct.block_q = BR
+        launch_direct.compute_grid = compute_grid
+        launch_direct.task_assignment = task_assignment
+        launch_direct.compute_work = compute_work
+        launch_direct.persistent_programs = persistent_programs
+        launch_direct.requested_split_policy = requested_split_policy
+        launch_direct.split_policy = "explicit" if num_splits is not None else split_policy
+        launch_direct.num_splits = splits
+        launch_direct.query_tile_tasks = tasks
+        launch_direct.execution_mode = "direct_single_split"
+        launch_direct.direct_kernel = direct_kernel
+        launch_direct.prepare_q = lambda q: q.view(-1, D) if runtime_lengths else q.permute(0, 2, 1, 3).contiguous()
+        return launch_direct
+
+    partial_kernel = tilelang.compile(partial, out_idx=[5, 6], target="ascend", execution_backend="auto",
+                                     pass_configs=dump_configs("partial"))
+    merge_kernel = tilelang.compile(merge_runtime if runtime_lengths else merge, out_idx=-1, target="ascend", execution_backend="auto",
+                                   pass_configs=dump_configs("merge"))
+
+    def launch(q, k, v, table, lengths):
+        # Put each head's query rows on the last two axes for the same
+        # Q-tail DMA geometry as the reference. Include this conversion in timing.
+        q_head_major = q.view(-1, D) if runtime_lengths else q.permute(0, 2, 1, 3).contiguous()
+        if runtime_lengths:
+            parts, lse = partial_kernel(q_head_major, k.view(-1, D), v.view(-1, D), table, lengths)
+            return merge_kernel(q_head_major, parts, lse).view(batch, q.shape[1], heads, D)
+        parts, lse = partial_kernel(q_head_major, k, v, table, lengths)
+        return merge_kernel(parts, lse)
+    # Expose the exact compiled callables for isolated profiling; launch unchanged.
+    launch.block_q = BR
+    launch.compute_grid = compute_grid
+    launch.task_assignment = task_assignment
+    launch.compute_work = compute_work
+    launch.persistent_programs = persistent_programs
+    launch.requested_split_policy = requested_split_policy
+    launch.split_policy = "explicit" if num_splits is not None else split_policy
+    launch.num_splits = splits
+    launch.query_tile_tasks = tasks
+    launch.execution_mode = "split_and_merge"
+    launch.partial_kernel = partial_kernel
+    launch.merge_kernel = merge_kernel
+    launch.prepare_q = lambda q: q.view(-1, D) if runtime_lengths else q.permute(0, 2, 1, 3).contiguous()
+    return launch
+
+def mha_paged_decode(q, k_cache, v_cache, block_table, cache_seqlens,
+                     page_size, is_causal=False, *, pipeline_stages=2, buffer_versions=2,
+                     q_resident=True, kv_versions=None, schedule_mode="manual", num_splits=None, split_policy="auto", persistent_programs=28, cube_mode="stable", general_model_version=1):
+    """Same public tensor contract as v0; metadata values must be valid."""
+    if q.ndim != 4 or k_cache.ndim != 3:
+        raise ValueError("expected Q[B,Sq,H,D], K/V[N,H,D]")
+    b, sq, h, d = q.shape
+    if min(b, sq, h, d) <= 0 or block_table.ndim != 2:
+        raise ValueError("positive Q extents and rank-2 table required")
+    if k_cache.shape[1:] != (h, d) or v_cache.shape != k_cache.shape:
+        raise ValueError("K/V shape mismatch")
+    if block_table.shape[0] != b or block_table.shape[1] <= 0 or cache_seqlens.shape != (b,):
+        raise ValueError("metadata shape mismatch")
+    if q.dtype not in (torch.float16, torch.bfloat16) or k_cache.dtype != q.dtype or v_cache.dtype != q.dtype:
+        raise ValueError("matching FP16/BF16 Q/K/V required")
+    if block_table.dtype != torch.int32 or cache_seqlens.dtype != torch.int32:
+        raise ValueError("int32 metadata required")
+    inputs = (q, k_cache, v_cache, block_table, cache_seqlens)
+    if q.device.type != "npu" or any(x.device != q.device or not x.is_contiguous() for x in inputs):
+        raise ValueError("contiguous inputs on the same NPU required")
+    full_kv_cache = False
+    model_cache_lengths = None
+    selected_route = route(q.dtype, d, page_size, sq, is_causal, cube_mode)
+    if selected_route == "cube_general":
+        lengths = cache_seqlens.cpu().tolist()
+        if any(n < 0 or n > block_table.shape[1] * page_size for n in lengths):
+            raise ValueError("Cache lengths must be within table capacity")
+        if split_policy == "cost_model":
+            model_cache_lengths = tuple(lengths)
+    if selected_route == "cube_bf16_d128":
+        lengths = cache_seqlens.cpu().tolist()
+        full_kv_cache = all(n == block_table.shape[1] * page_size for n in lengths)
+        if any(n <= 0 or n % 128 or n > block_table.shape[1] * page_size for n in lengths):
+            raise ValueError("Full-block Cube path requires positive 128-aligned cache lengths within table capacity")
+    with torch.npu.device(q.device):
+        kernel = build_kernel(b, sq, h, d, k_cache.shape[0], block_table.shape[1],
+                              page_size, is_causal,
+                              "float16" if q.dtype == torch.float16 else "bfloat16", q.device.index, pipeline_stages=pipeline_stages, buffer_versions=buffer_versions,
+                              q_resident=q_resident, kv_versions=kv_versions, schedule_mode=schedule_mode, num_splits=num_splits, split_policy=split_policy, full_kv_cache=full_kv_cache, persistent_programs=persistent_programs, cube_mode=cube_mode, cache_lengths=model_cache_lengths, general_model_version=general_model_version)
+        return kernel(*inputs)

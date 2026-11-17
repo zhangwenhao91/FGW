@@ -46,7 +46,7 @@ def main():
         import torch
         import torch_npu
         import tilelang
-        from operators.mha.kernels import mha_paged_decode_ascend_v7 as impl
+        from operators.mha.kernels import mha_paged_decode_ascend_v7_experimental as impl
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
         from tests.mha.test_mha_paged_accuracy import make_inputs
         torch.npu.set_device(args.device)

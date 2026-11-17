@@ -93,7 +93,10 @@ def main():
                     " Quick mode: round1 uses the initial fresh accuracy build; round2 rebuilds. "
                     "Exactly two builds per candidate per shape, two Event samples. "
                     "Initial build+first-call wall is the sum of separately measured build and first call.")
-        from operators.mha.kernels import mha_paged_decode_ascend_v7 as impl
+        if args.baseline_only:
+            from operators.mha.kernels import mha_paged_decode_ascend_v7 as impl
+        else:
+            from operators.mha.kernels import mha_paged_decode_ascend_v7_experimental as impl
         from operators.mha.split_cost_model import MODEL_PATH
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
         from tests.mha.test_mha_paged_accuracy import make_inputs
@@ -120,7 +123,7 @@ def main():
                     impl.build_kernel.cache_clear()
                 build_start = time.perf_counter()
                 program = impl.build_kernel(1, sq, 1, 128, pool_rows, kv//128, 128, False,
-                    "bfloat16", args.device, full_kv_cache=True, num_splits=split, kv_prefetch=label)
+                    "bfloat16", args.device, full_kv_cache=True, num_splits=split, **({} if args.baseline_only else {"kv_prefetch": label}))
                 programs[label] = program
                 initial_builds[label] = {"build_ms": (time.perf_counter()-build_start)*1000}
                 assert program.num_splits == programs["baseline"].num_splits
@@ -213,7 +216,7 @@ def main():
                             wall_start = time.perf_counter()
                             fresh = impl.build_kernel(1, sq, 1, 128, pool_rows, kv//128, 128, False,
                                 "bfloat16", args.device, full_kv_cache=True,
-                                num_splits=info["split"], kv_prefetch=label)
+                                num_splits=info["split"], **({} if args.baseline_only else {"kv_prefetch": label}))
                             build_ms = (time.perf_counter()-wall_start)*1000
                             call = functools.partial(fresh, *timed_inputs)
                             first_output = call()

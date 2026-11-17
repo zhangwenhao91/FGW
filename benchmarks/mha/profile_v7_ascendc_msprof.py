@@ -58,7 +58,7 @@ def main():
         import tilelang
         import tilelang.profiler.msprof as msprof_module
         from tilelang.profiler import do_bench
-        from operators.mha.kernels import mha_paged_decode_ascend_v7 as v7
+        from operators.mha.kernels import mha_paged_decode_ascend_v7_experimental as v7
         from operators.mha.split_cost_model import MODEL_PATH
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
         torch.npu.set_device(args.device)

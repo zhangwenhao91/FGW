@@ -93,7 +93,7 @@ def main():
         import torch
         import torch_npu
         import tilelang
-        from operators.mha.kernels import mha_paged_decode_ascend_v7 as v7
+        from operators.mha.kernels import mha_paged_decode_ascend_v7_experimental as v7
         from operators.mha.kernels import mha_paged_decode_ascend_v2 as v2
         from operators.mha.kernels import mha_paged_decode_ascend_v1 as v1
         from operators.mha.kernels import mha_paged_decode_ascend_cube_general as cube

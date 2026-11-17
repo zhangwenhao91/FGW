@@ -46,7 +46,7 @@ def main():
         import torch
         import torch_npu
         import tilelang
-        import operators.mha.kernels.mha_paged_decode_ascend_v7 as implementation
+        import operators.mha.kernels.mha_paged_decode_ascend_v7_experimental as implementation
         from operators.mha.kernels.mha_paged_decode_ascend_v0 import reference
         torch.npu.set_device(args.device)
         device = torch.device("npu", args.device)

@@ -39,7 +39,7 @@ def child(mode, directory, device_index):
         b,sq,h,d,kv,page = 2,4096,8,128,2048,128
         if mode == "v7-export":
             import tilelang
-            from operators.mha.kernels import mha_paged_decode_ascend_v7 as v7
+            from operators.mha.kernels import mha_paged_decode_ascend_v7_experimental as v7
             program = v7.build_kernel(b,sq,h,d,b*kv,kv//page,page,False,"bfloat16",device_index,
                 schedule_mode="manual",full_kv_cache=True,dump_ir_dir=str(directory/"v7_passes"))
             if program.execution_mode != "direct_single_split":

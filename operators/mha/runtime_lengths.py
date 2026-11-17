@@ -13,7 +13,7 @@ def build_runtime_kernel(batch, heads, num_splits, merge_rows=8, device_index=0)
         raise ValueError("Runtime candidate requires B1H1 and split1/2/4/8/16")
     if merge_rows not in (1, 2, 4, 8):
         raise ValueError("merge_rows must be 1/2/4/8")
-    from operators.mha.kernels.mha_paged_decode_ascend_v7 import build_kernel
+    from operators.mha.kernels.mha_paged_decode_ascend_v7_experimental import build_kernel
     # Positive specialization anchors are replaced by symbols before device IR.
     width = max(4, num_splits)
     program = build_kernel(batch, merge_rows, heads, 128, width*128, width, 128,
