@@ -59,3 +59,21 @@ Timing remains one compile round, three rotated timing pairs, five immediate
 warmups, two accuracy seeds. Existing five-case smoke runs the selected policy
 before the grid. CPU checks cover all 80 shapes plus tails, no overlap/gaps,
 partial ownership and the independent attention/state-merge oracle.
+
+## Direct-output ABI cleanup
+
+No-fragment plans now use a five-buffer entry (Q/K/V/page table/final O).
+The host launches it without allocating Parts/LSE or uploading Counts/Tasks/
+Merges. A program computes its consecutive whole-Q-tile range from its index:
+`first = pid * (tiles // programs) + min(pid, tiles % programs)`, with
+`count = tiles // programs + (pid < tiles % programs)`.
+The compiled split entry retains its existing nine-buffer ABI. Both entries
+inline one shared Cube/Vector computation macro; the plan cost coefficients
+and grid test policy are unchanged. The benchmark adapter represents absent
+partial outputs as Python None values, not device tensors.
+
+Local Ascend lowering checks cover Q1, Q129 and Q3712 with KV512 under the cost
+policy, and Q129/KV512 under balanced policy. They verify five/nine kernel
+arguments and absent direct metadata upload/merge. These checks use local
+TileLang e84ce3de, not the server's a7cb753d; they do not establish hardware
+accuracy or speed. The five-case NPU smoke and 80-shape grid remain required.

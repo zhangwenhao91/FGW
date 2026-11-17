@@ -143,18 +143,8 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
                 for c in range(0, D, VL):
                     S.vsts(O_ub[i, c], output_zero, clear_mask, "NORM_B32")
 
-    @T.prim_func
-    def local(
-        Q: T.Tensor((1, 1, sq, D), dtype),
-        K: T.Tensor((pool_rows, 1, D), dtype),
-        V: T.Tensor((pool_rows, 1, D), dtype),
-        Table: T.Tensor((1, width), "int32"),
-        Counts: T.Tensor((grid,), "int32"),
-        Tasks: T.Tensor((grid, max_segments, 4), "int32"),
-        Parts: T.Tensor((slots, BR, D), accum_dtype),
-        LSE: T.Tensor((slots * BR,), accum_dtype),
-        O: T.Tensor((1, sq, D), dtype),
-    ):
+    @T.macro
+    def local_body(Q, K, V, Table, Counts, Tasks, Parts, LSE, O):
         with T.Kernel(grid) as bx:
             Q_l1 = T.alloc_l1((BR, D), dtype)
             K_l1 = T.alloc_l1((BC, D), dtype)
@@ -181,11 +171,17 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
                 {K_l1: 3, V_l1: 3, qk: 2, pv: 2, scores: 3, probs: 2, current: 1, alpha: 3}
             )
             for work in T.serial(max_segments):
-                if work < Counts[bx]:
-                    task = Tasks[bx, work, 0]
-                    begin = Tasks[bx, work, 1]
-                    count = Tasks[bx, work, 2]
-                    slot = Tasks[bx, work, 3]
+                if work < (Counts[bx] if has_merge else ((sq + BR - 1) // BR // grid + T.if_then_else(bx < ((sq + BR - 1) // BR) % grid, 1, 0))):
+                    if has_merge:
+                        task = Tasks[bx, work, 0]
+                        begin = Tasks[bx, work, 1]
+                        count = Tasks[bx, work, 2]
+                        slot = Tasks[bx, work, 3]
+                    else:
+                        task = bx * (((sq + BR - 1) // BR) // grid) + T.min(bx, ((sq + BR - 1) // BR) % grid) + work
+                        begin = 0
+                        count = width
+                        slot = -1
                     qi = task * BR
                     b, h = 0, 0
                     T.copy(Q[b, h, qi : qi + BR, :], Q_l1)
@@ -244,6 +240,39 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
                                     S.vsts(cast_view[r, c], value, mask, "PK_B32")
                         T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi : qi + BR, h * D : (h + 1) * D])
 
+    # Both entry signatures inline the same Cube/Vector computation macro.
+    # With no fragments, unused workspace and metadata never enter the ABI.
+    if has_merge:
+        @T.prim_func
+        def local_split(
+            Q: T.Tensor((1, 1, sq, D), dtype),
+            K: T.Tensor((pool_rows, 1, D), dtype),
+            V: T.Tensor((pool_rows, 1, D), dtype),
+            Table: T.Tensor((1, width), "int32"),
+            Counts: T.Tensor((grid,), "int32"),
+            Tasks: T.Tensor((grid, max_segments, 4), "int32"),
+            Parts: T.Tensor((slots, BR, D), accum_dtype),
+            LSE: T.Tensor((slots * BR,), accum_dtype),
+            O: T.Tensor((1, sq, D), dtype),
+        ):
+            local_body(Q, K, V, Table, Counts, Tasks, Parts, LSE, O)
+
+        local_entry = local_split
+    else:
+        @T.prim_func
+        def local_direct(
+            Q: T.Tensor((1, 1, sq, D), dtype),
+            K: T.Tensor((pool_rows, 1, D), dtype),
+            V: T.Tensor((pool_rows, 1, D), dtype),
+            Table: T.Tensor((1, width), "int32"),
+            O: T.Tensor((1, sq, D), dtype),
+        ):
+            # Aliases are placeholders only: compile-time has_merge=False removes
+            # every Counts/Tasks/Parts/LSE reference in the shared macro.
+            local_body(Q, K, V, Table, Table, Table, O, O, O)
+
+        local_entry = local_direct
+
     merge_grid = max(1, merge_count * groups_per_tile)
 
     @T.prim_func
@@ -300,7 +329,9 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
                 T.copy(out, O[0, qi : qi + merge_rows, :])
 
     local_kernel = tilelang.compile(
-        local, out_idx=[6, 7, 8], target="ascend", execution_backend="auto", pass_configs={}
+        local_entry,
+        out_idx=[6, 7, 8] if has_merge else [4],
+        target="ascend", execution_backend="auto", pass_configs={}
     )
     merge_kernel = (
         tilelang.compile(merge, out_idx=[], target="ascend", execution_backend="auto", pass_configs={})
@@ -310,6 +341,8 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
     uploaded = {}
 
     def prepare_plan(device):
+        if not has_merge:
+            return None, None, None
         if device not in uploaded:
             counts = [len(p) for p in plan.programs]
             tasks = [list(p) + [(-1, -1, -1, -1)] * (max_segments - len(p)) for p in plan.programs]
@@ -328,10 +361,15 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
             x.device == q.device and x.is_contiguous() for x in (q, k, v, table, lengths)
         )
 
+    def run_local(prepared, k, v, table, counts=None, tasks=None):
+        if has_merge:
+            return local_kernel(prepared, k, v, table, counts, tasks)
+        return None, None, local_kernel(prepared, k, v, table)
+
     def compute(q, k, v, table, lengths):
         counts, tasks, merges = prepare_plan(q.device)
         prepared = q.permute(0, 2, 1, 3).contiguous()
-        return local_kernel(prepared, k, v, table, counts, tasks)
+        return run_local(prepared, k, v, table, counts, tasks)
 
     def finish(parts, lse, output):
         if merge_kernel is not None:
@@ -345,6 +383,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
     launch.plan = plan
     launch.prepare_plan = prepare_plan
     launch.validate_inputs = validate_inputs
+    launch.run_local = run_local
     launch.local_kernel = local_kernel
     launch.merge_kernel = merge_kernel
     launch.compute = compute

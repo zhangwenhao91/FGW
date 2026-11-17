@@ -63,7 +63,7 @@ def main():
         scope="B1H1 BF16 D128/page128 full live KV, noncausal, static contiguous host plan, no device queue. Default code/model unchanged.",
         timing="Full calls include Q preparation, workspace/output allocations, all kernels. Host plan construction/H2D upload and compilation excluded. Immediate equal warmup per Event sample.",
         local_contract="static/local is the local JIT on prepared Q with normal allocations; static/merge updates only boundary rows in a fixed valid final-output fixture in place; static/chain runs local then merge on prepared Q. No-merge plans omit merge/chain timing.",
-        prototype_cost="Local JIT allocates Parts/LSE/final O each call. No-fragment plan uses unused one-slot dummy workspace. No merge kernel is launched for it.",
+        prototype_cost="Split local JIT allocates Parts/LSE/final O. No-fragment local JIT allocates final O only; no task metadata upload or merge.",
     )
 
     last_stage = [None]
@@ -224,7 +224,7 @@ def main():
                     counts, tasks, merges = static.prepare_plan(inputs[0].device)
                     prepared = inputs[0].permute(0, 2, 1, 3).contiguous()
                     local = functools.partial(
-                        static.local_kernel, prepared, inputs[1], inputs[2], inputs[3], counts, tasks
+                        static.run_local, prepared, inputs[1], inputs[2], inputs[3], counts, tasks
                     )
                     parts, lse, output = local()
                     calls = {
