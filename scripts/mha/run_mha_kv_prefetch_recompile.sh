@@ -18,7 +18,5 @@ publish() {
   cat mha_kv_prefetch_recompile_paste.txt
 }
 trap publish EXIT
-python -u -m benchmarks.mha.bench_kv_prefetch --recompile-each-sample --smoke \
-  --rounds 2 --pairs 3 --warmup 5 --output "$run_dir/smoke.json" 2>&1 | tee "$run_dir/smoke.log"
-python -u -m benchmarks.mha.bench_kv_prefetch --recompile-each-sample \
-  --rounds 3 --pairs 3 --warmup 30 --output "$run_dir/full.json" 2>&1 | tee "$run_dir/full.log"
+python -u -m benchmarks.mha.bench_kv_prefetch --quick-regressions \
+  --warmup 5 --output "$run_dir/full.json" 2>&1 | tee "$run_dir/full.log"

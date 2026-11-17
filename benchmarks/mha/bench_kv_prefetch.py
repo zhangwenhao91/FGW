@@ -24,10 +24,17 @@ def main():
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--recompile-each-sample", action="store_true",
                         help="Disable TileLang cache and rebuild before every timed candidate sample")
+    parser.add_argument("--quick-regressions", action="store_true",
+                        help="Only two slow-vs-AscendC cases; two builds total per candidate including accuracy build")
     args = parser.parse_args()
-    if args.rounds < 2 or args.pairs < 3 or args.warmup < 1:
-        parser.error("rounds>=2, pairs>=3, warmup>=1 required")
+    if args.quick_regressions:
+        args.recompile_each_sample = True
+        args.rounds, args.pairs = 2, 1
+    if args.rounds < 2 or args.pairs < (1 if args.quick_regressions else 3) or args.warmup < 1:
+        parser.error("rounds>=2, pairs>=3 (quick:1), warmup>=1 required")
     cases = [(129, 2048), (4096, 8192)] if args.smoke else [(q, kv) for kv in KVS for q in QS]
+    if args.quick_regressions:
+        cases = [(4096, 8192), (8192, 8192)]
     if args.list_only:
         print(json.dumps({"cases": len(cases), "shapes": cases, "B": 1, "H": 1,
                           "variants": ["baseline", "k_early", "v_buffer4", "v_early", "ascendc"]}))
@@ -70,6 +77,11 @@ def main():
                 "Records build_ms and synchronized build+first_call wall ms separately. "
                 "Validates every fresh first output, warms it, then measures one Event execution. "
                 "AscendC is prebuilt vendor code; no native recompilation is claimed.")
+            if args.quick_regressions:
+                report["recompile_policy"] += (
+                    " Quick mode: round1 uses the initial fresh accuracy build; round2 rebuilds. "
+                    "Exactly two builds per candidate per shape, two Event samples. "
+                    "Initial build+first-call wall is the sum of separately measured build and first call.")
         from operators.mha.kernels import mha_paged_decode_ascend_v7 as impl
         from operators.mha.split_cost_model import MODEL_PATH
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
@@ -88,13 +100,18 @@ def main():
             cpu_inputs = make_inputs((key, 1, sq, 1, 128, 128, kv//128), 7, torch.bfloat16, torch)
             pool_rows = cpu_inputs[1].shape[0]
             programs = {}
+            initial_builds = {}
             for label in ("baseline", "k_early", "v_buffer4", "v_early"):
                 report.update(phase="compile_accuracy", active=f"{key}/compile_{label}")
                 save()
                 split = None if label == "baseline" else programs["baseline"].num_splits
+                if args.recompile_each_sample:
+                    impl.build_kernel.cache_clear()
+                build_start = time.perf_counter()
                 program = impl.build_kernel(1, sq, 1, 128, pool_rows, kv//128, 128, False,
                     "bfloat16", args.device, full_kv_cache=True, num_splits=split, kv_prefetch=label)
                 programs[label] = program
+                initial_builds[label] = {"build_ms": (time.perf_counter()-build_start)*1000}
                 assert program.num_splits == programs["baseline"].num_splits
                 assert program.compute_grid == programs["baseline"].compute_grid
                 kernels = {"direct": program.direct_kernel} if program.num_splits == 1 else {
@@ -122,7 +139,14 @@ def main():
                     sparse_mode=0, inner_precise=0, return_softmax_lse=False)
                 calls["ascendc"] = lambda native=native: native()[0]
                 for label, call in calls.items():
-                    got = call().cpu()
+                    torch.npu.synchronize()
+                    first_start = time.perf_counter()
+                    output = call()
+                    torch.npu.synchronize()
+                    if seed == 7 and label in initial_builds:
+                        initial_builds[label]["build_first_call_wall_ms"] = (
+                            initial_builds[label]["build_ms"] + (time.perf_counter()-first_start)*1000)
+                    got = output.cpu()
                     assert got.shape == q.shape and got.dtype == q.dtype and torch.isfinite(got).all()
                     torch.testing.assert_close(got, expected, rtol=1e-2, atol=4e-3)
                     info["correctness"][f"{label}/seed{seed}"] = {
@@ -161,7 +185,12 @@ def main():
                         order = tuple(reversed(order))
                     for label in order:
                         call = timed_calls[label]
-                        if args.recompile_each_sample and label != "ascendc":
+                        reuse_initial = args.quick_regressions and rd == 0 and pair == 0
+                        if args.recompile_each_sample and label != "ascendc" and reuse_initial:
+                            fresh_samples[label].append({**initial_builds[label],
+                                "source_sha256": list(info["kernels"][label].values()),
+                                "accuracy_build_reused": True})
+                        if args.recompile_each_sample and label != "ascendc" and not reuse_initial:
                             report.update(active=f"{key}/round{rd+1}/sample{pair+1}/recompile_{label}")
                             save()
                             torch.npu.synchronize()

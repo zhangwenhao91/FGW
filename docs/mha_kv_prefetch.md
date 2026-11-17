@@ -77,3 +77,15 @@ not Python startup or a cold compiler process environment. Repeated compilation
 introduces longer gaps between Event samples than the original benchmark.
 
 Paste output: `reports/mha/latest/mha_kv_prefetch_recompile_paste.txt`.
+
+### Current quick runner
+
+The runner now uses `--quick-regressions`: only Q4096/KV8192 and Q8192/KV8192,
+two rounds of one sample each, warmup5, with no extra smoke run. Each candidate
+is compiled exactly twice per shape: round1 reuses the fresh accuracy build,
+round2 rebuilds with all TileLang caches disabled. Thus 16 candidate builds in
+total; seed7/19 accuracy, warmups and AscendC comparison remain. Round1 build plus
+first-call wall is the sum of separately measured build and first-call wall
+intervals (accuracy setup between intervals is excluded). Two samples provide
+only a quick check, not a stable distribution. The full mode remains available
+by invoking the benchmark module with `--recompile-each-sample` directly.
