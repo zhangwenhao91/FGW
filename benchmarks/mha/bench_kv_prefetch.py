@@ -30,7 +30,11 @@ def main():
                         help="Only original TL and AscendC, with immediate equal warmup before each Event sample")
     parser.add_argument("--clean-grid", action="store_true",
                         help="Requested 80-shape clean-v7/FIA grid, two builds per shape, one per round")
+    parser.add_argument("--balanced-grid", action="store_true",
+                        help="12 default split1 shapes with equal Q-tile counts across all 28 programs")
     args = parser.parse_args()
+    if args.balanced_grid:
+        args.clean_grid = True
     if args.quick_regressions:
         args.recompile_each_sample = True
         args.rounds, args.pairs = 2, 1
@@ -47,6 +51,8 @@ def main():
     if args.clean_grid:
         cases = [(q, kv) for kv in (512,1024,2048,4096,8192,16384,24576,32768)
                  for q in (64,128,256,512,1024,2048,4096,8192,16384,32768)]
+    if args.balanced_grid:
+        cases = [(q, kv) for kv in (8192,16384,32768) for q in (3584,7168,17920,28672)]
     variants = ("baseline",) if args.baseline_only else ("baseline", "k_early", "v_buffer4", "v_early")
     comparisons = (("baseline", "ascendc"),) if args.baseline_only else (
         ("k_early", "baseline"), ("v_buffer4", "baseline"), ("v_early", "baseline"),
@@ -153,6 +159,14 @@ def main():
                     path.with_name(f"{path.stem}_{key}_{label}_{component}.cpp").write_text(source, encoding="utf-8")
             info.update(split=programs["baseline"].num_splits, compute_grid=programs["baseline"].compute_grid,
                         baseline_split_policy=programs["baseline"].split_policy)
+            if args.balanced_grid:
+                work = programs["baseline"].compute_work
+                grid = programs["baseline"].compute_grid
+                assert info["split"] == 1 and grid == 28 and work % grid == 0, (
+                    "Default selection is not the expected balanced split1", key, info["split"], grid, work)
+                info["balance"] = {"programs": grid, "compute_work": work,
+                    "min_tasks_per_program": work//grid, "max_tasks_per_program": work//grid,
+                    "kv_blocks_per_task": kv//128, "no_q_tail": sq % 128 == 0}
             for seed in (7, 19):
                 report["active"] = f"{key}/accuracy_seed{seed}"
                 save()
@@ -269,6 +283,10 @@ def main():
                 item[f"{candidate}_vs_{control}"] = {"speedup": statistics.median(ratios),
                     "min_round": min(ratios), "max_round": max(ratios), "faster_rounds": sum(v > 1 for v in ratios)}
             report["summary"].append(item)
+            item["useful_tflops"] = {label: 4*sq*kv*128/(us*1e6)
+                                      for label, us in item["median_us"].items()}
+            if args.balanced_grid:
+                item["balance"] = info["balance"]
             if args.recompile_each_sample:
                 records = [r["fresh_compiles"] for r in report["results"] if r["key"] == key]
                 item["fresh_compile"] = {label: {
