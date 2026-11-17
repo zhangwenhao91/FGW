@@ -11,6 +11,7 @@ import traceback
 import os
 from benchmarks.mha.bench_split_breakdown import compiler_temp
 from operators.mha.static_schedule import make_plan
+from benchmarks.mha.resource_guard import cpu_environment, progress, runtime_policy
 
 CASES = ((8192, 32768, 2), (4096, 8192, 1), (2048, 24576, 4), (3584, 32768, 1), (7168, 32768, 1))
 SMOKE = ((1, 512, 1), (17, 512, 1), (129, 512, 1), (3712, 512, 1), (3584, 512, 1))
@@ -49,7 +50,12 @@ def main():
         prototype_cost="Local JIT allocates Parts/LSE/final O each call. No-fragment plan uses unused one-slot dummy workspace. No merge kernel is launched for it.",
     )
 
+    last_stage = [None]
     def save():
+        stage = (report['phase'], report['active'])
+        if stage != last_stage[0]:
+            progress(path, f"{stage[0]} active={stage[1]}")
+            last_stage[0] = stage
         path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf8")
         lines = [
             f"status={report['status']} phase={report['phase']} active={report['active']} completed={len(report['summary'])}/{len(cases)}"
@@ -67,8 +73,15 @@ def main():
     try:
         report["compiler_tmp"] = compiler_temp(path)
         os.environ["TILELANG_DISABLE_CACHE"] = "1"
+        threads = cpu_environment()
+        report['resource_policy'] = runtime_policy()
+        report.update(phase='import_torch',active=None);save()
         import torch
+        torch.set_num_threads(threads)
+        report['cpu_threads'] = torch.get_num_threads()
+        report.update(phase='import_torch_npu');save()
         import torch_npu
+        report.update(phase='import_tilelang');save()
         import tilelang
         from tilelang.env import env
         from operators.mha.kernels import mha_static_host_candidate as candidate
@@ -80,6 +93,7 @@ def main():
 
         env.disable_cache()
         assert not env.is_cache_enabled()
+        report.update(phase='npu_set_device');save()
         torch.npu.set_device(args.device)
         props = torch.npu.get_device_properties(args.device)
         assert getattr(props, "cube_core_num", None) == 28

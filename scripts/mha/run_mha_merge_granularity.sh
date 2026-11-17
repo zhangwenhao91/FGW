@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+printf "[FGW] initializing run_mha_merge_granularity.sh\n"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "$script_dir/../.." && pwd)"
 export PYTHONPATH="$repo_root${PYTHONPATH:+:$PYTHONPATH}"
@@ -17,8 +18,14 @@ publish() {
   if [ -f "$run_dir/full_paste.txt" ]; then
     cat "$run_dir/full_paste.txt" >> mha_merge_granularity_paste.txt
   fi
+  for guard_log in "$run_dir"/guard*.jsonl; do
+    if [ -f "$guard_log" ]; then
+      printf "\nguard=%s\n" "$guard_log" >> mha_merge_granularity_paste.txt
+      tail -n 1 "$guard_log" >> mha_merge_granularity_paste.txt
+    fi
+  done
   cat mha_merge_granularity_paste.txt
 }
 trap publish EXIT
-python -u -m benchmarks.mha.bench_split_breakdown --merge-granularity --pairs 7 --warmup 5 \
+python -u -m benchmarks.mha.resource_guard --log "$run_dir/guard_full.jsonl" -- python -u -m benchmarks.mha.bench_split_breakdown --merge-granularity --pairs 7 --warmup 5 \
   --output "$run_dir/full.json" "${resume_args[@]}" "$@" 2>&1 | tee "$run_dir/full.log"

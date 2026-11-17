@@ -10,6 +10,7 @@ import traceback
 import os
 import tempfile
 import copy
+from benchmarks.mha.resource_guard import cpu_environment, progress, runtime_policy
 
 CASES = ((8192, 32768), (4096, 8192), (2048, 24576))
 SPLITS = (1, 2, 4, 8)
@@ -38,7 +39,7 @@ def compiler_temp(path):
 
 
 def resume_records(previous, current):
-    for field in ("source_sha256", "model_sha256", "versions", "device"):
+    for field in ("source_sha256", "model_sha256", "versions", "device", "resource_policy"):
         if previous.get(field) != current.get(field):
             raise ValueError(f"Cannot resume: {field} changed or missing")
     for field in ("pairs", "warmup", "device", "merge_granularity"):
@@ -128,7 +129,12 @@ def main():
                       "Isolated times are diagnostic and need not sum to full latency. "
                       "AscendC is the installed precompiled FIA v2."))
 
+    last_stage = [None]
     def save():
+        stage = (report['phase'], report['active'])
+        if stage != last_stage[0]:
+            progress(path, f"{stage[0]} active={stage[1]}")
+            last_stage[0] = stage
         path.write_text(json.dumps(report, indent=2)+"\n", encoding="utf-8")
         lines = [f"status={report['status']} phase={report['phase']} active={report['active']} "
                  f"completed={len(report['summary'])}/3"]
@@ -149,8 +155,19 @@ def main():
     try:
         report["compiler_tmp"] = compiler_temp(path)
         os.environ["TILELANG_DISABLE_CACHE"] = "1"
+        threads = cpu_environment()
+        report['resource_policy'] = runtime_policy()
+        if args.resume:
+            old_policy = json.loads(Path(args.resume).read_text(encoding='utf8')).get('resource_policy')
+            if old_policy != report['resource_policy']:
+                raise ValueError('Cannot resume: resource policy differs; old unrestricted measurements are not mixed with guarded runs')
+        report.update(phase='import_torch', active=None);save()
         import torch
+        torch.set_num_threads(threads)
+        report['cpu_threads'] = torch.get_num_threads()
+        report.update(phase='import_torch_npu');save()
         import torch_npu
+        report.update(phase='import_tilelang');save()
         import tilelang
         from tilelang.env import env
         from operators.mha.kernels import mha_paged_decode_ascend_v7 as impl
@@ -163,6 +180,7 @@ def main():
             report["merge_experiment"] = "Rows8 is original default; rows16/32 share the SAME partial kernel within each split/round. Split1 remains direct. No default promotion."
         env.disable_cache()
         assert not env.is_cache_enabled()
+        report.update(phase='npu_set_device');save()
         torch.npu.set_device(args.device)
         props = torch.npu.get_device_properties(args.device)
         assert getattr(props, "cube_core_num", None) == 28, "Requires 28 Cube cores"

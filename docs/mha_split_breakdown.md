@@ -51,15 +51,16 @@ again before each build. This avoids dependency on global `/tmp`, whose absence
 caused the reported ENOENT in tempfile.mkdtemp(). This identifies the failing
 filesystem operation, not what removed the original `/tmp` path.
 
-To continue the reported failed run, from the FGW repository root:
+For a future continuation with matching guarded resource policy, from FGW root:
 
 ```bash
-bash scripts/mha/run_mha_split_breakdown.sh --resume reports/mha/latest/mha_split_breakdown.0jJvDJl2/full.json
+bash scripts/mha/run_mha_split_breakdown.sh --resume /absolute/path/to/previous-guarded-run/full.json
 ```
 
 The runner resolves the previous path before changing directories, writes a new
 run folder and preserves the original report. Resume validates kernel/model
 hashes, versions, device, warmup and sample settings; completed cases/rounds are
 kept, while unfinished-round build and accuracy records are discarded and that
-round is rerun. This run retains Q8192/KV32768 and Q4096/KV8192 round1, so only
-the remaining three successful build rounds (12 variants) need executing.
+round is rerun. Reports from before resource supervision do not have a matching
+resource policy and are now rejected before Torch is imported. After reported
+server outages, collect crash evidence first; do not resume merely to reproduce.
