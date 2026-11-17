@@ -26,6 +26,8 @@ def main():
                         help="Disable TileLang cache and rebuild before every timed candidate sample")
     parser.add_argument("--quick-regressions", action="store_true",
                         help="Only two slow-vs-AscendC cases; two builds total per candidate including accuracy build")
+    parser.add_argument("--baseline-only", action="store_true",
+                        help="Only original TL and AscendC, with immediate equal warmup before each Event sample")
     args = parser.parse_args()
     if args.quick_regressions:
         args.recompile_each_sample = True
@@ -35,9 +37,14 @@ def main():
     cases = [(129, 2048), (4096, 8192)] if args.smoke else [(q, kv) for kv in KVS for q in QS]
     if args.quick_regressions:
         cases = [(4096, 8192), (8192, 8192)]
+    variants = ("baseline",) if args.baseline_only else ("baseline", "k_early", "v_buffer4", "v_early")
+    comparisons = (("baseline", "ascendc"),) if args.baseline_only else (
+        ("k_early", "baseline"), ("v_buffer4", "baseline"), ("v_early", "baseline"),
+        ("v_early", "v_buffer4"), ("k_early", "ascendc"), ("v_early", "ascendc"))
     if args.list_only:
         print(json.dumps({"cases": len(cases), "shapes": cases, "B": 1, "H": 1,
-                          "variants": ["baseline", "k_early", "v_buffer4", "v_early", "ascendc"]}))
+                          "variants": [*variants, "ascendc"], "rounds": args.rounds,
+                          "pairs": args.pairs, "immediate_equal_warmup": args.baseline_only}))
         return 0
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -47,6 +54,10 @@ def main():
               "scope": "baseline: K0/QK1/score3/softmax5/P6/V3/PV6/acc7, V3 buffers. k_early: K0/all other stages+1, same buffers. v_buffer4: baseline stages, V4 buffers. v_early: V2, other baseline stages, V4 buffers. Compare v_early to v_buffer4 to isolate timing.",
               "accuracy": "Both seeds7/19, shuffled/repeated pages, CPU reference rtol.01 atol.004",
               "timing": "Rotating/reversing five-way warm-cache Event full calls; includes all kernels and Q preparation"}
+    if args.baseline_only:
+        report.update(scope="Original Q128/manual TL vs prebuilt AscendC only; kernel defaults unchanged",
+                      timing="Alternating two-way Event samples; equal immediate warmup and synchronize before EACH sample; compile excluded",
+                      variants=[*variants, "ascendc"])
 
     def save():
         path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
@@ -101,7 +112,7 @@ def main():
             pool_rows = cpu_inputs[1].shape[0]
             programs = {}
             initial_builds = {}
-            for label in ("baseline", "k_early", "v_buffer4", "v_early"):
+            for label in variants:
                 report.update(phase="compile_accuracy", active=f"{key}/compile_{label}")
                 save()
                 split = None if label == "baseline" else programs["baseline"].num_splits
@@ -159,6 +170,10 @@ def main():
             start, end = torch.npu.Event(enable_timing=True), torch.npu.Event(enable_timing=True)
 
             def measure(call):
+                if args.baseline_only:
+                    for _ in range(args.warmup):
+                        call()
+                    torch.npu.synchronize()
                 start.record()
                 output = call()
                 end.record()
@@ -205,9 +220,10 @@ def main():
                             torch.npu.synchronize()
                             total_ms = (time.perf_counter()-wall_start)*1000
                             torch.testing.assert_close(first_output.cpu(), timed_expected, rtol=1e-2, atol=4e-3)
-                            for _ in range(args.warmup):
-                                call()
-                            torch.npu.synchronize()
+                            if not args.baseline_only:
+                                for _ in range(args.warmup):
+                                    call()
+                                torch.npu.synchronize()
                             components = [fresh.direct_kernel] if info["split"] == 1 else [fresh.partial_kernel, fresh.merge_kernel]
                             fresh_samples[label].append({"build_ms": build_ms,
                                 "build_first_call_wall_ms": total_ms,
@@ -223,10 +239,10 @@ def main():
             item = {"key": key, "split": info["split"], "rounds": len(rows),
                     "median_us": {label: statistics.median(r[label] for r in rows) for label in labels},
                     "max_abs_error": {label: max(info["correctness"][f"{label}/seed{seed}"]["max_abs_error"] for seed in (7, 19)) for label in labels},
-                    "source_equal_baseline_v_early": info["kernels"]["baseline"] == info["kernels"]["v_early"]}
-            for candidate, control in (("k_early", "baseline"), ("v_buffer4", "baseline"),
-                                       ("v_early", "baseline"), ("v_early", "v_buffer4"),
-                                       ("k_early", "ascendc"), ("v_early", "ascendc")):
+                    "round_median_us": rows}
+            if not args.baseline_only:
+                item["source_equal_baseline_v_early"] = info["kernels"]["baseline"] == info["kernels"]["v_early"]
+            for candidate, control in comparisons:
                 ratios = [r[control]/r[candidate] for r in rows]
                 item[f"{candidate}_vs_{control}"] = {"speedup": statistics.median(ratios),
                     "min_round": min(ratios), "max_round": max(ratios), "faster_rounds": sum(v > 1 for v in ratios)}
@@ -244,14 +260,16 @@ def main():
                     for label in fresh_samples if label != "baseline"}
             save()
         report["groups"] = {}
-        for comparison in ("k_early_vs_baseline", "v_buffer4_vs_baseline", "v_early_vs_baseline",
-                           "v_early_vs_v_buffer4", "k_early_vs_ascendc", "v_early_vs_ascendc"):
+        for candidate, control in comparisons:
+            comparison = f"{candidate}_vs_{control}"
             values = [r[comparison]["speedup"] for r in report["summary"]]
             report["groups"][comparison] = {"cases": len(values),
                 "geomean_speedup": math.exp(statistics.mean(math.log(v) for v in values)),
                 "faster_cases": sum(v > 1 for v in values)}
         if args.recompile_each_sample:
-            for label in ("k_early", "v_buffer4", "v_early"):
+            for label in variants:
+                if label == "baseline":
+                    continue
                 values = [r["build_first_call_speedup_vs_baseline"][label] for r in report["summary"]]
                 report["groups"][f"build_first_call_{label}_vs_baseline"] = {
                     "cases": len(values), "geomean_speedup": math.exp(statistics.mean(map(math.log, values))),
