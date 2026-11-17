@@ -1,37 +1,166 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# cat reports/mha/latest/mha_v7_balanced_ascendc_paste.txt 
-run_directory=mha_v7_balanced_ascendc.o0MZLkoS
-status=passed phase=complete correctness=passed completed=12/12 active=None
-B1H1 BF16 D128 page128 noncausal; speedup=AscendC_us/TL_us; two TL builds, two rounds.
-MATRIX: rows=Q, columns=KV; -=incomplete
-Q/KV 8192 16384 32768
-3584 1.4353 1.2408 1.1430
-7168 1.1865 1.1256 1.0726
-17920 1.0760 1.0268 1.0526
-28672 1.0285 1.0671 1.0540
-DETAIL: Q KV split TL_us AscendC_us speedup round_min round_max TL_builds
-q3584_kv8192 S1 58.835 84.488 1.4353 1.3503 1.5202 2
-  BALANCE {"programs": 28, "compute_work": 28, "min_tasks_per_program": 1, "max_tasks_per_program": 1, "kv_blocks_per_task": 64, "no_q_tail": true} TFLOPS {"baseline": 255.5029001679554, "ascendc": 177.9233193798369}
-q7168_kv8192 S1 107.568 127.655 1.1865 1.1592 1.2138 2
-  BALANCE {"programs": 28, "compute_work": 56, "min_tasks_per_program": 2, "max_tasks_per_program": 2, "kv_blocks_per_task": 64, "no_q_tail": true} TFLOPS {"baseline": 279.49679021736637, "ascendc": 235.5158136464757}
-q17920_kv8192 S1 248.296 267.159 1.0760 1.0748 1.0771 2
-  BALANCE {"programs": 28, "compute_work": 140, "min_tasks_per_program": 5, "max_tasks_per_program": 5, "kv_blocks_per_task": 64, "no_q_tail": true} TFLOPS {"baseline": 302.7103801557038, "ascendc": 281.3372909940256}
-q28672_kv8192 S1 387.533 398.594 1.0285 1.0219 1.0352 2
-  BALANCE {"programs": 28, "compute_work": 224, "min_tasks_per_program": 8, "max_tasks_per_program": 8, "kv_blocks_per_task": 64, "no_q_tail": true} TFLOPS {"baseline": 310.319995198496, "ascendc": 301.7078376646713}
-q3584_kv16384 S1 106.156 131.714 1.2408 1.2320 1.2495 2
-  BALANCE {"programs": 28, "compute_work": 28, "min_tasks_per_program": 1, "max_tasks_per_program": 1, "kv_blocks_per_task": 128, "no_q_tail": true} TFLOPS {"baseline": 283.21178244906224, "ascendc": 228.25883899972686}
-q7168_kv16384 S1 196.081 220.716 1.1256 1.1247 1.1266 2
-  BALANCE {"programs": 28, "compute_work": 56, "min_tasks_per_program": 2, "max_tasks_per_program": 2, "kv_blocks_per_task": 128, "no_q_tail": true} TFLOPS {"baseline": 306.65665150724647, "ascendc": 272.4300832117035}
-q17920_kv16384 S1 478.144 490.878 1.0268 1.0099 1.0437 2
-  BALANCE {"programs": 28, "compute_work": 140, "min_tasks_per_program": 5, "max_tasks_per_program": 5, "kv_blocks_per_task": 128, "no_q_tail": true} TFLOPS {"baseline": 314.3903380709609, "ascendc": 306.2346552463806}
-q28672_kv16384 S1 744.339 794.244 1.0671 1.0595 1.0747 2
-  BALANCE {"programs": 28, "compute_work": 224, "min_tasks_per_program": 8, "max_tasks_per_program": 8, "kv_blocks_per_task": 128, "no_q_tail": true} TFLOPS {"baseline": 323.1300874031276, "ascendc": 302.8265510194452}
-q3584_kv32768 S1 193.560 221.232 1.1430 1.1367 1.1492 2
-  BALANCE {"programs": 28, "compute_work": 28, "min_tasks_per_program": 1, "max_tasks_per_program": 1, "kv_blocks_per_task": 256, "no_q_tail": true} TFLOPS {"baseline": 310.6506671995008, "ascendc": 271.7940484685775}
-q7168_kv32768 S1 371.937 398.940 1.0726 1.0704 1.0749 2
-  BALANCE {"programs": 28, "compute_work": 56, "min_tasks_per_program": 2, "max_tasks_per_program": 2, "kv_blocks_per_task": 256, "no_q_tail": true} TFLOPS {"baseline": 323.3318602822778, "ascendc": 301.4469179276808}
-q17920_kv32768 S1 940.634 990.126 1.0526 1.0502 1.0550 2
-  BALANCE {"programs": 28, "compute_work": 140, "min_tasks_per_program": 5, "max_tasks_per_program": 5, "kv_blocks_per_task": 256, "no_q_tail": true} TFLOPS {"baseline": 319.62258300986304, "ascendc": 303.64606159437176}
-q28672_kv32768 S1 1496.074 1576.709 1.0540 1.0441 1.0639 2
-  BALANCE {"programs": 28, "compute_work": 224, "min_tasks_per_program": 8, "max_tasks_per_program": 8, "kv_blocks_per_task": 256, "no_q_tail": true} TFLOPS {"baseline": 321.5323420669283, "ascendc": 305.0887640511307}
-GROUPS: {"baseline_vs_ascendc": {"cases": 12, "geomean_speedup": 1.12063245973562, "faster_cases": 12}}
+[11:14:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[11:14:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[11:14:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[11:14:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[11:14:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[11:14:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[11:14:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+Traceback (most recent call last):
+  File "/home/z30086261/FGW/benchmarks/mha/bench_split_breakdown.py", line 138, in main
+    auto = impl.build_kernel(1, qlen, 1, 128, pool_rows, kv//128, 128, False,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py", line 467, in build_kernel
+    direct_kernel = tilelang.compile(
+                    ^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 166, in compile
+    return cached(
+           ^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/__init__.py", line 91, in cached
+    return cache.cached(
+           ^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/kernel_cache.py", line 350, in cached
+    return JITKernel(
+           ^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 140, in __init__
+    adapter = self._compile_and_create_adapter(func, out_idx)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 280, in _compile_and_create_adapter
+    self.artifact = self._compile_artifact(tilelang_func, pass_configs, compile_metadata)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 321, in _compile_artifact
+    artifact = lower_with_context(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 165, in lower_with_context
+    return _lower_with_context_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 190, in _lower_with_context_impl
+    codegen_mod = device_codegen(device_mod, context) if enable_device_compile else device_codegen_without_compile(device_mod, context)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 101, in device_codegen
+    return context.codegen_device(device_mod, compile_device=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py", line 221, in codegen_device
+    return self.module.codegen_device(mod, self.target, compile_device=compile_device)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py", line 126, in codegen_device
+    return self.get_device_codegen(target).lower(mod, target, compile_device=compile_device)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/device_codegen.py", line 45, in lower
+    return build_func(mod, target)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/device_codegen.py", line 21, in build
+    return run_codegen_with_instrumentation(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/instrumentation/session.py", line 264, in run_codegen_with_instrumentation
+    return session.run_codegen(CodegenEvent(name=name, mod=mod, target=target, role=role), call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/instrumentation/session.py", line 111, in run_codegen
+    return wrapped()
+           ^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/device_codegen.py", line 25, in <lambda>
+    lambda: tvm.ffi.get_global_func(global_func_name)(mod, target),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::codegen::BuildTileLangAscend(tvm::IRModule, tvm::Target)
+  File "<unknown>", line 0, in TVMFFIPyCallback(void*, TVMFFIAny const*, int, TVMFFIAny*)
+  File "<unknown>", line 0, in TVMFFIPyCallManager::ForwardPyErrorToFFI()
+  File "<unknown>", line 0, in TVMFFICyErrorSetRaisedFromPyError(_object*)
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/backend.py", line 41, in tilelang_callback_ascend_compile
+    aibin = bisheng.compile_ascend(
+    
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/contrib/bisheng.py", line 174, in compile_ascend
+    temp = utils.tempdir(keep_for_debug=not env.should_cleanup_temp_files())
+    
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/contrib/utils.py", line 207, in tempdir
+    return TempDirectory(custom_path=custom_path, keep_for_debug=keep_for_debug)
+    
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/contrib/utils.py", line 121, in __init__
+    self.temp_dir = tempfile.mkdtemp()
+    
+  File "/root/miniconda3/envs/zwh/lib/python3.12/tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+    
+RuntimeError: [Errno 2] No such file or directory: '/tmp/tmpmmsohhum'
+run_directory=mha_split_breakdown.0jJvDJl2
+status=error phase=compile_accuracy active=q4096_kv8192/round2/auto completed=1/3
+CASE {"key": "q8192_kv32768", "geometry": {"1": {"q_tiles": 64, "compute_work": 64, "programs": 28, "min_tasks_per_program": 2, "max_tasks_per_program": 3, "kv_blocks_per_task": 256, "critical_kv_blocks": 768, "partial_bytes": 0, "lse_bytes": 0}, "2": {"q_tiles": 64, "compute_work": 128, "programs": 28, "min_tasks_per_program": 4, "max_tasks_per_program": 5, "kv_blocks_per_task": 128, "critical_kv_blocks": 640, "partial_bytes": 8388608, "lse_bytes": 65536}, "4": {"q_tiles": 64, "compute_work": 256, "programs": 28, "min_tasks_per_program": 9, "max_tasks_per_program": 10, "kv_blocks_per_task": 64, "critical_kv_blocks": 640, "partial_bytes": 16777216, "lse_bytes": 131072}, "8": {"q_tiles": 64, "compute_work": 512, "programs": 28, "min_tasks_per_program": 18, "max_tasks_per_program": 19, "kv_blocks_per_task": 32, "critical_kv_blocks": 608, "partial_bytes": 33554432, "lse_bytes": 262144}}, "accuracy": [{"round": 1, "split": 1, "seed": 7, "component": "full", "max_abs_error": 0.000244140625}, {"round": 1, "split": 1, "seed": 7, "component": "local", "max_abs_error": 0.000244140625}, {"round": 1, "split": 1, "seed": 19, "component": "full", "max_abs_error": 0.000244140625}, {"round": 1, "split": 1, "seed": 19, "component": "local", "max_abs_error": 0.000244140625}, {"round": 1, "split": 2, "seed": 7, "component": "full", "max_abs_error": 0.000244140625}, {"round": 1, "split": 2, "seed": 7, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 1, "split": 2, "seed": 7, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 1, "split": 2, "seed": 19, "component": "full", "max_abs_error": 0.000244140625}, {"round": 1, "split": 2, "seed": 19, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 1, "split": 2, "seed": 19, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 1, "split": 4, "seed": 7, "component": "full", "max_abs_error": 0.000244140625}, {"round": 1, "split": 4, "seed": 7, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 1, "split": 4, "seed": 7, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 1, "split": 4, "seed": 19, "component": "full", "max_abs_error": 0.000244140625}, {"round": 1, "split": 4, "seed": 19, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 1, "split": 4, "seed": 19, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 1, "split": 8, "seed": 7, "component": "full", "max_abs_error": 0.000244140625}, {"round": 1, "split": 8, "seed": 7, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 1, "split": 8, "seed": 7, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 1, "split": 8, "seed": 19, "component": "full", "max_abs_error": 0.000244140625}, {"round": 1, "split": 8, "seed": 19, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 1, "split": 8, "seed": 19, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 2, "split": 1, "seed": 7, "component": "full", "max_abs_error": 0.000244140625}, {"round": 2, "split": 1, "seed": 7, "component": "local", "max_abs_error": 0.000244140625}, {"round": 2, "split": 1, "seed": 19, "component": "full", "max_abs_error": 0.000244140625}, {"round": 2, "split": 1, "seed": 19, "component": "local", "max_abs_error": 0.000244140625}, {"round": 2, "split": 2, "seed": 7, "component": "full", "max_abs_error": 0.000244140625}, {"round": 2, "split": 2, "seed": 7, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 2, "split": 2, "seed": 7, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 2, "split": 2, "seed": 19, "component": "full", "max_abs_error": 0.000244140625}, {"round": 2, "split": 2, "seed": 19, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 2, "split": 2, "seed": 19, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 2, "split": 4, "seed": 7, "component": "full", "max_abs_error": 0.000244140625}, {"round": 2, "split": 4, "seed": 7, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 2, "split": 4, "seed": 7, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 2, "split": 4, "seed": 19, "component": "full", "max_abs_error": 0.000244140625}, {"round": 2, "split": 4, "seed": 19, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 2, "split": 4, "seed": 19, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 2, "split": 8, "seed": 7, "component": "full", "max_abs_error": 0.000244140625}, {"round": 2, "split": 8, "seed": 7, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 2, "split": 8, "seed": 7, "component": "chain", "max_abs_error": 0.000244140625}, {"round": 2, "split": 8, "seed": 19, "component": "full", "max_abs_error": 0.000244140625}, {"round": 2, "split": 8, "seed": 19, "component": "merge", "max_abs_error": 0.000244140625}, {"round": 2, "split": 8, "seed": 19, "component": "chain", "max_abs_error": 0.000244140625}], "builds": [{"round": 1, "split": 1, "hashes": {"direct": "abcf41df4ff011b6ec5af622ae4cb86311961a4842ecbb82ca76a602e191e6c5"}}, {"round": 1, "split": 2, "hashes": {"partial": "73c876f0054ad3f0785b514a5cf879d94df98dcbee70cf8286601875cbba64d2", "merge": "87889c5dd631630cd832c953b081fa367a8d512da6852757881fecb5a02ae808"}}, {"round": 1, "split": 4, "hashes": {"partial": "d5e8b9d52b3d634f20320e3c72780eb23c1e796d988412e6733f21f47c95e53b", "merge": "40a8dcdc80dba68c583560d76ea3272f87656a672c16bc10178dd3543988f46c"}}, {"round": 1, "split": 8, "hashes": {"partial": "e19426ee8038785e4f61bd6439f3974f92f49b602581fc977eae5e5bc717ef41", "merge": "1d2122fd125297734b8e15545eabb7b1440f6db00ebb3d66173c09dd1695e185"}}, {"round": 2, "split": 1, "hashes": {"direct": "abcf41df4ff011b6ec5af622ae4cb86311961a4842ecbb82ca76a602e191e6c5"}}, {"round": 2, "split": 2, "hashes": {"partial": "73c876f0054ad3f0785b514a5cf879d94df98dcbee70cf8286601875cbba64d2", "merge": "87889c5dd631630cd832c953b081fa367a8d512da6852757881fecb5a02ae808"}}, {"round": 2, "split": 4, "hashes": {"partial": "d5e8b9d52b3d634f20320e3c72780eb23c1e796d988412e6733f21f47c95e53b", "merge": "40a8dcdc80dba68c583560d76ea3272f87656a672c16bc10178dd3543988f46c"}}, {"round": 2, "split": 8, "hashes": {"partial": "e19426ee8038785e4f61bd6439f3974f92f49b602581fc977eae5e5bc717ef41", "merge": "1d2122fd125297734b8e15545eabb7b1440f6db00ebb3d66173c09dd1695e185"}}], "auto_split": 1, "auto_policy": "cost_model"}
+CASE {"key": "q4096_kv8192", "geometry": {"1": {"q_tiles": 32, "compute_work": 32, "programs": 28, "min_tasks_per_program": 1, "max_tasks_per_program": 2, "kv_blocks_per_task": 64, "critical_kv_blocks": 128, "partial_bytes": 0, "lse_bytes": 0}, "2": {"q_tiles": 32, "compute_work": 64, "programs": 28, "min_tasks_per_program": 2, "max_tasks_per_program": 3, "kv_blocks_per_task": 32, "critical_kv_blocks": 96, "partial_bytes": 4194304, "lse_bytes": 32768}, "4": {"q_tiles": 32, "compute_work": 128, "programs": 28, "min_tasks_per_program": 4, "max_tasks_per_program": 5, "kv_blocks_per_task": 16, "critical_kv_blocks": 80, "partial_bytes": 8388608, "lse_bytes": 65536}, "8": {"q_tiles": 32, "compute_work": 256, "programs": 28, "min_tasks_per_program": 9, "max_tasks_per_program": 10, "kv_blocks_per_task": 8, "critical_kv_blocks": 80, "partial_bytes": 16777216, "lse_bytes": 131072}}, "accuracy": [{"round": 1, "split": 1, "seed": 7, "component": "full", "max_abs_error": 0.00048828125}, {"round": 1, "split": 1, "seed": 7, "component": "local", "max_abs_error": 0.00048828125}, {"round": 1, "split": 1, "seed": 19, "component": "full", "max_abs_error": 0.00048828125}, {"round": 1, "split": 1, "seed": 19, "component": "local", "max_abs_error": 0.00048828125}, {"round": 1, "split": 2, "seed": 7, "component": "full", "max_abs_error": 0.00048828125}, {"round": 1, "split": 2, "seed": 7, "component": "merge", "max_abs_error": 0.00048828125}, {"round": 1, "split": 2, "seed": 7, "component": "chain", "max_abs_error": 0.00048828125}, {"round": 1, "split": 2, "seed": 19, "component": "full", "max_abs_error": 0.00048828125}, {"round": 1, "split": 2, "seed": 19, "component": "merge", "max_abs_error": 0.00048828125}, {"round": 1, "split": 2, "seed": 19, "component": "chain", "max_abs_error": 0.00048828125}, {"round": 1, "split": 4, "seed": 7, "component": "full", "max_abs_error": 0.00048828125}, {"round": 1, "split": 4, "seed": 7, "component": "merge", "max_abs_error": 0.00048828125}, {"round": 1, "split": 4, "seed": 7, "component": "chain", "max_abs_error": 0.00048828125}, {"round": 1, "split": 4, "seed": 19, "component": "full", "max_abs_error": 0.00048828125}, {"round": 1, "split": 4, "seed": 19, "component": "merge", "max_abs_error": 0.00048828125}, {"round": 1, "split": 4, "seed": 19, "component": "chain", "max_abs_error": 0.00048828125}, {"round": 1, "split": 8, "seed": 7, "component": "full", "max_abs_error": 0.00048828125}, {"round": 1, "split": 8, "seed": 7, "component": "merge", "max_abs_error": 0.00048828125}, {"round": 1, "split": 8, "seed": 7, "component": "chain", "max_abs_error": 0.00048828125}, {"round": 1, "split": 8, "seed": 19, "component": "full", "max_abs_error": 0.00048828125}, {"round": 1, "split": 8, "seed": 19, "component": "merge", "max_abs_error": 0.00048828125}, {"round": 1, "split": 8, "seed": 19, "component": "chain", "max_abs_error": 0.00048828125}], "builds": [{"round": 1, "split": 1, "hashes": {"direct": "d1b47d679129482abcd971842be564672eae7d5ad867124cc64582f56ae77598"}}, {"round": 1, "split": 2, "hashes": {"partial": "8acba7f258d18d338fd2aa178dfdc37b0916042c75f606a918fe1a561733dec5", "merge": "87889c5dd631630cd832c953b081fa367a8d512da6852757881fecb5a02ae808"}}, {"round": 1, "split": 4, "hashes": {"partial": "00871ba94453fc679f85915d341ca9f1a2afdedde648e029e78fb852d3d8c6cf", "merge": "40a8dcdc80dba68c583560d76ea3272f87656a672c16bc10178dd3543988f46c"}}, {"round": 1, "split": 8, "hashes": {"partial": "11accd76c5e992e6e14695615f65d1225f1a8ad505bc61ecb380672802b822d8", "merge": "1d2122fd125297734b8e15545eabb7b1440f6db00ebb3d66173c09dd1695e185"}}], "auto_split": 1, "auto_policy": "cost_model"}
+RESULT {"key": "q8192_kv32768", "auto_split": 1, "ascendc_us": 486.36050522327423, "results": [{"split": 1, "median_us": {"full": 567.4259960651398, "local": 556.2590062618256}, "speedup_vs_auto": 1.0, "speedup_vs_ascendc": 0.8570191485673224, "round_speedup_vs_auto": [1.0, 1.0], "round_speedup_vs_ascendc": [0.8480627207415458, 0.8659755763930991], "isolated_local_plus_merge_us": 556.2590062618256, "build_count": 2}, {"split": 2, "median_us": {"full": 523.296982049942, "local": 488.0574941635132, "merge": 48.422498628497124, "chain": 524.724006652832}, "speedup_vs_auto": 1.0851748607896543, "speedup_vs_ascendc": 0.9303567961316769, "round_speedup_vs_auto": [1.0470836822862368, 1.1232660392930718], "round_speedup_vs_ascendc": [0.8879926364437424, 0.9727209558196114], "isolated_local_plus_merge_us": 536.4799927920103, "build_count": 2}, {"split": 4, "median_us": {"full": 550.3309965133667, "local": 482.3389947414398, "merge": 71.00849971175194, "chain": 554.1120171546936}, "speedup_vs_auto": 1.0310287213549274, "speedup_vs_ascendc": 0.8836974317150776, "round_speedup_vs_auto": [1.0214183283838612, 1.0406391143259934], "round_speedup_vs_ascendc": [0.866226806584499, 0.9011680568456562], "isolated_local_plus_merge_us": 553.3474944531918, "build_count": 2}, {"split": 8, "median_us": {"full": 592.7140116691589, "local": 501.6079843044281, "merge": 115.447998046875, "chain": 599.4600057601929}, "speedup_vs_auto": 0.9573296912335687, "speedup_vs_ascendc": 0.8205565103375931, "round_speedup_vs_auto": [0.9454238890034153, 0.9692354934637222], "round_speedup_vs_ascendc": [0.8017787555622896, 0.8393342651128965], "isolated_local_plus_merge_us": 617.0559823513031, "build_count": 2}], "round_median_us": [{"S1/full": 560.1059794425964, "S1/local": 557.0200085639954, "S2/full": 534.9199771881104, "S2/local": 488.5709881782532, "S2/merge": 49.146998673677444, "S2/chain": 521.2060213088989, "S4/full": 548.3610033988953, "S4/local": 481.70098662376404, "S4/merge": 70.33500075340271, "S4/chain": 549.5780110359192, "S8/full": 592.4389958381653, "S8/local": 501.4619827270508, "S8/merge": 115.39799720048904, "S8/chain": 599.3890166282654, "ascendc": 475.00500082969666}, {"S1/full": 574.7460126876831, "S1/local": 555.4980039596558, "S2/full": 511.6739869117737, "S2/local": 487.5440001487732, "S2/merge": 47.6979985833168, "S2/chain": 528.2419919967651, "S4/full": 552.3009896278381, "S4/local": 482.9770028591156, "S4/merge": 71.68199867010117, "S4/chain": 558.646023273468, "S8/full": 592.9890275001526, "S8/local": 501.7539858818054, "S8/merge": 115.49799889326096, "S8/chain": 599.5309948921204, "ascendc": 497.7160096168518}], "best_split": 2}
+Traceback (most recent call last):
+  File "/home/z30086261/FGW/benchmarks/mha/bench_split_breakdown.py", line 138, in main
+    auto = impl.build_kernel(1, qlen, 1, 128, pool_rows, kv//128, 128, False,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW/operators/mha/kernels/mha_paged_decode_ascend_v7.py", line 467, in build_kernel
+    direct_kernel = tilelang.compile(
+                    ^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 166, in compile
+    return cached(
+           ^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/__init__.py", line 91, in cached
+    return cache.cached(
+           ^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/cache/kernel_cache.py", line 350, in cached
+    return JITKernel(
+           ^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 140, in __init__
+    adapter = self._compile_and_create_adapter(func, out_idx)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 280, in _compile_and_create_adapter
+    self.artifact = self._compile_artifact(tilelang_func, pass_configs, compile_metadata)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 321, in _compile_artifact
+    artifact = lower_with_context(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 165, in lower_with_context
+    return _lower_with_context_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 190, in _lower_with_context_impl
+    codegen_mod = device_codegen(device_mod, context) if enable_device_compile else device_codegen_without_compile(device_mod, context)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/engine/lower.py", line 101, in device_codegen
+    return context.codegen_device(device_mod, compile_device=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py", line 221, in codegen_device
+    return self.module.codegen_device(mod, self.target, compile_device=compile_device)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/module.py", line 126, in codegen_device
+    return self.get_device_codegen(target).lower(mod, target, compile_device=compile_device)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/device_codegen.py", line 45, in lower
+    return build_func(mod, target)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/device_codegen.py", line 21, in build
+    return run_codegen_with_instrumentation(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/instrumentation/session.py", line 264, in run_codegen_with_instrumentation
+    return session.run_codegen(CodegenEvent(name=name, mod=mod, target=target, role=role), call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/instrumentation/session.py", line 111, in run_codegen
+    return wrapped()
+           ^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/backend/device_codegen.py", line 25, in <lambda>
+    lambda: tvm.ffi.get_global_func(global_func_name)(mod, target),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::codegen::BuildTileLangAscend(tvm::IRModule, tvm::Target)
+  File "<unknown>", line 0, in TVMFFIPyCallback(void*, TVMFFIAny const*, int, TVMFFIAny*)
+  File "<unknown>", line 0, in TVMFFIPyCallManager::ForwardPyErrorToFFI()
+  File "<unknown>", line 0, in TVMFFICyErrorSetRaisedFromPyError(_object*)
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/backend.py", line 41, in tilelang_callback_ascend_compile
+    aibin = bisheng.compile_ascend(
+    
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/contrib/bisheng.py", line 174, in compile_ascend
+    temp = utils.tempdir(keep_for_debug=not env.should_cleanup_temp_files())
+    
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/contrib/utils.py", line 207, in tempdir
+    return TempDirectory(custom_path=custom_path, keep_for_debug=keep_for_debug)
+    
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/contrib/utils.py", line 121, in __init__
+    self.temp_dir = tempfile.mkdtemp()
+    
+  File "/root/miniconda3/envs/zwh/lib/python3.12/tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+    
+RuntimeError: [Errno 2] No such file or directory: '/tmp/tmpmmsohhum'
+
 (zwh) root@ubuntu162:/home/z30086261/FGW#
