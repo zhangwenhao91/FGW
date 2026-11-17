@@ -12,12 +12,14 @@ import tilelang
 import tilelang.ascend.language as T
 from tilelang.ascend.language import simd as S
 from tilelang.layout import make_ascend_compact_nz_layout
-from operators.mha.static_schedule import make_plan
+from operators.mha.static_schedule import make_plan, choose_plan
 
 
 @lru_cache(maxsize=64)
-def build_kernel(sq, kv, pool_rows):
-    plan = make_plan(sq, kv)
+def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
+    if plan_policy not in ("balanced", "cost"):
+        raise ValueError("plan_policy must be balanced or cost")
+    plan = choose_plan(sq, kv) if plan_policy == "cost" else make_plan(sq, kv)
     if pool_rows <= 0 or pool_rows % 128 or pool_rows < kv:
         raise ValueError("whole physical pool pages, at least KV capacity required")
     BR, BC, ROWS, VL, D, STATS_ROWS = 128, 128, 64, 64, 128, 64

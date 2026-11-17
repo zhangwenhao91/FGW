@@ -34,3 +34,28 @@ Terminal output shows shape index out of 80, compilation/accuracy stages, and ea
 
 Local checks validate exact grid coverage, argument selection, summary handling
 and shell syntax. NPU correctness/performance require running the command above.
+
+## Cost-aware candidate
+
+The grid runner now passes `--plan-policy cost` (the benchmark default remains
+`balanced` for reproduction). Both policies use the same local/merge kernel
+source. The host evaluates a whole-Q plan with up to 28 programs and balanced
+KV-block plans with each program count from 1 through 28. The whole-Q plan
+assigns consecutive complete Q tiles and writes final O directly without merge.
+No device queue, benchmark-time tuning, shape lookup or default-v7 change.
+
+The initial fixed cost score is the maximum program's
+`0.72 * KV_blocks + 2.0 * segments`, plus, for split plans only,
+`12.0 + 0.20 * partial_count + 0.15 * merge_Q_tiles`.
+Units are approximate microseconds. These are initial stage estimates motivated
+by prior local/merge measurements, not regression-fitted or validated latency
+predictions. Common launch/allocation costs cancel in this simplified score;
+occupancy, cache effects and compiler changes are not modeled. All 80 shapes use
+identical coefficients, recorded in the raw report. NPU validation is required.
+
+Raw cases include the selected plan, its estimated cost and the previous
+28-program balanced plan. Compact results append `strategy` and `programs`.
+Timing remains one compile round, three rotated timing pairs, five immediate
+warmups, two accuracy seeds. Existing five-case smoke runs the selected policy
+before the grid. CPU checks cover all 80 shapes plus tails, no overlap/gaps,
+partial ownership and the independent attention/state-merge oracle.

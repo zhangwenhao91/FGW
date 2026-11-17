@@ -13,6 +13,7 @@ class Plan:
     # slot=-1 means complete Q tile, written directly to final output.
     merges: tuple  # (Q tile, first partial slot, number of partial slots)
     partial_count: int
+    strategy: str = "balanced"
 
     @property
     def max_segments(self):
@@ -25,6 +26,7 @@ class Plan:
     def describe(self):
         loads = [sum(s[2] for s in program) for program in self.programs]
         return dict(
+            strategy=self.strategy,
             Q=self.q,
             KV=self.kv,
             programs=len(loads),
@@ -97,7 +99,7 @@ def validate_plan(plan):
                 slots.append(slot)
                 groups.setdefault(tile, []).append(slot)
     assert cursor == ((plan.q + 127) // 128) * blocks
-    assert max(loads) - min(loads) <= 1
+    assert max(loads) - min(loads) <= (blocks if plan.strategy == "q_only" else 1)
     assert sorted(slots) == list(range(plan.partial_count))
     assert set(groups).isdisjoint(direct)
     assert len(groups) + len(direct) == (plan.q + 127) // 128
@@ -105,3 +107,44 @@ def validate_plan(plan):
     for tile, first, count in plan.merges:
         assert count >= 2 and groups[tile] == list(range(first, first + count))
     return True
+
+
+@lru_cache(maxsize=128)
+def make_q_plan(q, kv, cores=28):
+    """Assign whole consecutive Q tiles; never create partial KV states."""
+    # Reuse argument/range validation from the balanced planner.
+    make_plan(q, kv, cores)
+    tiles, blocks = (q + 127) // 128, kv // 128
+    cores = min(cores, tiles)
+    programs = []
+    for pid in range(cores):
+        first = pid * (tiles // cores) + min(pid, tiles % cores)
+        count = tiles // cores + int(pid < tiles % cores)
+        programs.append(tuple((tile, 0, blocks, -1) for tile in range(first, first + count)))
+    plan = Plan(q, kv, tuple(programs), (), 0, "q_only")
+    validate_plan(plan)
+    return plan
+
+
+# Initial stage-cost estimates in microseconds, not a fitted latency predictor.
+# Fixed for the entire grid: no shape lookup or runtime timing/search on device.
+COST_MODEL = dict(block_us=0.72, segment_us=2.0, merge_launch_us=12.0,
+                  partial_us=0.20, merge_tile_us=0.15)
+
+
+def estimate_cost(plan):
+    """Critical program work plus selective merge; common call costs cancel."""
+    c = COST_MODEL
+    local = max(sum(s[2] for s in program) * c['block_us']
+                + len(program) * c['segment_us'] for program in plan.programs)
+    merge = (c['merge_launch_us'] + plan.partial_count * c['partial_us']
+             + len(plan.merges) * c['merge_tile_us']) if plan.merges else 0.0
+    return dict(local_us=local, merge_us=merge, total_us=local + merge)
+
+
+@lru_cache(maxsize=128)
+def choose_plan(q, kv):
+    """Evaluate whole-Q and balanced-KV plans using 1..28 programs on host."""
+    candidates = [make_q_plan(q, kv)] + [make_plan(q, kv, cores) for cores in range(1, 29)]
+    return min(candidates, key=lambda p: (estimate_cost(p)['total_us'],
+                                         p.partial_count, -len(p.programs)))

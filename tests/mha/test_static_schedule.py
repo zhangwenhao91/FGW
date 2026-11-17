@@ -4,10 +4,45 @@ import math
 import random
 import unittest
 from collections import Counter
-from operators.mha.static_schedule import make_plan, validate_plan
+from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan
 
 
 class StaticScheduleTests(unittest.TestCase):
+    def test_whole_q_assignment_and_cost_selection(self):
+        for q in (1, 17, 129, 3712, 32768):
+            plan = make_q_plan(q, 512)
+            self.assertFalse(plan.merges)
+            self.assertEqual(plan.partial_count, 0)
+            tiles = [tile for program in plan.programs for tile, _, _, _ in program]
+            self.assertEqual(tiles, list(range((q + 127) // 128)))
+            self.assertTrue(all(first == 0 and count == 4 and slot == -1
+                                for program in plan.programs for _, first, count, slot in program))
+        # A short workload must not pay a merge launch merely to occupy cores.
+        self.assertFalse(choose_plan(128, 512).merges)
+        # Long unbalanced work should retain useful split-KV parallelism.
+        self.assertTrue(choose_plan(8192, 32768).merges)
+        self.assertEqual(len(choose_plan(8192, 32768).programs), 28)
+
+    def test_selected_grid_coverage(self):
+        from benchmarks.mha.summarize_clean_grid import QS, KVS
+        for q in (*QS, 17, 129, 3712):
+            for kv in KVS:
+                plan = choose_plan(q, kv)
+                validate_plan(plan)
+                self.assertLessEqual(len(plan.programs), 28)
+                # Explicitly check exact interval coverage for each Q tile.
+                intervals = {}
+                for program in plan.programs:
+                    for tile, first, count, _ in program:
+                        intervals.setdefault(tile, []).append((first, first + count))
+                self.assertEqual(set(intervals), set(range((q + 127) // 128)))
+                for spans in intervals.values():
+                    cursor = 0
+                    for first, end in sorted(spans):
+                        self.assertEqual(first, cursor)
+                        cursor = end
+                    self.assertEqual(cursor, kv // 128)
+
     def test_coverage_and_unique_ownership(self):
         for q in (1, 17, 128, 129, 257):
             for kv in (128, 256, 512, 1024):

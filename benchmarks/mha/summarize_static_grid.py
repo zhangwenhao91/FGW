@@ -10,6 +10,7 @@ def summarize(directory):
     rows = []
     failures = []
     policies = set()
+    plan_policies = set()
     for kv in KVS:
         for q in QS:
             key = f"q{q}_kv{kv}"
@@ -21,6 +22,7 @@ def summarize(directory):
                 if report['status'] == 'passed' and len(report['summary']) == 1:
                     rows.append(report['summary'][0])
                     settings = report.get('settings', {})
+                    plan_policies.add(settings.get('plan_policy', 'balanced'))
                     policies.add((settings.get('rounds', 2), settings.get('pairs', 7), settings.get('warmup', 5)))
                 else:
                     failures.append(f"{key}: {report['status']} phase={report.get('phase')} active={report.get('active')}")
@@ -30,14 +32,15 @@ def summarize(directory):
     lines = [f"status={'passed' if passed else 'incomplete_or_error'} completed={len(rows)}/80",
              'B1H1 BF16 D128 page128 noncausal; 2 correctness seeds; timing policy (compile_rounds, pairs, immediate_warmups)=' + str(sorted(policies)),
              'Full-call Event timing excludes compilation and one-time host plan/H2D preparation.',
-             'Q KV v7_us static_us AscendC_us v7/static AscendC/static round_AC_min round_AC_max parts merge_tiles builds']
+             'Q KV v7_us static_us AscendC_us v7/static AscendC/static round_AC_min round_AC_max parts merge_tiles builds strategy programs']
     for row in rows:
         t, p = row['median_us'], row['plan']
         ac = row['static_vs_ascendc']
         lines.append(f"{p['Q']} {p['KV']} {t['default']:.3f} {t['static']:.3f} {t['ascendc']:.3f} "
                      f"{row['static_vs_default']['speedup']:.4f} {ac['speedup']:.4f} "
                      f"{ac['min_round']:.4f} {ac['max_round']:.4f} "
-                     f"{p['partial_count']} {p['merge_q_tiles']} {row['static_builds']}")
+                     f"{p['partial_count']} {p['merge_q_tiles']} {row['static_builds']} {p.get('strategy', 'balanced')} {p['programs']}")
+    lines.append('plan_policy=' + ','.join(sorted(plan_policies)))
     lines.extend(failures)
     output = directory.parent / 'mha_static_host_grid_paste.txt'
     output.write_text('\n'.join(lines) + '\n', encoding='utf8')

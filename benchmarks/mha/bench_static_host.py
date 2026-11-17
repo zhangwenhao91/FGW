@@ -10,7 +10,7 @@ import statistics
 import traceback
 import os
 from benchmarks.mha.bench_split_breakdown import compiler_temp
-from operators.mha.static_schedule import make_plan
+from operators.mha.static_schedule import make_plan, choose_plan, estimate_cost, COST_MODEL
 from benchmarks.mha.resource_guard import cpu_environment, progress, runtime_policy
 
 CASES = ((8192, 32768, 2), (4096, 8192, 1), (2048, 24576, 4), (3584, 32768, 1), (7168, 32768, 1))
@@ -24,6 +24,7 @@ def main():
     )
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
+    parser.add_argument("--plan-policy", choices=("balanced", "cost"), default="balanced")
     parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
     parser.add_argument("--pairs", type=int, default=7)
     parser.add_argument("--warmup", type=int, default=5)
@@ -44,8 +45,9 @@ def main():
         if q not in QS or kv not in KVS:
             parser.error("--shape must belong to the original 80-shape grid")
         cases = ((q, kv, None),)
+    planner = choose_plan if args.plan_policy == "cost" else make_plan
     if args.list_only:
-        print(json.dumps([dict(**make_plan(q, kv).describe(), uniform_split=s) for q, kv, s in cases]))
+        print(json.dumps([dict(**planner(q, kv).describe(), uniform_split=s, estimate=estimate_cost(planner(q, kv))) for q, kv, s in cases]))
         return 0
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -54,6 +56,7 @@ def main():
         phase="setup",
         active=None,
         settings=vars(args),
+        plan_cost_model=COST_MODEL,
         cases=[],
         rounds=[],
         summary=[],
@@ -137,8 +140,10 @@ def main():
 
         for qlen, kv, best in cases:
             key = f"q{qlen}_kv{kv}"
-            plan = make_plan(qlen, kv)
-            info = dict(key=key, plan=plan.describe(), uniform_split=best, accuracy=[], builds=[])
+            plan = planner(qlen, kv)
+            info = dict(key=key, plan=plan.describe(), estimate=estimate_cost(plan),
+                        previous_balanced_plan=make_plan(qlen, kv).describe(),
+                        uniform_split=best, accuracy=[], builds=[])
             report["cases"].append(info)
             path.with_name(f"{path.stem}_{key}_plan.json").write_text(
                 json.dumps(
@@ -164,7 +169,8 @@ def main():
                 default.build_kernel.cache_clear()
                 pool = fixtures[7][0][1].shape[0]
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
-                static = candidate.build_kernel(qlen, kv, pool)
+                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy)
+                assert static.plan == plan
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} default v7", flush=True)
                 base = default.build_kernel(
                     1, qlen, 1, 128, pool, kv // 128, 128, False, "bfloat16", args.device, full_kv_cache=True
