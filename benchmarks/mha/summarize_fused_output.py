@@ -13,7 +13,7 @@ POLICY=dict(rounds=1,timing_rounds=6,pairs=9,initial_warmup=100,warmup=10,
             split_overlap=False,only_static_ascendc=True)
 
 
-def validate(report,kv):
+def validate(report,kv,q=32768):
     if report.get('status')!='passed' or report.get('correctness')!='passed' or report.get('output_variant')!='simd_div_cast_v1':
         raise ValueError('incomplete report or wrong variant')
     if any(report.get('settings',{}).get(k)!=v for k,v in POLICY.items()):
@@ -21,7 +21,7 @@ def validate(report,kv):
     if report.get('timer_primed') is not True or len(report['summary'])!=1:
         raise ValueError('missing summary/Event priming')
     summary=report['summary'][0]
-    if (summary['plan']['Q'],summary['plan']['KV'])!=(32768,kv) or summary['static_builds']!=1 or summary.get('reference_builds')!=1:
+    if (summary['plan']['Q'],summary['plan']['KV'])!=(q,kv) or summary['static_builds']!=1 or summary.get('reference_builds')!=1:
         raise ValueError('wrong shape or build counts')
     info=report['cases'][0]
     if {(r['seed'],r['label']) for r in info['accuracy']}!={(s,l) for s in (7,19) for l in LABELS}:

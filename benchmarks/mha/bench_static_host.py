@@ -113,6 +113,7 @@ def main():
         report['softmax_variant'] = 'register_rows2_v2'
     if args.fused_output:
         report['output_variant'] = 'simd_div_cast_v1'
+        report['benchmark_sha256'] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     def save():
         stage = (report['phase'], report['active'])
         if stage != last_stage[0]:

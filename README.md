@@ -1,5 +1,17 @@
 # FGW
 
+## 输出融合候选：80 规格三方对照
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_fused_output_grid
+cat reports/mha/latest/mha_fused_output_grid_paste.txt
+```
+
+候选、原版 raw+SIMD 与原生 AscendC 同场比较；每版编译一次，六轮交替计时。
+支持终端进度、断点续跑和退化项汇总，默认不变。
+[范围与续跑说明](docs/mha_fused_output_grid.md)。
+
 ## 保留的 raw+SIMD 基线与 AscendC：80 规格
 
 ```bash
