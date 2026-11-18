@@ -27,6 +27,7 @@ def main():
     parser.add_argument(
         "--smoke", action="store_true", help="Accuracy only, including tails/mixed/direct/no-merge"
     )
+    parser.add_argument("--raw-breakdown", action="store_true", help="Only raw SIMD full/local/merge/prepared-chain and native FIA; omit variant builds")
     parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
@@ -49,6 +50,8 @@ def main():
         parser.error("rounds>=1, pairs>=3, warmup>=1 required")
     if args.timing_rounds < 1 or args.initial_warmup < 0:
         parser.error("timing-rounds>=1 and initial-warmup>=0 required")
+    if args.raw_breakdown and (args.merge_policy != "rawsimd" or not args.only_static_ascendc):
+        parser.error("--raw-breakdown requires --merge-policy rawsimd --only-static-ascendc")
     if args.smoke and (args.grid or args.shape):
         parser.error("--smoke cannot be combined with --grid/--shape")
     from benchmarks.mha.summarize_clean_grid import QS, KVS
@@ -200,7 +203,7 @@ def main():
                 static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs)
                 assert static.plan == plan
                 simd_reference = None
-                if args.merge_policy == "rawsimd":
+                if args.merge_policy == "rawsimd" and not args.raw_breakdown:
                     print(f"[FGW compile] {key} normalized SIMD reference", flush=True)
                     simd_reference = candidate.build_kernel(qlen, kv, pool, args.plan_policy,
                         args.programs, args.merge_rows, args.tail_pieces, "simd", args.merge_programs, False)
@@ -222,6 +225,8 @@ def main():
                         assert simd_reference.local_kernel is static.local_kernel
                         info["reference_builds"] = info.get("reference_builds", 0) + 1
                     info["partial_contract"] = "Both variants share raw A/max/sum local and workspace; reference divides each element, candidate broadcasts row reciprocal."
+                if args.raw_breakdown:
+                    info["partial_contract"] = "Raw A/max/sum SIMD division only; local/merge/prepared chain/full breakdown; no comparison variant build."
                 info["merge_assignment"] = static.merge_assignment
                 base = uniform = None
                 if not args.only_static_ascendc:
@@ -286,6 +291,8 @@ def main():
                     static.validate_inputs(*inputs)
                     counts, tasks, merges = static.prepare_plan(inputs[0].device)
                     prepared = inputs[0].permute(0, 2, 1, 3).contiguous()
+                    if args.raw_breakdown:
+                        info["q_preparation_aliases_input"] = prepared.data_ptr() == inputs[0].data_ptr()
                     local = functools.partial(
                         static.run_local, prepared, inputs[1], inputs[2], inputs[3], counts, tasks
                     )
@@ -302,7 +309,7 @@ def main():
                         calls["default"] = functools.partial(base, *inputs)
                     if uniform is not base:
                         calls["uniform_best"] = functools.partial(uniform, *inputs)
-                    if static.merge_kernel is not None and not args.only_static_ascendc:
+                    if static.merge_kernel is not None and (not args.only_static_ascendc or args.raw_breakdown):
                         calls["static/merge"] = functools.partial(static.finish, parts, lse, output)
 
                         def chain(local=local, static=static):
@@ -345,7 +352,7 @@ def main():
                             )
                         )
                     if seed == 7:
-                        if not args.only_static_ascendc:
+                        if not args.only_static_ascendc or args.raw_breakdown:
                             calls["static/local"] = local
                         timed_calls = calls
                 if args.smoke:

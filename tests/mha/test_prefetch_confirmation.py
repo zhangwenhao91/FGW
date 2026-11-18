@@ -17,6 +17,11 @@ class PrefetchConfirmationTests(unittest.TestCase):
             for position in range(3):
                 self.assertEqual(Counter(order[position] for order in orders), Counter(dict.fromkeys(labels, 3)))
             self.assertEqual(orders[0][0], labels[repeat % 3])
+        labels5 = ('full', 'merge', 'chain', 'ascendc', 'local')
+        for repeat in range(6):
+            orders = [paired_order(labels5, pair, 0, repeat) for pair in range(10)]
+            for position in range(5):
+                self.assertEqual(Counter(order[position] for order in orders), Counter(dict.fromkeys(labels5, 2)))
         self.assertEqual(paired_order(('TL', 'AC'), 0), ('TL', 'AC'))
         self.assertEqual(paired_order(('TL', 'AC'), 1), ('AC', 'TL'))
 
