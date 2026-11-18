@@ -3,12 +3,18 @@ set -euo pipefail
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 export PYTHONPATH="$repo_root${PYTHONPATH:+:$PYTHONPATH}"
 export TILELANG_DISABLE_CACHE=1
+policy="${1:-cost}"
+case "$policy" in
+  cost) report=mha_50fca6d_grid_paste.txt ;;
+  tail_split) report=mha_tail_split_grid_paste.txt ;;
+  *) printf 'Usage: bash run_grid.sh [cost|tail_split]\n' >&2; exit 2 ;;
+esac
 mkdir -p "$repo_root/reports"
 run_dir="$(mktemp -d "$repo_root/reports/grid.XXXXXXXX")"
 publish() {
-  python -u "$repo_root/benchmark.py" summarize "$run_dir"
+  python -u "$repo_root/benchmark.py" --plan-policy "$policy" summarize "$run_dir"
   printf 'run_directory=%s\n' "$run_dir"
-  cat "$repo_root/reports/mha_50fca6d_grid_paste.txt"
+  cat "$repo_root/reports/$report"
 }
 trap publish EXIT
 cd -- "$repo_root"
@@ -20,9 +26,9 @@ for kv in 512 1024 2048 4096 8192 16384 24576 32768; do
   for q in 64 128 256 512 1024 2048 4096 8192 16384 32768; do
     key="q${q}_kv${kv}"
     printf '[50fca6d grid] starting %d/80 %s elapsed=%ss\n' "$((completed+1))" "$key" "$((SECONDS-started))"
-    python -u resource_guard.py --log "$run_dir/guard_${key}.jsonl" -- python -u benchmark.py case --q "$q" --kv "$kv" --output "$run_dir/$key.json" 2>&1 | tee "$run_dir/$key.log"
+    python -u resource_guard.py --log "$run_dir/guard_${key}.jsonl" -- python -u benchmark.py --plan-policy "$policy" case --q "$q" --kv "$kv" --output "$run_dir/$key.json" 2>&1 | tee "$run_dir/$key.log"
     completed=$((completed+1))
     printf '[50fca6d grid] completed %d/80 %s elapsed=%ss\n' "$completed" "$key" "$((SECONDS-started))"
-    python -u benchmark.py summarize "$run_dir"
+    python -u benchmark.py --plan-policy "$policy" summarize "$run_dir"
   done
 done

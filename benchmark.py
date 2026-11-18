@@ -1,4 +1,4 @@
-"""Only the frozen 50fca6d cost plan versus installed native AscendC FIA."""
+"""Benchmark frozen 50fca6d scheduling variants against native AscendC FIA."""
 import argparse
 import csv
 import functools
@@ -102,7 +102,17 @@ def run_case(args):
             inputs = [x.to('npu') for x in host]
             if program is None:
                 save('compile_once')
-                program = build_kernel(args.q,args.kv,host[1].shape[0],plan_policy='cost')
+                if POLICY["plan_policy"] == "tail_split":
+                    from unittest.mock import patch
+                    from benchmark_q_only import make_tail_plan
+                    from operators.mha.kernels import mha_paged_decode as mha
+
+                    with patch.object(mha, "make_plan", make_tail_plan):
+                        program = build_kernel(args.q, args.kv, host[1].shape[0],
+                                               plan_policy="balanced")
+                else:
+                    program = build_kernel(args.q, args.kv, host[1].shape[0],
+                                           plan_policy="cost")
                 report.update(builds=1,plan=program.plan.describe(),kernel_sha256={})
                 for name,kernel in (('local',program.local_kernel),('merge',program.merge_kernel)):
                     if kernel is not None:
@@ -210,7 +220,7 @@ def summarize(directory):
                     errors.append('guard_last_record: '+guard.read_text().splitlines()[-1])
     passed = len(rows)==80 and not errors
     lines = [f"status={'passed' if passed else 'incomplete_or_error'} completed={len(rows)}/80",
-             'TL=unchanged 50fca6d kernel + original cost planner; AscendC=native FIA v2.',
+             f'TL=unchanged 50fca6d kernel + {POLICY["plan_policy"]} planner; AscendC=native FIA v2.',
              'B1H1 BF16 D128 page128 noncausal; seeds7/19; 1 build; 3 repeats x 4 alternating pairs.',
              '100 initial warmups/control/repeat + Event priming; 10 immediate warmups/sample.',
              'Full-call warm-cache Event; speedup=AscendC/TL; median of all 12 samples/control; no sample excluded.']
@@ -225,7 +235,9 @@ def summarize(directory):
         lines.append(f"{r['Q']} {r['KV']} {r['TL_us']:.3f} {r['AscendC_us']:.3f} {r['speedup']:.6f} {r['repeat_median']:.6f} "
                      f"{r['repeat_min']:.6f} {r['repeat_max']:.6f} {r['wins']}/3 {r['plan']['partial_count']} {r['plan']['merge_q_tiles']}")
     lines.extend(errors)
-    output = directory.parent/'mha_50fca6d_grid_paste.txt'
+    filename = ("mha_tail_split_grid_paste.txt" if POLICY["plan_policy"] == "tail_split"
+                else "mha_50fca6d_grid_paste.txt")
+    output = directory.parent / filename
     output.write_text('\n'.join(lines)+'\n')
     (directory/'summary.json').write_text(json.dumps(dict(status='passed' if passed else 'incomplete_or_error',rows=rows,errors=errors),indent=2)+'\n')
     keys = ('Q','KV','TL_us','AscendC_us','speedup','repeat_median','repeat_min','repeat_max','wins')
@@ -237,6 +249,7 @@ def summarize(directory):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--plan-policy", choices=("cost", "tail_split"), default="cost")
     commands = parser.add_subparsers(dest='command',required=True)
     case = commands.add_parser('case')
     case.add_argument('--q',type=int,choices=QS,required=True)
@@ -246,6 +259,7 @@ def main():
     summary.add_argument('directory',type=Path)
     commands.add_parser('verify')
     args = parser.parse_args()
+    POLICY["plan_policy"] = args.plan_policy
     if args.command=='case':
         return run_case(args)
     if args.command=='summarize':
