@@ -40,11 +40,67 @@ def make_tail_plan(q, kv, cores=28):
     return Plan(q, kv, tuple(programs), merges, tail.partial_count, "tail_split")
 
 
+def build_split_first(mha, q, kv, pool_rows, tail_plan):
+    remainder = ((q + 127) // 128) % 28
+    prefix_rows = (((q + 127) // 128) - remainder) * 128
+    if not tail_plan.merges:
+        raise ValueError("--split-first requires a shape with tail_split merges")
+
+    compile_kernel = mha.tilelang.compile
+
+    def compile_with_explicit_outputs(func, **kwargs):
+        return compile_kernel(func, **dict(kwargs, out_idx=[]))
+
+    with patch.object(mha.tilelang, "compile", compile_with_explicit_outputs):
+        with patch.object(mha, "make_plan", make_q_plan):
+            direct = mha.build_kernel(prefix_rows, kv, pool_rows, plan_policy="balanced")
+        split = mha.build_kernel(q - prefix_rows, kv, pool_rows, plan_policy="balanced")
+    mha.build_kernel.cache_clear()
+    return prefix_rows, direct, split
+
+
+def bind_split_first(torch, programs, q, k, v, table):
+    prefix_rows, direct, split = programs
+    counts, tasks, merges = split.prepare_plan(q.device)
+    side = torch.npu.Stream(device=q.device)
+    ready, done = torch.npu.Event(), torch.npu.Event()
+    slots = split.plan.partial_count
+
+    def run(parallel):
+        prepared = q.view(1, 1, q.shape[1], 128)
+        output = torch.empty((1, q.shape[1], 128), dtype=q.dtype, device=q.device)
+        partial = torch.empty((slots, 128, 128), dtype=torch.float32, device=q.device)
+        lse = torch.empty((slots * 128,), dtype=torch.float32, device=q.device)
+        prefix = output[:, :prefix_rows, :]
+        tail = output[:, prefix_rows:, :]
+        split.local_kernel(prepared[:, :, prefix_rows:, :], k, v, table,
+                           counts, tasks, partial, lse, tail)
+        if parallel:
+            current = torch.npu.current_stream(q.device)
+            ready.record(current)
+            side.wait_event(ready)
+            with torch.npu.stream(side):
+                split.merge_kernel(partial, lse, merges, tail)
+                done.record(side)
+        direct.local_kernel(prepared[:, :, :prefix_rows, :], k, v, table, prefix)
+        if parallel:
+            # All workspace was allocated on current. Join side before
+            # returning it to the allocator or exposing the final output.
+            current.wait_event(done)
+        else:
+            split.merge_kernel(partial, lse, merges, tail)
+        return output.view_as(q)
+
+    return {"split_first_serial": functools.partial(run, False),
+            "split_first_parallel": functools.partial(run, True)}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--q", type=int, choices=QS, default=32768)
     parser.add_argument("--kv", type=int, choices=KVS, default=8192)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--split-first", action="store_true", help="Compare serial and dual-stream split-first launches")
     args = parser.parse_args()
     source = verify_source()
 
@@ -76,6 +132,10 @@ def main():
 
     plans = {label: program.plan.describe()
              for label, program in (("cost", cost), ("q_only", whole), ("tail_split", tail))}
+    if args.split_first:
+        programs = build_split_first(mha, args.q, args.kv, pool_rows, tail.plan)
+        plans.update(split_first_direct=programs[1].plan.describe(),
+                     split_first_partial=programs[2].plan.describe())
     print(json.dumps(plans), flush=True)
 
     accuracy = {}
@@ -99,6 +159,8 @@ def main():
                  "q_only": functools.partial(whole, *inputs),
                  "tail_split": functools.partial(tail, *inputs),
                  "AscendC": lambda native=native: native()[0]}
+        if args.split_first:
+            calls.update(bind_split_first(torch, programs, q, k, v, table))
         accuracy[seed] = {}
         for label, call in calls.items():
             actual = call().cpu()
@@ -119,7 +181,7 @@ def main():
         end.record()
         end.synchronize()
         for pair in range(POLICY["pairs"]):
-            offset = (repeat + pair) % len(labels)
+            offset = (repeat * POLICY["pairs"] + pair) % len(labels)
             for label in labels[offset:] + labels[:offset]:
                 call = timed[label]
                 for _ in range(POLICY["immediate_warmup"]):
@@ -144,6 +206,11 @@ def main():
                   median_us=medians, round_median_us=round_medians,
                   q_only_speedup=medians["cost"] / medians["q_only"],
                   tail_split_speedup=medians["cost"] / medians["tail_split"])
+    if args.split_first:
+        result.update(
+            parallel_vs_serial=medians["split_first_serial"] / medians["split_first_parallel"],
+            parallel_vs_tail_split=medians["tail_split"] / medians["split_first_parallel"],
+        )
     report = json.dumps(result, indent=2)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
