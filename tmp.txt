@@ -1,16 +1,18 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-50fca6d-clean# python benchmark_q_only.py --q 32768 --kv 8192 --output reports/q32768_kv8192_tail_split.json
-2026-11-18 17:47:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `local_split` with `out_idx=[6, 7, 8]`
-[17:47:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
-[17:47:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
-[17:47:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
-[17:47:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
-[17:47:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
-[17:47:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
-[17:47:36] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
-2026-11-18 17:47:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `local_split`
-2026-11-18 17:47:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=[]`
-2026-11-18 17:47:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
-{"cost": {"strategy": "balanced", "Q": 32768, "KV": 8192, "programs": 28, "q_tiles": 256, "min_kv_blocks": 585, "max_kv_blocks": 586, "segments": 283, "max_segments": 11, "partial_count": 54, "merge_q_tiles": 27, "direct_q_tiles": 229, "max_parts": 2, "partial_bytes": 3538944, "lse_bytes": 27648}, "q_only": {"strategy": "q_only", "Q": 32768, "KV": 8192, "programs": 28, "q_tiles": 256, "min_kv_blocks": 576, "max_kv_blocks": 640, "segments": 256, "max_segments": 10, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 256, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}, "tail_split": {"strategy": "tail_split", "Q": 32768, "KV": 8192, "programs": 28, "q_tiles": 256, "min_kv_blocks": 585, "max_kv_blocks": 586, "segments": 283, "max_segments": 11, "partial_count": 31, "merge_q_tiles": 4, "direct_q_tiles": 252, "max_parts": 8, "partial_bytes": 2031616, "lse_bytes": 15872}}
+(zwh) root@ubuntu162:/home/z30086261/FGW-50fca6d-clean# python benchmark_q_only.py --q 32768 --kv 8192 --split-first --output reports/q32768_kv8192_split_first.json
+2026-11-18 17:58:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `local_direct` with `out_idx=[]`
+2026-11-18 17:59:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `local_direct`
+2026-11-18 17:59:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `local_split` with `out_idx=[]`
+[17:59:08] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[17:59:08] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[17:59:08] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[17:59:08] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[17:59:08] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[17:59:08] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[17:59:08] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-18 17:59:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `local_split`
+2026-11-18 17:59:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=[]`
+2026-11-18 17:59:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+{"cost": {"strategy": "balanced", "Q": 32768, "KV": 8192, "programs": 28, "q_tiles": 256, "min_kv_blocks": 585, "max_kv_blocks": 586, "segments": 283, "max_segments": 11, "partial_count": 54, "merge_q_tiles": 27, "direct_q_tiles": 229, "max_parts": 2, "partial_bytes": 3538944, "lse_bytes": 27648}, "q_only": {"strategy": "q_only", "Q": 32768, "KV": 8192, "programs": 28, "q_tiles": 256, "min_kv_blocks": 576, "max_kv_blocks": 640, "segments": 256, "max_segments": 10, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 256, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}, "tail_split": {"strategy": "tail_split", "Q": 32768, "KV": 8192, "programs": 28, "q_tiles": 256, "min_kv_blocks": 585, "max_kv_blocks": 586, "segments": 283, "max_segments": 11, "partial_count": 31, "merge_q_tiles": 4, "direct_q_tiles": 252, "max_parts": 8, "partial_bytes": 2031616, "lse_bytes": 15872}, "split_first_direct": {"strategy": "q_only", "Q": 32256, "KV": 8192, "programs": 28, "q_tiles": 252, "min_kv_blocks": 576, "max_kv_blocks": 576, "segments": 252, "max_segments": 9, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 252, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}, "split_first_partial": {"strategy": "balanced", "Q": 512, "KV": 8192, "programs": 28, "q_tiles": 4, "min_kv_blocks": 9, "max_kv_blocks": 10, "segments": 31, "max_segments": 2, "partial_count": 31, "merge_q_tiles": 4, "direct_q_tiles": 0, "max_parts": 8, "partial_bytes": 2031616, "lse_bytes": 15872}}
 {
   "Q": 32768,
   "KV": 8192,
@@ -96,6 +98,40 @@
       "max_parts": 8,
       "partial_bytes": 2031616,
       "lse_bytes": 15872
+    },
+    "split_first_direct": {
+      "strategy": "q_only",
+      "Q": 32256,
+      "KV": 8192,
+      "programs": 28,
+      "q_tiles": 252,
+      "min_kv_blocks": 576,
+      "max_kv_blocks": 576,
+      "segments": 252,
+      "max_segments": 9,
+      "partial_count": 0,
+      "merge_q_tiles": 0,
+      "direct_q_tiles": 252,
+      "max_parts": 0,
+      "partial_bytes": 0,
+      "lse_bytes": 0
+    },
+    "split_first_partial": {
+      "strategy": "balanced",
+      "Q": 512,
+      "KV": 8192,
+      "programs": 28,
+      "q_tiles": 4,
+      "min_kv_blocks": 9,
+      "max_kv_blocks": 10,
+      "segments": 31,
+      "max_segments": 2,
+      "partial_count": 31,
+      "merge_q_tiles": 4,
+      "direct_q_tiles": 0,
+      "max_parts": 8,
+      "partial_bytes": 2031616,
+      "lse_bytes": 15872
     }
   },
   "max_abs_error": {
@@ -103,100 +139,142 @@
       "cost": 0.00048828125,
       "q_only": 0.00048828125,
       "tail_split": 0.00048828125,
-      "AscendC": 0.00048828125
+      "AscendC": 0.00048828125,
+      "split_first_serial": 0.00048828125,
+      "split_first_parallel": 0.00048828125
     },
     "19": {
       "cost": 0.00048828125,
       "q_only": 0.00048828125,
       "tail_split": 0.00048828125,
-      "AscendC": 0.00048828125
+      "AscendC": 0.00048828125,
+      "split_first_serial": 0.00048828125,
+      "split_first_parallel": 0.00048828125
     }
   },
   "samples_us": {
     "cost": [
-      580.2649855613708,
-      576.6159892082214,
-      558.2730174064636,
-      566.756010055542,
-      564.4369721412659,
-      563.971996307373,
-      566.1180019378662,
-      564.7850036621094,
-      564.7600293159485,
-      575.6080150604248,
-      558.7689876556396,
-      554.1530251502991
+      535.4520082473755,
+      572.1049904823303,
+      545.8539724349976,
+      575.2699971199036,
+      544.1539883613586,
+      544.7909832000732,
+      565.3129816055298,
+      564.2930269241333,
+      563.7760162353516,
+      554.2330145835876,
+      554.2920231819153,
+      572.7819800376892
     ],
     "q_only": [
-      527.9710292816162,
-      562.6490116119385,
-      585.1560235023499,
-      561.9249939918518,
-      562.9770159721375,
-      549.6240258216858,
-      545.1589822769165,
-      526.8110036849976,
-      582.3079943656921,
-      592.9610133171082,
-      564.5269751548767,
-      556.7110180854797
+      552.528977394104,
+      584.3570232391357,
+      524.2059826850891,
+      517.503023147583,
+      556.4479827880859,
+      562.7310276031494,
+      572.6029872894287,
+      583.5199952125549,
+      562.978982925415,
+      562.2090101242065,
+      581.6090106964111,
+      582.8649997711182
     ],
     "tail_split": [
-      580.5000066757202,
-      541.5650010108948,
-      577.318012714386,
-      560.3179931640625,
-      560.3520274162292,
-      560.139000415802,
-      555.3910136222839,
-      557.2720170021057,
-      557.5240254402161,
-      567.6770210266113,
-      544.7239875793457,
-      528.3240079879761
+      547.2319722175598,
+      579.3480277061462,
+      548.6369729042053,
+      521.5100049972534,
+      540.4340028762817,
+      537.7510190010071,
+      556.8689703941345,
+      567.3890113830566,
+      557.3819875717163,
+      546.576976776123,
+      547.3560094833374,
+      557.3369860649109
     ],
     "AscendC": [
-      566.2059783935547,
-      545.0630187988281,
-      495.01898884773254,
-      563.7890100479126,
-      551.1599779129028,
-      548.7589836120605,
-      582.2229981422424,
-      559.6039891242981,
-      558.2060217857361,
-      563.4589791297913,
-      535.9809994697571,
-      533.9540243148804
+      550.029993057251,
+      573.4000205993652,
+      534.3959927558899,
+      563.9309883117676,
+      533.9609980583191,
+      544.4920063018799,
+      561.9940161705017,
+      563.7149810791016,
+      549.8420000076294,
+      551.5069961547852,
+      553.6249876022339,
+      553.2220005989075
+    ],
+    "split_first_serial": [
+      572.3999738693237,
+      581.1929702758789,
+      582.7550292015076,
+      524.4539976119995,
+      569.6380138397217,
+      562.2119903564453,
+      574.1750001907349,
+      557.030975818634,
+      558.2219958305359,
+      549.2839813232422,
+      548.1780171394348,
+      560.6189966201782
+    ],
+    "split_first_parallel": [
+      573.7929940223694,
+      567.0539736747742,
+      563.3119940757751,
+      576.0250091552734,
+      561.9890093803406,
+      543.982982635498,
+      574.8130083084106,
+      566.6499733924866,
+      562.4110102653503,
+      554.5520186424255,
+      553.3789992332458,
+      570.0029730796814
     ]
   },
   "median_us": {
-    "cost": 564.7725164890289,
-    "q_only": 562.2870028018951,
-    "tail_split": 558.831512928009,
-    "AscendC": 554.6829998493195
+    "cost": 559.0340197086334,
+    "q_only": 562.8550052642822,
+    "tail_split": 547.9964911937714,
+    "AscendC": 552.3644983768463,
+    "split_first_serial": 561.4154934883118,
+    "split_first_parallel": 564.9809837341309
   },
   "round_median_us": [
     {
-      "cost": 571.6859996318817,
-      "q_only": 562.2870028018951,
-      "tail_split": 568.8180029392242,
-      "AscendC": 554.4260144233704
+      "cost": 558.9794814586639,
+      "q_only": 538.3674800395966,
+      "tail_split": 547.9344725608826,
+      "AscendC": 556.9804906845093,
+      "split_first_serial": 576.7964720726013,
+      "split_first_parallel": 570.4234838485718
     },
     {
-      "cost": 564.6109879016876,
-      "q_only": 547.3915040493011,
-      "tail_split": 558.7055087089539,
-      "AscendC": 555.3819835186005
+      "cost": 554.5420050621033,
+      "q_only": 567.6670074462891,
+      "tail_split": 548.6514866352081,
+      "AscendC": 553.2430112361908,
+      "split_first_serial": 565.9250020980835,
+      "split_first_parallel": 564.3194913864136
     },
     {
-      "cost": 561.7645084857941,
-      "q_only": 573.4174847602844,
-      "tail_split": 551.1240065097809,
-      "AscendC": 547.0935106277466
+      "cost": 559.0340197086334,
+      "q_only": 572.2939968109131,
+      "tail_split": 552.3464977741241,
+      "AscendC": 552.3644983768463,
+      "split_first_serial": 553.752988576889,
+      "split_first_parallel": 558.4815144538879
     }
   ],
-  "q_only_speedup": 1.004420364822143,
-  "tail_split_speedup": 1.0106311176509928
+  "q_only_speedup": 0.9932114212009988,
+  "tail_split_speedup": 1.0201416043573885,
+  "parallel_vs_serial": 0.9936891853912433,
+  "parallel_vs_tail_split": 0.9699379394539904
 }
 (zwh) root@ubuntu162:/home/z30086261/FGW-50fca6d-clean#
