@@ -4,7 +4,7 @@ import math
 import random
 import unittest
 from collections import Counter
-from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan, make_tail_plan
+from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan, make_tail_plan, make_stream_plan, choose_stream_plan
 
 
 class StaticScheduleTests(unittest.TestCase):
@@ -42,6 +42,17 @@ class StaticScheduleTests(unittest.TestCase):
                         self.assertEqual(first, cursor)
                         cursor = end
                     self.assertEqual(cursor, kv // 128)
+
+    def test_stream_policy_coverage_and_parallelism(self):
+        from benchmarks.mha.summarize_clean_grid import QS, KVS
+        for q in (*QS, 1, 17, 129, 3712):
+            for kv in KVS:
+                validate_plan(choose_stream_plan(q, kv))
+                for cores in (1, 2, 7, 27, 28):
+                    validate_plan(make_stream_plan(q, kv, cores))
+        self.assertGreater(len(choose_stream_plan(64, 32768).programs), 1)
+        self.assertFalse(choose_stream_plan(16384, 1024).merges)
+        self.assertFalse(choose_stream_plan(128, 512).merges)
 
     def test_tail_wave_coverage_and_fragment_count(self):
         for kv in (4096, 8192):
@@ -84,7 +95,7 @@ class StaticScheduleTests(unittest.TestCase):
 
     def test_split_state_merge_matches_dense_attention(self):
         # Three Q tiles on two cores: full+fragment in each, only middle Q tile merges.
-        for plan in (make_plan(257, 512, 2), make_tail_plan(257, 512, 2)):
+        for plan in (make_plan(257, 512, 2), make_tail_plan(257, 512, 2), make_stream_plan(257, 512, 2)):
             self.assertEqual(len(plan.merges), 1)
             self._check_attention(plan)
 

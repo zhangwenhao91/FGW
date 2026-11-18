@@ -10,7 +10,7 @@ import statistics
 import traceback
 import os
 from benchmarks.mha.bench_split_breakdown import compiler_temp
-from operators.mha.static_schedule import make_plan, choose_plan, estimate_cost, COST_MODEL, make_tail_plan
+from operators.mha.static_schedule import make_plan, choose_plan, estimate_cost, COST_MODEL, make_tail_plan, choose_stream_plan
 from benchmarks.mha.resource_guard import cpu_environment, progress, runtime_policy
 
 CASES = ((8192, 32768, 2), (4096, 8192, 1), (2048, 24576, 4), (3584, 32768, 1), (7168, 32768, 1))
@@ -25,7 +25,7 @@ def main():
     parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
-    parser.add_argument("--plan-policy", choices=("balanced", "cost", "tail"), default="balanced")
+    parser.add_argument("--plan-policy", choices=("balanced", "cost", "tail", "stream"), default="balanced")
     parser.add_argument("--tail-pieces", type=int, choices=(2, 4, 7))
     parser.add_argument("--programs", type=int, choices=range(1, 29))
     parser.add_argument("--merge-rows", type=int, choices=(8, 16, 32), default=8)
@@ -49,13 +49,15 @@ def main():
         if q not in QS or kv not in KVS:
             parser.error("--shape must belong to the original 80-shape grid")
         cases = ((q, kv, None),)
-    if args.programs is not None and args.plan_policy == "cost":
+    if args.programs is not None and args.plan_policy in ("cost", "stream"):
         parser.error("--programs requires --plan-policy balanced")
     planner = choose_plan if args.plan_policy == "cost" else functools.partial(make_plan, cores=args.programs or 28)
     if args.tail_pieces is not None and args.plan_policy != "tail":
         parser.error("--tail-pieces requires --plan-policy tail")
     if args.plan_policy == "tail":
         planner = functools.partial(make_tail_plan, cores=args.programs or 28, pieces=args.tail_pieces)
+    if args.plan_policy == "stream":
+        planner = choose_stream_plan
     if args.list_only:
         print(json.dumps([dict(**planner(q, kv).describe(), uniform_split=s, estimate=estimate_cost(planner(q, kv))) for q, kv, s in cases]))
         return 0

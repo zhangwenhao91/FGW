@@ -189,3 +189,74 @@ def choose_plan(q, kv):
     candidates = [make_q_plan(q, kv)] + [make_plan(q, kv, cores) for cores in range(1, 29)]
     return min(candidates, key=lambda p: (estimate_cost(p)['total_us'],
                                          p.partial_count, -len(p.programs)))
+
+
+@lru_cache(maxsize=128)
+def make_stream_plan(q, kv, cores=28):
+    """Whole-Q-first host assignment with a remaining-work target per core.
+
+    Independent simplified implementation for fixed 128x128 dense tiles;
+    follows the assignment order used by FIA split_core_v2, not its ABI.
+    """
+    make_plan(q, kv, cores)  # Validate scalar/range constraints.
+    tiles, blocks = (q + 127) // 128, kv // 128
+    cores = min(cores, tiles * blocks)
+    programs, cursor = [], 0
+    total = tiles * blocks
+    for pid in range(cores):
+        if cursor == total:
+            break
+        # Half-block tolerance, as in the source's whole-row/block assignment.
+        target = (total - cursor) / (cores - pid)
+        assigned, tasks = 0, []
+        while cursor < total:
+            tile, first = divmod(cursor, blocks)
+            remaining = blocks - first
+            if assigned + remaining <= target + 0.5 or pid == cores - 1:
+                take = remaining  # Prefer finishing the current Q tile.
+            else:
+                take = min(remaining, max(0, int(target + 0.5 - assigned)))
+                if not tasks:
+                    take = max(1, take)
+                if take == 0:
+                    break
+            tasks.append([tile, first, take, -1])
+            cursor += take
+            assigned += take
+            if assigned >= target - 0.5:
+                break
+        programs.append(tasks)
+    assert cursor == total
+    owners = {}
+    for pid, tasks in enumerate(programs):
+        for idx, (tile, _, _, _) in enumerate(tasks):
+            owners.setdefault(tile, []).append((pid, idx))
+    merges, slot = [], 0
+    for tile, entries in sorted(owners.items()):
+        if len(entries) > 1:
+            merges.append((tile, slot, len(entries)))
+            for pid, idx in entries:
+                programs[pid][idx][3] = slot
+                slot += 1
+    if not merges:
+        # The direct ABI derives ranges from pid; retain its canonical layout.
+        return make_q_plan(q, kv, len(programs))
+    plan = Plan(q, kv, tuple(tuple(tuple(s) for s in tasks) for tasks in programs),
+                tuple(merges), slot, "stream")
+    validate_plan(plan)
+    return plan
+
+
+@lru_cache(maxsize=128)
+def choose_stream_plan(q, kv):
+    """Compare split/no-split with an explicit gain threshold; no shape table."""
+    direct = make_q_plan(q, kv)
+    candidates = [make_stream_plan(q, kv, cores) for cores in range(1, 29)]
+    # Also allow the independent final-wave assignment with adaptive pieces.
+    # This is our extension, not a claim of reproducing AscendC's final plan.
+    candidates.extend(make_tail_plan(q, kv, cores) for cores in range(1, 29))
+    split = min(candidates, key=lambda p: (estimate_cost(p)['total_us'], p.partial_count))
+    # Existing score already charges merge; require one additional block's gain.
+    if estimate_cost(direct)['total_us'] - estimate_cost(split)['total_us'] > COST_MODEL['block_us']:
+        return split
+    return direct

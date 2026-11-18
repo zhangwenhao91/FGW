@@ -12,20 +12,22 @@ import tilelang
 import tilelang.ascend.language as T
 from tilelang.ascend.language import simd as S
 from tilelang.layout import make_ascend_compact_nz_layout
-from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan
+from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan, choose_stream_plan
 
 
 @lru_cache(maxsize=64)
 def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None):
-    if plan_policy not in ("balanced", "cost", "tail"):
+    if plan_policy not in ("balanced", "cost", "tail", "stream"):
         raise ValueError("plan_policy must be balanced, cost or tail")
     if merge_rows not in (8, 16, 32):
         raise ValueError("merge_rows must be 8, 16 or 32")
-    if programs is not None and plan_policy == "cost":
+    if programs is not None and plan_policy in ("cost", "stream"):
         raise ValueError("explicit programs require balanced policy")
     plan = choose_plan(sq, kv) if plan_policy == "cost" else make_plan(sq, kv, 28 if programs is None else programs)
     if plan_policy == "tail":
         plan = make_tail_plan(sq, kv, 28 if programs is None else programs, tail_pieces)
+    if plan_policy == "stream":
+        plan = choose_stream_plan(sq, kv)
     if pool_rows <= 0 or pool_rows % 128 or pool_rows < kv:
         raise ValueError("whole physical pool pages, at least KV capacity required")
     BR, BC, ROWS, VL, D, STATS_ROWS = 128, 128, 64, 64, 128, 64
