@@ -260,3 +260,32 @@ def choose_stream_plan(q, kv):
     if estimate_cost(direct)['total_us'] - estimate_cost(split)['total_us'] > COST_MODEL['block_us']:
         return split
     return direct
+
+
+@lru_cache(maxsize=128)
+def make_merge_tasks(plan, vectors=56):
+    """Allocate vector programs by valid Q rows times per-group KV pieces.
+
+    Each record is (Q tile, first partial slot, pieces, first row, row count).
+    This is host metadata only; no device queue or online timing.
+    """
+    if type(vectors) is not int or vectors < len(plan.merges) or vectors <= 0:
+        raise ValueError("positive vector budget, at least one per merge group required")
+    if not plan.merges:
+        return ()
+    groups = [(tile, first, pieces, min(128, plan.q - tile * 128))
+              for tile, first, pieces in plan.merges]
+    budget = min(vectors, sum(rows for _, _, _, rows in groups))
+    total_work = sum(rows * pieces for _, _, pieces, rows in groups)
+    average = (total_work + budget - 1) // budget
+    spare = budget - len(groups)
+    tasks = []
+    for tile, first, pieces, rows in groups:
+        count = min(rows, spare + 1, max(1, rows * pieces // average))
+        stride = (rows + count - 1) // count
+        count = (rows + stride - 1) // stride
+        spare -= count - 1
+        for begin in range(0, rows, stride):
+            tasks.append((tile, first, pieces, begin, min(stride, rows - begin)))
+    assert len(tasks) <= vectors
+    return tuple(tasks)

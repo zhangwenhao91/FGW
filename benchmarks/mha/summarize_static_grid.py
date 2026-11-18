@@ -35,12 +35,17 @@ def summarize(directory, native_only=False, candidate="t7r8"):
              'Q KV v7_us static_us AscendC_us v7/static AscendC/static round_AC_min round_AC_max parts merge_tiles builds strategy programs']
     if native_only:
         lines[-1] = f'Q KV {candidate}_us AscendC_us speedup parts merge_tiles builds strategy programs'
+    if native_only and candidate == "weighted":
+        lines[-1] += ' merge_programs max_merge_rows'
     for row in rows:
         t, p = row['median_us'], row['plan']
         ac = row['static_vs_ascendc']
         if native_only:
             lines.append(f"{p['Q']} {p['KV']} {t['static']:.3f} {t['ascendc']:.3f} {ac['speedup']:.4f} "
                          f"{p['partial_count']} {p['merge_q_tiles']} {row['static_builds']} {p.get('strategy', 'balanced')} {p['programs']}")
+            if candidate == "weighted":
+                assignment = row.get('merge_assignment', {})
+                lines[-1] += f" {assignment.get('programs', 0)} {assignment.get('max_rows', 0)}"
             continue
         lines.append(f"{p['Q']} {p['KV']} {t['default']:.3f} {t['static']:.3f} {t['ascendc']:.3f} "
                      f"{row['static_vs_default']['speedup']:.4f} {ac['speedup']:.4f} "
@@ -60,6 +65,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('directory', type=Path)
     parser.add_argument("--native-only", action="store_true")
-    parser.add_argument("--name", choices=("t7r8", "stream"), default="t7r8")
+    parser.add_argument("--name", choices=("t7r8", "stream", "weighted"), default="t7r8")
     args = parser.parse_args()
     summarize(args.directory, args.native_only, args.name)

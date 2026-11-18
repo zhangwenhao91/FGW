@@ -28,6 +28,7 @@ def main():
     parser.add_argument("--plan-policy", choices=("balanced", "cost", "tail", "stream"), default="balanced")
     parser.add_argument("--tail-pieces", type=int, choices=(2, 4, 7))
     parser.add_argument("--programs", type=int, choices=range(1, 29))
+    parser.add_argument("--merge-policy", choices=("fixed", "weighted"), default="fixed")
     parser.add_argument("--merge-rows", type=int, choices=(8, 16, 32), default=8)
     parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
     parser.add_argument("--pairs", type=int, default=7)
@@ -114,6 +115,7 @@ def main():
         from tilelang.env import env
         from operators.mha.kernels import mha_static_host_candidate as candidate
         from operators.mha.kernels import mha_paged_decode_ascend_v7 as default
+        from operators.mha.kernels import mha_weighted_merge as weighted_merge_source
         from operators.mha import static_schedule
         from operators.mha.split_cost_model import MODEL_PATH
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
@@ -132,7 +134,7 @@ def main():
             ),
             source_sha256={
                 name: hashlib.sha256(Path(m.__file__).read_bytes()).hexdigest()
-                for name, m in [("candidate", candidate), ("default", default), ("plan", static_schedule)]
+                for name, m in [("candidate", candidate), ("default", default), ("plan", static_schedule), ("weighted_merge", weighted_merge_source)]
             },
             model_sha256=hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest(),
         )
@@ -181,8 +183,11 @@ def main():
                 default.build_kernel.cache_clear()
                 pool = fixtures[7][0][1].shape[0]
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
-                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces)
+                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy)
                 assert static.plan == plan
+                info["merge_assignment"] = dict(policy=args.merge_policy, tasks=static.merge_tasks,
+                    programs=len(static.merge_tasks),
+                    max_rows=max((task[4] for task in static.merge_tasks), default=0))
                 base = uniform = None
                 if not args.only_static_ascendc:
                     print(f"[FGW compile] {key} round={rd+1}/{args.rounds} default v7", flush=True)
@@ -330,6 +335,7 @@ def main():
                     round_us=rows,
                     static_builds=len(info["builds"]),
                     plan=plan.describe(),
+                    merge_assignment={k: v for k, v in info["merge_assignment"].items() if k != "tasks"},
                 )
                 for control in ("default", "uniform_best", "ascendc"):
                     if control not in rows[0]:

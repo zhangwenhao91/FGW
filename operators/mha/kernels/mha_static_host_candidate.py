@@ -12,13 +12,15 @@ import tilelang
 import tilelang.ascend.language as T
 from tilelang.ascend.language import simd as S
 from tilelang.layout import make_ascend_compact_nz_layout
-from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan, choose_stream_plan
+from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan, choose_stream_plan, make_merge_tasks
 
 
 @lru_cache(maxsize=64)
-def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None):
+def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed"):
     if plan_policy not in ("balanced", "cost", "tail", "stream"):
         raise ValueError("plan_policy must be balanced, cost or tail")
+    if merge_policy not in ("fixed", "weighted"):
+        raise ValueError("merge_policy must be fixed or weighted")
     if merge_rows not in (8, 16, 32):
         raise ValueError("merge_rows must be 8, 16 or 32")
     if programs is not None and plan_policy in ("cost", "stream"):
@@ -341,8 +343,13 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
         out_idx=[6, 7, 8] if has_merge else [4],
         target="ascend", execution_backend="auto", pass_configs={}
     )
+    merge_tasks = make_merge_tasks(plan) if merge_policy == "weighted" and has_merge else ()
+    merge_entry = merge
+    if merge_tasks:
+        from operators.mha.kernels.mha_weighted_merge import make_kernel
+        merge_entry = make_kernel(sq, slots, merge_tasks, max_parts)
     merge_kernel = (
-        tilelang.compile(merge, out_idx=[], target="ascend", execution_backend="auto", pass_configs={})
+        tilelang.compile(merge_entry, out_idx=[], target="ascend", execution_backend="auto", pass_configs={})
         if has_merge
         else None
     )
@@ -354,7 +361,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
         if device not in uploaded:
             counts = [len(p) for p in plan.programs]
             tasks = [list(p) + [(-1, -1, -1, -1)] * (max_segments - len(p)) for p in plan.programs]
-            merges = list(plan.merges) or [(-1, -1, -1)]
+            merges = list(merge_tasks) if merge_tasks else (list(plan.merges) or [(-1, -1, -1)])
             uploaded[device] = tuple(
                 torch.tensor(x, dtype=torch.int32, device=device) for x in (counts, tasks, merges)
             )
@@ -388,6 +395,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     def launch(q, k, v, table, lengths):
         return finish(*compute(q, k, v, table, lengths))
 
+    launch.merge_tasks = merge_tasks
     launch.plan = plan
     launch.prepare_plan = prepare_plan
     launch.validate_inputs = validate_inputs

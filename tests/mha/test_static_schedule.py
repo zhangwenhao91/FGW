@@ -4,7 +4,7 @@ import math
 import random
 import unittest
 from collections import Counter
-from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan, make_tail_plan, make_stream_plan, choose_stream_plan
+from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan, make_tail_plan, make_stream_plan, choose_stream_plan, make_merge_tasks
 
 
 class StaticScheduleTests(unittest.TestCase):
@@ -42,6 +42,29 @@ class StaticScheduleTests(unittest.TestCase):
                         self.assertEqual(first, cursor)
                         cursor = end
                     self.assertEqual(cursor, kv // 128)
+
+    def test_weighted_merge_exact_row_ownership(self):
+        from benchmarks.mha.summarize_clean_grid import QS, KVS
+        for q in (*QS, 1, 129, 3712):
+            for kv in KVS:
+                plan = choose_stream_plan(q, kv)
+                tasks = make_merge_tasks(plan)
+                self.assertLessEqual(len(tasks), 56)
+                expected = {(tile, r) for tile, _, _ in plan.merges
+                            for r in range(min(128, q - tile * 128))}
+                seen = Counter((tile, r) for tile, _, _, begin, rows in tasks
+                               for r in range(begin, begin + rows))
+                self.assertEqual(set(seen), expected)
+                self.assertTrue(all(n == 1 for n in seen.values()))
+                groups = {tile: (first, count) for tile, first, count in plan.merges}
+                for tile, first, count, begin, rows in tasks:
+                    self.assertEqual(groups[tile], (first, count))
+                    self.assertGreater(rows, 0)
+                    self.assertLessEqual(begin + rows, min(128, q - tile * 128))
+        plan = make_tail_plan(32768, 4096, pieces=7)
+        tasks = make_merge_tasks(plan)
+        self.assertEqual(len(tasks), 52)
+        self.assertEqual(max(task[4] for task in tasks), 10)
 
     def test_stream_policy_coverage_and_parallelism(self):
         from benchmarks.mha.summarize_clean_grid import QS, KVS
@@ -98,8 +121,9 @@ class StaticScheduleTests(unittest.TestCase):
         for plan in (make_plan(257, 512, 2), make_tail_plan(257, 512, 2), make_stream_plan(257, 512, 2)):
             self.assertEqual(len(plan.merges), 1)
             self._check_attention(plan)
+            self._check_attention(plan, weighted=True)
 
-    def _check_attention(self, plan):
+    def _check_attention(self, plan, weighted=False):
         qlen, kv = plan.q, plan.kv
         rng = random.Random(7)
         q = [[rng.uniform(-1, 1) for _ in range(2)] for _ in range(qlen)]
@@ -130,8 +154,10 @@ class StaticScheduleTests(unittest.TestCase):
                         outputs[tile * 128 + row] = value
                 else:
                     partials[slot] = values
-        for tile, first, count in plan.merges:
-            for row in range(min(128, qlen - tile * 128)):
+        merge_tasks = make_merge_tasks(plan) if weighted else tuple(
+            (tile, first, count, 0, min(128, qlen - tile * 128)) for tile, first, count in plan.merges)
+        for tile, first, count, begin, rows in merge_tasks:
+            for row in range(begin, begin + rows):
                 fragments = [partials[s][row] for s in range(first, first + count)]
                 maximum = max(lse for _, lse in fragments)
                 weights = [math.exp(lse - maximum) for _, lse in fragments]
