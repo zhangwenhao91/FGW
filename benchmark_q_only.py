@@ -1,4 +1,4 @@
-"""Compare frozen cost scheduling, whole-Q scheduling, and native FIA v2."""
+"""Compare frozen cost, whole-Q, tail-split, and native FIA v2."""
 import argparse
 import functools
 import json
@@ -7,6 +7,37 @@ from pathlib import Path
 from unittest.mock import patch
 
 from benchmark import KVS, POLICY, QS, make_inputs, reference, verify_source
+from operators.mha.static_schedule import Plan, make_plan, make_q_plan
+
+
+def make_tail_plan(q, kv, cores=28):
+    whole = make_q_plan(q, kv, cores)
+    tiles = (q + 127) // 128
+    waves, remainder = divmod(tiles, cores)
+    if not waves or not remainder:
+        return whole
+
+    blocks = kv // 128
+    prefix_tiles = waves * cores
+    tail = make_plan(remainder * 128, kv, cores)
+    if not tail.merges:
+        return whole
+
+    programs = []
+    for pid in range(cores):
+        first_tile = pid * waves
+        prefix = tuple(
+            (tile, 0, blocks, -1)
+            for tile in range(first_tile, first_tile + waves)
+        )
+        extra = tail.programs[pid] if pid < len(tail.programs) else ()
+        programs.append(prefix + tuple(
+            (prefix_tiles + tile, begin, count, slot)
+            for tile, begin, count, slot in extra
+        ))
+    merges = tuple((prefix_tiles + tile, slot, count)
+                   for tile, slot, count in tail.merges)
+    return Plan(q, kv, tuple(programs), merges, tail.partial_count, "tail_split")
 
 
 def main():
@@ -22,7 +53,6 @@ def main():
     import torch
     import torch_npu
     from operators.mha.kernels import mha_paged_decode as mha
-    from operators.mha.static_schedule import make_q_plan
 
     torch.set_num_threads(threads)
     torch.npu.set_device(0)
@@ -37,7 +67,15 @@ def main():
     with patch.object(mha, "make_plan", make_q_plan):
         whole = mha.build_kernel(args.q, args.kv, pool_rows, plan_policy="balanced")
     assert whole.plan.strategy == "q_only" and whole.merge_kernel is None
-    plans = {"cost": cost.plan.describe(), "q_only": whole.plan.describe()}
+    # Both experimental builds use the balanced entry. Clear its Python
+    # cache so the second build consumes the next planner.
+    mha.build_kernel.cache_clear()
+    with patch.object(mha, "make_plan", make_tail_plan):
+        tail = mha.build_kernel(args.q, args.kv, pool_rows, plan_policy="balanced")
+    mha.build_kernel.cache_clear()
+
+    plans = {label: program.plan.describe()
+             for label, program in (("cost", cost), ("q_only", whole), ("tail_split", tail))}
     print(json.dumps(plans), flush=True)
 
     accuracy = {}
@@ -47,6 +85,7 @@ def main():
         inputs = [tensor.to("npu") for tensor in host]
         cost.validate_inputs(*inputs)
         whole.validate_inputs(*inputs)
+        tail.validate_inputs(*inputs)
         q, k, v, table, _ = inputs
         native = functools.partial(
             torch_npu.npu_fused_infer_attention_score_v2,
@@ -58,6 +97,7 @@ def main():
         )
         calls = {"cost": functools.partial(cost, *inputs),
                  "q_only": functools.partial(whole, *inputs),
+                 "tail_split": functools.partial(tail, *inputs),
                  "AscendC": lambda native=native: native()[0]}
         accuracy[seed] = {}
         for label, call in calls.items():
@@ -93,9 +133,17 @@ def main():
                 del output
 
     medians = {label: statistics.median(values) for label, values in samples.items()}
+    pairs = POLICY["pairs"]
+    round_medians = [
+        {label: statistics.median(values[start:start + pairs])
+         for label, values in samples.items()}
+        for start in range(0, POLICY["repeats"] * pairs, pairs)
+    ]
     result = dict(Q=args.q, KV=args.kv, device=str(device), source=source,
                   plans=plans, max_abs_error=accuracy, samples_us=samples,
-                  median_us=medians, q_only_speedup=medians["cost"] / medians["q_only"])
+                  median_us=medians, round_median_us=round_medians,
+                  q_only_speedup=medians["cost"] / medians["q_only"],
+                  tail_split_speedup=medians["cost"] / medians["tail_split"])
     report = json.dumps(result, indent=2)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
