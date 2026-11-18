@@ -1,6 +1,7 @@
 """Static host plan vs default v7, previously best uniform split, and installed FIA."""
 
 import argparse
+from dataclasses import asdict
 import functools
 import hashlib
 import json
@@ -231,7 +232,9 @@ def main():
                     static = standalone.build_kernel(qlen, kv, pool)
                 else:
                     static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs, row_softmax=args.row_softmax, fused_output=args.fused_output)
-                assert static.plan == plan
+                # Standalone and benchmark planners define distinct Plan classes.
+                if asdict(static.plan) != asdict(plan):
+                    raise ValueError(f"{key}: compiled task plan differs from benchmark plan")
                 overlap = None
                 if args.split_overlap:
                     from operators.mha.split_overlap import build_overlap
