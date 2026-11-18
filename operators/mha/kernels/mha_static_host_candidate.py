@@ -16,10 +16,10 @@ from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan
 
 
 @lru_cache(maxsize=64)
-def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56):
+def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56, include_fixed_control=True):
     if plan_policy not in ("balanced", "cost", "tail", "stream"):
         raise ValueError("plan_policy must be balanced, cost or tail")
-    if merge_policy not in ("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd"):
+    if merge_policy not in ("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd", "rawsimd"):
         raise ValueError("merge_policy must be fixed or weighted")
     if merge_programs not in (28, 56):
         raise ValueError("merge_programs must be 28 or 56")
@@ -47,6 +47,9 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     merge_count = len(plan.merges)
     max_parts = plan.max_parts
     has_merge = merge_count > 0
+    raw_partials = merge_policy == "rawsimd"
+    stats_plane = slots * BR
+    stats_size = stats_plane * (2 if raw_partials else 1)
     merge_rows = min(merge_rows, tilelang.next_power_of_2(sq))
     groups_per_tile = BR // merge_rows
     pipeline_annotations = {"enable_offset": True}
@@ -225,16 +228,27 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
                         with T.Stage(7):
                             T.dual_copy(pv, current)
                             accumulate_output(current, output, alpha)
-                    with T.SimtVF(threads=128):
-                        for r, d in T.Parallel(ROWS, D):
-                            output[r, d] = output[r, d] / T.max(total[r], 1e-30)
+                    if not raw_partials:
+                        with T.SimtVF(threads=128):
+                            for r, d in T.Parallel(ROWS, D):
+                                output[r, d] = output[r, d] / T.max(total[r], 1e-30)
+                    else:
+                        if slot < 0:
+                            with T.SimtVF(threads=128):
+                                for r, d in T.Parallel(ROWS, D):
+                                    output[r, d] = output[r, d] / T.max(total[r], 1e-30)
                     if has_merge:
                         if slot >= 0:
-                            with T.SimtVF(threads=128):
-                                for r in T.Parallel(ROWS):
-                                    lse[r] = T.log2(T.max(total[r], 1e-30)) * 0.6931471805599453 + maximum[r]
-                            T.dual_copy(output, Parts[slot, :, :])
-                            T.dual_copy(lse, LSE[slot * BR : (slot + 1) * BR])
+                            if raw_partials:
+                                T.dual_copy(output, Parts[slot, :, :])
+                                T.dual_copy(maximum, LSE[slot * BR : (slot + 1) * BR])
+                                T.dual_copy(total, LSE[stats_plane + slot * BR : stats_plane + (slot + 1) * BR])
+                            else:
+                                with T.SimtVF(threads=128):
+                                    for r in T.Parallel(ROWS):
+                                        lse[r] = T.log2(T.max(total[r], 1e-30)) * 0.6931471805599453 + maximum[r]
+                                T.dual_copy(output, Parts[slot, :, :])
+                                T.dual_copy(lse, LSE[slot * BR : (slot + 1) * BR])
                         else:
                             cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
                             with T.SimdVF(latency=193):
@@ -266,7 +280,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
             Counts: T.Tensor((grid,), "int32"),
             Tasks: T.Tensor((grid, max_segments, 4), "int32"),
             Parts: T.Tensor((slots, BR, D), accum_dtype),
-            LSE: T.Tensor((slots * BR,), accum_dtype),
+            LSE: T.Tensor((stats_size,), accum_dtype),
             O: T.Tensor((1, sq, D), dtype),
         ):
             local_body(Q, K, V, Table, Counts, Tasks, Parts, LSE, O)
@@ -382,15 +396,15 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     if merge_policy == "prefetch" and has_merge:
         from operators.mha.kernels.mha_prefetch_merge import make_kernel
         merge_entry = make_kernel(sq, slots, merge_count, max_parts, merge_rows)
-    if merge_policy == "simd" and has_merge:
+    if merge_policy in ("simd", "rawsimd") and has_merge:
         from operators.mha.kernels.mha_simd_merge import make_kernel
-        merge_entry = make_kernel(sq, slots, merge_count, max_parts, merge_rows)
+        merge_entry = make_kernel(sq, slots, merge_count, max_parts, merge_rows, raw=raw_partials)
     merge_kernel = (
         tilelang.compile(merge_entry, out_idx=[], target="ascend", execution_backend="auto", pass_configs={})
         if has_merge
         else None
     )
-    fixed_merge_kernel = tilelang.compile(merge, out_idx=[], target="ascend", execution_backend="auto", pass_configs={}) if (block_tasks or (merge_policy in ("preweighted", "prefetch", "simd") and has_merge)) else None
+    fixed_merge_kernel = tilelang.compile(merge, out_idx=[], target="ascend", execution_backend="auto", pass_configs={}) if include_fixed_control and (block_tasks or (merge_policy in ("preweighted", "prefetch", "simd") and has_merge)) else None
     uploaded = {}
     fixed_tables = {}
 
@@ -449,9 +463,10 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     launch.merge_assignment = dict(policy=merge_policy, tasks=block_tasks or merge_tasks,
         programs=len(block_tasks or merge_tasks), max_rows=merge_rows if block_tasks else max((t[4] for t in merge_tasks), default=0),
         max_chunks=max_chunks if block_tasks else 1)
-    if merge_policy in ("preweighted", "prefetch", "simd") and has_merge:
+    if merge_policy in ("preweighted", "prefetch", "simd", "rawsimd") and has_merge:
         launch.merge_assignment = dict(policy=merge_policy, tasks=plan.merges,
             programs=merge_grid, max_rows=merge_rows, max_chunks=1)
+    launch.raw_partials = raw_partials
     launch.merge_tasks = merge_tasks
     launch.plan = plan
     launch.prepare_plan = prepare_plan

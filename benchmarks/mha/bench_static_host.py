@@ -33,7 +33,7 @@ def main():
     parser.add_argument("--plan-policy", choices=("balanced", "cost", "tail", "stream"), default="balanced")
     parser.add_argument("--tail-pieces", type=int, choices=(2, 4, 7))
     parser.add_argument("--programs", type=int, choices=range(1, 29))
-    parser.add_argument("--merge-policy", choices=("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd"), default="fixed")
+    parser.add_argument("--merge-policy", choices=("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd", "rawsimd"), default="fixed")
     parser.add_argument("--merge-programs", type=int, choices=(28, 56), default=56)
     parser.add_argument("--merge-rows", type=int, choices=(8, 16, 32), default=8)
     parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
@@ -199,6 +199,14 @@ def main():
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
                 static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs)
                 assert static.plan == plan
+                simd_reference = None
+                if args.merge_policy == "rawsimd":
+                    print(f"[FGW compile] {key} normalized SIMD reference", flush=True)
+                    simd_reference = candidate.build_kernel(qlen, kv, pool, args.plan_policy,
+                        args.programs, args.merge_rows, args.tail_pieces, "simd", args.merge_programs, False)
+                    assert simd_reference.plan == static.plan
+                    info["reference_builds"] = info.get("reference_builds", 0) + 1
+                    info["partial_contract"] = "Raw FP32 A + max/sum planes; reference normalized FP32 Partial + LSE. Direct tiles normalized normally."
                 info["merge_assignment"] = static.merge_assignment
                 base = uniform = None
                 if not args.only_static_ascendc:
@@ -244,6 +252,10 @@ def main():
                         )
                 if static.fixed_merge_kernel is not None:
                     kernels["fixed_merge"] = static.fixed_merge_kernel
+                if simd_reference is not None:
+                    kernels["normalized_simd_local"] = simd_reference.local_kernel
+                    if simd_reference.merge_kernel is not None:
+                        kernels["normalized_simd_merge"] = simd_reference.merge_kernel
                 hashes = {}
                 for label, kernel in kernels.items():
                     source = kernel.get_kernel_source()
@@ -265,6 +277,9 @@ def main():
                     calls = {
                         "static": functools.partial(static, *inputs),
                     }
+                    if simd_reference is not None:
+                        simd_reference.validate_inputs(*inputs)
+                        calls["simd_ref"] = functools.partial(simd_reference, *inputs)
                     if static.fixed_merge_kernel is not None:
                         calls["fixed_r8"] = functools.partial(static.fixed_launch, *inputs)
                     if base is not None:
@@ -374,10 +389,11 @@ def main():
                     median_us={k: statistics.median(r[k] for r in rows) for k in rows[0]},
                     round_us=rows,
                     static_builds=len(info["builds"]),
+                    reference_builds=info.get("reference_builds", 0),
                     plan=plan.describe(),
                     merge_assignment={k: v for k, v in info["merge_assignment"].items() if k != "tasks"},
                 )
-                for control in ("default", "uniform_best", "ascendc", "fixed_r8"):
+                for control in ("default", "uniform_best", "ascendc", "fixed_r8", "simd_ref"):
                     if control not in rows[0]:
                         continue
                     ratios = [r[control] / r["static"] for r in rows]
