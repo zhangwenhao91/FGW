@@ -22,6 +22,7 @@ def main():
     parser.add_argument(
         "--smoke", action="store_true", help="Accuracy only, including tails/mixed/direct/no-merge"
     )
+    parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
     parser.add_argument("--plan-policy", choices=("balanced", "cost", "tail"), default="balanced")
@@ -180,35 +181,39 @@ def main():
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
                 static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces)
                 assert static.plan == plan
-                print(f"[FGW compile] {key} round={rd+1}/{args.rounds} default v7", flush=True)
-                base = default.build_kernel(
-                    1, qlen, 1, 128, pool, kv // 128, 128, False, "bfloat16", args.device, full_kv_cache=True
-                )
-                default.build_kernel.cache_clear()
-                compiler_temp(path)
-                uniform = (
-                    base
-                    if best is None or base.num_splits == best
-                    else default.build_kernel(
-                        1,
-                        qlen,
-                        1,
-                        128,
-                        pool,
-                        kv // 128,
-                        128,
-                        False,
-                        "bfloat16",
-                        args.device,
-                        full_kv_cache=True,
-                        num_splits=best,
+                base = uniform = None
+                if not args.only_static_ascendc:
+                    print(f"[FGW compile] {key} round={rd+1}/{args.rounds} default v7", flush=True)
+                    base = default.build_kernel(
+                        1, qlen, 1, 128, pool, kv // 128, 128, False, "bfloat16", args.device, full_kv_cache=True
                     )
-                )
-                info["default_split"] = base.num_splits
+                    default.build_kernel.cache_clear()
+                    compiler_temp(path)
+                    uniform = (
+                        base
+                        if best is None or base.num_splits == best
+                        else default.build_kernel(
+                            1,
+                            qlen,
+                            1,
+                            128,
+                            pool,
+                            kv // 128,
+                            128,
+                            False,
+                            "bfloat16",
+                            args.device,
+                            full_kv_cache=True,
+                            num_splits=best,
+                        )
+                    )
+                    info["default_split"] = base.num_splits
                 kernels = {"static_local": static.local_kernel}
                 if static.merge_kernel is not None:
                     kernels["static_merge"] = static.merge_kernel
                 for label, program in [("default", base), ("uniform", uniform)]:
+                    if program is None:
+                        continue
                     if program.num_splits == 1:
                         kernels[label + "_direct"] = program.direct_kernel
                     else:
@@ -237,12 +242,13 @@ def main():
                     )
                     parts, lse, output = local()
                     calls = {
-                        "default": functools.partial(base, *inputs),
                         "static": functools.partial(static, *inputs),
                     }
+                    if base is not None:
+                        calls["default"] = functools.partial(base, *inputs)
                     if uniform is not base:
                         calls["uniform_best"] = functools.partial(uniform, *inputs)
-                    if static.merge_kernel is not None:
+                    if static.merge_kernel is not None and not args.only_static_ascendc:
                         calls["static/merge"] = functools.partial(static.finish, parts, lse, output)
 
                         def chain(local=local, static=static):
@@ -285,7 +291,8 @@ def main():
                             )
                         )
                     if seed == 7:
-                        calls["static/local"] = local
+                        if not args.only_static_ascendc:
+                            calls["static/local"] = local
                         timed_calls = calls
                 if args.smoke:
                     continue
@@ -298,6 +305,8 @@ def main():
                     order = labels[offset:] + labels[:offset]
                     if (pair + rd) % 2:
                         order = tuple(reversed(order))
+                    if args.only_static_ascendc:
+                        order = labels if (pair + rd) % 2 == 0 else tuple(reversed(labels))
                     for label in order:
                         print(f"[FGW timing] {key} round={rd+1}/{args.rounds} pair={pair+1}/{args.pairs} {label} starting", flush=True)
                         us = measure(timed_calls[label])

@@ -6,7 +6,7 @@ from pathlib import Path
 from benchmarks.mha.summarize_clean_grid import QS, KVS
 
 
-def summarize(directory):
+def summarize(directory, native_only=False):
     rows = []
     failures = []
     policies = set()
@@ -33,16 +33,22 @@ def summarize(directory):
              'B1H1 BF16 D128 page128 noncausal; 2 correctness seeds; timing policy (compile_rounds, pairs, immediate_warmups)=' + str(sorted(policies)),
              'Full-call Event timing excludes compilation and one-time host plan/H2D preparation.',
              'Q KV v7_us static_us AscendC_us v7/static AscendC/static round_AC_min round_AC_max parts merge_tiles builds strategy programs']
+    if native_only:
+        lines[-1] = 'Q KV t7r8_us AscendC_us speedup parts merge_tiles builds strategy programs'
     for row in rows:
         t, p = row['median_us'], row['plan']
         ac = row['static_vs_ascendc']
+        if native_only:
+            lines.append(f"{p['Q']} {p['KV']} {t['static']:.3f} {t['ascendc']:.3f} {ac['speedup']:.4f} "
+                         f"{p['partial_count']} {p['merge_q_tiles']} {row['static_builds']} {p.get('strategy', 'balanced')} {p['programs']}")
+            continue
         lines.append(f"{p['Q']} {p['KV']} {t['default']:.3f} {t['static']:.3f} {t['ascendc']:.3f} "
                      f"{row['static_vs_default']['speedup']:.4f} {ac['speedup']:.4f} "
                      f"{ac['min_round']:.4f} {ac['max_round']:.4f} "
                      f"{p['partial_count']} {p['merge_q_tiles']} {row['static_builds']} {p.get('strategy', 'balanced')} {p['programs']}")
     lines.append('plan_policy=' + ','.join(sorted(plan_policies)))
     lines.extend(failures)
-    output = directory.parent / 'mha_static_host_grid_paste.txt'
+    output = directory.parent / ('mha_t7r8_grid_paste.txt' if native_only else 'mha_static_host_grid_paste.txt')
     output.write_text('\n'.join(lines) + '\n', encoding='utf8')
     (directory / 'summary.json').write_text(json.dumps(dict(status='passed' if passed else 'incomplete_or_error',
                                                           completed=len(rows), expected=80, failures=failures,
@@ -53,4 +59,6 @@ def summarize(directory):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('directory', type=Path)
-    summarize(parser.parse_args().directory)
+    parser.add_argument("--native-only", action="store_true")
+    args = parser.parse_args()
+    summarize(args.directory, args.native_only)
