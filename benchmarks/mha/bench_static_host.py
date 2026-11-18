@@ -28,7 +28,8 @@ def main():
     parser.add_argument("--plan-policy", choices=("balanced", "cost", "tail", "stream"), default="balanced")
     parser.add_argument("--tail-pieces", type=int, choices=(2, 4, 7))
     parser.add_argument("--programs", type=int, choices=range(1, 29))
-    parser.add_argument("--merge-policy", choices=("fixed", "weighted"), default="fixed")
+    parser.add_argument("--merge-policy", choices=("fixed", "weighted", "grouped"), default="fixed")
+    parser.add_argument("--merge-programs", type=int, choices=(28, 56), default=56)
     parser.add_argument("--merge-rows", type=int, choices=(8, 16, 32), default=8)
     parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
     parser.add_argument("--pairs", type=int, default=7)
@@ -183,11 +184,9 @@ def main():
                 default.build_kernel.cache_clear()
                 pool = fixtures[7][0][1].shape[0]
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
-                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy)
+                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs)
                 assert static.plan == plan
-                info["merge_assignment"] = dict(policy=args.merge_policy, tasks=static.merge_tasks,
-                    programs=len(static.merge_tasks),
-                    max_rows=max((task[4] for task in static.merge_tasks), default=0))
+                info["merge_assignment"] = static.merge_assignment
                 base = uniform = None
                 if not args.only_static_ascendc:
                     print(f"[FGW compile] {key} round={rd+1}/{args.rounds} default v7", flush=True)
@@ -230,6 +229,8 @@ def main():
                                 label + "_merge": program.merge_kernel,
                             }
                         )
+                if static.fixed_merge_kernel is not None:
+                    kernels["fixed_merge"] = static.fixed_merge_kernel
                 hashes = {}
                 for label, kernel in kernels.items():
                     source = kernel.get_kernel_source()
@@ -251,6 +252,8 @@ def main():
                     calls = {
                         "static": functools.partial(static, *inputs),
                     }
+                    if static.fixed_merge_kernel is not None:
+                        calls["fixed_r8"] = functools.partial(static.fixed_launch, *inputs)
                     if base is not None:
                         calls["default"] = functools.partial(base, *inputs)
                     if uniform is not base:
@@ -313,7 +316,7 @@ def main():
                     if (pair + rd) % 2:
                         order = tuple(reversed(order))
                     if args.only_static_ascendc:
-                        order = labels if (pair + rd) % 2 == 0 else tuple(reversed(labels))
+                        order = (labels if (pair + rd) % 2 == 0 else tuple(reversed(labels))) if len(labels) == 2 else labels[offset:] + labels[:offset]
                     for label in order:
                         print(f"[FGW timing] {key} round={rd+1}/{args.rounds} pair={pair+1}/{args.pairs} {label} starting", flush=True)
                         us = measure(timed_calls[label])
@@ -337,7 +340,7 @@ def main():
                     plan=plan.describe(),
                     merge_assignment={k: v for k, v in info["merge_assignment"].items() if k != "tasks"},
                 )
-                for control in ("default", "uniform_best", "ascendc"):
+                for control in ("default", "uniform_best", "ascendc", "fixed_r8"):
                     if control not in rows[0]:
                         continue
                     ratios = [r[control] / r["static"] for r in rows]

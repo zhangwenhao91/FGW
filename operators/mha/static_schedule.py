@@ -289,3 +289,22 @@ def make_merge_tasks(plan, vectors=56):
             tasks.append((tile, first, pieces, begin, min(stride, rows - begin)))
     assert len(tasks) <= vectors
     return tuple(tasks)
+
+
+@lru_cache(maxsize=128)
+def make_block_merge_tasks(plan, vectors=56, rows=8):
+    """Assign original fixed-size DMA chunks to weighted static workers."""
+    if type(vectors) is not int or vectors <= 0 or rows != 8:
+        raise ValueError("positive vector budget and rows=8 required")
+    chunks = [(tile, first, pieces, begin, min(rows, plan.q - tile * 128 - begin))
+              for tile, first, pieces in plan.merges
+              for begin in range(0, min(128, plan.q - tile * 128), rows)]
+    if not chunks:
+        return ()
+    workers = [[] for _ in range(min(vectors, len(chunks)))]
+    loads = [0] * len(workers)
+    for task in sorted(chunks, key=lambda t: (-t[2] * t[4], t[0], t[3])):
+        pid = min(range(len(workers)), key=lambda i: (loads[i], len(workers[i]), i))
+        workers[pid].append(task)
+        loads[pid] += task[2] * task[4]
+    return tuple(tuple(tasks) for tasks in workers)

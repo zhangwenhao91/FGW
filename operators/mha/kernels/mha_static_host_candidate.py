@@ -12,15 +12,19 @@ import tilelang
 import tilelang.ascend.language as T
 from tilelang.ascend.language import simd as S
 from tilelang.layout import make_ascend_compact_nz_layout
-from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan, choose_stream_plan, make_merge_tasks
+from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan, choose_stream_plan, make_merge_tasks, make_block_merge_tasks
 
 
 @lru_cache(maxsize=64)
-def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed"):
+def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56):
     if plan_policy not in ("balanced", "cost", "tail", "stream"):
         raise ValueError("plan_policy must be balanced, cost or tail")
-    if merge_policy not in ("fixed", "weighted"):
+    if merge_policy not in ("fixed", "weighted", "grouped"):
         raise ValueError("merge_policy must be fixed or weighted")
+    if merge_programs not in (28, 56):
+        raise ValueError("merge_programs must be 28 or 56")
+    if merge_policy == "grouped" and merge_rows != 8:
+        raise ValueError("grouped comparison requires original R8")
     if merge_rows not in (8, 16, 32):
         raise ValueError("merge_rows must be 8, 16 or 32")
     if programs is not None and plan_policy in ("cost", "stream"):
@@ -285,6 +289,48 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
 
     merge_grid = max(1, merge_count * groups_per_tile)
 
+    @T.macro
+    def merge_block(Parts, LSE, O, tile, first, pieces, row):
+        qi = tile * BR + row
+        if qi < sq:
+            part = T.alloc_shared((merge_rows, D), accum_dtype)
+            score = T.alloc_shared((merge_rows,), accum_dtype)
+            maximum = T.alloc_shared((merge_rows,), accum_dtype)
+            total = T.alloc_shared((merge_rows,), accum_dtype)
+            peak_rows = T.alloc_shared((merge_rows,), accum_dtype)
+            old_weights = T.alloc_shared((merge_rows,), accum_dtype)
+            new_weights = T.alloc_shared((merge_rows,), accum_dtype)
+            acc = T.alloc_shared((merge_rows, D), accum_dtype)
+            out = T.alloc_shared((merge_rows, D), dtype)
+            with T.SimtVF(threads=128):
+                for r, d in T.Parallel(merge_rows, D):
+                    acc[r, d] = 0
+                for r in T.Parallel(merge_rows):
+                    maximum[r] = -1e30
+                    total[r] = 0
+            for piece in T.serial(max_parts):
+                if piece < pieces:
+                    slot = first + piece
+                    T.copy(Parts[slot, row : row + merge_rows, :], part)
+                    offset = slot * BR + row
+                    T.copy(LSE[offset : offset + merge_rows], score)
+                    with T.SimtVF(threads=128):
+                        for r in T.Parallel(merge_rows):
+                            peak_rows[r] = T.max(maximum[r], score[r])
+                            old_weights[r] = T.exp(maximum[r] - peak_rows[r])
+                            new_weights[r] = T.if_then_else(
+                                score[r] > -1e29, T.exp(score[r] - peak_rows[r]), 0
+                            )
+                        for r, d in T.Parallel(merge_rows, D):
+                            acc[r, d] = acc[r, d] * old_weights[r] + part[r, d] * new_weights[r]
+                        for r in T.Parallel(merge_rows):
+                            total[r] = total[r] * old_weights[r] + new_weights[r]
+                            maximum[r] = peak_rows[r]
+            with T.SimtVF(threads=128):
+                for r, d in T.Parallel(merge_rows, D):
+                    out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1e-30), dtype)
+            T.copy(out, O[0, qi : qi + merge_rows, :])
+
     @T.prim_func
     def merge(
         Parts: T.Tensor((slots, BR, D), accum_dtype),
@@ -298,45 +344,27 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
             tile = Merges[group, 0]
             first = Merges[group, 1]
             pieces = Merges[group, 2]
-            qi = tile * BR + row
-            if qi < sq:
-                part = T.alloc_shared((merge_rows, D), accum_dtype)
-                score = T.alloc_shared((merge_rows,), accum_dtype)
-                maximum = T.alloc_shared((merge_rows,), accum_dtype)
-                total = T.alloc_shared((merge_rows,), accum_dtype)
-                peak_rows = T.alloc_shared((merge_rows,), accum_dtype)
-                old_weights = T.alloc_shared((merge_rows,), accum_dtype)
-                new_weights = T.alloc_shared((merge_rows,), accum_dtype)
-                acc = T.alloc_shared((merge_rows, D), accum_dtype)
-                out = T.alloc_shared((merge_rows, D), dtype)
-                with T.SimtVF(threads=128):
-                    for r, d in T.Parallel(merge_rows, D):
-                        acc[r, d] = 0
-                    for r in T.Parallel(merge_rows):
-                        maximum[r] = -1e30
-                        total[r] = 0
-                for piece in T.serial(max_parts):
-                    if piece < pieces:
-                        slot = first + piece
-                        T.copy(Parts[slot, row : row + merge_rows, :], part)
-                        offset = slot * BR + row
-                        T.copy(LSE[offset : offset + merge_rows], score)
-                        with T.SimtVF(threads=128):
-                            for r in T.Parallel(merge_rows):
-                                peak_rows[r] = T.max(maximum[r], score[r])
-                                old_weights[r] = T.exp(maximum[r] - peak_rows[r])
-                                new_weights[r] = T.if_then_else(
-                                    score[r] > -1e29, T.exp(score[r] - peak_rows[r]), 0
-                                )
-                            for r, d in T.Parallel(merge_rows, D):
-                                acc[r, d] = acc[r, d] * old_weights[r] + part[r, d] * new_weights[r]
-                            for r in T.Parallel(merge_rows):
-                                total[r] = total[r] * old_weights[r] + new_weights[r]
-                                maximum[r] = peak_rows[r]
-                with T.SimtVF(threads=128):
-                    for r, d in T.Parallel(merge_rows, D):
-                        out[r, d] = T.cast(acc[r, d] / T.max(total[r], 1e-30), dtype)
-                T.copy(out, O[0, qi : qi + merge_rows, :])
+            merge_block(Parts, LSE, O, tile, first, pieces, row)
+
+    block_tasks = make_block_merge_tasks(plan, merge_programs) if merge_policy == "grouped" and has_merge else ()
+    block_grid = max(1, len(block_tasks))
+    max_chunks = max((len(tasks) for tasks in block_tasks), default=1)
+
+    @T.prim_func
+    def merge_grouped(
+        Parts: T.Tensor((slots, BR, D), accum_dtype),
+        LSE: T.Tensor((slots * BR,), accum_dtype),
+        Tasks: T.Tensor((block_grid, max_chunks, 5), "int32"),
+        O: T.Tensor((1, sq, D), dtype),
+    ):
+        with T.Kernel(block_grid) as core:
+            for chunk in T.serial(max_chunks):
+                tile = Tasks[core, chunk, 0]
+                if tile >= 0:
+                    first = Tasks[core, chunk, 1]
+                    pieces = Tasks[core, chunk, 2]
+                    row = Tasks[core, chunk, 3]
+                    merge_block(Parts, LSE, O, tile, first, pieces, row)
 
     local_kernel = tilelang.compile(
         local_entry,
@@ -344,7 +372,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
         target="ascend", execution_backend="auto", pass_configs={}
     )
     merge_tasks = make_merge_tasks(plan) if merge_policy == "weighted" and has_merge else ()
-    merge_entry = merge
+    merge_entry = merge_grouped if block_tasks else merge
     if merge_tasks:
         from operators.mha.kernels.mha_weighted_merge import make_kernel
         merge_entry = make_kernel(sq, slots, merge_tasks, max_parts)
@@ -353,7 +381,9 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
         if has_merge
         else None
     )
+    fixed_merge_kernel = tilelang.compile(merge, out_idx=[], target="ascend", execution_backend="auto", pass_configs={}) if block_tasks else None
     uploaded = {}
+    fixed_tables = {}
 
     def prepare_plan(device):
         if not has_merge:
@@ -362,6 +392,9 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
             counts = [len(p) for p in plan.programs]
             tasks = [list(p) + [(-1, -1, -1, -1)] * (max_segments - len(p)) for p in plan.programs]
             merges = list(merge_tasks) if merge_tasks else (list(plan.merges) or [(-1, -1, -1)])
+            if block_tasks:
+                merges = [list(tasks) + [(-1, -1, -1, -1, -1)] * (max_chunks - len(tasks)) for tasks in block_tasks]
+                fixed_tables[device] = torch.tensor(plan.merges, dtype=torch.int32, device=device)
             uploaded[device] = tuple(
                 torch.tensor(x, dtype=torch.int32, device=device) for x in (counts, tasks, merges)
             )
@@ -395,6 +428,16 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     def launch(q, k, v, table, lengths):
         return finish(*compute(q, k, v, table, lengths))
 
+    def fixed_launch(q, k, v, table, lengths):
+        parts, lse, output = compute(q, k, v, table, lengths)
+        fixed_merge_kernel(parts, lse, fixed_tables[output.device], output)
+        return output.view(1, sq, 1, D)
+
+    launch.fixed_launch = fixed_launch
+    launch.fixed_merge_kernel = fixed_merge_kernel
+    launch.merge_assignment = dict(policy=merge_policy, tasks=block_tasks or merge_tasks,
+        programs=len(block_tasks or merge_tasks), max_rows=merge_rows if block_tasks else max((t[4] for t in merge_tasks), default=0),
+        max_chunks=max_chunks if block_tasks else 1)
     launch.merge_tasks = merge_tasks
     launch.plan = plan
     launch.prepare_plan = prepare_plan

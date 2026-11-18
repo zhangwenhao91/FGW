@@ -4,7 +4,7 @@ import math
 import random
 import unittest
 from collections import Counter
-from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan, make_tail_plan, make_stream_plan, choose_stream_plan, make_merge_tasks
+from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan, make_tail_plan, make_stream_plan, choose_stream_plan, make_merge_tasks, make_block_merge_tasks
 
 
 class StaticScheduleTests(unittest.TestCase):
@@ -66,6 +66,23 @@ class StaticScheduleTests(unittest.TestCase):
         self.assertEqual(len(tasks), 52)
         self.assertEqual(max(task[4] for task in tasks), 10)
 
+    def test_grouped_dma_chunk_ownership(self):
+        from benchmarks.mha.summarize_clean_grid import QS, KVS
+        for q in (*QS, 129, 3712):
+            for kv in KVS:
+                plan = choose_stream_plan(q, kv)
+                expected = {(t, r) for t, _, _ in plan.merges for r in range(min(128, q - t * 128))}
+                for budget in (28, 56):
+                    workers = make_block_merge_tasks(plan, budget)
+                    seen = Counter((t, r) for worker in workers for t, _, _, begin, rows in worker
+                                   for r in range(begin, begin + rows))
+                    self.assertEqual(set(seen), expected)
+                    self.assertTrue(all(n == 1 for n in seen.values()))
+                    self.assertLessEqual(len(workers), budget)
+                    self.assertTrue(all(worker for worker in workers))
+                    self.assertTrue(all(begin % 8 == 0 and 0 < rows <= 8
+                                        for worker in workers for _, _, _, begin, rows in worker))
+
     def test_stream_policy_coverage_and_parallelism(self):
         from benchmarks.mha.summarize_clean_grid import QS, KVS
         for q in (*QS, 1, 17, 129, 3712):
@@ -122,6 +139,7 @@ class StaticScheduleTests(unittest.TestCase):
             self.assertEqual(len(plan.merges), 1)
             self._check_attention(plan)
             self._check_attention(plan, weighted=True)
+            self._check_attention(plan, weighted="grouped")
 
     def _check_attention(self, plan, weighted=False):
         qlen, kv = plan.q, plan.kv
@@ -156,6 +174,8 @@ class StaticScheduleTests(unittest.TestCase):
                     partials[slot] = values
         merge_tasks = make_merge_tasks(plan) if weighted else tuple(
             (tile, first, count, 0, min(128, qlen - tile * 128)) for tile, first, count in plan.merges)
+        if weighted == "grouped":
+            merge_tasks = tuple(task for worker in make_block_merge_tasks(plan) for task in worker)
         for tile, first, count, begin, rows in merge_tasks:
             for row in range(begin, begin + rows):
                 fragments = [partials[s][row] for s in range(first, first + count)]
