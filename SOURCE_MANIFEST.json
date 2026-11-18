@@ -1,0 +1,30 @@
+{
+  "repository": "https://github.com/zhangwenhao91/FGW",
+  "source_commit": "50fca6d93466f6c8eed2388b58366c3aae819299",
+  "files": {
+    "operators/__init__.py": {
+      "original_path": "operators/__init__.py",
+      "sha256": "9757d41fdf694f70ea1f097be579df64338774370925ee5564cd7f2487ceac4c"
+    },
+    "operators/mha/__init__.py": {
+      "original_path": "operators/mha/__init__.py",
+      "sha256": "e89bd88cc0349d8ef1cf42fe09b3a8a931a3d959bfb4e6871ba11261740ddb7e"
+    },
+    "operators/mha/kernels/__init__.py": {
+      "original_path": "operators/mha/kernels/__init__.py",
+      "sha256": "2b9d6480f7f08bfecf42f82a7aa4a203c97f4084657f9f63f61bbe84d7f6ebe1"
+    },
+    "operators/mha/kernels/mha_paged_decode.py": {
+      "original_path": "operators/mha/kernels/mha_static_host_candidate.py",
+      "sha256": "9641c52246e66a413e852da53aec44b370783e6fa1d057729987fa0adec81bac"
+    },
+    "operators/mha/static_schedule.py": {
+      "original_path": "operators/mha/static_schedule.py",
+      "sha256": "0e1b5e58b05581d2b0ff6cdf0fedc08726b6b5102c28f42848704c71c8a59ea7"
+    },
+    "third_party/licenses/TILELANG_LICENSE": {
+      "original_path": "third_party/licenses/TILELANG_LICENSE",
+      "sha256": "f70e5cdc24c3797af741930440086f9a0ad36930b05a3dfc25b420936dc2cfa1"
+    }
+  }
+}
