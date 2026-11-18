@@ -3,7 +3,7 @@ import tilelang.ascend.language as T
 from tilelang.ascend.language import simd as S
 
 
-def make_kernel(sq, slots, merge_count, max_parts, rows, raw=False):
+def make_kernel(sq, slots, merge_count, max_parts, rows, raw=False, reciprocal=False):
     groups_per_tile = 128 // rows
     grid = max(1, merge_count * groups_per_tile)
     stats_plane = slots * 128
@@ -86,12 +86,41 @@ def make_kernel(sq, slots, merge_count, max_parts, rows, raw=False):
                 with T.SimdVF(latency=200):
                     full = S.pset(32, "PAT_ALL")
                     minimum = S.vdup(T.float32(1e-30), "float32", full)
+                    if reciprocal:
+                        stats = S.pset(32, stat_pattern)
+                        denominator_rows = S.vmax(S.vld(total[0], "NORM"), minimum, stats)
+                        inverse = S.vdiv(S.vdup(T.float32(1), "float32", full), denominator_rows, stats)
+                        # Reuse scratch after the final online update.
+                        S.vsts(old_weights[0], inverse, stats, "NORM_B32")
+                        S.mem_bar("VST_VLD")
                     for r in range(rows):
-                        denominator = S.vmax(S.vld(total[r], "BRC_B32"), minimum, full)
+                        if reciprocal:
+                            inverse_row = S.vld(old_weights[r], "BRC_B32")
+                        else:
+                            denominator = S.vmax(S.vld(total[r], "BRC_B32"), minimum, full)
                         for c in range(0, 128, 64):
-                            value = S.vdiv(S.vld(acc[r, c], "NORM"), denominator, full)
+                            if reciprocal:
+                                value = S.vmul(S.vld(acc[r, c], "NORM"), inverse_row, full)
+                            else:
+                                value = S.vdiv(S.vld(acc[r, c], "NORM"), denominator, full)
                             converted = S.vcvt(value, "bfloat16", full)
                             S.vsts(out[r, c], converted, full, "PK_B32")
                 T.copy(out, O[0, qi : qi + rows, :])
 
     return merge_simd
+
+
+def replace_merge(program, kernel):
+    """Use an alternate merge with the exact same compiled local and metadata."""
+    def finish(parts, stats, output):
+        merges = program.prepare_plan(output.device)[2]
+        kernel(parts, stats, merges, output)
+        return output.view(1, program.plan.q, 1, 128)
+
+    def launch(q, k, v, table, lengths):
+        return finish(*program.compute(q, k, v, table, lengths))
+
+    launch.__dict__.update(program.__dict__)
+    launch.merge_kernel = kernel
+    launch.finish = finish
+    return launch

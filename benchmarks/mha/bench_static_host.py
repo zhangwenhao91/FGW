@@ -33,7 +33,7 @@ def main():
     parser.add_argument("--plan-policy", choices=("balanced", "cost", "tail", "stream"), default="balanced")
     parser.add_argument("--tail-pieces", type=int, choices=(2, 4, 7))
     parser.add_argument("--programs", type=int, choices=range(1, 29))
-    parser.add_argument("--merge-policy", choices=("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd", "rawsimd"), default="fixed")
+    parser.add_argument("--merge-policy", choices=("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd", "rawsimd", "rawrecip"), default="fixed")
     parser.add_argument("--merge-programs", type=int, choices=(28, 56), default=56)
     parser.add_argument("--merge-rows", type=int, choices=(8, 16, 32), default=8)
     parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
@@ -207,6 +207,21 @@ def main():
                     assert simd_reference.plan == static.plan
                     info["reference_builds"] = info.get("reference_builds", 0) + 1
                     info["partial_contract"] = "Raw FP32 A + max/sum planes; reference normalized FP32 Partial + LSE. Direct tiles normalized normally."
+                if args.merge_policy == "rawrecip":
+                    from operators.mha.kernels.mha_simd_merge import make_kernel, replace_merge
+                    print(f"[FGW compile] {key} raw SIMD division reference (shared local)", flush=True)
+                    if static.merge_kernel is None:
+                        simd_reference = static
+                        info["reference_builds"] = 0
+                    else:
+                        baseline_merge = tilelang.compile(make_kernel(qlen, max(1, plan.partial_count),
+                            len(plan.merges), plan.max_parts, min(args.merge_rows, tilelang.next_power_of_2(qlen)),
+                            raw=True, reciprocal=False), out_idx=[], target="ascend", execution_backend="auto", pass_configs={})
+                        simd_reference = replace_merge(static, baseline_merge)
+                        static = replace_merge(static, static.merge_kernel)
+                        assert simd_reference.local_kernel is static.local_kernel
+                        info["reference_builds"] = info.get("reference_builds", 0) + 1
+                    info["partial_contract"] = "Both variants share raw A/max/sum local and workspace; reference divides each element, candidate broadcasts row reciprocal."
                 info["merge_assignment"] = static.merge_assignment
                 base = uniform = None
                 if not args.only_static_ascendc:
@@ -253,9 +268,10 @@ def main():
                 if static.fixed_merge_kernel is not None:
                     kernels["fixed_merge"] = static.fixed_merge_kernel
                 if simd_reference is not None:
-                    kernels["normalized_simd_local"] = simd_reference.local_kernel
+                    reference_prefix = "raw_simd_ref" if args.merge_policy == "rawrecip" else "normalized_simd"
+                    kernels[reference_prefix + "_local"] = simd_reference.local_kernel
                     if simd_reference.merge_kernel is not None:
-                        kernels["normalized_simd_merge"] = simd_reference.merge_kernel
+                        kernels[reference_prefix + "_merge"] = simd_reference.merge_kernel
                 hashes = {}
                 for label, kernel in kernels.items():
                     source = kernel.get_kernel_source()
@@ -279,7 +295,7 @@ def main():
                     }
                     if simd_reference is not None:
                         simd_reference.validate_inputs(*inputs)
-                        calls["simd_ref"] = functools.partial(simd_reference, *inputs)
+                        calls["raw_ref" if args.merge_policy == "rawrecip" else "simd_ref"] = functools.partial(simd_reference, *inputs)
                     if static.fixed_merge_kernel is not None:
                         calls["fixed_r8"] = functools.partial(static.fixed_launch, *inputs)
                     if base is not None:
@@ -393,7 +409,7 @@ def main():
                     plan=plan.describe(),
                     merge_assignment={k: v for k, v in info["merge_assignment"].items() if k != "tasks"},
                 )
-                for control in ("default", "uniform_best", "ascendc", "fixed_r8", "simd_ref"):
+                for control in ("default", "uniform_best", "ascendc", "fixed_r8", "simd_ref", "raw_ref"):
                     if control not in rows[0]:
                         continue
                     ratios = [r[control] / r["static"] for r in rows]

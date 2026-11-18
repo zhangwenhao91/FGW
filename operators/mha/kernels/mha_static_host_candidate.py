@@ -19,7 +19,7 @@ from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan
 def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56, include_fixed_control=True):
     if plan_policy not in ("balanced", "cost", "tail", "stream"):
         raise ValueError("plan_policy must be balanced, cost or tail")
-    if merge_policy not in ("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd", "rawsimd"):
+    if merge_policy not in ("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd", "rawsimd", "rawrecip"):
         raise ValueError("merge_policy must be fixed or weighted")
     if merge_programs not in (28, 56):
         raise ValueError("merge_programs must be 28 or 56")
@@ -47,7 +47,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     merge_count = len(plan.merges)
     max_parts = plan.max_parts
     has_merge = merge_count > 0
-    raw_partials = merge_policy == "rawsimd"
+    raw_partials = merge_policy in ("rawsimd", "rawrecip")
     stats_plane = slots * BR
     stats_size = stats_plane * (2 if raw_partials else 1)
     merge_rows = min(merge_rows, tilelang.next_power_of_2(sq))
@@ -396,9 +396,9 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     if merge_policy == "prefetch" and has_merge:
         from operators.mha.kernels.mha_prefetch_merge import make_kernel
         merge_entry = make_kernel(sq, slots, merge_count, max_parts, merge_rows)
-    if merge_policy in ("simd", "rawsimd") and has_merge:
+    if merge_policy in ("simd", "rawsimd", "rawrecip") and has_merge:
         from operators.mha.kernels.mha_simd_merge import make_kernel
-        merge_entry = make_kernel(sq, slots, merge_count, max_parts, merge_rows, raw=raw_partials)
+        merge_entry = make_kernel(sq, slots, merge_count, max_parts, merge_rows, raw=raw_partials, reciprocal=merge_policy == "rawrecip")
     merge_kernel = (
         tilelang.compile(merge_entry, out_idx=[], target="ascend", execution_backend="auto", pass_configs={})
         if has_merge
@@ -463,7 +463,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     launch.merge_assignment = dict(policy=merge_policy, tasks=block_tasks or merge_tasks,
         programs=len(block_tasks or merge_tasks), max_rows=merge_rows if block_tasks else max((t[4] for t in merge_tasks), default=0),
         max_chunks=max_chunks if block_tasks else 1)
-    if merge_policy in ("preweighted", "prefetch", "simd", "rawsimd") and has_merge:
+    if merge_policy in ("preweighted", "prefetch", "simd", "rawsimd", "rawrecip") and has_merge:
         launch.merge_assignment = dict(policy=merge_policy, tasks=plan.merges,
             programs=merge_grid, max_rows=merge_rows, max_chunks=1)
     launch.raw_partials = raw_partials
