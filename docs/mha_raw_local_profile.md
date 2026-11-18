@@ -23,6 +23,13 @@ The trace JSON can be opened in Perfetto. The supervisor applies the existing
 CPU, memory and timeout policy; it cannot guarantee protection against a
 device or driver failure.
 
+For this profiling runner only, the default process-tree RSS budget is 8192
+MiB (override with `FGW_MAX_TREE_RSS_MB`). The first NPU run finished all five
+local calls but was terminated during synchronous profiler export at 4534
+MiB under the previous 4096 MiB budget. Other benchmark budgets are unchanged.
+The compact paste also includes each guard's last record, so a forced stop
+is visible even when the worker cannot update its own `running` report.
+
 The compact summary reports AIC/AIV counters separately, including
 cycle-weighted busy ratios and record ranges. Ratios can overlap and must
 not be added. Counter records are not physical-core counts. Record durations
