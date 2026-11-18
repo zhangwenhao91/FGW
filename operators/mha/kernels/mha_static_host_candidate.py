@@ -131,31 +131,48 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
 
     @T.macro
     def softmax_row(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
-        # Keep each scaled score row in registers through max/exp/sum/packing.
-        # Each row has independent online state; PV accumulation is unchanged.
+        # Interleave two independent rows, retaining scaled scores in registers.
+        # PV accumulation and the vectorized online-stat update are unchanged.
         with T.SimdVF(latency=735):
             full = S.pset(32, "PAT_ALL")
             one = S.pset(32, "PAT_VL1")
             b16 = S.pset(16, "PAT_VL128")
             dst = S.make_ubuf_ptr(T.access_ptr(P_nz_ub[0, 0], "w", ROWS + 1, BC), "bfloat16")
             S.vsts(old_m_ub[0], S.vld(m_ub[0], "NORM"), full, "NORM_B32")
-            for r in range(ROWS):
-                even, odd = S.vld2(S_ub[r, 0], "DINTLV_B32")
-                scaled_even = S.vmuls(even, T.float32(scale), full)
-                scaled_odd = S.vmuls(odd, T.float32(scale), full)
-                block_max = S.vdupv(S.vcmax(S.vmax(scaled_even, scaled_odd, full), full), full)
-                previous_max = S.vld(m_ub[r], "BRC_B32")
-                peak = S.vmax(previous_max, block_max, full)
-                exp_even = S.vexpdif(scaled_even, peak, full)
-                exp_odd = S.vexpdif(scaled_odd, peak, full)
-                row_total = S.vcadd(S.vadd(exp_even, exp_odd, full), full)
-                S.vsts(m_ub[r], peak, one, "ONEPT_B32")
-                S.vsts(row_sum_ub[r], row_total, one, "ONEPT_B32")
-                even_bf16 = S.vcvt(exp_even, "bfloat16", full, sat=False, part=0)
-                odd_bf16 = S.vcvt(exp_odd, "bfloat16", full, sat=False, part=1)
-                bits = S.vor(T.reinterpret(even_bf16, "uint16x128"),
-                             T.reinterpret(odd_bf16, "uint16x128"), b16)
-                dst = S.vsstb(T.reinterpret(bits, "bfloat16x128"), dst,
+            for r in range(0, ROWS, 2):
+                even0, odd0 = S.vld2(S_ub[r, 0], "DINTLV_B32")
+                even1, odd1 = S.vld2(S_ub[r + 1, 0], "DINTLV_B32")
+                scaled_even0 = S.vmuls(even0, T.float32(scale), full)
+                scaled_even1 = S.vmuls(even1, T.float32(scale), full)
+                scaled_odd0 = S.vmuls(odd0, T.float32(scale), full)
+                scaled_odd1 = S.vmuls(odd1, T.float32(scale), full)
+                reduced0 = S.vcmax(S.vmax(scaled_even0, scaled_odd0, full), full)
+                reduced1 = S.vcmax(S.vmax(scaled_even1, scaled_odd1, full), full)
+                block_max0 = S.vdupv(reduced0, full)
+                block_max1 = S.vdupv(reduced1, full)
+                peak0 = S.vmax(S.vld(m_ub[r], "BRC_B32"), block_max0, full)
+                peak1 = S.vmax(S.vld(m_ub[r + 1], "BRC_B32"), block_max1, full)
+                exp_even0 = S.vexpdif(scaled_even0, peak0, full)
+                exp_even1 = S.vexpdif(scaled_even1, peak1, full)
+                exp_odd0 = S.vexpdif(scaled_odd0, peak0, full)
+                exp_odd1 = S.vexpdif(scaled_odd1, peak1, full)
+                row_total0 = S.vcadd(S.vadd(exp_even0, exp_odd0, full), full)
+                row_total1 = S.vcadd(S.vadd(exp_even1, exp_odd1, full), full)
+                S.vsts(m_ub[r], peak0, one, "ONEPT_B32")
+                S.vsts(m_ub[r + 1], peak1, one, "ONEPT_B32")
+                S.vsts(row_sum_ub[r], row_total0, one, "ONEPT_B32")
+                S.vsts(row_sum_ub[r + 1], row_total1, one, "ONEPT_B32")
+                even_bf16_0 = S.vcvt(exp_even0, "bfloat16", full, sat=False, part=0)
+                even_bf16_1 = S.vcvt(exp_even1, "bfloat16", full, sat=False, part=0)
+                odd_bf16_0 = S.vcvt(exp_odd0, "bfloat16", full, sat=False, part=1)
+                odd_bf16_1 = S.vcvt(exp_odd1, "bfloat16", full, sat=False, part=1)
+                bits0 = S.vor(T.reinterpret(even_bf16_0, "uint16x128"),
+                              T.reinterpret(odd_bf16_0, "uint16x128"), b16)
+                bits1 = S.vor(T.reinterpret(even_bf16_1, "uint16x128"),
+                              T.reinterpret(odd_bf16_1, "uint16x128"), b16)
+                dst = S.vsstb(T.reinterpret(bits0, "bfloat16x128"), dst,
+                              T.int32(ROWS + 1 << 16 | 1), b16, update=True)
+                dst = S.vsstb(T.reinterpret(bits1, "bfloat16x128"), dst,
                               T.int32(ROWS + 1 << 16 | 1), b16, update=True)
             S.mem_bar("VST_VLD")
             # Preserve the inexpensive all-rows-at-once alpha/denominator update.

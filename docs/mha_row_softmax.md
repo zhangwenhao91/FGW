@@ -8,11 +8,18 @@ raw+SIMD baseline, and installed AscendC FIA at B1H1 BF16 D128 page128,
 noncausal, Q32768 and KV4096/8192. The candidate is opt-in with
 `--row-softmax`; existing defaults are unchanged.
 
-Only the local softmax macro changes. It loads a score row with DINTLV,
-scales its even/odd lanes, reduces the maximum, broadcasts the reduced
-maximum, combines it with the previous online maximum, and computes exp,
-the row sum, BF16 conversion and NZ packing while scaled scores remain in
-registers. The original all-64-rows alpha and denominator update remains.
+The current candidate is `register_rows2_v2`: it replaces the single-row
+experiment in the same opt-in path. The report records this identifier and
+the summarizer rejects older reports. The previous single-row candidate
+increased full-call latency by 8.1%/9.7% for KV4096/8192; it was not promoted.
+
+Only the local softmax macro changes. It loads two score rows with DINTLV,
+interleaves their independent scale, max, broadcast and exp operations, then
+calculates the row sums, BF16 conversion and NZ packing while all four scaled
+even/odd score vectors remain in registers. Both reduced maxima are available
+before either row's exp calculation. The original all-64-rows alpha and
+denominator update remains. The extra live vectors can increase register
+pressure; real-NPU measurements must determine the tradeoff.
 This removes the full scaled-score UB store/reload and reduces the explicit
 internal VST_VLD barriers from three to one. Maximum reduction pairs change
 from the two contiguous halves to even/odd lanes; the finite-input maximum

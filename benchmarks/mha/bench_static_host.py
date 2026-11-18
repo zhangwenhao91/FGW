@@ -28,7 +28,7 @@ def main():
         "--smoke", action="store_true", help="Accuracy only, including tails/mixed/direct/no-merge"
     )
     parser.add_argument("--raw-breakdown", action="store_true", help="Only raw SIMD full/local/merge/prepared-chain and native FIA; omit variant builds")
-    parser.add_argument("--row-softmax", action="store_true", help="Compare register-resident row softmax with original raw SIMD and native FIA")
+    parser.add_argument("--row-softmax", action="store_true", help="Compare two interleaved register-resident softmax rows with original raw SIMD and native FIA")
     parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
@@ -97,6 +97,8 @@ def main():
     )
 
     last_stage = [None]
+    if args.row_softmax:
+        report['softmax_variant'] = 'register_rows2_v2'
     def save():
         stage = (report['phase'], report['active'])
         if stage != last_stage[0]:
@@ -223,7 +225,7 @@ def main():
                     if static.merge_kernel is not None:
                         static = replace_merge(static, simd_reference.merge_kernel)
                     info["reference_builds"] = info.get("reference_builds", 0) + 1
-                    info["partial_contract"] = "Only local softmax differs: register-resident rows vs original UB roundtrip. Same plan, raw A/max/sum and shared SIMD merge."
+                    info["partial_contract"] = "Only local softmax differs: two interleaved register-resident rows vs original UB roundtrip. Same plan, raw A/max/sum and shared SIMD merge."
                 if args.merge_policy == "rawrecip":
                     from operators.mha.kernels.mha_simd_merge import make_kernel, replace_merge
                     print(f"[FGW compile] {key} raw SIMD division reference (shared local)", flush=True)

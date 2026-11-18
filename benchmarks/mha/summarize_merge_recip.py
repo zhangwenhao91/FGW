@@ -15,7 +15,7 @@ def summarize(directory, row_softmax=False):
              'static=reciprocal; raw_ref=original raw SIMD division; ascendc=native FIA.']
     if row_softmax:
         lines[0] = 'Q32768 B1H1 BF16 D128; one build per local variant, shared SIMD merge; 6 measurement repeats x 9 rotated triples.'
-        lines[3] = 'static=register-resident row softmax; raw_ref=original raw SIMD; ascendc=native FIA.'
+        lines[3] = 'static=register_rows2_v2 (two interleaved rows); raw_ref=original raw SIMD; ascendc=native FIA.'
     completed = 0
     for kv in (4096, 8192):
         path = directory / f'kv{kv}.json'
@@ -37,7 +37,9 @@ def summarize(directory, row_softmax=False):
                         and all(r['compile_round'] == 1 and set(r['samples_us']) == set(LABELS)
                                 and all(len(r['samples_us'][label]) == 9 for label in LABELS) for r in repeats))
             if row_softmax:
-                complete = complete and settings.get('row_softmax') is True and settings.get('merge_policy') == 'rawsimd'
+                complete = (complete and settings.get('row_softmax') is True
+                            and settings.get('merge_policy') == 'rawsimd'
+                            and report.get('softmax_variant') == 'register_rows2_v2')
             lines.append(f"KV{kv}: status={report['status']} phase={report.get('phase')} repeats={len(repeats)}/6 complete={complete}")
             if row_softmax:
                 if report.get('error'):
