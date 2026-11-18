@@ -1,9 +1,65 @@
-d=reports/mha/latest/mha_raw_local_profile.K749GE9g
-{
-  echo '=== profiler log ==='
-  tail -n 120 "$d/kv4096.log"
-  echo '=== resource guard ==='
-  tail -n 30 "$d/guard_kv4096.jsonl"
-  echo '=== current report ==='
-  cat "$d/kv4096_paste.txt"
-} > tmp.txt
+(zwh) root@ubuntu162:/home/z30086261/FGW# cat tmp.txt 
+=== profiler log ===
+[FGW guard] starting host-only preflight
+[FGW guard] Torch/BLAS thread cap=4; process-tree RSS budget=4096 MiB; timeout=1800s
+[FGW guard] elapsed=0.0s tree_RSS=0MiB host_available=1501295MiB
+[FGW stage] setup
+[FGW stage] import_torch
+[FGW stage] import_torch_npu
+[FGW stage] import_tilelang
+[FGW stage] set_device
+[FGW stage] reference_seed7
+[FGW stage] compile_rawsimd_once
+2026-11-18 14:35:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `local_split` with `out_idx=[6, 7, 8]`
+[14:35:55] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[14:35:55] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[14:35:55] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[14:35:55] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[14:35:55] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[14:35:55] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[14:35:55] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-18 14:35:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `local_split`
+2026-11-18 14:35:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge_simd` with `out_idx=[]`
+2026-11-18 14:36:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge_simd`
+[FGW stage] accuracy_seed7
+[FGW stage] reference_seed19
+[FGW stage] accuracy_seed19
+[FGW stage] warmup_session1
+[FGW profile] warmup 25/100
+[FGW profile] warmup 50/100
+[FGW profile] warmup 75/100
+[FGW profile] warmup 100/100
+[FGW stage] capture_session1
+[2026-11-18 14:36:01] [WARNING] [1596763] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[FGW profile] session=1/3 local=1/5
+[FGW profile] session=1/3 local=2/5
+[FGW profile] session=1/3 local=3/5
+[FGW profile] session=1/3 local=4/5
+[FGW profile] session=1/3 local=5/5
+[2026-11-18 14:36:02] [INFO] [1599706] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/mha/latest/mha_raw_local_profile.K749GE9g/kv4096_trace1/ubuntu162_1596763_20261118143601560_ascend_pt
+[FGW guard] stopping worker: process-tree RSS budget exceeded
+=== resource guard ===
+{"event": "start", "command": ["python", "-u", "-m", "benchmarks.mha.profile_raw_local", "--kv", "4096", "--sessions", "3", "--repeat", "5", "--warmup", "100", "--output", "mha_raw_local_profile.K749GE9g/kv4096.json"], "cpu_threads": 4, "max_tree_rss_mb": 4096, "timeout_seconds": 1800, "utc": "2026-11-18T14:35:47.602043+00:00", "mem_available_mb": 1501294.734375, "swap_free_mb": 8191.99609375}
+{"utc": "2026-11-18T14:35:47.604495+00:00", "mem_available_mb": 1501294.734375, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 0.0, "pids": [1596763], "rss_mb": 0.01171875, "names": {"1596763": "python"}, "disk_free_mb": 21851876.83203125}
+{"utc": "2026-11-18T14:35:48.604902+00:00", "mem_available_mb": 1500711.38671875, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 1.0, "pids": [1596763], "rss_mb": 735.13671875, "names": {"1596763": "python"}, "disk_free_mb": 21851876.23828125}
+{"utc": "2026-11-18T14:35:49.606164+00:00", "mem_available_mb": 1500020.9453125, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 2.0, "pids": [1596763], "rss_mb": 1452.79296875, "names": {"1596763": "python"}, "disk_free_mb": 21851875.796875}
+{"utc": "2026-11-18T14:35:50.607639+00:00", "mem_available_mb": 1499872.890625, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 3.0, "pids": [1596763], "rss_mb": 1707.9296875, "names": {"1596763": "python"}, "disk_free_mb": 21851875.3046875}
+{"utc": "2026-11-18T14:35:51.608493+00:00", "mem_available_mb": 1499935.8671875, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 4.0, "pids": [1596763], "rss_mb": 1763.6015625, "names": {"1596763": "python"}, "disk_free_mb": 21851874.87109375}
+{"utc": "2026-11-18T14:35:52.610000+00:00", "mem_available_mb": 1500132.66796875, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 5.0, "pids": [1596763], "rss_mb": 1764.1484375, "names": {"1596763": "python"}, "disk_free_mb": 21851874.3046875}
+{"utc": "2026-11-18T14:35:53.611575+00:00", "mem_available_mb": 1499923.37109375, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 6.0, "pids": [1596763], "rss_mb": 1764.1484375, "names": {"1596763": "python"}, "disk_free_mb": 21851873.90234375}
+{"utc": "2026-11-18T14:35:54.613228+00:00", "mem_available_mb": 1499826.625, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 7.0, "pids": [1596763], "rss_mb": 1764.1484375, "names": {"1596763": "python"}, "disk_free_mb": 21851873.45703125}
+{"utc": "2026-11-18T14:35:55.615223+00:00", "mem_available_mb": 1499891.8125, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 8.0, "pids": [1596763], "rss_mb": 1764.5234375, "names": {"1596763": "python"}, "disk_free_mb": 21851873.03125}
+{"utc": "2026-11-18T14:35:56.617584+00:00", "mem_available_mb": 1499853.71484375, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 9.0, "pids": [1596763, 1598427, 1598429], "rss_mb": 1915.1328125, "names": {"1596763": "python", "1598429": "bisheng", "1598427": "bisheng"}, "disk_free_mb": 21851872.5234375}
+{"utc": "2026-11-18T14:35:57.619881+00:00", "mem_available_mb": 1499990.859375, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 10.0, "pids": [1596763, 1598427, 1598537], "rss_mb": 1933.17578125, "names": {"1598537": "bisheng", "1596763": "python", "1598427": "bisheng"}, "disk_free_mb": 21851872.0625}
+{"utc": "2026-11-18T14:35:58.621430+00:00", "mem_available_mb": 1499976.4921875, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 11.0, "pids": [1596763], "rss_mb": 1775.55078125, "names": {"1596763": "python"}, "disk_free_mb": 21851871.6640625}
+{"utc": "2026-11-18T14:35:59.623010+00:00", "mem_available_mb": 1499718.69140625, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 12.0, "pids": [1596763, 1598903, 1598905], "rss_mb": 1968.89453125, "names": {"1598905": "bisheng", "1596763": "python", "1598903": "bisheng"}, "disk_free_mb": 21851871.1171875}
+{"utc": "2026-11-18T14:36:00.625178+00:00", "mem_available_mb": 1499948.7265625, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 13.0, "pids": [1596763, 1598903, 1599076], "rss_mb": 1984.2109375, "names": {"1596763": "python", "1599076": "bisheng", "1598903": "bisheng"}, "disk_free_mb": 21851870.625}
+{"utc": "2026-11-18T14:36:01.626569+00:00", "mem_available_mb": 1499751.2265625, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 14.0, "pids": [1596763], "rss_mb": 1943.93359375, "names": {"1596763": "python"}, "disk_free_mb": 21851869.921875}
+{"utc": "2026-11-18T14:36:02.627617+00:00", "mem_available_mb": 1499723.44140625, "swap_free_mb": 8191.99609375, "event": "sample", "elapsed_seconds": 15.0, "pids": [1596763, 1599706, 1599747, 1599753, 1599757, 1599758], "rss_mb": 4533.77734375, "names": {"1599747": "python", "1599753": "msprof", "1599757": "python3", "1599758": "python", "1599706": "python", "1596763": "python"}, "disk_free_mb": 21851844.84765625}
+{"event": "end", "returncode": -15, "reason": "process-tree RSS budget exceeded", "utc": "2026-11-18T14:36:02.741697+00:00", "mem_available_mb": 1499711.140625, "swap_free_mb": 8191.99609375}
+=== current report ===
+status=running phase=capture_session1 KV=4096 captures=1/3
+Only prepared-Q raw local is called during profiling; no cache flush, merge or native FIA.
+Pipe busy ratios overlap and do not directly measure synchronization waits; retain raw trace.
+SESSION 1 status=running raw=None trace=/home/z30086261/FGW/reports/mha/latest/mha_raw_local_profile.K749GE9g/kv4096_trace1
+(zwh) root@ubuntu162:/home/z30086261/FGW#
