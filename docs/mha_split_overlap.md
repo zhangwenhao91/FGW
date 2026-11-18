@@ -73,3 +73,13 @@ source at Q257/KV512, including direct tail output and raw m/l/A states
 The local TileLang dev compiler differs from the server a7cb753d; real NPU
 precision, event reuse, in-place adapter source matching, concurrency and
 speedup remain to be verified by this run. No default promotion is made.
+
+First NPU result: all accuracy and repeat checks passed. Full-call medians
+(microseconds, KV4096/KV8192) were baseline 290.907/555.921, serial
+293.326/564.444, parallel 336.491/593.266, AscendC 292.099/562.250.
+Parallel lost to baseline and serial in all six repeats for both shapes.
+Both retained traces exported successfully, but the strict Chrome parser
+found no `cat=kernel` events, so actual overlap is still unconfirmed.
+Inspect the existing trace schema with `tools/mha/inspect_overlap_trace.py`;
+no NPU test rerun is needed. Do not promote this candidate or attribute its
+regression to a specific hardware bottleneck without inspecting the trace.
