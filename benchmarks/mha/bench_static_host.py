@@ -33,7 +33,7 @@ def main():
     parser.add_argument("--plan-policy", choices=("balanced", "cost", "tail", "stream"), default="balanced")
     parser.add_argument("--tail-pieces", type=int, choices=(2, 4, 7))
     parser.add_argument("--programs", type=int, choices=range(1, 29))
-    parser.add_argument("--merge-policy", choices=("fixed", "weighted", "grouped", "preweighted", "prefetch"), default="fixed")
+    parser.add_argument("--merge-policy", choices=("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd"), default="fixed")
     parser.add_argument("--merge-programs", type=int, choices=(28, 56), default=56)
     parser.add_argument("--merge-rows", type=int, choices=(8, 16, 32), default=8)
     parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
@@ -129,6 +129,7 @@ def main():
         from operators.mha.kernels import mha_weighted_merge as weighted_merge_source
         from operators.mha.kernels import mha_preweighted_merge as preweighted_merge_source
         from operators.mha.kernels import mha_prefetch_merge as prefetch_merge_source
+        from operators.mha.kernels import mha_simd_merge as simd_merge_source
         from operators.mha import static_schedule
         from operators.mha.split_cost_model import MODEL_PATH
         from benchmarks.mha.bench_mha_mfu import chunked_cpu_reference
@@ -147,7 +148,7 @@ def main():
             ),
             source_sha256={
                 name: hashlib.sha256(Path(m.__file__).read_bytes()).hexdigest()
-                for name, m in [("candidate", candidate), ("default", default), ("plan", static_schedule), ("weighted_merge", weighted_merge_source), ("preweighted_merge", preweighted_merge_source), ("prefetch_merge", prefetch_merge_source)]
+                for name, m in [("candidate", candidate), ("default", default), ("plan", static_schedule), ("weighted_merge", weighted_merge_source), ("preweighted_merge", preweighted_merge_source), ("prefetch_merge", prefetch_merge_source), ("simd_merge", simd_merge_source)]
             },
             model_sha256=hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest(),
         )
