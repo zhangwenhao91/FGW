@@ -17,6 +17,11 @@ CASES = ((8192, 32768, 2), (4096, 8192, 1), (2048, 24576, 4), (3584, 32768, 1), 
 SMOKE = ((1, 512, 1), (17, 512, 1), (129, 512, 1), (3712, 512, 1), (3584, 512, 1))
 
 
+def paired_order(labels, pair, compile_round=0, measurement_round=0):
+    offset = (pair + compile_round + measurement_round) % len(labels)
+    return labels[offset:] + labels[:offset]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -32,6 +37,8 @@ def main():
     parser.add_argument("--merge-programs", type=int, choices=(28, 56), default=56)
     parser.add_argument("--merge-rows", type=int, choices=(8, 16, 32), default=8)
     parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
+    parser.add_argument("--timing-rounds", type=int, default=1, help="Measurement repeats reusing each compiled build")
+    parser.add_argument("--initial-warmup", type=int, default=0, help="Warmups per control before each measurement repeat")
     parser.add_argument("--pairs", type=int, default=7)
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--device", type=int, default=0)
@@ -40,6 +47,8 @@ def main():
     args = parser.parse_args()
     if args.rounds < 1 or args.pairs < 3 or args.warmup < 1:
         parser.error("rounds>=1, pairs>=3, warmup>=1 required")
+    if args.timing_rounds < 1 or args.initial_warmup < 0:
+        parser.error("timing-rounds>=1 and initial-warmup>=0 required")
     if args.smoke and (args.grid or args.shape):
         parser.error("--smoke cannot be combined with --grid/--shape")
     from benchmarks.mha.summarize_clean_grid import QS, KVS
@@ -73,6 +82,7 @@ def main():
         plan_cost_model=COST_MODEL,
         cases=[],
         rounds=[],
+        measurement_rounds=[],
         summary=[],
         scope="B1H1 BF16 D128/page128 full live KV, noncausal, static contiguous host plan, no device queue. Default code/model unchanged.",
         timing="Full calls include Q preparation, workspace/output allocations, all kernels. Host plan construction/H2D upload and compilation excluded. Immediate equal warmup per Event sample.",
@@ -312,18 +322,42 @@ def main():
                 save()
                 labels = tuple(timed_calls)
                 samples = {label: [] for label in labels}
-                for pair in range(args.pairs):
-                    offset = (pair + rd) % len(labels)
-                    order = labels[offset:] + labels[:offset]
-                    if (pair + rd) % 2:
-                        order = tuple(reversed(order))
-                    if args.only_static_ascendc:
-                        order = (labels if (pair + rd) % 2 == 0 else tuple(reversed(labels))) if len(labels) == 2 else labels[offset:] + labels[:offset]
-                    for label in order:
-                        print(f"[FGW timing] {key} round={rd+1}/{args.rounds} pair={pair+1}/{args.pairs} {label} starting", flush=True)
-                        us = measure(timed_calls[label])
-                        samples[label].append(us)
-                        print(f"[FGW timing] {key} pair={pair+1}/{args.pairs} {label}={us:.3f} us", flush=True)
+                for repeat in range(args.timing_rounds):
+                    if args.initial_warmup:
+                        report.update(phase="initial_warmup", active=f"{key}/build{rd+1}/measure{repeat+1}")
+                        save()
+                        for sweep in range(args.initial_warmup):
+                            for label in paired_order(labels, sweep, rd, repeat):
+                                timed_calls[label]()
+                            if (sweep + 1) % 25 == 0 or sweep + 1 == args.initial_warmup:
+                                print(f"[FGW warmup] {key} measure={repeat+1}/{args.timing_rounds} {sweep+1}/{args.initial_warmup} per control", flush=True)
+                        torch.npu.synchronize()
+                        # Create/record both reusable timing events outside measurement.
+                        start.record()
+                        end.record()
+                        end.synchronize()
+                        report['timer_primed'] = True
+                    report.update(phase="timing", active=f"{key}/build{rd+1}/measure{repeat+1}")
+                    save()
+                    batch = {label: [] for label in labels}
+                    for pair in range(args.pairs):
+                        offset = (pair + rd + repeat) % len(labels)
+                        order = labels[offset:] + labels[:offset]
+                        if (pair + rd + repeat) % 2:
+                            order = tuple(reversed(order))
+                        if args.only_static_ascendc:
+                            order = paired_order(labels, pair, rd, repeat)
+                        for label in order:
+                            print(f"[FGW timing] {key} build={rd+1}/{args.rounds} measure={repeat+1}/{args.timing_rounds} pair={pair+1}/{args.pairs} {label} starting", flush=True)
+                            us = measure(timed_calls[label])
+                            samples[label].append(us)
+                            batch[label].append(us)
+                            print(f"[FGW timing] {key} measure={repeat+1} pair={pair+1}/{args.pairs} {label}={us:.3f} us", flush=True)
+                    batch_medians = {label: statistics.median(values) for label, values in batch.items()}
+                    report['measurement_rounds'].append(dict(key=key, compile_round=rd+1,
+                        measurement_round=repeat+1, median_us=batch_medians, samples_us=batch))
+                    save()
+                    print(f"[FGW repeat] {key} {repeat+1}/{args.timing_rounds} {batch_medians}", flush=True)
                 medians = {k: statistics.median(v) for k, v in samples.items()}
                 rows.append(medians)
                 report["rounds"].append(dict(key=key, round=rd + 1, median_us=medians, samples_us=samples))
