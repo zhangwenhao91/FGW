@@ -82,31 +82,72 @@ def make_plan(q, kv, cores=28):
 
 def validate_plan(plan):
     blocks = plan.kv // 128
-    cursor = 0
-    slots = []
-    direct = set()
-    groups = {}
-    loads = []
+    tiles = (plan.q + 127) // 128
+    slots, direct, groups, intervals, loads = [], set(), {}, {}, []
     for program in plan.programs:
+        assert program
         loads.append(sum(s[2] for s in program))
         for tile, first, count, slot in program:
-            assert tile * blocks + first == cursor and 0 < count <= blocks - first
-            cursor += count
+            assert 0 <= tile < tiles and 0 <= first < blocks and 0 < count <= blocks - first
+            intervals.setdefault(tile, []).append((first, first + count))
             if slot < 0:
                 assert first == 0 and count == blocks and tile not in direct
                 direct.add(tile)
             else:
                 slots.append(slot)
                 groups.setdefault(tile, []).append(slot)
-    assert cursor == ((plan.q + 127) // 128) * blocks
-    assert max(loads) - min(loads) <= (blocks if plan.strategy == "q_only" else 1)
+    assert set(intervals) == set(range(tiles))
+    for spans in intervals.values():
+        cursor = 0
+        for first, stop in sorted(spans):
+            assert first == cursor
+            cursor = stop
+        assert cursor == blocks
+    assert max(loads) - min(loads) <= (1 if plan.strategy == "balanced" else blocks)
     assert sorted(slots) == list(range(plan.partial_count))
     assert set(groups).isdisjoint(direct)
-    assert len(groups) + len(direct) == (plan.q + 127) // 128
+    assert len(groups) + len(direct) == tiles
     assert len(plan.merges) <= len(plan.programs) - 1
+    assert len({tile for tile, _, _ in plan.merges}) == len(plan.merges)
+    assert {tile for tile, _, _ in plan.merges} == set(groups)
     for tile, first, count in plan.merges:
-        assert count >= 2 and groups[tile] == list(range(first, first + count))
+        assert count >= 2 and sorted(groups[tile]) == list(range(first, first + count))
     return True
+
+
+@lru_cache(maxsize=128)
+def make_tail_plan(q, kv, cores=28, pieces=None):
+    """Whole Q tiles in full waves; split only Q tiles in the final wave."""
+    make_plan(q, kv, cores)
+    if pieces is not None and (type(pieces) is not int or pieces < 2):
+        raise ValueError("pieces must be None or an integer >=2")
+    tiles, blocks = (q + 127) // 128, kv // 128
+    full, tail = divmod(tiles, cores)
+    if not full or not tail or blocks < 2:
+        return make_q_plan(q, kv, cores)
+    programs = [[(tile, 0, blocks, -1) for tile in range(pid * full, (pid + 1) * full)]
+                for pid in range(cores)]
+    merges, slot, receiver = [], 0, 0
+    for extra in range(tail):
+        tile = full * cores + extra
+        count = min(blocks, pieces or (cores // tail + int(extra < cores % tail)))
+        # Explicit larger counts may fill multiple waves of tail fragments.
+        if count == 1:
+            programs[receiver % cores].append((tile, 0, blocks, -1))
+            receiver += 1
+            continue
+        merges.append((tile, slot, count))
+        for part in range(count):
+            first = part * (blocks // count) + min(part, blocks % count)
+            size = blocks // count + int(part < blocks % count)
+            programs[receiver % cores].append((tile, first, size, slot))
+            receiver += 1
+            slot += 1
+    if not merges:
+        return make_q_plan(q, kv, cores)
+    plan = Plan(q, kv, tuple(tuple(p) for p in programs), tuple(merges), slot, "tail")
+    validate_plan(plan)
+    return plan
 
 
 @lru_cache(maxsize=128)

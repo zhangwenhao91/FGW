@@ -4,9 +4,10 @@ import json
 from pathlib import Path
 
 
-def summarize(directory):
+def summarize(directory, tail=False):
+    variants = ("cost", "t2r32", "t4r32", "t7r8", "t7r32") if tail else ("cost", "p28r8", "p28r16", "p28r32", "p27r32")
     expected = [f'kv{kv}_{variant}' for kv in (4096, 8192)
-                for variant in ('cost', 'p28r8', 'p28r16', 'p28r32', 'p27r32')]
+                for variant in variants]
     results, problems = [], []
     for key in expected:
         path = directory / (key + '.json')
@@ -32,7 +33,7 @@ def summarize(directory):
                      f"{row['static_vs_ascendc']['speedup']:.4f} {t['static/local']:.3f} "
                      f"{t.get('static/merge', 0):.3f}")
     lines.extend(problems)
-    output = directory.parent / 'mha_static_targets_paste.txt'
+    output = directory.parent / ('mha_static_tail_paste.txt' if tail else 'mha_static_targets_paste.txt')
     output.write_text('\n'.join(lines) + '\n', encoding='utf8')
     (directory / 'summary.json').write_text(json.dumps(dict(results=results, problems=problems), indent=2))
     print(output, flush=True)
@@ -41,4 +42,6 @@ def summarize(directory):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('directory', type=Path)
-    summarize(parser.parse_args().directory)
+    parser.add_argument('--tail', action='store_true')
+    args = parser.parse_args()
+    summarize(args.directory, args.tail)

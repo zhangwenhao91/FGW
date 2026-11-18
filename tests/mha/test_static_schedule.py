@@ -4,7 +4,7 @@ import math
 import random
 import unittest
 from collections import Counter
-from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan
+from operators.mha.static_schedule import make_plan, make_q_plan, choose_plan, validate_plan, make_tail_plan
 
 
 class StaticScheduleTests(unittest.TestCase):
@@ -43,6 +43,19 @@ class StaticScheduleTests(unittest.TestCase):
                         cursor = end
                     self.assertEqual(cursor, kv // 128)
 
+    def test_tail_wave_coverage_and_fragment_count(self):
+        for kv in (4096, 8192):
+            plan = make_tail_plan(32768, kv)
+            validate_plan(plan)
+            self.assertEqual((len(plan.merges), plan.partial_count), (4, 28))
+            self.assertEqual({tile for tile, _, _ in plan.merges}, set(range(252, 256)))
+            self.assertEqual(plan.describe()['direct_q_tiles'], 252)
+            self.assertLessEqual(plan.describe()['max_kv_blocks'] - plan.describe()['min_kv_blocks'], 1)
+        for q in (1, 129, 3584, 3712, 4096, 8192, 32768):
+            for kv in (128, 256, 512, 4096, 8192):
+                for pieces in (None, 2, 4, 7):
+                    validate_plan(make_tail_plan(q, kv, pieces=pieces))
+
     def test_coverage_and_unique_ownership(self):
         for q in (1, 17, 128, 129, 257):
             for kv in (128, 256, 512, 1024):
@@ -71,9 +84,12 @@ class StaticScheduleTests(unittest.TestCase):
 
     def test_split_state_merge_matches_dense_attention(self):
         # Three Q tiles on two cores: full+fragment in each, only middle Q tile merges.
-        qlen, kv = 257, 512
-        plan = make_plan(qlen, kv, 2)
-        self.assertEqual(len(plan.merges), 1)
+        for plan in (make_plan(257, 512, 2), make_tail_plan(257, 512, 2)):
+            self.assertEqual(len(plan.merges), 1)
+            self._check_attention(plan)
+
+    def _check_attention(self, plan):
+        qlen, kv = plan.q, plan.kv
         rng = random.Random(7)
         q = [[rng.uniform(-1, 1) for _ in range(2)] for _ in range(qlen)]
         k = [[rng.uniform(-1, 1) for _ in range(2)] for _ in range(kv)]
