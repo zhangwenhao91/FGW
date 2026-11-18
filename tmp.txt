@@ -1,18 +1,67 @@
-python - <<'PY'
-import json
-from pathlib import Path
+(zwh) root@ubuntu162:/home/z30086261/FGW# python fgw.py mha run run_mha_standalone_fused_grid
+test_coverage_and_unique_ownership (tests.mha.test_static_schedule.StaticScheduleTests.test_coverage_and_unique_ownership) ... ok
+test_grouped_dma_chunk_ownership (tests.mha.test_static_schedule.StaticScheduleTests.test_grouped_dma_chunk_ownership) ... ok
+test_selected_grid_coverage (tests.mha.test_static_schedule.StaticScheduleTests.test_selected_grid_coverage) ... ok
+test_split_state_merge_matches_dense_attention (tests.mha.test_static_schedule.StaticScheduleTests.test_split_state_merge_matches_dense_attention) ... ok
+test_stream_policy_coverage_and_parallelism (tests.mha.test_static_schedule.StaticScheduleTests.test_stream_policy_coverage_and_parallelism) ... ok
+test_tail_wave_coverage_and_fragment_count (tests.mha.test_static_schedule.StaticScheduleTests.test_tail_wave_coverage_and_fragment_count) ... ok
+test_target_shapes_and_balanced_no_merge (tests.mha.test_static_schedule.StaticScheduleTests.test_target_shapes_and_balanced_no_merge) ... ok
+test_weighted_merge_exact_row_ownership (tests.mha.test_static_schedule.StaticScheduleTests.test_weighted_merge_exact_row_ownership) ... ok
+test_whole_q_assignment_and_cost_selection (tests.mha.test_static_schedule.StaticScheduleTests.test_whole_q_assignment_and_cost_selection) ... ok
+test_raw_merge_matches_dense_with_unequal_and_empty_partitions (tests.mha.test_raw_partial_state.RawPartialStateTests.test_raw_merge_matches_dense_with_unequal_and_empty_partitions) ... ok
+test_complete_measurements_and_preserve_slow_samples (tests.mha.test_raw_grid_report.RawGridReportTests.test_complete_measurements_and_preserve_slow_samples) ... ok
+test_reject_wrong_variant_missing_seed_or_samples (tests.mha.test_raw_grid_report.RawGridReportTests.test_reject_wrong_variant_missing_seed_or_samples) ... ok
+test_summary_keeps_missing_and_source_mismatch_visible (tests.mha.test_raw_grid_report.RawGridReportTests.test_summary_keeps_missing_and_source_mismatch_visible) ... /tmp/tmpseuo4fbk/mha_raw_default_grid_paste.txt
+ok
 
-root = Path("reports/mha/latest")
-paths = list(root.glob("mha_fused_output_grid.*/summary.json"))
-path = max(paths, key=lambda p: p.stat().st_mtime)
-print(path)
-report = json.loads(path.read_text())
-assert report["status"] == "passed" and report["completed"] == 80
-rows = {(r["Q"], r["KV"]): r for r in report["rows"]}
+----------------------------------------------------------------------
+Ran 13 tests in 1.204s
 
-print("Q KV round fused_us AscendC_us speedup")
-for q, kv in [(32768, 2048), (16384, 8192), (16384, 16384), (16384, 24576)]:
-    for i, r in enumerate(rows[q, kv]["repeat_medians_us"], 1):
-        tl, ac = r["static"], r["ascendc"]
-        print(f"{q} {kv} {i} {tl:.3f} {ac:.3f} {ac / tl:.6f}")
-PY
+OK
+[FGW fused grid] starting 1/80 q64_kv512 elapsed=0s
+[FGW guard] starting host-only preflight
+[FGW guard] Torch/BLAS thread cap=4; process-tree RSS budget=4096 MiB; timeout=1800s
+[FGW guard] elapsed=0.0s tree_RSS=0MiB host_available=1495767MiB
+[FGW stage] setup active=None
+[FGW stage] import_torch active=None
+[FGW stage] import_torch_npu active=None
+[FGW stage] import_tilelang active=None
+[FGW stage] npu_set_device active=None
+[FGW stage] reference active=q64_kv512/seed7
+[FGW stage] reference active=q64_kv512/seed19
+[FGW stage] compile_accuracy active=q64_kv512/round1
+[FGW compile] q64_kv512 round=1/1 static
+2026-11-18 20:37:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `local_direct` with `out_idx=[4]`
+2026-11-18 20:37:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `local_direct`
+Traceback (most recent call last):
+  File "/home/z30086261/FGW/benchmarks/mha/bench_static_host.py", line 234, in main
+    assert static.plan == plan
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError
+mha_standalone_fused_grid_paste.txt
+run_directory=mha_standalone_fused_grid.y9wfbsYD
+status=incomplete_or_error completed=0/80
+TL=standalone fused output + stream plan + raw SIMD merge; AscendC=native FIA.
+B1H1 BF16 D128 page128 noncausal; 2 accuracy seeds; 1 build/shape; 6 repeats x 4 alternating pairs.
+100 warmups/control/repeat + Event priming; 10 immediate warmups/sample.
+speedup=AscendC/TL; median of all 24 samples/control.
+Q/KV 512 1024 2048 4096 8192 16384 24576 32768
+64 - - - - - - - -
+128 - - - - - - - -
+256 - - - - - - - -
+512 - - - - - - - -
+1024 - - - - - - - -
+2048 - - - - - - - -
+4096 - - - - - - - -
+8192 - - - - - - - -
+16384 - - - - - - - -
+32768 - - - - - - - -
+Q KV TL_us AscendC_us speedup repeat_median repeat_min repeat_max wins partials merge_tiles
+PER_REPEAT for cases with fewer than six wins: Q KV round TL_us AscendC_us speedup
+q64_kv512: status=error phase=compile_accuracy Traceback (most recent call last):
+  File "/home/z30086261/FGW/benchmarks/mha/bench_static_host.py", line 234, in main
+    assert static.plan == plan
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+(zwh) root@ubuntu162:/home/z30086261/FGW#
