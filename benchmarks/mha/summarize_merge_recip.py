@@ -7,11 +7,15 @@ import statistics
 LABELS = ('static', 'raw_ref', 'ascendc')
 
 
-def summarize(directory):
+def summarize(directory, row_softmax=False):
+    candidate = 'row_softmax' if row_softmax else 'reciprocal'
     lines = ['Q32768 B1H1 BF16 D128; one shared raw local build; one build per merge variant; 6 measurement repeats x 9 rotated triples.',
              'Before each repeat: 100 warmups/control + timer priming; immediately before each sample: 10 warmups.',
              'No samples excluded. Aggregate=median of all 54 samples/control; repeat ratios use repeat medians.',
              'static=reciprocal; raw_ref=original raw SIMD division; ascendc=native FIA.']
+    if row_softmax:
+        lines[0] = 'Q32768 B1H1 BF16 D128; one build per local variant, shared SIMD merge; 6 measurement repeats x 9 rotated triples.'
+        lines[3] = 'static=register-resident row softmax; raw_ref=original raw SIMD; ascendc=native FIA.'
     completed = 0
     for kv in (4096, 8192):
         path = directory / f'kv{kv}.json'
@@ -32,28 +36,38 @@ def summarize(directory):
                         and {r['measurement_round'] for r in repeats} == set(range(1, 7))
                         and all(r['compile_round'] == 1 and set(r['samples_us']) == set(LABELS)
                                 and all(len(r['samples_us'][label]) == 9 for label in LABELS) for r in repeats))
+            if row_softmax:
+                complete = complete and settings.get('row_softmax') is True and settings.get('merge_policy') == 'rawsimd'
             lines.append(f"KV{kv}: status={report['status']} phase={report.get('phase')} repeats={len(repeats)}/6 complete={complete}")
+            if row_softmax:
+                if report.get('error'):
+                    lines.append(report['error'])
+                guard = directory / f'guard_kv{kv}.jsonl'
+                if guard.exists():
+                    records = guard.read_text().splitlines()
+                    if records:
+                        lines.append('guard_last_record: ' + records[-1])
             if complete:
                 all_samples = {label: [v for r in repeats for v in r['samples_us'][label]] for label in LABELS}
                 med = {label: statistics.median(values) for label, values in all_samples.items()}
                 lines.append('AGGREGATE_us ' + json.dumps(med, sort_keys=True))
                 for control in ('raw_ref', 'ascendc'):
                     ratios = [r['median_us'][control] / r['median_us']['static'] for r in repeats]
-                    lines.append(f"{control}/reciprocal overall={med[control]/med['static']:.6f} "
+                    lines.append(f"{control}/{candidate} overall={med[control]/med['static']:.6f} "
                                  f"repeat_median={statistics.median(ratios):.6f} "
                                  f"range=[{min(ratios):.6f},{max(ratios):.6f}] wins={sum(x>1 for x in ratios)}/6")
                 completed += 1
             for r in repeats:
                 med = r['median_us']
-                lines.append(f"REPEAT {r['measurement_round']} reciprocal={med['static']:.3f} raw_SIMD_div={med['raw_ref']:.3f} "
-                             f"AscendC={med['ascendc']:.3f} raw_ref/reciprocal={med['raw_ref']/med['static']:.6f} "
-                             f"AC/reciprocal={med['ascendc']/med['static']:.6f}")
+                lines.append(f"REPEAT {r['measurement_round']} {candidate}={med['static']:.3f} raw_SIMD_div={med['raw_ref']:.3f} "
+                             f"AscendC={med['ascendc']:.3f} raw_ref/{candidate}={med['raw_ref']/med['static']:.6f} "
+                             f"AC/{candidate}={med['ascendc']/med['static']:.6f}")
                 lines.append('SAMPLES_us ' + json.dumps({label: [round(v, 3) for v in values]
                                                         for label, values in r['samples_us'].items()}, sort_keys=True))
         except (ValueError, KeyError, TypeError) as exc:
             lines.append(f'KV{kv}: invalid report {exc}')
     lines.insert(0, f"status={'passed' if completed == 2 else 'incomplete_or_error'} completed={completed}/2")
-    output = directory.parent / 'mha_merge_recip_paste.txt'
+    output = directory.parent / ('mha_row_softmax_paste.txt' if row_softmax else 'mha_merge_recip_paste.txt')
     output.write_text('\n'.join(lines) + '\n', encoding='utf8')
     print(output, flush=True)
 

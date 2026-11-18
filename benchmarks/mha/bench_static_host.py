@@ -28,6 +28,7 @@ def main():
         "--smoke", action="store_true", help="Accuracy only, including tails/mixed/direct/no-merge"
     )
     parser.add_argument("--raw-breakdown", action="store_true", help="Only raw SIMD full/local/merge/prepared-chain and native FIA; omit variant builds")
+    parser.add_argument("--row-softmax", action="store_true", help="Compare register-resident row softmax with original raw SIMD and native FIA")
     parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
@@ -52,6 +53,8 @@ def main():
         parser.error("timing-rounds>=1 and initial-warmup>=0 required")
     if args.raw_breakdown and (args.merge_policy != "rawsimd" or not args.only_static_ascendc):
         parser.error("--raw-breakdown requires --merge-policy rawsimd --only-static-ascendc")
+    if args.row_softmax and (args.merge_policy != "rawsimd" or not args.only_static_ascendc or args.raw_breakdown):
+        parser.error("--row-softmax requires rawsimd, --only-static-ascendc and no --raw-breakdown")
     if args.smoke and (args.grid or args.shape):
         parser.error("--smoke cannot be combined with --grid/--shape")
     from benchmarks.mha.summarize_clean_grid import QS, KVS
@@ -200,16 +203,27 @@ def main():
                 default.build_kernel.cache_clear()
                 pool = fixtures[7][0][1].shape[0]
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
-                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs)
+                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs, row_softmax=args.row_softmax)
                 assert static.plan == plan
                 simd_reference = None
-                if args.merge_policy == "rawsimd" and not args.raw_breakdown:
+                if args.merge_policy == "rawsimd" and not args.raw_breakdown and not args.row_softmax:
                     print(f"[FGW compile] {key} normalized SIMD reference", flush=True)
                     simd_reference = candidate.build_kernel(qlen, kv, pool, args.plan_policy,
                         args.programs, args.merge_rows, args.tail_pieces, "simd", args.merge_programs, False)
                     assert simd_reference.plan == static.plan
                     info["reference_builds"] = info.get("reference_builds", 0) + 1
                     info["partial_contract"] = "Raw FP32 A + max/sum planes; reference normalized FP32 Partial + LSE. Direct tiles normalized normally."
+                if args.row_softmax:
+                    from operators.mha.kernels.mha_simd_merge import replace_merge
+                    print(f"[FGW compile] {key} original raw SIMD softmax reference", flush=True)
+                    simd_reference = candidate.build_kernel(qlen, kv, pool, args.plan_policy,
+                        args.programs, args.merge_rows, args.tail_pieces, "rawsimd", args.merge_programs)
+                    assert simd_reference.plan == static.plan
+                    # Both full calls use the very same compiled merge object.
+                    if static.merge_kernel is not None:
+                        static = replace_merge(static, simd_reference.merge_kernel)
+                    info["reference_builds"] = info.get("reference_builds", 0) + 1
+                    info["partial_contract"] = "Only local softmax differs: register-resident rows vs original UB roundtrip. Same plan, raw A/max/sum and shared SIMD merge."
                 if args.merge_policy == "rawrecip":
                     from operators.mha.kernels.mha_simd_merge import make_kernel, replace_merge
                     print(f"[FGW compile] {key} raw SIMD division reference (shared local)", flush=True)
@@ -273,7 +287,7 @@ def main():
                 if static.fixed_merge_kernel is not None:
                     kernels["fixed_merge"] = static.fixed_merge_kernel
                 if simd_reference is not None:
-                    reference_prefix = "raw_simd_ref" if args.merge_policy == "rawrecip" else "normalized_simd"
+                    reference_prefix = "raw_simd_ref" if args.merge_policy == "rawrecip" or args.row_softmax else "normalized_simd"
                     kernels[reference_prefix + "_local"] = simd_reference.local_kernel
                     if simd_reference.merge_kernel is not None:
                         kernels[reference_prefix + "_merge"] = simd_reference.merge_kernel
@@ -302,7 +316,7 @@ def main():
                     }
                     if simd_reference is not None:
                         simd_reference.validate_inputs(*inputs)
-                        calls["raw_ref" if args.merge_policy == "rawrecip" else "simd_ref"] = functools.partial(simd_reference, *inputs)
+                        calls["raw_ref" if args.merge_policy == "rawrecip" or args.row_softmax else "simd_ref"] = functools.partial(simd_reference, *inputs)
                     if static.fixed_merge_kernel is not None:
                         calls["fixed_r8"] = functools.partial(static.fixed_launch, *inputs)
                     if base is not None:

@@ -16,7 +16,7 @@ from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan
 
 
 @lru_cache(maxsize=64)
-def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56, include_fixed_control=True):
+def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56, include_fixed_control=True, row_softmax=False):
     if plan_policy not in ("balanced", "cost", "tail", "stream"):
         raise ValueError("plan_policy must be balanced, cost or tail")
     if merge_policy not in ("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd", "rawsimd", "rawrecip"):
@@ -130,6 +130,41 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
             S.vsts(l_ub[0], l_updated, softmax_full, "NORM_B32")
 
     @T.macro
+    def softmax_row(S_ub, P_nz_ub, m_ub, l_ub, alpha_ub, old_m_ub, row_sum_ub):
+        # Keep each scaled score row in registers through max/exp/sum/packing.
+        # Each row has independent online state; PV accumulation is unchanged.
+        with T.SimdVF(latency=735):
+            full = S.pset(32, "PAT_ALL")
+            one = S.pset(32, "PAT_VL1")
+            b16 = S.pset(16, "PAT_VL128")
+            dst = S.make_ubuf_ptr(T.access_ptr(P_nz_ub[0, 0], "w", ROWS + 1, BC), "bfloat16")
+            S.vsts(old_m_ub[0], S.vld(m_ub[0], "NORM"), full, "NORM_B32")
+            for r in range(ROWS):
+                even, odd = S.vld2(S_ub[r, 0], "DINTLV_B32")
+                scaled_even = S.vmuls(even, T.float32(scale), full)
+                scaled_odd = S.vmuls(odd, T.float32(scale), full)
+                block_max = S.vdupv(S.vcmax(S.vmax(scaled_even, scaled_odd, full), full), full)
+                previous_max = S.vld(m_ub[r], "BRC_B32")
+                peak = S.vmax(previous_max, block_max, full)
+                exp_even = S.vexpdif(scaled_even, peak, full)
+                exp_odd = S.vexpdif(scaled_odd, peak, full)
+                row_total = S.vcadd(S.vadd(exp_even, exp_odd, full), full)
+                S.vsts(m_ub[r], peak, one, "ONEPT_B32")
+                S.vsts(row_sum_ub[r], row_total, one, "ONEPT_B32")
+                even_bf16 = S.vcvt(exp_even, "bfloat16", full, sat=False, part=0)
+                odd_bf16 = S.vcvt(exp_odd, "bfloat16", full, sat=False, part=1)
+                bits = S.vor(T.reinterpret(even_bf16, "uint16x128"),
+                             T.reinterpret(odd_bf16, "uint16x128"), b16)
+                dst = S.vsstb(T.reinterpret(bits, "bfloat16x128"), dst,
+                              T.int32(ROWS + 1 << 16 | 1), b16, update=True)
+            S.mem_bar("VST_VLD")
+            # Preserve the inexpensive all-rows-at-once alpha/denominator update.
+            rescale = S.vexpdif(S.vld(old_m_ub[0], "NORM"), S.vld(m_ub[0], "NORM"), full)
+            S.vsts(alpha_ub[0], rescale, full, "NORM_B32")
+            updated_total = S.vadd(S.vmul(S.vld(l_ub[0], "NORM"), rescale, full), S.vld(row_sum_ub[0], "NORM"), full)
+            S.vsts(l_ub[0], updated_total, full, "NORM_B32")
+
+    @T.macro
     def accumulate_output(O_tmp_ub, O_ub, alpha_ub):
         # Preserve the original online-softmax accumulation order.
         with T.SimdVF(latency=318):
@@ -216,7 +251,10 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
                         with T.Stage(3):
                             T.dual_copy(qk, scores)
                         with T.Stage(5):
-                            softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
+                            if row_softmax:
+                                softmax_row(scores, probs, maximum, total, alpha, old_max, row_sum)
+                            else:
+                                softmax(scores, probs, maximum, total, alpha, old_max, row_sum)
                         with T.Stage(6):
                             T.dual_copy(probs[0:ROWS, :], P_l1)
                         with T.Stage(3):
