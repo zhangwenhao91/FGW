@@ -19,7 +19,7 @@ from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan
 def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56):
     if plan_policy not in ("balanced", "cost", "tail", "stream"):
         raise ValueError("plan_policy must be balanced, cost or tail")
-    if merge_policy not in ("fixed", "weighted", "grouped", "preweighted"):
+    if merge_policy not in ("fixed", "weighted", "grouped", "preweighted", "prefetch"):
         raise ValueError("merge_policy must be fixed or weighted")
     if merge_programs not in (28, 56):
         raise ValueError("merge_programs must be 28 or 56")
@@ -379,12 +379,15 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     if merge_policy == "preweighted" and has_merge:
         from operators.mha.kernels.mha_preweighted_merge import make_kernel
         merge_entry = make_kernel(sq, slots, merge_count, max_parts, merge_rows)
+    if merge_policy == "prefetch" and has_merge:
+        from operators.mha.kernels.mha_prefetch_merge import make_kernel
+        merge_entry = make_kernel(sq, slots, merge_count, max_parts, merge_rows)
     merge_kernel = (
         tilelang.compile(merge_entry, out_idx=[], target="ascend", execution_backend="auto", pass_configs={})
         if has_merge
         else None
     )
-    fixed_merge_kernel = tilelang.compile(merge, out_idx=[], target="ascend", execution_backend="auto", pass_configs={}) if (block_tasks or (merge_policy == "preweighted" and has_merge)) else None
+    fixed_merge_kernel = tilelang.compile(merge, out_idx=[], target="ascend", execution_backend="auto", pass_configs={}) if (block_tasks or (merge_policy in ("preweighted", "prefetch") and has_merge)) else None
     uploaded = {}
     fixed_tables = {}
 
@@ -395,7 +398,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
             counts = [len(p) for p in plan.programs]
             tasks = [list(p) + [(-1, -1, -1, -1)] * (max_segments - len(p)) for p in plan.programs]
             merges = list(merge_tasks) if merge_tasks else (list(plan.merges) or [(-1, -1, -1)])
-            if merge_policy == "preweighted":
+            if merge_policy in ("preweighted", "prefetch"):
                 fixed_tables[device] = torch.tensor(plan.merges, dtype=torch.int32, device=device)
             if block_tasks:
                 merges = [list(tasks) + [(-1, -1, -1, -1, -1)] * (max_chunks - len(tasks)) for tasks in block_tasks]
@@ -443,7 +446,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
     launch.merge_assignment = dict(policy=merge_policy, tasks=block_tasks or merge_tasks,
         programs=len(block_tasks or merge_tasks), max_rows=merge_rows if block_tasks else max((t[4] for t in merge_tasks), default=0),
         max_chunks=max_chunks if block_tasks else 1)
-    if merge_policy == "preweighted" and has_merge:
+    if merge_policy in ("preweighted", "prefetch") and has_merge:
         launch.merge_assignment = dict(policy=merge_policy, tasks=plan.merges,
             programs=merge_grid, max_rows=merge_rows, max_chunks=1)
     launch.merge_tasks = merge_tasks
