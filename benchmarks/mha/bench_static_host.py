@@ -29,6 +29,7 @@ def main():
     )
     parser.add_argument("--raw-breakdown", action="store_true", help="Only raw SIMD full/local/merge/prepared-chain and native FIA; omit variant builds")
     parser.add_argument("--row-softmax", action="store_true", help="Compare two interleaved register-resident softmax rows with original raw SIMD and native FIA")
+    parser.add_argument("--raw-baseline-only", action="store_true", help="Only original raw SIMD baseline and native FIA; no normalized reference or diagnostics")
     parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
@@ -55,6 +56,8 @@ def main():
         parser.error("--raw-breakdown requires --merge-policy rawsimd --only-static-ascendc")
     if args.row_softmax and (args.merge_policy != "rawsimd" or not args.only_static_ascendc or args.raw_breakdown):
         parser.error("--row-softmax requires rawsimd, --only-static-ascendc and no --raw-breakdown")
+    if args.raw_baseline_only and (args.merge_policy != "rawsimd" or not args.only_static_ascendc or args.row_softmax or args.raw_breakdown):
+        parser.error("--raw-baseline-only requires rawsimd, --only-static-ascendc and no other experiment")
     if args.smoke and (args.grid or args.shape):
         parser.error("--smoke cannot be combined with --grid/--shape")
     from benchmarks.mha.summarize_clean_grid import QS, KVS
@@ -208,7 +211,7 @@ def main():
                 static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs, row_softmax=args.row_softmax)
                 assert static.plan == plan
                 simd_reference = None
-                if args.merge_policy == "rawsimd" and not args.raw_breakdown and not args.row_softmax:
+                if args.merge_policy == "rawsimd" and not args.raw_breakdown and not args.row_softmax and not args.raw_baseline_only:
                     print(f"[FGW compile] {key} normalized SIMD reference", flush=True)
                     simd_reference = candidate.build_kernel(qlen, kv, pool, args.plan_policy,
                         args.programs, args.merge_rows, args.tail_pieces, "simd", args.merge_programs, False)

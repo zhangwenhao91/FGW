@@ -1,5 +1,17 @@
 # FGW
 
+## 保留的 raw+SIMD 基线与 AscendC：80 规格
+
+```bash
+git pull --ff-only
+python fgw.py mha run run_mha_raw_default_grid
+cat reports/mha/latest/mha_raw_default_grid_paste.txt
+```
+
+B1H1 BF16 D128，原 10×8 Q/KV 网格；stream 任务表、原版 softmax、raw SIMD merge。
+每个规格编译一次，三轮交替计时，终端输出进度。
+[范围、计时口径和报告说明](docs/mha_raw_default_grid.md)。
+
 ## 冻结V2：四种误选定向复测
 
 ```bash
