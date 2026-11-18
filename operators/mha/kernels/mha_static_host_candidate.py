@@ -16,10 +16,14 @@ from operators.mha.static_schedule import make_plan, choose_plan
 
 
 @lru_cache(maxsize=64)
-def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
+def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8):
     if plan_policy not in ("balanced", "cost"):
         raise ValueError("plan_policy must be balanced or cost")
-    plan = choose_plan(sq, kv) if plan_policy == "cost" else make_plan(sq, kv)
+    if merge_rows not in (8, 16, 32):
+        raise ValueError("merge_rows must be 8, 16 or 32")
+    if programs is not None and plan_policy != "balanced":
+        raise ValueError("explicit programs require balanced policy")
+    plan = choose_plan(sq, kv) if plan_policy == "cost" else make_plan(sq, kv, 28 if programs is None else programs)
     if pool_rows <= 0 or pool_rows % 128 or pool_rows < kv:
         raise ValueError("whole physical pool pages, at least KV capacity required")
     BR, BC, ROWS, VL, D, STATS_ROWS = 128, 128, 64, 64, 128, 64
@@ -33,7 +37,7 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced"):
     merge_count = len(plan.merges)
     max_parts = plan.max_parts
     has_merge = merge_count > 0
-    merge_rows = min(8, tilelang.next_power_of_2(sq))
+    merge_rows = min(merge_rows, tilelang.next_power_of_2(sq))
     groups_per_tile = BR // merge_rows
     pipeline_annotations = {"enable_offset": True}
 

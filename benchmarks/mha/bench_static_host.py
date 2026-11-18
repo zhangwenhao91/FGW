@@ -25,6 +25,8 @@ def main():
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
     parser.add_argument("--plan-policy", choices=("balanced", "cost"), default="balanced")
+    parser.add_argument("--programs", type=int, choices=range(1, 29))
+    parser.add_argument("--merge-rows", type=int, choices=(8, 16, 32), default=8)
     parser.add_argument("--rounds", type=int, default=2, help="Independent compilation rounds per shape")
     parser.add_argument("--pairs", type=int, default=7)
     parser.add_argument("--warmup", type=int, default=5)
@@ -45,7 +47,9 @@ def main():
         if q not in QS or kv not in KVS:
             parser.error("--shape must belong to the original 80-shape grid")
         cases = ((q, kv, None),)
-    planner = choose_plan if args.plan_policy == "cost" else make_plan
+    if args.programs is not None and args.plan_policy != "balanced":
+        parser.error("--programs requires --plan-policy balanced")
+    planner = choose_plan if args.plan_policy == "cost" else functools.partial(make_plan, cores=args.programs or 28)
     if args.list_only:
         print(json.dumps([dict(**planner(q, kv).describe(), uniform_split=s, estimate=estimate_cost(planner(q, kv))) for q, kv, s in cases]))
         return 0
@@ -169,7 +173,7 @@ def main():
                 default.build_kernel.cache_clear()
                 pool = fixtures[7][0][1].shape[0]
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
-                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy)
+                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows)
                 assert static.plan == plan
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} default v7", flush=True)
                 base = default.build_kernel(
