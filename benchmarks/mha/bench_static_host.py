@@ -32,6 +32,7 @@ def main():
     parser.add_argument("--raw-baseline-only", action="store_true", help="Only original raw SIMD baseline and native FIA; no normalized reference or diagnostics")
     parser.add_argument("--split-overlap", action="store_true", help="Add serial/parallel two-phase launches to the raw baseline")
     parser.add_argument("--split-overlap-trace", action="store_true", help="Accuracy and retained parallel trace, no timing")
+    parser.add_argument("--standalone-fused", action="store_true", help="Benchmark the standalone fused kernel against native FIA")
     parser.add_argument("--fused-output", action="store_true", help="Compare fused SIMD division/cast with original raw SIMD and FIA")
     parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
@@ -65,6 +66,8 @@ def main():
         parser.error('--split-overlap requires --raw-baseline-only')
     if args.split_overlap_trace and not args.split_overlap:
         parser.error('--split-overlap-trace requires --split-overlap')
+    if args.standalone_fused and (not args.raw_baseline_only or args.plan_policy != "stream" or args.merge_rows != 8 or args.split_overlap):
+        parser.error("--standalone-fused requires the stream/rawsimd R8 two-control benchmark")
     if args.fused_output and (args.merge_policy!='rawsimd' or not args.only_static_ascendc or args.row_softmax or args.raw_breakdown or args.raw_baseline_only or args.split_overlap):
         parser.error('--fused-output requires rawsimd, --only-static-ascendc and no other experiment')
     if args.smoke and (args.grid or args.shape):
@@ -175,6 +178,9 @@ def main():
             },
             model_sha256=hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest(),
         )
+        if args.standalone_fused:
+            from operators.mha.kernels import mha_paged_decode_ascend_fused as standalone
+            report["source_sha256"]["standalone_fused"] = hashlib.sha256(Path(standalone.__file__).read_bytes()).hexdigest()
         start, end = torch.npu.Event(enable_timing=True), torch.npu.Event(enable_timing=True)
 
         def measure(call):
@@ -220,7 +226,11 @@ def main():
                 default.build_kernel.cache_clear()
                 pool = fixtures[7][0][1].shape[0]
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
-                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs, row_softmax=args.row_softmax, fused_output=args.fused_output)
+                if args.standalone_fused:
+                    standalone.build_kernel.cache_clear()
+                    static = standalone.build_kernel(qlen, kv, pool)
+                else:
+                    static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs, row_softmax=args.row_softmax, fused_output=args.fused_output)
                 assert static.plan == plan
                 overlap = None
                 if args.split_overlap:
@@ -448,7 +458,7 @@ def main():
                     batch_medians = {label: statistics.median(values) for label, values in batch.items()}
                     report['measurement_rounds'].append(dict(key=key, compile_round=rd+1,
                         measurement_round=repeat+1, median_us=batch_medians, samples_us=batch))
-                    if args.split_overlap or args.fused_output:
+                    if args.split_overlap or args.fused_output or args.standalone_fused:
                         # Outside Event samples: check outputs again after the
                         # repeated warmups, allocations and candidate launches.
                         for label in labels:

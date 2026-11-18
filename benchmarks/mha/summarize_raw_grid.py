@@ -13,10 +13,14 @@ POLICY = dict(rounds=1, timing_rounds=3, pairs=4, initial_warmup=100, warmup=10,
               row_softmax=False, raw_breakdown=False)
 
 
-def extract(report, q, kv):
+def extract(report, q, kv, standalone=False):
+    if bool(report.get("settings", {}).get("standalone_fused")) != standalone:
+        raise ValueError("wrong kernel variant")
+    repeats_expected, pairs = (6, 4) if standalone else (3, 4)
+    policy = dict(POLICY, timing_rounds=repeats_expected)
     if report.get('status') != 'passed' or report.get('correctness') != 'passed':
         raise ValueError(f"status={report.get('status')} phase={report.get('phase')} {report.get('error', '')}")
-    if any(report.get('settings', {}).get(k) != v for k, v in POLICY.items()):
+    if any(report.get('settings', {}).get(k) != v for k, v in policy.items()):
         raise ValueError('measurement settings differ from frozen raw grid policy')
     if len(report['summary']) != 1 or report.get('timer_primed') is not True:
         raise ValueError('missing summary or Event priming')
@@ -28,14 +32,22 @@ def extract(report, q, kv):
     accuracy = report['cases'][0]['accuracy']
     if {(r['seed'], r['label']) for r in accuracy} != {(s, l) for s in (7, 19) for l in ('static', 'ascendc')}:
         raise ValueError('missing correctness control/seed')
+    if standalone:
+        if not report.get('source_sha256', {}).get('standalone_fused'):
+            raise ValueError('missing standalone kernel hash')
+        checks = report['cases'][0].get('repeat_accuracy', [])
+        if {(r['repeat'], r['label']) for r in checks} != {
+            (i, label) for i in range(1, 7) for label in ('static', 'ascendc')
+        }:
+            raise ValueError('missing post-repeat accuracy checks')
     repeats = report['measurement_rounds']
-    if len(repeats) != 3 or {r['measurement_round'] for r in repeats} != {1, 2, 3}:
+    if len(repeats) != repeats_expected or {r['measurement_round'] for r in repeats} != set(range(1, repeats_expected + 1)):
         raise ValueError('incomplete measurement repeats')
     for row in repeats:
         samples = row['samples_us']
         if row['compile_round'] != 1 or set(samples) != {'static', 'ascendc'}:
             raise ValueError('unexpected controls/builds')
-        if any(len(v) != 4 or any(not math.isfinite(x) or x <= 0 for x in v) for v in samples.values()):
+        if any(len(v) != pairs or any(not math.isfinite(x) or x <= 0 for x in v) for v in samples.values()):
             raise ValueError('missing or invalid samples')
     med = {label: statistics.median([v for r in repeats for v in r['samples_us'][label]])
            for label in ('static', 'ascendc')}
@@ -46,7 +58,7 @@ def extract(report, q, kv):
                 plan=summary['plan'], samples_us=[r['samples_us'] for r in repeats])
 
 
-def summarize(directory):
+def summarize(directory, standalone=False):
     rows, failures, fingerprint = [], [], None
     for kv in KVS:
         for q in QS:
@@ -56,7 +68,7 @@ def summarize(directory):
                 continue
             try:
                 report = json.loads(path.read_text())
-                row = extract(report, q, kv)
+                row = extract(report, q, kv, standalone)
                 identity = {k: report[k] for k in ('versions', 'device', 'source_sha256')}
                 if fingerprint is None:
                     fingerprint = identity
@@ -71,6 +83,13 @@ def summarize(directory):
              'B1H1 BF16 D128 page128 noncausal; 2 accuracy seeds; 1 build/shape; 3 repeats x 4 alternating pairs.',
              '100 warmups/control/repeat + Event priming; 10 immediate warmups/sample; full-call warm-cache Event.',
              'speedup=AscendC/TL; aggregate=median of all 12 samples/control; no samples discarded.']
+    if standalone:
+        lines[1:5] = [
+            'TL=standalone fused output + stream plan + raw SIMD merge; AscendC=native FIA.',
+            'B1H1 BF16 D128 page128 noncausal; 2 accuracy seeds; 1 build/shape; 6 repeats x 4 alternating pairs.',
+            '100 warmups/control/repeat + Event priming; 10 immediate warmups/sample.',
+            'speedup=AscendC/TL; median of all 24 samples/control.',
+        ]
     if rows:
         lines.append(f"geomean_speedup={math.exp(statistics.mean(math.log(r['speedup']) for r in rows)):.6f} "
                      f"faster={sum(r['speedup']>1 for r in rows)}/{len(rows)} min={min(r['speedup'] for r in rows):.6f} max={max(r['speedup'] for r in rows):.6f}")
@@ -78,13 +97,22 @@ def summarize(directory):
     lines.append('Q/KV ' + ' '.join(map(str, KVS)))
     for q in QS:
         lines.append(str(q) + ' ' + ' '.join(f"{lookup[q,kv]['speedup']:.4f}" if (q,kv) in lookup else '-' for kv in KVS))
-    lines.append('Q KV TL_us AscendC_us speedup repeat_median repeat_min repeat_max wins/3 partials merge_tiles')
+    lines.append('Q KV TL_us AscendC_us speedup repeat_median repeat_min repeat_max wins partials merge_tiles')
     for r in rows:
         lines.append(f"{r['Q']} {r['KV']} {r['TL_us']:.3f} {r['AscendC_us']:.3f} {r['speedup']:.6f} "
-                     f"{r['repeat_median']:.6f} {r['repeat_min']:.6f} {r['repeat_max']:.6f} {r['wins']}/3 "
+                     f"{r['repeat_median']:.6f} {r['repeat_min']:.6f} {r['repeat_max']:.6f} {r['wins']}/{6 if standalone else 3} "
                      f"{r['plan']['partial_count']} {r['plan']['merge_q_tiles']}")
+    if standalone:
+        lines.append('PER_REPEAT for cases with fewer than six wins: Q KV round TL_us AscendC_us speedup')
+        for row in rows:
+            if row['wins'] == 6:
+                continue
+            for index, samples in enumerate(row['samples_us'], 1):
+                tl = statistics.median(samples['static'])
+                ac = statistics.median(samples['ascendc'])
+                lines.append(f"{row['Q']} {row['KV']} {index} {tl:.3f} {ac:.3f} {ac/tl:.6f}")
     lines.extend(failures)
-    output = directory.parent / 'mha_raw_default_grid_paste.txt'
+    output = directory.parent / ('mha_standalone_fused_grid_paste.txt' if standalone else 'mha_raw_default_grid_paste.txt')
     output.write_text('\n'.join(lines) + '\n', encoding='utf8')
     (directory/'summary.json').write_text(json.dumps(dict(status='passed' if complete else 'incomplete_or_error',
                                                         completed=len(rows), failures=failures, rows=rows), indent=2)+'\n')
@@ -99,4 +127,6 @@ def summarize(directory):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('directory', type=Path)
-    summarize(parser.parse_args().directory)
+    parser.add_argument("--standalone-fused", action="store_true")
+    args = parser.parse_args()
+    summarize(args.directory, args.standalone_fused)
