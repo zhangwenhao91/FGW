@@ -58,8 +58,12 @@ Event workers retain the usual 4 GiB budget. Raw profiler data and exported
 JSON/CSV are retained in the private run directory. Trace errors do not erase
 completed timing reports. Open exported trace JSON in Perfetto if needed.
 
-The parser accepts only one aggregate `cat=kernel`, `ph=X` Chrome interval per
-kernel call: ten local intervals and five merge intervals on distinct lanes.
+The parser accepts one aggregate `ph=X` interval per kernel call, either with
+`cat=kernel` or on a metadata-identified `Ascend Hardware` process with
+`Task Type=MIX_AIC/AI_VECTOR_CORE`. CANN's absent category and decimal-string
+epoch timestamps are supported; an origin is subtracted before float
+conversion to preserve sub-microsecond intervals. It expects ten local
+intervals and five merge intervals on distinct lanes.
 It checks partial-to-merge ordering and reports direct/merge interval
 intersection. Unknown layouts are marked `unrecognized_layout`, not zero
 overlap. Observed timeline overlap does not establish a performance benefit;
@@ -83,3 +87,22 @@ found no `cat=kernel` events, so actual overlap is still unconfirmed.
 Inspect the existing trace schema with `tools/mha/inspect_overlap_trace.py`;
 no NPU test rerun is needed. Do not promote this candidate or attribute its
 regression to a specific hardware bottleneck without inspecting the trace.
+
+The subsequent uploaded inspection contained all fifteen hardware intervals
+per shape. Parsing these existing intervals shows:
+
+| KV | Calls with task-interval overlap | Direct duration | Merge duration without overlap | Merge duration with overlap | Merge completion after direct |
+| --- | --- | --- | --- | --- | --- |
+| 4096 | 3/5 | 227.927–229.033 us | 5.842–5.887 us | 231.436–231.917 us | 3.518–3.940 us |
+| 8192 | 4/5 | 424.857–425.782 us | 5.720 us | 426.920–428.098 us | 2.758–3.137 us |
+
+Overlapped task envelopes do not prove useful Vector instructions ran
+simultaneously. The merge interval grows to approximately the entire direct
+interval and finishes a few microseconds later, consistent with resource or
+scheduling waits rather than an independently completed merge hidden behind
+direct computation. This is an inference, not a measured stall breakdown.
+The first two KV4096 calls and first KV8192 call also have 91–227 us
+split-to-direct gaps under profiling; these are instrumented samples and
+must not be treated as unprofiled Event overhead. No samples are discarded.
+The Event regressions remain the decisive performance result. The parser
+fix changes no kernel or timing policy and needs no NPU rerun.

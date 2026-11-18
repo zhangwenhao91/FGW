@@ -2,17 +2,35 @@
 from pathlib import Path
 import json
 import statistics
+from decimal import Decimal, InvalidOperation
 
 
 def analyze_traces(paths, calls=5):
     observed = set()
     for path in paths:
         payload = json.loads(Path(path).read_text())
-        if not isinstance(payload,dict):
+        raw = payload.get('traceEvents',[]) if isinstance(payload,dict) else payload if isinstance(payload,list) else []
+        if not raw:
             continue
-        events = [e for e in payload.get('traceEvents',[]) if e.get('ph')=='X'
-                  and e.get('cat')=='kernel' and isinstance(e.get('dur'),(int,float))
-                  and isinstance(e.get('ts'),(int,float))]
+        hardware = {e.get('pid') for e in raw if e.get('ph')=='M'
+                    and e.get('name')=='process_name' and e.get('args',{}).get('name')=='Ascend Hardware'}
+        events, origin = [], None
+        for e in raw:
+            on_hardware = (e.get('pid') in hardware and e.get('args',{}).get('Task Type')
+                           in ('MIX_AIC','AI_VECTOR_CORE'))
+            if e.get('ph')!='X' or not (e.get('cat')=='kernel' or on_hardware):
+                continue
+            try:
+                ts,dur = Decimal(str(e['ts'])),Decimal(str(e['dur']))
+                if not ts.is_finite() or not dur.is_finite() or dur<=0:
+                    continue
+            except (KeyError,InvalidOperation):
+                continue
+            if origin is None:
+                origin = ts
+            # CANN serializes epoch microseconds as decimal strings. Subtract
+            # an origin before float conversion to preserve sub-us differences.
+            events.append(dict(e,ts=float(ts-origin),dur=float(dur)))
         observed.update(str(e.get('name')) for e in events)
         local = sorted([e for e in events if 'local_split' in str(e.get('name',''))],key=lambda e:e['ts'])
         merges = sorted([e for e in events if 'merge_simd' in str(e.get('name',''))],key=lambda e:e['ts'])
@@ -31,10 +49,13 @@ def analyze_traces(paths, calls=5):
             continue
         return dict(status='recognized',trace=str(path),calls=calls,
                     overlap_us=overlap,merge_duration_us=duration,
+                    direct_duration_us=[d['dur'] for d in direct],
+                    merge_end_minus_direct_end_us=[m['ts']+m['dur']-d['ts']-d['dur'] for d,m in zip(direct,merges)],
+                    split_to_direct_gap_us=[d['ts']-p['ts']-p['dur'] for p,d in zip(partial,direct)],
                     median_overlap_us=statistics.median(overlap),
                     fraction_of_merge_interval_overlapped=sum(overlap)/sum(duration),
                     calls_with_overlap=sum(v>0 for v in overlap),
-                    note='Chrome kernel intervals in microseconds; interval overlap is not a speedup measurement.')
+                    note='Hardware task intervals in microseconds may include resource waits. Interval overlap is not proof of simultaneous useful computation or speedup.')
     return dict(status='unrecognized_layout',observed_kernel_names=sorted(observed)[:16],
                 note='Inspect retained trace manually; do not interpret missing/unrecognized events as zero overlap.')
 

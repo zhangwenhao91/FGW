@@ -55,6 +55,22 @@ class SplitOverlapTests(unittest.TestCase):
             path.write_text(json.dumps(dict(traceEvents=events[:-1])))
             self.assertEqual(analyze_traces([path])['status'],'unrecognized_layout')
 
+    def test_cann_hardware_pid_and_decimal_timestamp(self):
+        events=[dict(name='process_name',ph='M',pid=99,args={'name':'Ascend Hardware'})]
+        for name,ts,dur,tid,kind in (('local_split_kernel','1795028939172582.000',.5,61,'MIX_AIC'),
+                                   ('local_split_kernel','1795028939172582.757',228.361,61,'MIX_AIC'),
+                                   ('merge_simd_kernel','1795028939172583.477',231.436,59,'AI_VECTOR_CORE')):
+            events.append(dict(name=name,ph='X',pid=99,tid=tid,ts=ts,dur=dur,args={'Task Type':kind}))
+        # A same-name host event must never enter the hardware intervals.
+        events.append(dict(events[1],pid=100))
+        with tempfile.TemporaryDirectory() as temp:
+            path=Path(temp)/'trace.json'
+            path.write_text(json.dumps(events))
+            result=analyze_traces([path],calls=1)
+            self.assertEqual(result['status'],'recognized')
+            self.assertAlmostEqual(result['overlap_us'][0],227.641,places=6)
+            self.assertAlmostEqual(result['merge_end_minus_direct_end_us'][0],3.795,places=6)
+
     def test_complete_four_control_contract_and_source_equality(self):
         settings=dict(rounds=1,timing_rounds=6,pairs=8,initial_warmup=100,warmup=10,
                       split_overlap=True,split_overlap_trace=False,raw_baseline_only=True,
