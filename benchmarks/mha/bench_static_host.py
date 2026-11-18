@@ -30,6 +30,8 @@ def main():
     parser.add_argument("--raw-breakdown", action="store_true", help="Only raw SIMD full/local/merge/prepared-chain and native FIA; omit variant builds")
     parser.add_argument("--row-softmax", action="store_true", help="Compare two interleaved register-resident softmax rows with original raw SIMD and native FIA")
     parser.add_argument("--raw-baseline-only", action="store_true", help="Only original raw SIMD baseline and native FIA; no normalized reference or diagnostics")
+    parser.add_argument("--split-overlap", action="store_true", help="Add serial/parallel two-phase launches to the raw baseline")
+    parser.add_argument("--split-overlap-trace", action="store_true", help="Accuracy and retained parallel trace, no timing")
     parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
@@ -58,6 +60,10 @@ def main():
         parser.error("--row-softmax requires rawsimd, --only-static-ascendc and no --raw-breakdown")
     if args.raw_baseline_only and (args.merge_policy != "rawsimd" or not args.only_static_ascendc or args.row_softmax or args.raw_breakdown):
         parser.error("--raw-baseline-only requires rawsimd, --only-static-ascendc and no other experiment")
+    if args.split_overlap and not args.raw_baseline_only:
+        parser.error('--split-overlap requires --raw-baseline-only')
+    if args.split_overlap_trace and not args.split_overlap:
+        parser.error('--split-overlap-trace requires --split-overlap')
     if args.smoke and (args.grid or args.shape):
         parser.error("--smoke cannot be combined with --grid/--shape")
     from benchmarks.mha.summarize_clean_grid import QS, KVS
@@ -210,6 +216,16 @@ def main():
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
                 static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs, row_softmax=args.row_softmax)
                 assert static.plan == plan
+                overlap = None
+                if args.split_overlap:
+                    from operators.mha.split_overlap import build_overlap
+                    print(f'[FGW compile] {key} two-phase in-place adapter',flush=True)
+                    overlap = build_overlap(static,fixtures[7][0][0].device)
+                    info['overlap_scope'] = overlap['scope']
+                    info['phase_counts'] = [phase[0] for phase in overlap['tables']]
+                    from operators.mha import phase_schedule,split_overlap
+                    info['overlap_source_sha256'] = {m.__name__:hashlib.sha256(Path(m.__file__).read_bytes()).hexdigest()
+                                                    for m in (phase_schedule,split_overlap)}
                 simd_reference = None
                 if args.merge_policy == "rawsimd" and not args.raw_breakdown and not args.row_softmax and not args.raw_baseline_only:
                     print(f"[FGW compile] {key} normalized SIMD reference", flush=True)
@@ -275,6 +291,8 @@ def main():
                     )
                     info["default_split"] = base.num_splits
                 kernels = {"static_local": static.local_kernel}
+                if overlap is not None:
+                    kernels['two_phase_inplace_local'] = overlap['kernel']
                 if static.merge_kernel is not None:
                     kernels["static_merge"] = static.merge_kernel
                 for label, program in [("default", base), ("uniform", uniform)]:
@@ -319,6 +337,9 @@ def main():
                     calls = {
                         "static": functools.partial(static, *inputs),
                     }
+                    if overlap is not None:
+                        calls['two_phase_serial'] = functools.partial(overlap['serial'],*inputs)
+                        calls['two_phase_parallel'] = functools.partial(overlap['parallel'],*inputs)
                     if simd_reference is not None:
                         simd_reference.validate_inputs(*inputs)
                         calls["raw_ref" if args.merge_policy == "rawrecip" or args.row_softmax else "simd_ref"] = functools.partial(simd_reference, *inputs)
@@ -374,6 +395,11 @@ def main():
                         if not args.only_static_ascendc or args.raw_breakdown:
                             calls["static/local"] = local
                         timed_calls = calls
+                if args.split_overlap_trace:
+                    from benchmarks.mha.profile_split_overlap import capture
+                    report.update(phase='trace',active=key);save()
+                    info['trace'] = capture(timed_calls['two_phase_parallel'],path.parent/(path.stem+'_trace'))
+                    continue
                 if args.smoke:
                     continue
                 report.update(phase="timing", active=f"{key}/round{rd+1}")
@@ -414,6 +440,15 @@ def main():
                     batch_medians = {label: statistics.median(values) for label, values in batch.items()}
                     report['measurement_rounds'].append(dict(key=key, compile_round=rd+1,
                         measurement_round=repeat+1, median_us=batch_medians, samples_us=batch))
+                    if args.split_overlap:
+                        # Outside Event samples: exercise event/workspace reuse
+                        # after the queued warmups and repeated fork/join calls.
+                        for label in labels:
+                            actual = timed_calls[label]().cpu()
+                            torch.testing.assert_close(actual,fixtures[7][1],rtol=.01,atol=.004)
+                            info.setdefault('repeat_accuracy',[]).append(dict(
+                                repeat=repeat+1,label=label,
+                                max_abs_error=(actual.float()-fixtures[7][1].float()).abs().max().item()))
                     save()
                     print(f"[FGW repeat] {key} {repeat+1}/{args.timing_rounds} {batch_medians}", flush=True)
                 medians = {k: statistics.median(v) for k, v in samples.items()}
@@ -423,7 +458,7 @@ def main():
                 print(key, "round", rd + 1, medians, flush=True)
             info["accuracy_checks"] = len(info["accuracy"])
             info["max_abs_error"] = max(a["max_abs_error"] for a in info["accuracy"])
-            if args.smoke:
+            if args.smoke or args.split_overlap_trace:
                 report["summary"].append(dict(key=key, status="accuracy_passed", plan=plan.describe()))
             else:
                 result = dict(
