@@ -1,7 +1,9 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# cat reports/mha/latest/mha_raw_local_profile_paste.txt 
-run_directory=mha_raw_local_profile.K749GE9g
-status=running phase=capture_session1 KV=4096 captures=1/3
-Only prepared-Q raw local is called during profiling; no cache flush, merge or native FIA.
-Pipe busy ratios overlap and do not directly measure synchronization waits; retain raw trace.
-SESSION 1 status=running raw=None trace=/home/z30086261/FGW/reports/mha/latest/mha_raw_local_profile.K749GE9g/kv4096_trace1
-(zwh) root@ubuntu162:/home/z30086261/FGW#
+d=reports/mha/latest/mha_raw_local_profile.K749GE9g
+{
+  echo '=== profiler log ==='
+  tail -n 120 "$d/kv4096.log"
+  echo '=== resource guard ==='
+  tail -n 30 "$d/guard_kv4096.jsonl"
+  echo '=== current report ==='
+  cat "$d/kv4096_paste.txt"
+} > tmp.txt
