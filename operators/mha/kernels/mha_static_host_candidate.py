@@ -16,7 +16,9 @@ from operators.mha.static_schedule import make_plan, choose_plan, make_tail_plan
 
 
 @lru_cache(maxsize=64)
-def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56, include_fixed_control=True, row_softmax=False):
+def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge_rows=8, tail_pieces=None, merge_policy="fixed", merge_programs=56, include_fixed_control=True, row_softmax=False, fused_output=False):
+    if fused_output and merge_policy != 'rawsimd':
+        raise ValueError('fused_output experiment requires rawsimd')
     if plan_policy not in ("balanced", "cost", "tail", "stream"):
         raise ValueError("plan_policy must be balanced, cost or tail")
     if merge_policy not in ("fixed", "weighted", "grouped", "preweighted", "prefetch", "simd", "rawsimd", "rawrecip"):
@@ -288,10 +290,11 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
                             for r, d in T.Parallel(ROWS, D):
                                 output[r, d] = output[r, d] / T.max(total[r], 1e-30)
                     else:
-                        if slot < 0:
-                            with T.SimtVF(threads=128):
-                                for r, d in T.Parallel(ROWS, D):
-                                    output[r, d] = output[r, d] / T.max(total[r], 1e-30)
+                        if not fused_output:
+                            if slot < 0:
+                                with T.SimtVF(threads=128):
+                                    for r, d in T.Parallel(ROWS, D):
+                                        output[r, d] = output[r, d] / T.max(total[r], 1e-30)
                     if has_merge:
                         if slot >= 0:
                             if raw_partials:
@@ -308,18 +311,34 @@ def build_kernel(sq, kv, pool_rows, plan_policy="balanced", programs=None, merge
                             cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
                             with T.SimdVF(latency=193):
                                 mask = S.pset(32, "PAT_ALL")
+                                if fused_output:
+                                    minimum = S.vdup(T.float32(1e-30), accum_dtype, mask)
                                 for r in range(ROWS):
+                                    if fused_output:
+                                        denominator = S.vmax(S.vld(total[r], "BRC_B32"), minimum, mask)
                                     for c in range(0, D, VL):
-                                        value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
+                                        if fused_output:
+                                            normalized = S.vdiv(S.vld(output[r, c], "NORM"), denominator, mask)
+                                            value = S.vcvt(normalized, dtype, mask)
+                                        else:
+                                            value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
                                         S.vsts(cast_view[r, c], value, mask, "PK_B32")
                             T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi : qi + BR, h * D : (h + 1) * D])
                     else:
                         cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
                         with T.SimdVF(latency=193):
                             mask = S.pset(32, "PAT_ALL")
+                            if fused_output:
+                                minimum = S.vdup(T.float32(1e-30), accum_dtype, mask)
                             for r in range(ROWS):
+                                if fused_output:
+                                    denominator = S.vmax(S.vld(total[r], "BRC_B32"), minimum, mask)
                                 for c in range(0, D, VL):
-                                    value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
+                                    if fused_output:
+                                        normalized = S.vdiv(S.vld(output[r, c], "NORM"), denominator, mask)
+                                        value = S.vcvt(normalized, dtype, mask)
+                                    else:
+                                        value = S.vcvt(S.vld(output[r, c], "NORM"), dtype, mask)
                                     S.vsts(cast_view[r, c], value, mask, "PK_B32")
                         T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi : qi + BR, h * D : (h + 1) * D])
 

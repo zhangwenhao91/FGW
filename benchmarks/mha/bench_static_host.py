@@ -32,6 +32,7 @@ def main():
     parser.add_argument("--raw-baseline-only", action="store_true", help="Only original raw SIMD baseline and native FIA; no normalized reference or diagnostics")
     parser.add_argument("--split-overlap", action="store_true", help="Add serial/parallel two-phase launches to the raw baseline")
     parser.add_argument("--split-overlap-trace", action="store_true", help="Accuracy and retained parallel trace, no timing")
+    parser.add_argument("--fused-output", action="store_true", help="Compare fused SIMD division/cast with original raw SIMD and FIA")
     parser.add_argument("--only-static-ascendc", action="store_true", help="Compile/time only static candidate and AscendC; omit v7 and diagnostic timings")
     parser.add_argument("--grid", action="store_true", help="Original clean-v7 80-shape grid")
     parser.add_argument("--shape", nargs=2, type=int, metavar=("Q", "KV"))
@@ -64,6 +65,8 @@ def main():
         parser.error('--split-overlap requires --raw-baseline-only')
     if args.split_overlap_trace and not args.split_overlap:
         parser.error('--split-overlap-trace requires --split-overlap')
+    if args.fused_output and (args.merge_policy!='rawsimd' or not args.only_static_ascendc or args.row_softmax or args.raw_breakdown or args.raw_baseline_only or args.split_overlap):
+        parser.error('--fused-output requires rawsimd, --only-static-ascendc and no other experiment')
     if args.smoke and (args.grid or args.shape):
         parser.error("--smoke cannot be combined with --grid/--shape")
     from benchmarks.mha.summarize_clean_grid import QS, KVS
@@ -108,6 +111,8 @@ def main():
     last_stage = [None]
     if args.row_softmax:
         report['softmax_variant'] = 'register_rows2_v2'
+    if args.fused_output:
+        report['output_variant'] = 'simd_div_cast_v1'
     def save():
         stage = (report['phase'], report['active'])
         if stage != last_stage[0]:
@@ -214,7 +219,7 @@ def main():
                 default.build_kernel.cache_clear()
                 pool = fixtures[7][0][1].shape[0]
                 print(f"[FGW compile] {key} round={rd+1}/{args.rounds} static", flush=True)
-                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs, row_softmax=args.row_softmax)
+                static = candidate.build_kernel(qlen, kv, pool, args.plan_policy, args.programs, args.merge_rows, args.tail_pieces, args.merge_policy, args.merge_programs, row_softmax=args.row_softmax, fused_output=args.fused_output)
                 assert static.plan == plan
                 overlap = None
                 if args.split_overlap:
@@ -227,16 +232,16 @@ def main():
                     info['overlap_source_sha256'] = {m.__name__:hashlib.sha256(Path(m.__file__).read_bytes()).hexdigest()
                                                     for m in (phase_schedule,split_overlap)}
                 simd_reference = None
-                if args.merge_policy == "rawsimd" and not args.raw_breakdown and not args.row_softmax and not args.raw_baseline_only:
+                if args.merge_policy == "rawsimd" and not args.raw_breakdown and not args.row_softmax and not args.raw_baseline_only and not args.fused_output:
                     print(f"[FGW compile] {key} normalized SIMD reference", flush=True)
                     simd_reference = candidate.build_kernel(qlen, kv, pool, args.plan_policy,
                         args.programs, args.merge_rows, args.tail_pieces, "simd", args.merge_programs, False)
                     assert simd_reference.plan == static.plan
                     info["reference_builds"] = info.get("reference_builds", 0) + 1
                     info["partial_contract"] = "Raw FP32 A + max/sum planes; reference normalized FP32 Partial + LSE. Direct tiles normalized normally."
-                if args.row_softmax:
+                if args.row_softmax or args.fused_output:
                     from operators.mha.kernels.mha_simd_merge import replace_merge
-                    print(f"[FGW compile] {key} original raw SIMD softmax reference", flush=True)
+                    print(f"[FGW compile] {key} original raw SIMD reference", flush=True)
                     simd_reference = candidate.build_kernel(qlen, kv, pool, args.plan_policy,
                         args.programs, args.merge_rows, args.tail_pieces, "rawsimd", args.merge_programs)
                     assert simd_reference.plan == static.plan
@@ -245,6 +250,8 @@ def main():
                         static = replace_merge(static, simd_reference.merge_kernel)
                     info["reference_builds"] = info.get("reference_builds", 0) + 1
                     info["partial_contract"] = "Only local softmax differs: two interleaved register-resident rows vs original UB roundtrip. Same plan, raw A/max/sum and shared SIMD merge."
+                    if args.fused_output:
+                        info['partial_contract'] = 'Only direct output epilogue differs: SIMD div/cast vs SIMT division then SIMD cast. Raw A/max/sum, softmax, QK/PV, task plan and merge are unchanged.'
                 if args.merge_policy == "rawrecip":
                     from operators.mha.kernels.mha_simd_merge import make_kernel, replace_merge
                     print(f"[FGW compile] {key} raw SIMD division reference (shared local)", flush=True)
@@ -310,7 +317,7 @@ def main():
                 if static.fixed_merge_kernel is not None:
                     kernels["fixed_merge"] = static.fixed_merge_kernel
                 if simd_reference is not None:
-                    reference_prefix = "raw_simd_ref" if args.merge_policy == "rawrecip" or args.row_softmax else "normalized_simd"
+                    reference_prefix = "raw_simd_ref" if args.merge_policy == "rawrecip" or args.row_softmax or args.fused_output else "normalized_simd"
                     kernels[reference_prefix + "_local"] = simd_reference.local_kernel
                     if simd_reference.merge_kernel is not None:
                         kernels[reference_prefix + "_merge"] = simd_reference.merge_kernel
@@ -342,7 +349,7 @@ def main():
                         calls['two_phase_parallel'] = functools.partial(overlap['parallel'],*inputs)
                     if simd_reference is not None:
                         simd_reference.validate_inputs(*inputs)
-                        calls["raw_ref" if args.merge_policy == "rawrecip" or args.row_softmax else "simd_ref"] = functools.partial(simd_reference, *inputs)
+                        calls["raw_ref" if args.merge_policy == "rawrecip" or args.row_softmax or args.fused_output else "simd_ref"] = functools.partial(simd_reference, *inputs)
                     if static.fixed_merge_kernel is not None:
                         calls["fixed_r8"] = functools.partial(static.fixed_launch, *inputs)
                     if base is not None:
@@ -440,9 +447,9 @@ def main():
                     batch_medians = {label: statistics.median(values) for label, values in batch.items()}
                     report['measurement_rounds'].append(dict(key=key, compile_round=rd+1,
                         measurement_round=repeat+1, median_us=batch_medians, samples_us=batch))
-                    if args.split_overlap:
-                        # Outside Event samples: exercise event/workspace reuse
-                        # after the queued warmups and repeated fork/join calls.
+                    if args.split_overlap or args.fused_output:
+                        # Outside Event samples: check outputs again after the
+                        # repeated warmups, allocations and candidate launches.
                         for label in labels:
                             actual = timed_calls[label]().cpu()
                             torch.testing.assert_close(actual,fixtures[7][1],rtol=.01,atol=.004)
