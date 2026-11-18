@@ -1,0 +1,159 @@
+(zwh) root@ubuntu162:/home/z30086261/FGW-50fca6d-clean# python benchmark_q_only.py --q 32768 --kv8192 --output reports/q32768_kv8192_q_only.json
+usage: benchmark_q_only.py [-h] [--q {64,128,256,512,1024,2048,4096,8192,16384,32768}] [--kv {512,1024,2048,4096,8192,16384,24576,32768}] [--output OUTPUT]
+benchmark_q_only.py: error: unrecognized arguments: --kv8192
+(zwh) root@ubuntu162:/home/z30086261/FGW-50fca6d-clean# python benchmark_q_only.py --q 32768 --kv 8192 --output reports/q32768_kv8192_q_only.json
+2026-11-18 17:33:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `local_split` with `out_idx=[6, 7, 8]`
+[17:33:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[17:33:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[17:33:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[17:33:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[17:33:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[17:33:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[17:33:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-18 17:33:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `local_split`
+2026-11-18 17:33:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `merge` with `out_idx=[]`
+2026-11-18 17:33:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `merge`
+2026-11-18 17:33:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `local_direct` with `out_idx=[4]`
+[17:33:14] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage K_l1 uses a non-affine loop nest.
+[17:33:14] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage qk uses a non-affine loop nest.
+[17:33:14] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage scores uses a non-affine loop nest.
+[17:33:14] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage probs uses a non-affine loop nest.
+[17:33:14] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage V_l1 uses a non-affine loop nest.
+[17:33:14] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage pv uses a non-affine loop nest.
+[17:33:14] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage alpha uses a non-affine loop nest.
+2026-11-18 17:33:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `local_direct`
+{"cost": {"strategy": "balanced", "Q": 32768, "KV": 8192, "programs": 28, "q_tiles": 256, "min_kv_blocks": 585, "max_kv_blocks": 586, "segments": 283, "max_segments": 11, "partial_count": 54, "merge_q_tiles": 27, "direct_q_tiles": 229, "max_parts": 2, "partial_bytes": 3538944, "lse_bytes": 27648}, "q_only": {"strategy": "q_only", "Q": 32768, "KV": 8192, "programs": 28, "q_tiles": 256, "min_kv_blocks": 576, "max_kv_blocks": 640, "segments": 256, "max_segments": 10, "partial_count": 0, "merge_q_tiles": 0, "direct_q_tiles": 256, "max_parts": 0, "partial_bytes": 0, "lse_bytes": 0}}
+{
+  "Q": 32768,
+  "KV": 8192,
+  "device": "_NPUDeviceProperties(name='Ascend950PR_9579', total_memory=126208MB, cube_core_num=28, vector_core_num=56, uuid=cc08d80a-d200-0000-0000-00c6a2600000, L2_cache_size=128MB)",
+  "source": {
+    "source_commit": "50fca6d93466f6c8eed2388b58366c3aae819299",
+    "files": {
+      "operators/__init__.py": {
+        "original_path": "operators/__init__.py",
+        "sha256": "9757d41fdf694f70ea1f097be579df64338774370925ee5564cd7f2487ceac4c"
+      },
+      "operators/mha/__init__.py": {
+        "original_path": "operators/mha/__init__.py",
+        "sha256": "e89bd88cc0349d8ef1cf42fe09b3a8a931a3d959bfb4e6871ba11261740ddb7e"
+      },
+      "operators/mha/kernels/__init__.py": {
+        "original_path": "operators/mha/kernels/__init__.py",
+        "sha256": "2b9d6480f7f08bfecf42f82a7aa4a203c97f4084657f9f63f61bbe84d7f6ebe1"
+      },
+      "operators/mha/kernels/mha_paged_decode.py": {
+        "original_path": "operators/mha/kernels/mha_static_host_candidate.py",
+        "sha256": "9641c52246e66a413e852da53aec44b370783e6fa1d057729987fa0adec81bac"
+      },
+      "operators/mha/static_schedule.py": {
+        "original_path": "operators/mha/static_schedule.py",
+        "sha256": "0e1b5e58b05581d2b0ff6cdf0fedc08726b6b5102c28f42848704c71c8a59ea7"
+      },
+      "third_party/licenses/TILELANG_LICENSE": {
+        "original_path": "third_party/licenses/TILELANG_LICENSE",
+        "sha256": "f70e5cdc24c3797af741930440086f9a0ad36930b05a3dfc25b420936dc2cfa1"
+      }
+    },
+    "benchmark_sha256": "db48dd552de721d569ad17f8de8b42006ca590bd2571439e2d07c04005f68946"
+  },
+  "plans": {
+    "cost": {
+      "strategy": "balanced",
+      "Q": 32768,
+      "KV": 8192,
+      "programs": 28,
+      "q_tiles": 256,
+      "min_kv_blocks": 585,
+      "max_kv_blocks": 586,
+      "segments": 283,
+      "max_segments": 11,
+      "partial_count": 54,
+      "merge_q_tiles": 27,
+      "direct_q_tiles": 229,
+      "max_parts": 2,
+      "partial_bytes": 3538944,
+      "lse_bytes": 27648
+    },
+    "q_only": {
+      "strategy": "q_only",
+      "Q": 32768,
+      "KV": 8192,
+      "programs": 28,
+      "q_tiles": 256,
+      "min_kv_blocks": 576,
+      "max_kv_blocks": 640,
+      "segments": 256,
+      "max_segments": 10,
+      "partial_count": 0,
+      "merge_q_tiles": 0,
+      "direct_q_tiles": 256,
+      "max_parts": 0,
+      "partial_bytes": 0,
+      "lse_bytes": 0
+    }
+  },
+  "max_abs_error": {
+    "7": {
+      "cost": 0.00048828125,
+      "q_only": 0.00048828125,
+      "AscendC": 0.00048828125
+    },
+    "19": {
+      "cost": 0.00048828125,
+      "q_only": 0.00048828125,
+      "AscendC": 0.00048828125
+    }
+  },
+  "samples_us": {
+    "cost": [
+      517.874002456665,
+      614.978015422821,
+      626.4529824256897,
+      604.2450070381165,
+      551.3240098953247,
+      560.5890154838562,
+      559.3339800834656,
+      572.1960067749023,
+      561.5310072898865,
+      566.806972026825,
+      560.38898229599,
+      561.3660216331482
+    ],
+    "q_only": [
+      507.9770088195801,
+      544.3710088729858,
+      575.2249956130981,
+      546.4609861373901,
+      580.2940130233765,
+      568.4630274772644,
+      558.4030151367188,
+      570.7899928092957,
+      580.3490281105042,
+      583.1769704818726,
+      582.1260213851929,
+      579.2530179023743
+    ],
+    "AscendC": [
+      562.5609755516052,
+      590.6689763069153,
+      608.8910102844238,
+      573.5059976577759,
+      550.8549809455872,
+      541.297972202301,
+      537.443995475769,
+      577.1549940109253,
+      560.1909756660461,
+      557.7710270881653,
+      548.2649803161621,
+      544.5190072059631
+    ]
+  },
+  "median_us": {
+    "cost": 561.4485144615173,
+    "q_only": 573.0074942111969,
+    "AscendC": 558.9810013771057
+  },
+  "q_only_speedup": 0.9798275243056085
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW-50fca6d-clean#
