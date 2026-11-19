@@ -5,14 +5,14 @@ SIMD macros adapted from tile-ai/tilelang at a7cb753dafc6b2514cbbd7c8431260c9d05
 see third_party/licenses/TILELANG_LICENSE.
 """
 
+from dataclasses import dataclass
 from functools import lru_cache
-import torch
+
 import tilelang
 import tilelang.ascend.language as T
 from tilelang.ascend.language import simd as S
 from tilelang.layout import make_ascend_compact_nz_layout
-
-from dataclasses import dataclass
+import torch
 
 
 @dataclass(frozen=True)
@@ -356,7 +356,14 @@ def _make_merge(sq, slots, merge_count, max_parts, rows):
 
 @lru_cache(maxsize=64)
 def build_kernel(sq, kv, pool_rows):
-    """Build paged B1H1 BF16/D128 attention for fixed Q and KV lengths."""
+    """Build noncausal paged attention for fixed B1H1 BF16/D128 shapes.
+
+    Q has shape (1, sq, 1, 128). K and V have shape (pool_rows, 1, 128).
+    The int32 page table has shape (1, kv // 128) and must contain valid
+    physical page IDs. The int32 lengths tensor has shape (1,) and must
+    contain kv. All tensors must be contiguous and on the same NPU.
+    Call validate_inputs outside the timed path before dispatch.
+    """
     plan = choose_stream_plan(sq, kv)
     if pool_rows <= 0 or pool_rows % 128 or pool_rows < kv:
         raise ValueError("whole physical pool pages, at least KV capacity required")
@@ -386,64 +393,51 @@ def build_kernel(sq, kv, pool_rows):
             softmax_b16 = S.pset(16, "PAT_VL128")
             dst_nz_ptr = S.make_ubuf_ptr(T.access_ptr(P_nz_ub[0, 0], "w", ROWS + 1, BC), "bfloat16")
             S.vsts(old_m_ub[0], S.vld(m_ub[0], "NORM"), softmax_full, "NORM_B32")
-            for r in range(0, ROWS, 2):
-                s00 = S.vmuls(S.vld(S_ub[r, 0], "NORM"), T.float32(scale), softmax_full)
-                s01 = S.vmuls(S.vld(S_ub[r, VL], "NORM"), T.float32(scale), softmax_full)
-                s10 = S.vmuls(S.vld(S_ub[r + 1, 0], "NORM"), T.float32(scale), softmax_full)
-                s11 = S.vmuls(S.vld(S_ub[r + 1, VL], "NORM"), T.float32(scale), softmax_full)
-                S.vsts(S_ub[r, 0], s00, softmax_full, "NORM_B32")
-                S.vsts(S_ub[r, VL], s01, softmax_full, "NORM_B32")
-                S.vsts(S_ub[r + 1, 0], s10, softmax_full, "NORM_B32")
-                S.vsts(S_ub[r + 1, VL], s11, softmax_full, "NORM_B32")
-                max0 = S.vcmax(S.vmax(s00, s01, softmax_full), softmax_full)
-                max1 = S.vcmax(S.vmax(s10, s11, softmax_full), softmax_full)
-                S.vsts(m_ub[r], max0, softmax_one, "ONEPT_B32")
-                S.vsts(m_ub[r + 1], max1, softmax_one, "ONEPT_B32")
+            # Explicit expansion keeps register indices constant across two rows.
+            group = 2
+            low = S.alloc_local((group,), T.float32)
+            high = S.alloc_local((group,), T.float32)
+            for r in range(0, ROWS, group):
+                for i in T.unroll(group, explicit=True):
+                    low[i] = S.vmuls(S.vld(S_ub[r + i, 0], "NORM"), T.float32(scale), softmax_full)
+                    high[i] = S.vmuls(S.vld(S_ub[r + i, VL], "NORM"), T.float32(scale), softmax_full)
+                for i in T.unroll(group, explicit=True):
+                    S.vsts(S_ub[r + i, 0], low[i], softmax_full, "NORM_B32")
+                    S.vsts(S_ub[r + i, VL], high[i], softmax_full, "NORM_B32")
+                for i in T.unroll(group, explicit=True):
+                    row_max = S.vcmax(S.vmax(low[i], high[i], softmax_full), softmax_full)
+                    S.vsts(m_ub[r + i], row_max, softmax_one, "ONEPT_B32")
             S.mem_bar("VST_VLD")
             merged_max = S.vmax(S.vld(m_ub[0], "NORM"), S.vld(old_m_ub[0], "NORM"), softmax_full)
             S.vsts(m_ub[0], merged_max, softmax_full, "NORM_B32")
             S.mem_bar("VST_VLD")
-            for r in range(0, ROWS, 2):
-                max0 = S.vld(m_ub[r], "BRC_B32")
-                max1 = S.vld(m_ub[r + 1], "BRC_B32")
-                p00, p01 = S.vld2(S_ub[r, 0], "DINTLV_B32")
-                p10, p11 = S.vld2(S_ub[r + 1, 0], "DINTLV_B32")
-                e00 = S.vexpdif(p00, max0, softmax_full)
-                e10 = S.vexpdif(p10, max1, softmax_full)
-                e01 = S.vexpdif(p01, max0, softmax_full)
-                e11 = S.vexpdif(p11, max1, softmax_full)
-                row_sum0 = S.vcadd(S.vadd(e00, e01, softmax_full), softmax_full)
-                row_sum1 = S.vcadd(S.vadd(e10, e11, softmax_full), softmax_full)
-                S.vsts(row_sum_ub[r], row_sum0, softmax_one, "ONEPT_B32")
-                S.vsts(row_sum_ub[r + 1], row_sum1, softmax_one, "ONEPT_B32")
-                even_bf16_0 = S.vcvt(e00, "bfloat16", softmax_full, sat=False, part=0)
-                even_bf16_1 = S.vcvt(e10, "bfloat16", softmax_full, sat=False, part=0)
-                odd_bf16_0 = S.vcvt(e01, "bfloat16", softmax_full, sat=False, part=1)
-                odd_bf16_1 = S.vcvt(e11, "bfloat16", softmax_full, sat=False, part=1)
-                merged_bits0 = S.vor(
-                    T.reinterpret(even_bf16_0, "uint16x128"),
-                    T.reinterpret(odd_bf16_0, "uint16x128"),
-                    softmax_b16,
-                )
-                merged_bits1 = S.vor(
-                    T.reinterpret(even_bf16_1, "uint16x128"),
-                    T.reinterpret(odd_bf16_1, "uint16x128"),
-                    softmax_b16,
-                )
-                dst_nz_ptr = S.vsstb(
-                    T.reinterpret(merged_bits0, "bfloat16x128"),
-                    dst_nz_ptr,
-                    T.int32(ROWS + 1 << 16 | 1),
-                    softmax_b16,
-                    update=True,
-                )
-                dst_nz_ptr = S.vsstb(
-                    T.reinterpret(merged_bits1, "bfloat16x128"),
-                    dst_nz_ptr,
-                    T.int32(ROWS + 1 << 16 | 1),
-                    softmax_b16,
-                    update=True,
-                )
+            even_exp = S.alloc_local((group,), T.float32)
+            odd_exp = S.alloc_local((group,), T.float32)
+            for r in range(0, ROWS, group):
+                for i in T.unroll(group, explicit=True):
+                    row_max = S.vld(m_ub[r + i], "BRC_B32")
+                    even, odd = S.vld2(S_ub[r + i, 0], "DINTLV_B32")
+                    even_exp[i] = S.vexpdif(even, row_max, softmax_full)
+                    odd_exp[i] = S.vexpdif(odd, row_max, softmax_full)
+                for i in T.unroll(group, explicit=True):
+                    row_sum = S.vcadd(S.vadd(even_exp[i], odd_exp[i], softmax_full), softmax_full)
+                    S.vsts(row_sum_ub[r + i], row_sum, softmax_one, "ONEPT_B32")
+                # Store in row order because each store advances the NZ pointer.
+                for i in T.unroll(group, explicit=True):
+                    even_bf16 = S.vcvt(even_exp[i], "bfloat16", softmax_full, sat=False, part=0)
+                    odd_bf16 = S.vcvt(odd_exp[i], "bfloat16", softmax_full, sat=False, part=1)
+                    packed = S.vor(
+                        T.reinterpret(even_bf16, "uint16x128"),
+                        T.reinterpret(odd_bf16, "uint16x128"),
+                        softmax_b16,
+                    )
+                    dst_nz_ptr = S.vsstb(
+                        T.reinterpret(packed, "bfloat16x128"),
+                        dst_nz_ptr,
+                        T.int32((ROWS + 1) << 16 | 1),
+                        softmax_b16,
+                        update=True,
+                    )
             S.mem_bar("VST_VLD")
             alpha_reg = S.vexpdif(S.vld(old_m_ub[0], "NORM"), S.vld(m_ub[0], "NORM"), softmax_full)
             S.vsts(alpha_ub[0], alpha_reg, softmax_full, "NORM_B32")
@@ -481,6 +475,20 @@ def build_kernel(sq, kv, pool_rows):
             for i in range(ROWS):
                 for c in range(0, D, VL):
                     S.vsts(O_ub[i, c], output_zero, clear_mask, "NORM_B32")
+
+    @T.macro
+    def write_final_output(output, total, destination):
+        cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
+        with T.SimdVF(latency=193):
+            mask = S.pset(32, "PAT_ALL")
+            minimum = S.vdup(T.float32(1e-30), accum_dtype, mask)
+            for r in range(ROWS):
+                denominator = S.vmax(S.vld(total[r], "BRC_B32"), minimum, mask)
+                for c in range(0, D, VL):
+                    normalized = S.vdiv(S.vld(output[r, c], "NORM"), denominator, mask)
+                    value = S.vcvt(normalized, dtype, mask)
+                    S.vsts(cast_view[r, c], value, mask, "PK_B32")
+        T.dual_copy(cast_view[0:ROWS, 0:D], destination)
 
     @T.macro
     def local_body(Q, K, V, Table, Counts, Tasks, Parts, LSE, O):
@@ -555,29 +563,9 @@ def build_kernel(sq, kv, pool_rows):
                             T.dual_copy(maximum, LSE[slot * BR : (slot + 1) * BR])
                             T.dual_copy(total, LSE[stats_plane + slot * BR : stats_plane + (slot + 1) * BR])
                         else:
-                            cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
-                            with T.SimdVF(latency=193):
-                                mask = S.pset(32, "PAT_ALL")
-                                minimum = S.vdup(T.float32(1e-30), accum_dtype, mask)
-                                for r in range(ROWS):
-                                    denominator = S.vmax(S.vld(total[r], "BRC_B32"), minimum, mask)
-                                    for c in range(0, D, VL):
-                                        normalized = S.vdiv(S.vld(output[r, c], "NORM"), denominator, mask)
-                                        value = S.vcvt(normalized, dtype, mask)
-                                        S.vsts(cast_view[r, c], value, mask, "PK_B32")
-                            T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi : qi + BR, h * D : (h + 1) * D])
+                            write_final_output(output, total, O[b, qi : qi + BR, h * D : (h + 1) * D])
                     else:
-                        cast_view = T.view(output, (ROWS * 2, D), dtype=dtype)
-                        with T.SimdVF(latency=193):
-                            mask = S.pset(32, "PAT_ALL")
-                            minimum = S.vdup(T.float32(1e-30), accum_dtype, mask)
-                            for r in range(ROWS):
-                                denominator = S.vmax(S.vld(total[r], "BRC_B32"), minimum, mask)
-                                for c in range(0, D, VL):
-                                    normalized = S.vdiv(S.vld(output[r, c], "NORM"), denominator, mask)
-                                    value = S.vcvt(normalized, dtype, mask)
-                                    S.vsts(cast_view[r, c], value, mask, "PK_B32")
-                        T.dual_copy(cast_view[0:ROWS, 0:D], O[b, qi : qi + BR, h * D : (h + 1) * D])
+                        write_final_output(output, total, O[b, qi : qi + BR, h * D : (h + 1) * D])
 
     # Both entry signatures inline the same Cube/Vector computation macro.
     # With no fragments, unused workspace and metadata never enter the ABI.
@@ -625,7 +613,6 @@ def build_kernel(sq, kv, pool_rows):
     )
     uploaded = {}
 
-
     def prepare_plan(device):
         if not has_merge:
             return None, None, None
@@ -639,13 +626,22 @@ def build_kernel(sq, kv, pool_rows):
         return uploaded[device]
 
     def validate_inputs(q, k, v, table, lengths):
-        assert tuple(q.shape) == (1, sq, 1, D) and tuple(k.shape) == (pool_rows, 1, D) and v.shape == k.shape
-        assert tuple(table.shape) == (1, width) and lengths.cpu().tolist() == [kv]
-        assert q.dtype == k.dtype == v.dtype == torch.bfloat16
-        assert table.dtype == lengths.dtype == torch.int32
-        assert q.device.type == "npu" and all(
-            x.device == q.device and x.is_contiguous() for x in (q, k, v, table, lengths)
-        )
+        if tuple(q.shape) != (1, sq, 1, D) or tuple(k.shape) != (pool_rows, 1, D) or v.shape != k.shape:
+            raise ValueError("Q or K/V shape does not match the compiled kernel")
+        if tuple(table.shape) != (1, width) or tuple(lengths.shape) != (1,):
+            raise ValueError("page table or lengths shape does not match the compiled kernel")
+        if not (q.dtype == k.dtype == v.dtype == torch.bfloat16):
+            raise TypeError("Q, K and V must use BF16")
+        if not (table.dtype == lengths.dtype == torch.int32):
+            raise TypeError("page table and lengths must use int32")
+        if q.device.type != "npu" or any(
+            x.device != q.device or not x.is_contiguous() for x in (q, k, v, table, lengths)
+        ):
+            raise ValueError("inputs must be contiguous tensors on the same NPU")
+        if lengths.item() != kv:
+            raise ValueError("the live KV length must match the compiled KV length")
+        if table.min().item() < 0 or table.max().item() >= pool_rows // page_size:
+            raise ValueError("page table contains an out-of-range physical page ID")
 
     def run_local(prepared, k, v, table, counts=None, tasks=None):
         if has_merge:
@@ -666,7 +662,6 @@ def build_kernel(sq, kv, pool_rows):
     def launch(q, k, v, table, lengths):
         return finish(*compute(q, k, v, table, lengths))
 
-    launch.fixed_merge_kernel = None
     launch.merge_assignment = dict(policy="rawsimd", tasks=plan.merges,
                                    programs=merge_count * (BR // merge_rows), max_rows=merge_rows)
     launch.plan = plan

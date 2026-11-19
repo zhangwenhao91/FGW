@@ -328,7 +328,7 @@ def main():
                                 label + "_merge": program.merge_kernel,
                             }
                         )
-                if static.fixed_merge_kernel is not None:
+                if getattr(static, "fixed_merge_kernel", None) is not None:
                     kernels["fixed_merge"] = static.fixed_merge_kernel
                 if simd_reference is not None:
                     reference_prefix = "raw_simd_ref" if args.merge_policy == "rawrecip" or args.row_softmax or args.fused_output else "normalized_simd"
@@ -364,7 +364,7 @@ def main():
                     if simd_reference is not None:
                         simd_reference.validate_inputs(*inputs)
                         calls["raw_ref" if args.merge_policy == "rawrecip" or args.row_softmax or args.fused_output else "simd_ref"] = functools.partial(simd_reference, *inputs)
-                    if static.fixed_merge_kernel is not None:
+                    if getattr(static, "fixed_merge_kernel", None) is not None:
                         calls["fixed_r8"] = functools.partial(static.fixed_launch, *inputs)
                     if base is not None:
                         calls["default"] = functools.partial(base, *inputs)
