@@ -1,7 +1,10 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --device npu:0 2>&1 | tee dsa_dense_sfa.log
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case full --device npu:0 2>&1 | tee dsa_full.log
 torch=2.13.0+cpu torch_npu=2.13.0
-Checking native SFA output
-Checking PyTorch NPU baseline output
+Checking native SFA output (full)
+Compiling TileLang DSA
+2026-11-23 19:46:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-23 19:46:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Checking TileLang DSA output
 Accuracy passed. Starting alternating Event measurements
 timing 1/6
 timing 2/6
@@ -10,6 +13,7 @@ timing 4/6
 timing 5/6
 timing 6/6
 {
+  "case": "full",
   "shape": [
     1,
     1024,
@@ -28,65 +32,58 @@ timing 6/6
       "passed": true,
       "max_abs_error": 0.001953125
     },
-    "torch_npu_composite": {
+    "tilelang_dsa": {
       "passed": true,
-      "max_abs_error": 0.0009765625
+      "max_abs_error": 0.001953125
     }
   },
   "samples_us": {
     "native_sfa": [
-      3355.2050590515137,
-      3359.5049381256104,
-      3587.9039764404297,
-      3364.83097076416,
-      3356.0988903045654,
-      3362.272024154663
+      3385.283946990967,
+      3366.6460514068604,
+      3359.611988067627,
+      3348.3970165252686,
+      3371.958017349243,
+      3387.2549533843994
     ],
-    "torch_npu_composite": [
-      53843.15490722656,
-      54053.87496948242,
-      53790.58837890625,
-      53750.32043457031,
-      53889.7705078125,
-      53821.285247802734
+    "tilelang_dsa": [
+      194978.1951904297,
+      195209.3505859375,
+      195333.8623046875,
+      194738.8153076172,
+      195065.3839111328,
+      195577.7587890625
     ]
   },
   "median_us": {
-    "native_sfa": 3360.8884811401367,
-    "torch_npu_composite": 53832.22007751465
+    "native_sfa": 3369.3020343780518,
+    "tilelang_dsa": 195137.36724853516
   },
-  "composite_latency_over_sfa": 16.017258644432257
+  "speedup_vs_sfa": 0.017266308764362734
 }
-(zwh) root@ubuntu162:/home/z30086261/FGW# ll
-total 108
-drwxr-xr-x 12 root root 20480 Nov 23 19:38 ./
-drwxr-xr-x 13 root root  4096 Nov 18 16:06 ../
-drwxr-xr-x  4 root root  4096 Nov 23 19:37 benchmarks/
-drwxr-xr-x  3 root root  4096 Nov 18 19:41 docs/
--rw-r--r--  1 root root   904 Nov 23 19:38 dsa_dense_sfa.json
--rw-r--r--  1 root root  1125 Nov 23 19:38 dsa_dense_sfa.log
--rw-r--r--  1 root root  3103 Nov 13 10:57 fgw.py
-drwxr-xr-x  8 root root  4096 Nov 23 19:37 .git/
--rw-r--r--  1 root root    62 Nov 11 18:13 .gitattributes
--rw-r--r--  1 root root    80 Nov 11 16:13 .gitignore
-drwxr-xr-x  5 root root  4096 Nov 23 19:32 operators/
-drwxr-xr-x  2 root root  4096 Nov 11 15:37 __pycache__/
--rw-r--r--  1 root root 13696 Nov 18 19:41 README.md
-drwxr-xr-x  5 root root  4096 Nov 17 17:54 reports/
-drwxr-xr-x  3 root root  4096 Nov 11 16:13 scripts/
-drwxr-xr-x  4 root root  4096 Nov 11 16:15 tests/
-drwxr-xr-x  5 root root  4096 Nov 16 11:30 third_party/
--rw-r--r--  1 root root  7778 Nov 19 10:57 tmp.txt
-drwxr-xr-x  5 root root  4096 Nov 11 16:26 tools/
-(zwh) root@ubuntu162:/home/z30086261/FGW# cat dsa_dense_sfa.json 
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case discrete --device npu:0 2>&1 | tee dsa_discrete.log
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (discrete)
+Compiling TileLang DSA
+2026-11-23 19:47:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-23 19:47:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Checking TileLang DSA output
+Accuracy passed. Starting alternating Event measurements
+timing 1/6
+timing 2/6
+timing 3/6
+timing 4/6
+timing 5/6
+timing 6/6
 {
+  "case": "discrete",
   "shape": [
     1,
     1024,
-    2048,
+    4096,
     128,
     1,
-    2048,
+    1024,
     512,
     64
   ],
@@ -98,33 +95,33 @@ drwxr-xr-x  5 root root  4096 Nov 11 16:26 tools/
       "passed": true,
       "max_abs_error": 0.001953125
     },
-    "torch_npu_composite": {
+    "tilelang_dsa": {
       "passed": true,
-      "max_abs_error": 0.0009765625
+      "max_abs_error": 0.001953125
     }
   },
   "samples_us": {
     "native_sfa": [
-      3355.2050590515137,
-      3359.5049381256104,
-      3587.9039764404297,
-      3364.83097076416,
-      3356.0988903045654,
-      3362.272024154663
+      1790.5800342559814,
+      1787.7930402755737,
+      1789.0340089797974,
+      1785.1059436798096,
+      1780.6689739227295,
+      1784.5309972763062
     ],
-    "torch_npu_composite": [
-      53843.15490722656,
-      54053.87496948242,
-      53790.58837890625,
-      53750.32043457031,
-      53889.7705078125,
-      53821.285247802734
+    "tilelang_dsa": [
+      102551.93328857422,
+      102653.45764160156,
+      102507.15637207031,
+      102616.95098876953,
+      102623.61907958984,
+      102587.2802734375
     ]
   },
   "median_us": {
-    "native_sfa": 3360.8884811401367,
-    "torch_npu_composite": 53832.22007751465
+    "native_sfa": 1786.4494919776917,
+    "tilelang_dsa": 102602.11563110352
   },
-  "composite_latency_over_sfa": 16.017258644432257
+  "speedup_vs_sfa": 0.01741142939391919
 }
 (zwh) root@ubuntu162:/home/z30086261/FGW#
