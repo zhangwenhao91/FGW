@@ -1,7 +1,60 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_smoke --device npu:0
-passed torch.float16 stride=1 tail=0
-passed torch.float16 stride=1 tail=64
-passed torch.float16 stride=3 tail=64
-passed torch.bfloat16 stride=1 tail=0
-passed torch.bfloat16 stride=1 tail=64
-passed torch.bfloat16 stride=3 tail=64
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --device npu:0 2>&1 | tee dsa_dense_sfa.log
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output
+Checking PyTorch NPU baseline output
+Accuracy passed. Starting alternating Event measurements
+timing 1/6
+timing 2/6
+timing 3/6
+timing 4/6
+timing 5/6
+timing 6/6
+{
+  "shape": [
+    1,
+    1024,
+    2048,
+    128,
+    1,
+    2048,
+    512,
+    64
+  ],
+  "dtype": "bfloat16",
+  "torch": "2.13.0+cpu",
+  "torch_npu": "2.13.0",
+  "accuracy": {
+    "native_sfa": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "torch_npu_composite": {
+      "passed": true,
+      "max_abs_error": 0.0009765625
+    }
+  },
+  "samples_us": {
+    "native_sfa": [
+      3355.2050590515137,
+      3359.5049381256104,
+      3587.9039764404297,
+      3364.83097076416,
+      3356.0988903045654,
+      3362.272024154663
+    ],
+    "torch_npu_composite": [
+      53843.15490722656,
+      54053.87496948242,
+      53790.58837890625,
+      53750.32043457031,
+      53889.7705078125,
+      53821.285247802734
+    ]
+  },
+  "median_us": {
+    "native_sfa": 3360.8884811401367,
+    "torch_npu_composite": 53832.22007751465
+  },
+  "composite_latency_over_sfa": 16.017258644432257
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
