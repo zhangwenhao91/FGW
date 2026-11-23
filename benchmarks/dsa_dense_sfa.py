@@ -21,6 +21,7 @@ def main():
             "dma-gather",
             "dma-pipeline",
             "head-tile",
+            "head64-pv",
         ),
         default="full",
     )
@@ -47,7 +48,14 @@ def main():
     head_diagnostic = args.case == "head-tile"
     pipeline_diagnostic = args.case in ("dma-pipeline", "head-tile")
     dma_diagnostic = args.case in ("dma-gather", "dma-pipeline", "head-tile")
-    if diagnostic or pv_diagnostic or reuse_diagnostic or dma_diagnostic:
+    head_pv_diagnostic = args.case == "head64-pv"
+    if (
+        diagnostic
+        or pv_diagnostic
+        or reuse_diagnostic
+        or dma_diagnostic
+        or head_pv_diagnostic
+    ):
         sq = 64
     topk = sk if args.case == "full" else 1024
     scale = (d + tail) ** -0.5
@@ -93,18 +101,21 @@ def main():
 
     print(f"Checking native SFA output ({args.case})", flush=True)
     native_out = ascendc().cpu()
-    print("Compiling TileLang DSA", flush=True)
-    kernel = build_kernel(sq, sk, topk)
+    calls = {"native_sfa": ascendc}
+    outputs = {"native_sfa": native_out}
+    if not head_pv_diagnostic:
+        print("Compiling TileLang DSA", flush=True)
+        kernel = build_kernel(sq, sk, topk)
 
-    def tilelang_dsa():
-        return kernel(qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)).unsqueeze(
-            0
-        )
+        def tilelang_dsa():
+            return kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
 
-    print("Checking TileLang DSA output", flush=True)
-    tilelang_out = tilelang_dsa().cpu()
-    calls = {"native_sfa": ascendc, "tilelang_dsa": tilelang_dsa}
-    outputs = {"native_sfa": native_out, "tilelang_dsa": tilelang_out}
+        print("Checking TileLang DSA output", flush=True)
+        tilelang_out = tilelang_dsa().cpu()
+        calls["tilelang_dsa"] = tilelang_dsa
+        outputs["tilelang_dsa"] = tilelang_out
     if diagnostic:
         print("Preparing contiguous KV in candidate order (untimed)", flush=True)
         packed = kv[0, :, 0][selected.long()].reshape(sq * topk, d + tail).to(device)
@@ -161,7 +172,7 @@ def main():
 
         outputs["tilelang_dma_pipeline"] = tilelang_dma_pipeline().cpu()
         calls["tilelang_dma_pipeline"] = tilelang_dma_pipeline
-    if head_diagnostic:
+    if head_diagnostic or head_pv_diagnostic:
         print("Compiling 64-head DMA prefetch candidate", flush=True)
         wide_head_kernel = build_kernel(
             sq, sk, topk, reuse_kv=True, dma_gather=True, pipeline=True, head_tile=64
@@ -174,6 +185,26 @@ def main():
 
         outputs["tilelang_head64"] = tilelang_head64().cpu()
         calls["tilelang_head64"] = tilelang_head64
+    if head_pv_diagnostic:
+        print("Compiling 64-head candidate with 256-column PV", flush=True)
+        wide_pv_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=256,
+        )
+
+        def tilelang_head64_pv256():
+            return wide_pv_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_head64_pv256"] = tilelang_head64_pv256().cpu()
+        calls["tilelang_head64_pv256"] = tilelang_head64_pv256
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -221,8 +252,13 @@ def main():
     report.update(
         samples_us=samples,
         median_us=medians,
-        speedup_vs_sfa=medians["native_sfa"] / medians["tilelang_dsa"],
     )
+    if "tilelang_dsa" in medians:
+        report["speedup_vs_sfa"] = medians["native_sfa"] / medians["tilelang_dsa"]
+    if head_pv_diagnostic:
+        wide = medians["tilelang_head64_pv256"]
+        report["pv256_speedup_vs_pv128"] = medians["tilelang_head64"] / wide
+        report["pv256_speedup_vs_sfa"] = medians["native_sfa"] / wide
     if diagnostic:
         gather = medians["tilelang_dsa"]
         contiguous = medians["tilelang_prepacked"]
