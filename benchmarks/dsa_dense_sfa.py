@@ -19,6 +19,7 @@ def main():
             "pv-diagnostic",
             "reuse-kv",
             "dma-gather",
+            "dma-pipeline",
         ),
         default="full",
     )
@@ -42,7 +43,8 @@ def main():
     diagnostic = args.case == "gather-diagnostic"
     pv_diagnostic = args.case == "pv-diagnostic"
     reuse_diagnostic = args.case == "reuse-kv"
-    dma_diagnostic = args.case == "dma-gather"
+    pipeline_diagnostic = args.case == "dma-pipeline"
+    dma_diagnostic = args.case in ("dma-gather", "dma-pipeline")
     if diagnostic or pv_diagnostic or reuse_diagnostic or dma_diagnostic:
         sq = 64
     topk = sk if args.case == "full" else 1024
@@ -144,6 +146,19 @@ def main():
 
         outputs["tilelang_dma_gather"] = tilelang_dma_gather().cpu()
         calls["tilelang_dma_gather"] = tilelang_dma_gather
+    if pipeline_diagnostic:
+        print("Compiling double-buffered DMA pipeline", flush=True)
+        pipeline_kernel = build_kernel(
+            sq, sk, topk, reuse_kv=True, dma_gather=True, pipeline=True
+        )
+
+        def tilelang_dma_pipeline():
+            return pipeline_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_dma_pipeline"] = tilelang_dma_pipeline().cpu()
+        calls["tilelang_dma_pipeline"] = tilelang_dma_pipeline
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -211,6 +226,12 @@ def main():
         dma = medians["tilelang_dma_gather"]
         report["dma_speedup_vs_simt_reuse"] = medians["tilelang_reuse_kv"] / dma
         report["dma_speedup_vs_sfa"] = medians["native_sfa"] / dma
+    if pipeline_diagnostic:
+        pipelined = medians["tilelang_dma_pipeline"]
+        report["pipeline_speedup_vs_serial_dma"] = (
+            medians["tilelang_dma_gather"] / pipelined
+        )
+        report["pipeline_speedup_vs_sfa"] = medians["native_sfa"] / pipelined
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
