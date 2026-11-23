@@ -57,4 +57,74 @@ timing 6/6
   },
   "composite_latency_over_sfa": 16.017258644432257
 }
+(zwh) root@ubuntu162:/home/z30086261/FGW# ll
+total 108
+drwxr-xr-x 12 root root 20480 Nov 23 19:38 ./
+drwxr-xr-x 13 root root  4096 Nov 18 16:06 ../
+drwxr-xr-x  4 root root  4096 Nov 23 19:37 benchmarks/
+drwxr-xr-x  3 root root  4096 Nov 18 19:41 docs/
+-rw-r--r--  1 root root   904 Nov 23 19:38 dsa_dense_sfa.json
+-rw-r--r--  1 root root  1125 Nov 23 19:38 dsa_dense_sfa.log
+-rw-r--r--  1 root root  3103 Nov 13 10:57 fgw.py
+drwxr-xr-x  8 root root  4096 Nov 23 19:37 .git/
+-rw-r--r--  1 root root    62 Nov 11 18:13 .gitattributes
+-rw-r--r--  1 root root    80 Nov 11 16:13 .gitignore
+drwxr-xr-x  5 root root  4096 Nov 23 19:32 operators/
+drwxr-xr-x  2 root root  4096 Nov 11 15:37 __pycache__/
+-rw-r--r--  1 root root 13696 Nov 18 19:41 README.md
+drwxr-xr-x  5 root root  4096 Nov 17 17:54 reports/
+drwxr-xr-x  3 root root  4096 Nov 11 16:13 scripts/
+drwxr-xr-x  4 root root  4096 Nov 11 16:15 tests/
+drwxr-xr-x  5 root root  4096 Nov 16 11:30 third_party/
+-rw-r--r--  1 root root  7778 Nov 19 10:57 tmp.txt
+drwxr-xr-x  5 root root  4096 Nov 11 16:26 tools/
+(zwh) root@ubuntu162:/home/z30086261/FGW# cat dsa_dense_sfa.json 
+{
+  "shape": [
+    1,
+    1024,
+    2048,
+    128,
+    1,
+    2048,
+    512,
+    64
+  ],
+  "dtype": "bfloat16",
+  "torch": "2.13.0+cpu",
+  "torch_npu": "2.13.0",
+  "accuracy": {
+    "native_sfa": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "torch_npu_composite": {
+      "passed": true,
+      "max_abs_error": 0.0009765625
+    }
+  },
+  "samples_us": {
+    "native_sfa": [
+      3355.2050590515137,
+      3359.5049381256104,
+      3587.9039764404297,
+      3364.83097076416,
+      3356.0988903045654,
+      3362.272024154663
+    ],
+    "torch_npu_composite": [
+      53843.15490722656,
+      54053.87496948242,
+      53790.58837890625,
+      53750.32043457031,
+      53889.7705078125,
+      53821.285247802734
+    ]
+  },
+  "median_us": {
+    "native_sfa": 3360.8884811401367,
+    "torch_npu_composite": 53832.22007751465
+  },
+  "composite_latency_over_sfa": 16.017258644432257
+}
 (zwh) root@ubuntu162:/home/z30086261/FGW#
