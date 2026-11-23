@@ -12,7 +12,7 @@ def main():
     parser.add_argument("--device", default="npu:0")
     parser.add_argument(
         "--case",
-        choices=("full", "discrete", "gather-diagnostic", "pv-diagnostic"),
+        choices=("full", "discrete", "gather-diagnostic", "pv-diagnostic", "reuse-kv"),
         default="full",
     )
     parser.add_argument("--output")
@@ -34,7 +34,8 @@ def main():
         sk = 4096
     diagnostic = args.case == "gather-diagnostic"
     pv_diagnostic = args.case == "pv-diagnostic"
-    if diagnostic or pv_diagnostic:
+    reuse_diagnostic = args.case == "reuse-kv"
+    if diagnostic or pv_diagnostic or reuse_diagnostic:
         sq = 64
     topk = sk if args.case == "full" else 1024
     scale = (d + tail) ** -0.5
@@ -113,6 +114,17 @@ def main():
 
         outputs["tilelang_wide_pv"] = tilelang_wide_pv().cpu()
         calls["tilelang_wide_pv"] = tilelang_wide_pv
+    if reuse_diagnostic:
+        print("Compiling shared L1 KV tile for QK and PV", flush=True)
+        shared_kernel = build_kernel(sq, sk, topk, reuse_kv=True)
+
+        def tilelang_reuse_kv():
+            return shared_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_reuse_kv"] = tilelang_reuse_kv().cpu()
+        calls["tilelang_reuse_kv"] = tilelang_reuse_kv
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -172,6 +184,10 @@ def main():
         wide = medians["tilelang_wide_pv"]
         report["wide_pv_speedup_vs_baseline"] = medians["tilelang_dsa"] / wide
         report["wide_pv_speedup_vs_sfa"] = medians["native_sfa"] / wide
+    if reuse_diagnostic:
+        reused = medians["tilelang_reuse_kv"]
+        report["reuse_kv_speedup_vs_baseline"] = medians["tilelang_dsa"] / reused
+        report["reuse_kv_speedup_vs_sfa"] = medians["native_sfa"] / reused
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

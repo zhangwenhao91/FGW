@@ -8,7 +8,7 @@ from tilelang.layout import make_ascend_compact_nz_layout
 
 
 @lru_cache(maxsize=8)
-def build_kernel(sq, sk, topk, *, prepacked=False, pv_width=128):
+def build_kernel(sq, sk, topk, *, prepacked=False, pv_width=128, reuse_kv=False):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
@@ -37,7 +37,7 @@ def build_kernel(sq, sk, topk, *, prepacked=False, pv_width=128):
             qa = T.alloc_l0a((br, width), dtype)
             kb = T.alloc_l0b((bc, width), dtype)
             pa = T.alloc_l0a((br, bc), dtype)
-            vb = T.alloc_l0b((part, bc), dtype)
+            vb = T.alloc_l0b((bc, part) if reuse_kv else (part, bc), dtype)
             qk = T.alloc_l0c((br, bc), fp32)
             pv = T.alloc_l0c((br, part), fp32)
             k = T.alloc_shared((bc // 2, width), dtype)
@@ -122,21 +122,32 @@ def build_kernel(sq, sk, topk, *, prepacked=False, pv_width=128):
                 T.dual_copy(pn[:rows, :], p_l1)
                 T.copy(p_l1, pa)
                 for chunk in T.serial(dim // part):
-                    with T.SimtVF(threads=128):
-                        for d, j in T.Parallel(part // 2, bc):
-                            index = valid[j]
-                            v[d, j] = 0
-                            if index >= 0:
-                                source = (
-                                    qi * topk + block * bc + j if prepacked else index
-                                )
-                                v[d, j] = KV[
-                                    source, chunk * part + sid * (part // 2) + d
-                                ]
-                    T.copy(v, vn[: part // 2, :])
-                    T.dual_copy(vn[: part // 2, :], v_l1)
-                    T.copy(v_l1, vb)
-                    T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
+                    if reuse_kv:
+                        # The latent prefix already in L1 is also the value tile.
+                        T.copy(
+                            k_l1[:, chunk * part : (chunk + 1) * part],
+                            vb,
+                            transpose=False,
+                        )
+                        T.gemm(pa, vb, pv, transpose_B=False, clear_accum=True)
+                    else:
+                        with T.SimtVF(threads=128):
+                            for d, j in T.Parallel(part // 2, bc):
+                                index = valid[j]
+                                v[d, j] = 0
+                                if index >= 0:
+                                    source = (
+                                        qi * topk + block * bc + j
+                                        if prepacked
+                                        else index
+                                    )
+                                    v[d, j] = KV[
+                                        source, chunk * part + sid * (part // 2) + d
+                                    ]
+                        T.copy(v, vn[: part // 2, :])
+                        T.dual_copy(vn[: part // 2, :], v_l1)
+                        T.copy(v_l1, vb)
+                        T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
                     T.dual_copy(pv, current)
                     with T.SimtVF(threads=128):
                         for r, d in T.Parallel(rows, part):
