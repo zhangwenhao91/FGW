@@ -20,6 +20,7 @@ def main():
             "reuse-kv",
             "dma-gather",
             "dma-pipeline",
+            "head-tile",
         ),
         default="full",
     )
@@ -43,8 +44,9 @@ def main():
     diagnostic = args.case == "gather-diagnostic"
     pv_diagnostic = args.case == "pv-diagnostic"
     reuse_diagnostic = args.case == "reuse-kv"
-    pipeline_diagnostic = args.case == "dma-pipeline"
-    dma_diagnostic = args.case in ("dma-gather", "dma-pipeline")
+    head_diagnostic = args.case == "head-tile"
+    pipeline_diagnostic = args.case in ("dma-pipeline", "head-tile")
+    dma_diagnostic = args.case in ("dma-gather", "dma-pipeline", "head-tile")
     if diagnostic or pv_diagnostic or reuse_diagnostic or dma_diagnostic:
         sq = 64
     topk = sk if args.case == "full" else 1024
@@ -159,6 +161,19 @@ def main():
 
         outputs["tilelang_dma_pipeline"] = tilelang_dma_pipeline().cpu()
         calls["tilelang_dma_pipeline"] = tilelang_dma_pipeline
+    if head_diagnostic:
+        print("Compiling 64-head DMA prefetch candidate", flush=True)
+        wide_head_kernel = build_kernel(
+            sq, sk, topk, reuse_kv=True, dma_gather=True, pipeline=True, head_tile=64
+        )
+
+        def tilelang_head64():
+            return wide_head_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_head64"] = tilelang_head64().cpu()
+        calls["tilelang_head64"] = tilelang_head64
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -232,6 +247,13 @@ def main():
             medians["tilelang_dma_gather"] / pipelined
         )
         report["pipeline_speedup_vs_sfa"] = medians["native_sfa"] / pipelined
+    if head_diagnostic:
+        report["head64_speedup_vs_head32"] = (
+            medians["tilelang_dma_pipeline"] / medians["tilelang_head64"]
+        )
+        report["head64_speedup_vs_sfa"] = (
+            medians["native_sfa"] / medians["tilelang_head64"]
+        )
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

@@ -18,6 +18,7 @@ def build_kernel(
     reuse_kv=False,
     dma_gather=False,
     pipeline=False,
+    head_tile=32,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -29,7 +30,10 @@ def build_kernel(
     heads, width, dim = 128, 576, 512
     if pv_width not in (128, 256):
         raise ValueError("pv_width must be 128 or 256")
-    br, bc, rows, part = 32, 32, 16, pv_width
+    if head_tile not in (32, 64) or (head_tile == 64 and not pipeline):
+        raise ValueError("64-head tiles require the DMA prefetch path")
+    br, bc, rows, part = head_tile, 32, head_tile // 2, pv_width
+    qk_width = width if br == 32 else 192
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
     kv_rows = sq * topk if prepacked else sk
@@ -83,6 +87,7 @@ def build_kernel(
         KV,
         valid,
         k_l1,
+        q_l1,
         kb,
         qa,
         qk,
@@ -102,8 +107,17 @@ def build_kernel(
         current,
         output,
     ):
-        T.copy(k_l1, kb)
-        T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+        if br == 32:
+            T.copy(k_l1, kb)
+            T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
+        else:
+            # Full-width Q exceeds L0A with 64 heads. Accumulate three K slices
+            # in FP32 before applying scale and softmax.
+            for section in T.serial(width // qk_width):
+                lo = section * qk_width
+                T.copy(q_l1[:, lo : lo + qk_width], qa)
+                T.copy(k_l1[:, lo : lo + qk_width], kb)
+                T.gemm(qa, kb, qk, transpose_B=True, clear_accum=(section == 0))
         T.dual_copy(qk, scores)
         with T.SimtVF(threads=128):
             peaks = T.alloc_reducer((rows,), fp32, op="max")
@@ -175,8 +189,8 @@ def build_kernel(
             k_l1 = T.alloc_l1((bc, width), dtype)
             v_l1 = T.alloc_l1((part, bc), dtype)
             p_l1 = T.alloc_l1((br, bc), dtype)
-            qa = T.alloc_l0a((br, width), dtype)
-            kb = T.alloc_l0b((bc, width), dtype)
+            qa = T.alloc_l0a((br, qk_width), dtype)
+            kb = T.alloc_l0b((bc, qk_width), dtype)
             pa = T.alloc_l0a((br, bc), dtype)
             vb = T.alloc_l0b((bc, part) if reuse_kv else (part, bc), dtype)
             qk = T.alloc_l0c((br, bc), fp32)
@@ -202,7 +216,8 @@ def build_kernel(
             alpha = T.alloc_shared((rows,), fp32)
             valid = T.alloc_shared((bc,), "int32")
             T.copy(Q[qi, hi : hi + br, :], q_l1)
-            T.copy(q_l1, qa)
+            if br == 32:
+                T.copy(q_l1, qa)
             with T.SimtVF(threads=128):
                 for r, d in T.Parallel(rows, dim):
                     output[r, d] = 0
@@ -226,6 +241,7 @@ def build_kernel(
                             KV,
                             valid,
                             k_l1,
+                            q_l1,
                             kb,
                             qa,
                             qk,
@@ -255,6 +271,7 @@ def build_kernel(
                         KV,
                         valid,
                         k_l1,
+                        q_l1,
                         kb,
                         qa,
                         qk,
