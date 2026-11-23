@@ -1,6 +1,20 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# cat dsa_dense_sfa_gather-diagnostic.json 
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case reuse-kv --device npu:0
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (reuse-kv)
+Compiling TileLang DSA
+Checking TileLang DSA output
+Compiling shared L1 KV tile for QK and PV
+2026-11-23 20:07:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-23 20:07:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Accuracy passed. Starting alternating Event measurements
+timing 1/6
+timing 2/6
+timing 3/6
+timing 4/6
+timing 5/6
+timing 6/6
 {
-  "case": "gather-diagnostic",
+  "case": "reuse-kv",
   "shape": [
     1,
     64,
@@ -23,45 +37,44 @@
       "passed": true,
       "max_abs_error": 0.001953125
     },
-    "tilelang_prepacked": {
+    "tilelang_reuse_kv": {
       "passed": true,
       "max_abs_error": 0.001953125
     }
   },
   "samples_us": {
     "native_sfa": [
-      143.3829963207245,
-      141.13999903202057,
-      141.9370025396347,
-      141.80800318717957,
-      142.5579935312271,
-      140.86000621318817
+      133.97100567817688,
+      138.14400136470795,
+      137.21099495887756,
+      168.02899539470673,
+      137.18999922275543,
+      133.95699858665466
     ],
     "tilelang_dsa": [
-      6946.88081741333,
-      6966.969966888428,
-      6966.689109802246,
-      6955.130100250244,
-      6949.652194976807,
-      6985.940933227539
+      6975.488185882568,
+      6963.346004486084,
+      6947.470188140869,
+      6959.943771362305,
+      6949.972152709961,
+      6950.76322555542
     ],
-    "tilelang_prepacked": [
-      6754.1961669921875,
-      6731.888771057129,
-      6750.48303604126,
-      6738.5969161987305,
-      6758.1071853637695,
-      6731.360912322998
+    "tilelang_reuse_kv": [
+      3726.365089416504,
+      3712.7740383148193,
+      3727.5140285491943,
+      3721.302032470703,
+      3712.886095046997,
+      3723.252058029175
     ]
   },
   "median_us": {
-    "native_sfa": 141.87250286340714,
-    "tilelang_dsa": 6960.909605026245,
-    "tilelang_prepacked": 6744.539976119995
+    "native_sfa": 137.2004970908165,
+    "tilelang_dsa": 6955.353498458862,
+    "tilelang_reuse_kv": 3722.277045249939
   },
-  "speedup_vs_sfa": 0.0203813166545024,
-  "prepacked_bytes": 75497472,
-  "indexed_over_prepacked": 1.032080709681066,
-  "indexed_minus_prepacked_us": 216.36962890625
+  "speedup_vs_sfa": 0.019725884115195123,
+  "reuse_kv_speedup_vs_baseline": 1.8685749109767924,
+  "reuse_kv_speedup_vs_sfa": 0.03685929215448925
 }
 (zwh) root@ubuntu162:/home/z30086261/FGW#
