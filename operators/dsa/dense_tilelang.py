@@ -35,35 +35,7 @@ def build_kernel(
     kv_rows = sq * topk if prepacked else sk
 
     @T.macro
-    def compute_block(
-        block,
-        qi,
-        sid,
-        KV,
-        Indices,
-        valid,
-        k,
-        kn,
-        k_l1,
-        kb,
-        qa,
-        qk,
-        scores,
-        maximum,
-        alpha,
-        total,
-        p,
-        pn,
-        p_l1,
-        pa,
-        v,
-        vn,
-        v_l1,
-        vb,
-        pv,
-        current,
-        output,
-    ):
+    def gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1):
         with T.SimtVF(threads=128):
             for j in T.Parallel(bc):
                 valid[j] = -1
@@ -102,6 +74,34 @@ def build_kernel(
                         k[j, d] = KV[source, d]
         T.copy(k, kn[: bc // 2, :])
         T.dual_copy(kn[: bc // 2, :], k_l1)
+
+    @T.macro
+    def attend_block(
+        block,
+        qi,
+        sid,
+        KV,
+        valid,
+        k_l1,
+        kb,
+        qa,
+        qk,
+        scores,
+        maximum,
+        alpha,
+        total,
+        p,
+        pn,
+        p_l1,
+        pa,
+        v,
+        vn,
+        v_l1,
+        vb,
+        pv,
+        current,
+        output,
+    ):
         T.copy(k_l1, kb)
         T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
         T.dual_copy(qk, scores)
@@ -211,47 +211,49 @@ def build_kernel(
                     total[r] = 0
             if pipeline:
                 T.annotate_buffer_versions({k: 2, kn: 2, k_l1: 2, valid: 2})
-                for block in T.Pipelined(T.ceildiv(topk, bc), num_stages=2):
-                    compute_block(
-                        block,
-                        qi,
-                        sid,
-                        KV,
-                        Indices,
-                        valid,
-                        k,
-                        kn,
-                        k_l1,
-                        kb,
-                        qa,
-                        qk,
-                        scores,
-                        maximum,
-                        alpha,
-                        total,
-                        p,
-                        pn,
-                        p_l1,
-                        pa,
-                        v,
-                        vn,
-                        v_l1,
-                        vb,
-                        pv,
-                        current,
-                        output,
-                    )
+                for block in T.Pipelined(
+                    T.ceildiv(topk, bc),
+                    num_stages=2,
+                    annotations={"enable_offset": True},
+                ):
+                    with T.Stage(0):
+                        gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1)
+                    with T.Stage(1):
+                        attend_block(
+                            block,
+                            qi,
+                            sid,
+                            KV,
+                            valid,
+                            k_l1,
+                            kb,
+                            qa,
+                            qk,
+                            scores,
+                            maximum,
+                            alpha,
+                            total,
+                            p,
+                            pn,
+                            p_l1,
+                            pa,
+                            v,
+                            vn,
+                            v_l1,
+                            vb,
+                            pv,
+                            current,
+                            output,
+                        )
             else:
                 for block in T.serial(T.ceildiv(topk, bc)):
-                    compute_block(
+                    gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1)
+                    attend_block(
                         block,
                         qi,
                         sid,
                         KV,
-                        Indices,
                         valid,
-                        k,
-                        kn,
                         k_l1,
                         kb,
                         qa,
