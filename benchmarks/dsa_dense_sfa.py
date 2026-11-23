@@ -12,7 +12,14 @@ def main():
     parser.add_argument("--device", default="npu:0")
     parser.add_argument(
         "--case",
-        choices=("full", "discrete", "gather-diagnostic", "pv-diagnostic", "reuse-kv"),
+        choices=(
+            "full",
+            "discrete",
+            "gather-diagnostic",
+            "pv-diagnostic",
+            "reuse-kv",
+            "dma-gather",
+        ),
         default="full",
     )
     parser.add_argument("--output")
@@ -35,7 +42,8 @@ def main():
     diagnostic = args.case == "gather-diagnostic"
     pv_diagnostic = args.case == "pv-diagnostic"
     reuse_diagnostic = args.case == "reuse-kv"
-    if diagnostic or pv_diagnostic or reuse_diagnostic:
+    dma_diagnostic = args.case == "dma-gather"
+    if diagnostic or pv_diagnostic or reuse_diagnostic or dma_diagnostic:
         sq = 64
     topk = sk if args.case == "full" else 1024
     scale = (d + tail) ** -0.5
@@ -114,7 +122,7 @@ def main():
 
         outputs["tilelang_wide_pv"] = tilelang_wide_pv().cpu()
         calls["tilelang_wide_pv"] = tilelang_wide_pv
-    if reuse_diagnostic:
+    if reuse_diagnostic or dma_diagnostic:
         print("Compiling shared L1 KV tile for QK and PV", flush=True)
         shared_kernel = build_kernel(sq, sk, topk, reuse_kv=True)
 
@@ -125,6 +133,17 @@ def main():
 
         outputs["tilelang_reuse_kv"] = tilelang_reuse_kv().cpu()
         calls["tilelang_reuse_kv"] = tilelang_reuse_kv
+    if dma_diagnostic:
+        print("Compiling row DMA gather with adjacent-pair coalescing", flush=True)
+        dma_kernel = build_kernel(sq, sk, topk, reuse_kv=True, dma_gather=True)
+
+        def tilelang_dma_gather():
+            return dma_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_dma_gather"] = tilelang_dma_gather().cpu()
+        calls["tilelang_dma_gather"] = tilelang_dma_gather
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -188,6 +207,10 @@ def main():
         reused = medians["tilelang_reuse_kv"]
         report["reuse_kv_speedup_vs_baseline"] = medians["tilelang_dsa"] / reused
         report["reuse_kv_speedup_vs_sfa"] = medians["native_sfa"] / reused
+    if dma_diagnostic:
+        dma = medians["tilelang_dma_gather"]
+        report["dma_speedup_vs_simt_reuse"] = medians["tilelang_reuse_kv"] / dma
+        report["dma_speedup_vs_sfa"] = medians["native_sfa"] / dma
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

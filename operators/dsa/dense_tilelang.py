@@ -8,10 +8,14 @@ from tilelang.layout import make_ascend_compact_nz_layout
 
 
 @lru_cache(maxsize=8)
-def build_kernel(sq, sk, topk, *, prepacked=False, pv_width=128, reuse_kv=False):
+def build_kernel(
+    sq, sk, topk, *, prepacked=False, pv_width=128, reuse_kv=False, dma_gather=False
+):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
+    if dma_gather and (not reuse_kv or prepacked):
+        raise ValueError("DMA gather requires indexed L1 reuse")
     heads, width, dim = 128, 576, 512
     if pv_width not in (128, 256):
         raise ValueError("pv_width must be 128 or 256")
@@ -76,17 +80,35 @@ def build_kernel(sq, sk, topk, *, prepacked=False, pv_width=128, reuse_kv=False)
                             index = Indices[qi, block * bc + j]
                             if index >= 0 and index <= sk - sq + qi:
                                 valid[j] = index
-                with T.SimtVF(threads=128):
-                    for j, d in T.Parallel(bc // 2, width):
-                        index = valid[sid * (bc // 2) + j]
-                        k[j, d] = 0
-                        if index >= 0:
-                            source = (
-                                qi * topk + block * bc + sid * (bc // 2) + j
-                                if prepacked
-                                else index
-                            )
-                            k[j, d] = KV[source, d]
+                if dma_gather:
+                    with T.SimtVF(threads=128):
+                        for j, d in T.Parallel(bc // 2, width):
+                            k[j, d] = 0
+                    # Fixed pairs give DMA static extents. Disjoint or masked
+                    # rows fall back to one DMA per valid row.
+                    for pair in T.serial(bc // 4):
+                        j = pair * 2
+                        first = valid[sid * (bc // 2) + j]
+                        second = valid[sid * (bc // 2) + j + 1]
+                        if first >= 0 and second == first + 1:
+                            T.copy(KV[first : first + 2, :], k[j : j + 2, :])
+                        else:
+                            if first >= 0:
+                                T.copy(KV[first, :], k[j, :])
+                            if second >= 0:
+                                T.copy(KV[second, :], k[j + 1, :])
+                else:
+                    with T.SimtVF(threads=128):
+                        for j, d in T.Parallel(bc // 2, width):
+                            index = valid[sid * (bc // 2) + j]
+                            k[j, d] = 0
+                            if index >= 0:
+                                source = (
+                                    qi * topk + block * bc + sid * (bc // 2) + j
+                                    if prepacked
+                                    else index
+                                )
+                                k[j, d] = KV[source, d]
                 T.copy(k, kn[: bc // 2, :])
                 T.dual_copy(kn[: bc // 2, :], k_l1)
                 T.copy(k_l1, kb)
