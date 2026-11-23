@@ -1,17 +1,4 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case full --device npu:0 2>&1 | tee dsa_full.log
-torch=2.13.0+cpu torch_npu=2.13.0
-Checking native SFA output (full)
-Compiling TileLang DSA
-2026-11-23 19:46:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
-2026-11-23 19:46:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
-Checking TileLang DSA output
-Accuracy passed. Starting alternating Event measurements
-timing 1/6
-timing 2/6
-timing 3/6
-timing 4/6
-timing 5/6
-timing 6/6
+(zwh) root@ubuntu162:/home/z30086261/FGW# cat dsa_dense_sfa_full.json 
 {
   "case": "full",
   "shape": [
@@ -61,20 +48,7 @@ timing 6/6
   },
   "speedup_vs_sfa": 0.017266308764362734
 }
-(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case discrete --device npu:0 2>&1 | tee dsa_discrete.log
-torch=2.13.0+cpu torch_npu=2.13.0
-Checking native SFA output (discrete)
-Compiling TileLang DSA
-2026-11-23 19:47:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
-2026-11-23 19:47:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
-Checking TileLang DSA output
-Accuracy passed. Starting alternating Event measurements
-timing 1/6
-timing 2/6
-timing 3/6
-timing 4/6
-timing 5/6
-timing 6/6
+(zwh) root@ubuntu162:/home/z30086261/FGW# cat dsa_dense_sfa_discrete.json 
 {
   "case": "discrete",
   "shape": [
