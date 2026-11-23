@@ -22,6 +22,7 @@ def main():
             "dma-pipeline",
             "head-tile",
             "head64-pv",
+            "kv-tile",
         ),
         default="full",
     )
@@ -49,12 +50,14 @@ def main():
     pipeline_diagnostic = args.case in ("dma-pipeline", "head-tile")
     dma_diagnostic = args.case in ("dma-gather", "dma-pipeline", "head-tile")
     head_pv_diagnostic = args.case == "head64-pv"
+    kv_diagnostic = args.case == "kv-tile"
     if (
         diagnostic
         or pv_diagnostic
         or reuse_diagnostic
         or dma_diagnostic
         or head_pv_diagnostic
+        or kv_diagnostic
     ):
         sq = 64
     topk = sk if args.case == "full" else 1024
@@ -103,7 +106,7 @@ def main():
     native_out = ascendc().cpu()
     calls = {"native_sfa": ascendc}
     outputs = {"native_sfa": native_out}
-    if not head_pv_diagnostic:
+    if not (head_pv_diagnostic or kv_diagnostic):
         print("Compiling TileLang DSA", flush=True)
         kernel = build_kernel(sq, sk, topk)
 
@@ -185,7 +188,7 @@ def main():
 
         outputs["tilelang_head64"] = tilelang_head64().cpu()
         calls["tilelang_head64"] = tilelang_head64
-    if head_pv_diagnostic:
+    if head_pv_diagnostic or kv_diagnostic:
         print("Compiling 64-head candidate with 256-column PV", flush=True)
         wide_pv_kernel = build_kernel(
             sq,
@@ -205,6 +208,27 @@ def main():
 
         outputs["tilelang_head64_pv256"] = tilelang_head64_pv256().cpu()
         calls["tilelang_head64_pv256"] = tilelang_head64_pv256
+    if kv_diagnostic:
+        print("Compiling 64-row KV tile", flush=True)
+        wide_kv_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=256,
+            kv_tile=64,
+        )
+
+        def tilelang_kv64():
+            return wide_kv_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_kv64"] = tilelang_kv64().cpu()
+        calls["tilelang_kv64"] = tilelang_kv64
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -290,6 +314,10 @@ def main():
         report["head64_speedup_vs_sfa"] = (
             medians["native_sfa"] / medians["tilelang_head64"]
         )
+    if kv_diagnostic:
+        wide = medians["tilelang_kv64"]
+        report["kv64_speedup_vs_kv32"] = medians["tilelang_head64_pv256"] / wide
+        report["kv64_speedup_vs_sfa"] = medians["native_sfa"] / wide
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

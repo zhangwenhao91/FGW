@@ -19,6 +19,7 @@ def build_kernel(
     dma_gather=False,
     pipeline=False,
     head_tile=32,
+    kv_tile=32,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -32,7 +33,10 @@ def build_kernel(
         raise ValueError("pv_width must be 128 or 256")
     if head_tile not in (32, 64) or (head_tile == 64 and not pipeline):
         raise ValueError("64-head tiles require the DMA prefetch path")
-    br, bc, rows, part = head_tile, 32, head_tile // 2, pv_width
+    if kv_tile not in (32, 64) or (kv_tile == 64 and head_tile != 64):
+        raise ValueError("64-row KV tiles require 64-head tiles")
+    br, bc, rows, part = head_tile, kv_tile, head_tile // 2, pv_width
+    gather_rows = 16
     qk_width = width if br == 32 else 192
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
@@ -48,22 +52,32 @@ def build_kernel(
                     if index >= 0 and index <= sk - sq + qi:
                         valid[j] = index
         if dma_gather:
-            with T.SimtVF(threads=128):
-                for j, d in T.Parallel(bc // 2, width):
-                    k[j, d] = 0
-            # Fixed pairs give DMA static extents. Disjoint or masked
-            # rows fall back to one DMA per valid row.
-            for pair in T.serial(bc // 4):
-                j = pair * 2
-                first = valid[sid * (bc // 2) + j]
-                second = valid[sid * (bc // 2) + j + 1]
-                if first >= 0 and second == first + 1:
-                    T.copy(KV[first : first + 2, :], k[j : j + 2, :])
-                else:
-                    if first >= 0:
-                        T.copy(KV[first, :], k[j, :])
-                    if second >= 0:
-                        T.copy(KV[second, :], k[j + 1, :])
+            # Reuse a 16-row UB staging area for each AIV half-tile.
+            for segment in T.serial(bc // (2 * gather_rows)):
+                with T.SimtVF(threads=128):
+                    for j, d in T.Parallel(gather_rows, width):
+                        k[j, d] = 0
+                # Fixed pairs give DMA static extents. Disjoint or masked
+                # rows fall back to one DMA per valid row.
+                for pair in T.serial(gather_rows // 2):
+                    j = pair * 2
+                    first = valid[segment * (2 * gather_rows) + sid * gather_rows + j]
+                    second = valid[
+                        segment * (2 * gather_rows) + sid * gather_rows + j + 1
+                    ]
+                    if first >= 0 and second == first + 1:
+                        T.copy(KV[first : first + 2, :], k[j : j + 2, :])
+                    else:
+                        if first >= 0:
+                            T.copy(KV[first, :], k[j, :])
+                        if second >= 0:
+                            T.copy(KV[second, :], k[j + 1, :])
+                T.copy(k, kn[:gather_rows, :])
+                first_row = segment * (2 * gather_rows)
+                T.dual_copy(
+                    kn[:gather_rows, :],
+                    k_l1[first_row : first_row + 2 * gather_rows, :],
+                )
         else:
             with T.SimtVF(threads=128):
                 for j, d in T.Parallel(bc // 2, width):
@@ -76,8 +90,8 @@ def build_kernel(
                             else index
                         )
                         k[j, d] = KV[source, d]
-        T.copy(k, kn[: bc // 2, :])
-        T.dual_copy(kn[: bc // 2, :], k_l1)
+            T.copy(k, kn[:gather_rows, :])
+            T.dual_copy(kn[:gather_rows, :], k_l1)
 
     @T.macro
     def attend_block(
@@ -195,10 +209,10 @@ def build_kernel(
             vb = T.alloc_l0b((bc, part) if reuse_kv else (part, bc), dtype)
             qk = T.alloc_l0c((br, bc), fp32)
             pv = T.alloc_l0c((br, part), fp32)
-            k = T.alloc_shared((bc // 2, width), dtype)
+            k = T.alloc_shared((gather_rows, width), dtype)
             v = T.alloc_shared((part // 2, bc), dtype)
             p = T.alloc_shared((rows, bc), dtype)
-            kn = T.alloc_shared((bc // 2 + 1, width), dtype)
+            kn = T.alloc_shared((gather_rows + 1, width), dtype)
             vn = T.alloc_shared((part // 2 + 1, bc), dtype)
             pn = T.alloc_shared((rows + 1, bc), dtype)
             T.annotate_layout(
