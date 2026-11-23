@@ -8,12 +8,14 @@ from tilelang.layout import make_ascend_compact_nz_layout
 
 
 @lru_cache(maxsize=8)
-def build_kernel(sq, sk, topk, *, prepacked=False):
+def build_kernel(sq, sk, topk, *, prepacked=False, pv_width=128):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
     heads, width, dim = 128, 576, 512
-    br, bc, rows, part = 32, 32, 16, 128
+    if pv_width not in (128, 256):
+        raise ValueError("pv_width must be 128 or 256")
+    br, bc, rows, part = 32, 32, 16, pv_width
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
     kv_rows = sq * topk if prepacked else sk

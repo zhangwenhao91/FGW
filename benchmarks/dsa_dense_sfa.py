@@ -11,7 +11,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", default="npu:0")
     parser.add_argument(
-        "--case", choices=("full", "discrete", "gather-diagnostic"), default="full"
+        "--case",
+        choices=("full", "discrete", "gather-diagnostic", "pv-diagnostic"),
+        default="full",
     )
     parser.add_argument("--output")
     args = parser.parse_args()
@@ -31,7 +33,8 @@ def main():
     if args.case != "full":
         sk = 4096
     diagnostic = args.case == "gather-diagnostic"
-    if diagnostic:
+    pv_diagnostic = args.case == "pv-diagnostic"
+    if diagnostic or pv_diagnostic:
         sq = 64
     topk = sk if args.case == "full" else 1024
     scale = (d + tail) ** -0.5
@@ -99,6 +102,17 @@ def main():
 
         outputs["tilelang_prepacked"] = tilelang_prepacked().cpu()
         calls["tilelang_prepacked"] = tilelang_prepacked
+    if pv_diagnostic:
+        print("Compiling wide PV (256 columns per Cube call)", flush=True)
+        wide_kernel = build_kernel(sq, sk, topk, pv_width=256)
+
+        def tilelang_wide_pv():
+            return wide_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_wide_pv"] = tilelang_wide_pv().cpu()
+        calls["tilelang_wide_pv"] = tilelang_wide_pv
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -154,6 +168,10 @@ def main():
         report["prepacked_bytes"] = packed.numel() * packed.element_size()
         report["indexed_over_prepacked"] = gather / contiguous
         report["indexed_minus_prepacked_us"] = gather - contiguous
+    if pv_diagnostic:
+        wide = medians["tilelang_wide_pv"]
+        report["wide_pv_speedup_vs_baseline"] = medians["tilelang_dsa"] / wide
+        report["wide_pv_speedup_vs_sfa"] = medians["native_sfa"] / wide
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
