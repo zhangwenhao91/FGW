@@ -10,7 +10,9 @@ import torch
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", default="npu:0")
-    parser.add_argument("--case", choices=("full", "discrete"), default="full")
+    parser.add_argument(
+        "--case", choices=("full", "discrete", "gather-diagnostic"), default="full"
+    )
     parser.add_argument("--output")
     args = parser.parse_args()
     import torch_npu
@@ -26,8 +28,11 @@ def main():
         )
 
     sq, sk, h, d, tail = 1024, 2048, 128, 512, 64
-    if args.case == "discrete":
+    if args.case != "full":
         sk = 4096
+    diagnostic = args.case == "gather-diagnostic"
+    if diagnostic:
+        sq = 64
     topk = sk if args.case == "full" else 1024
     scale = (d + tail) ** -0.5
     generator = torch.Generator().manual_seed(7)
@@ -82,6 +87,18 @@ def main():
 
     print("Checking TileLang DSA output", flush=True)
     tilelang_out = tilelang_dsa().cpu()
+    calls = {"native_sfa": ascendc, "tilelang_dsa": tilelang_dsa}
+    outputs = {"native_sfa": native_out, "tilelang_dsa": tilelang_out}
+    if diagnostic:
+        print("Preparing contiguous KV in candidate order (untimed)", flush=True)
+        packed = kv[0, :, 0][selected.long()].reshape(sq * topk, d + tail).to(device)
+        packed_kernel = build_kernel(sq, sk, topk, prepacked=True)
+
+        def tilelang_prepacked():
+            return packed_kernel(qn[0], packed, indices.view(sq, topk)).unsqueeze(0)
+
+        outputs["tilelang_prepacked"] = tilelang_prepacked().cpu()
+        calls["tilelang_prepacked"] = tilelang_prepacked
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -91,10 +108,7 @@ def main():
         "accuracy": {},
     }
     key_fp32 = kv[0, :, 0].float()
-    for name, out in (
-        ("native_sfa", native_out),
-        ("tilelang_dsa", tilelang_out),
-    ):
+    for name, out in outputs.items():
         assert out.shape == (1, sq, h, d) and out.dtype == q.dtype
         errors = []
         for start in range(0, sq, 16):
@@ -122,7 +136,6 @@ def main():
         return begin.elapsed_time(end) * 1000
 
     print("Accuracy passed. Starting alternating Event measurements", flush=True)
-    calls = {"native_sfa": ascendc, "tilelang_dsa": tilelang_dsa}
     samples = {name: [] for name in calls}
     for repeat in range(6):
         order = list(calls)[:: (-1 if repeat % 2 else 1)]
@@ -135,6 +148,12 @@ def main():
         median_us=medians,
         speedup_vs_sfa=medians["native_sfa"] / medians["tilelang_dsa"],
     )
+    if diagnostic:
+        gather = medians["tilelang_dsa"]
+        contiguous = medians["tilelang_prepacked"]
+        report["prepacked_bytes"] = packed.numel() * packed.element_size()
+        report["indexed_over_prepacked"] = gather / contiguous
+        report["indexed_minus_prepacked_us"] = gather - contiguous
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

@@ -8,19 +8,20 @@ from tilelang.layout import make_ascend_compact_nz_layout
 
 
 @lru_cache(maxsize=8)
-def build_kernel(sq, sk, topk):
-    """Run on unique valid indices packed before padding, stride one."""
+def build_kernel(sq, sk, topk, *, prepacked=False):
+    """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
     heads, width, dim = 128, 576, 512
     br, bc, rows, part = 32, 32, 16, 128
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
+    kv_rows = sq * topk if prepacked else sk
 
     @T.prim_func
     def forward(
         Q: T.Tensor((sq, heads, width), dtype),
-        KV: T.Tensor((sk, width), dtype),
+        KV: T.Tensor((kv_rows, width), dtype),
         Indices: T.Tensor((sq, topk), "int32"),
         Out: T.Tensor((sq, heads, dim), dtype),
     ):
@@ -78,7 +79,12 @@ def build_kernel(sq, sk, topk):
                         index = valid[sid * (bc // 2) + j]
                         k[j, d] = 0
                         if index >= 0:
-                            k[j, d] = KV[index, d]
+                            source = (
+                                qi * topk + block * bc + sid * (bc // 2) + j
+                                if prepacked
+                                else index
+                            )
+                            k[j, d] = KV[source, d]
                 T.copy(k, kn[: bc // 2, :])
                 T.dual_copy(kn[: bc // 2, :], k_l1)
                 T.copy(k_l1, kb)
@@ -119,8 +125,11 @@ def build_kernel(sq, sk, topk):
                             index = valid[j]
                             v[d, j] = 0
                             if index >= 0:
+                                source = (
+                                    qi * topk + block * bc + j if prepacked else index
+                                )
                                 v[d, j] = KV[
-                                    index, chunk * part + sid * (part // 2) + d
+                                    source, chunk * part + sid * (part // 2) + d
                                 ]
                     T.copy(v, vn[: part // 2, :])
                     T.dual_copy(vn[: part // 2, :], v_l1)
