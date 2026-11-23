@@ -1,21 +1,21 @@
-"""Compare the DSA correctness baseline with native AscendC SFA on Ascend 950."""
+"""Compare TileLang DSA with native AscendC SFA on Ascend 950."""
 
 import argparse
 import json
 import statistics
-from functools import partial
 
 import torch
-
-from operators.dsa.dense import dsa_dense_fwd
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", default="npu:0")
-    parser.add_argument("--output", default="dsa_dense_sfa.json")
+    parser.add_argument("--case", choices=("full", "discrete"), default="full")
+    parser.add_argument("--output")
     args = parser.parse_args()
     import torch_npu
+
+    from operators.dsa.dense_tilelang import build_kernel
 
     torch.npu.set_device(args.device)
     print(f"torch={torch.__version__} torch_npu={torch_npu.__version__}", flush=True)
@@ -26,6 +26,9 @@ def main():
         )
 
     sq, sk, h, d, tail = 1024, 2048, 128, 512, 64
+    if args.case == "discrete":
+        sk = 4096
+    topk = sk if args.case == "full" else 1024
     scale = (d + tail) ** -0.5
     generator = torch.Generator().manual_seed(7)
     q = torch.randn(1, sq, h, d + tail, generator=generator).to(torch.bfloat16)
@@ -33,9 +36,20 @@ def main():
     device = args.device
     qn, kvn = q.to(device), kv.to(device)
     key_ids = torch.arange(sk, dtype=torch.int32)
-    # Supply the same ascending full candidate list. Right-aligned causality
-    # reduces the list to [0, sk-sq+row] on both paths.
-    indices = key_ids.view(1, 1, 1, sk).expand(1, sq, 1, sk).contiguous().to(device)
+    if args.case == "full":
+        selected = key_ids.expand(sq, sk).contiguous()
+    else:
+        selected = torch.stack(
+            [
+                torch.randperm(sk - sq + row + 1, generator=generator)[:topk]
+                .sort()
+                .values
+                for row in range(sq)
+            ]
+        ).to(torch.int32)
+    indices = selected.view(1, sq, 1, topk).to(device)
+    selection_mask = torch.zeros((sq, sk), dtype=torch.bool)
+    selection_mask.scatter_(1, selected.long(), True)
     query, key = qn[..., :d].contiguous(), kvn[..., :d].contiguous()
     query_rope, key_rope = qn[..., d:].contiguous(), kvn[..., d:].contiguous()
 
@@ -56,15 +70,21 @@ def main():
             return_softmax_lse=False,
         )[0]
 
-    baseline = partial(
-        dsa_dense_fwd, qn, kvn, indices, dim_tail=tail, q_start_index_s=sk - sq
-    )
-    print("Checking native SFA output", flush=True)
+    print(f"Checking native SFA output ({args.case})", flush=True)
     native_out = ascendc().cpu()
-    print("Checking PyTorch NPU baseline output", flush=True)
-    baseline_out = baseline().cpu()
+    print("Compiling TileLang DSA", flush=True)
+    kernel = build_kernel(sq, sk, topk)
+
+    def tilelang_dsa():
+        return kernel(qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)).unsqueeze(
+            0
+        )
+
+    print("Checking TileLang DSA output", flush=True)
+    tilelang_out = tilelang_dsa().cpu()
     report = {
-        "shape": [1, sq, sk, h, 1, sk, d, tail],
+        "case": args.case,
+        "shape": [1, sq, sk, h, 1, topk, d, tail],
         "dtype": "bfloat16",
         "torch": torch.__version__,
         "torch_npu": torch_npu.__version__,
@@ -73,7 +93,7 @@ def main():
     key_fp32 = kv[0, :, 0].float()
     for name, out in (
         ("native_sfa", native_out),
-        ("torch_npu_composite", baseline_out),
+        ("tilelang_dsa", tilelang_out),
     ):
         assert out.shape == (1, sq, h, d) and out.dtype == q.dtype
         errors = []
@@ -81,6 +101,7 @@ def main():
             end = min(start + 16, sq)
             scores = (q[0, start:end].float() @ key_fp32.T) * scale
             allowed = key_ids <= (torch.arange(start, end) + sk - sq)[:, None, None]
+            allowed = allowed & selection_mask[start:end, None, :]
             ref = (
                 scores.masked_fill(~allowed, -torch.inf).softmax(-1) @ key_fp32[:, :d]
             ).to(q.dtype)
@@ -101,7 +122,7 @@ def main():
         return begin.elapsed_time(end) * 1000
 
     print("Accuracy passed. Starting alternating Event measurements", flush=True)
-    calls = {"native_sfa": ascendc, "torch_npu_composite": baseline}
+    calls = {"native_sfa": ascendc, "tilelang_dsa": tilelang_dsa}
     samples = {name: [] for name in calls}
     for repeat in range(6):
         order = list(calls)[:: (-1 if repeat % 2 else 1)]
@@ -112,11 +133,12 @@ def main():
     report.update(
         samples_us=samples,
         median_us=medians,
-        composite_latency_over_sfa=medians["torch_npu_composite"]
-        / medians["native_sfa"],
+        speedup_vs_sfa=medians["native_sfa"] / medians["tilelang_dsa"],
     )
     result = json.dumps(report, indent=2)
-    with open(args.output, "w", encoding="utf-8") as file:
+    with open(
+        args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
+    ) as file:
         file.write(result + "\n")
     print(result)
 
