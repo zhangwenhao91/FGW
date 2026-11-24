@@ -1,22 +1,8 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
-remote: Enumerating objects: 7, done.
-remote: Counting objects: 100% (7/7), done.
-remote: Compressing objects: 100% (2/2), done.
-remote: Total 4 (delta 2), reused 4 (delta 2), pack-reused 0 (from 0)
-Unpacking objects: 100% (4/4), 645 bytes | 645.00 KiB/s, done.
-From https://github.com/zhangwenhao91/FGW-mHC
-   e9390ab..ba80f01  main       -> origin/main
-Updating e9390ab..ba80f01
-Fast-forward
- fgw_mhc/_kernels.py | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# bash run_npu.sh --device npu:0 --output results-ba80f01.csv
-....                                                                                                                                                                                                                                                                                                                                                              [100%]
-4 passed in 25.23s
-2026-11-24 19:00:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-2026-11-24 19:00:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
-2026-11-24 19:00:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-2026-11-24 19:00:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
-2026-11-24 19:00:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-2026-11-24 19:00:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# cat results-ba80f01.csv 
+stage,batch,hidden,baseline,tilelang_us,baseline_us,speedup
+pre,1,1280,cann_eager_composite,54.201,158.220,2.919
+post,1,1280,cann_addcmul_with_casts,18.366,29.174,1.588
+pre,2,1920,cann_eager_composite,58.339,189.530,3.249
+post,2,1920,cann_addcmul_with_casts,18.920,28.053,1.483
+pre,4,2560,cann_eager_composite,79.200,159.113,2.009
+post,4,2560,cann_addcmul_with_casts,18.295,26.981,1.475
