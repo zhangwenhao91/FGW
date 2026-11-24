@@ -1,22 +1,19 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
-Already up to date.
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python bench_vllm_ascend.py --backend tilelang --device npu:0 \
->   --output tilelang-pair.csv
-tilelang B=1 hidden=1280: 43.830 us
-tilelang B=2 hidden=1920: 60.751 us
-tilelang B=4 hidden=2560: 83.039 us
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# docker run --rm --pull=never --shm-size=1g \
->   --device /dev/davinci0 --device /dev/davinci_manager \
->   --device /dev/devmm_svm --device /dev/hisi_hdc \
->   -v /usr/local/dcmi:/usr/local/dcmi:ro \
->   -v /usr/local/bin/npu-smi:/usr/local/bin/npu-smi:ro \
->   -v /usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64:ro \
->   -v /usr/local/Ascend/driver/version.info:/usr/local/Ascend/driver/version.info:ro \
->   -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
->   -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
->   quay.io/ascend/vllm-ascend:v0.30.0-a5 \
->   bench_vllm_ascend.py --backend vllm --device npu:0 --output vllm-pair.csv
-docker: Error response from daemon: error gathering device information while adding custom device "/dev/devmm_svm": no such file or directory
+devices=(--device /dev/davinci0 --device /dev/davinci_manager)
+for node in /dev/hisi_hdc /dev/ummu /dev/uburma; do
+  if [ -e "$node" ]; then
+    devices+=(--device "$node")
+  fi
+done
 
-Run 'docker run --help' for more information
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
+docker run --rm --pull=never --shm-size=1g \
+  "${devices[@]}" \
+  -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
+  -v /usr/local/dcmi:/usr/local/dcmi:ro \
+  -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
+  -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
+  -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
+  quay.io/ascend/vllm-ascend:v0.30.0-a5 \
+  bench_vllm_ascend.py --backend vllm --device npu:0 --output vllm-pair.csv &&
+python bench_vllm_ascend.py --merge tilelang-pair.csv vllm-pair.csv \
+  --output vllm-ascend-results.csv &&
+cat vllm-ascend-results.csv
