@@ -1,3 +1,32 @@
-dir=reports/dsa/profile/staged-nz-l1euoo7k
-find "$dir" -type f \( -name '*.csv' -o -name 'trace_view.json' \) -printf '%s %p\n'
-find "$dir" -name op_statistic.csv -print -exec head -n 12 {} \;
+(zwh) root@ubuntu162:/home/z30086261/FGW# dir=reports/dsa/profile/staged-nz-l1euoo7k
+(zwh) root@ubuntu162:/home/z30086261/FGW# find "$dir" -type f \( -name '*.csv' -o -name 'trace_view.json' \) -printf '%s %p\n'
+165 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv
+1734 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/operator_details.csv
+521 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/task_time.csv
+19637 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json
+302 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/api_statistic.csv
+210 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/step_trace_time.csv
+2299 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv
+2307 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/PROF_000002_20261124093830930_04067819IIPRBJJH/mindstudio_profiler_output/op_summary_20261124093832.csv
+515 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/PROF_000002_20261124093830930_04067819IIPRBJJH/mindstudio_profiler_output/task_time_20261124093832.csv
+163 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/PROF_000002_20261124093830930_04067819IIPRBJJH/mindstudio_profiler_output/op_statistic_20261124093832.csv
+298 reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/PROF_000002_20261124093830930_04067819IIPRBJJH/mindstudio_profiler_output/api_statistic_20261124093832.csv
+168 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv
+1754 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/operator_details.csv
+741 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/task_time.csv
+35159 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json
+744 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/api_statistic.csv
+201 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/step_trace_time.csv
+3603 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv
+3593 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/PROF_000001_20261124093827226_04067819HBQFJQCI/mindstudio_profiler_output/op_summary_20261124093829.csv
+734 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/PROF_000001_20261124093827226_04067819HBQFJQCI/mindstudio_profiler_output/api_statistic_20261124093829.csv
+166 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/PROF_000001_20261124093827226_04067819HBQFJQCI/mindstudio_profiler_output/op_statistic_20261124093829.csv
+735 reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/PROF_000001_20261124093827226_04067819HBQFJQCI/mindstudio_profiler_output/task_time_20261124093829.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW# find "$dir" -name op_statistic.csv -print -exec head -n 12 {} \;
+reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv
+Device_id,OP Type,Core Type,Count,Total Time(us),Min Time(us),Avg Time(us),Max Time(us),Ratio(%)
+0,forward_kernel,MIX_AIC,5,6117.83,1222.841,1223.566,1224.771,100
+reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv
+Device_id,OP Type,Core Type,Count,Total Time(us),Min Time(us),Avg Time(us),Max Time(us),Ratio(%)
+0,SparseFlashAttention,MIX_AIC,5,611.175,121.797,122.235,123.191,100
+(zwh) root@ubuntu162:/home/z30086261/FGW# 
