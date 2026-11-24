@@ -1,4 +1,11 @@
-curl --noproxy download-r2.pytorch.org --connect-timeout 5 -fsSI \
-  'https://download-r2.pytorch.org/whl/cpu/torch-2.10.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata'
-
-python -m pip show torch torch-npu vllm | grep -E '^(Name|Version):'
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# curl --noproxy download-r2.pytorch.org --connect-timeout 5 -fsSI \
+>   'https://download-r2.pytorch.org/whl/cpu/torch-2.10.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata'
+curl: (6) Could not resolve host: download-r2.pytorch.org
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python -m pip show torch torch-npu vllm | grep -E '^(Name|Version):'
+WARNING: Package(s) not found: vllm
+Name: torch
+Version: 2.13.0+cpu
+Name: torch_npu
+Version: 2.13.0
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
