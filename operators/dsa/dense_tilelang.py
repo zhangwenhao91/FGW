@@ -46,10 +46,12 @@ def build_kernel(
     if dma_gather and (not reuse_kv or prepacked):
         raise ValueError("DMA gather requires indexed L1 reuse")
     heads, width, dim = 128, 576, 512
-    if pv_width not in (128, 256):
-        raise ValueError("pv_width must be 128 or 256")
+    if pv_width not in (128, 256, 512):
+        raise ValueError("pv_width must be 128, 256 or 512")
     if head_tile not in (32, 64) or (head_tile == 64 and not pipeline):
         raise ValueError("64-head tiles require the DMA prefetch path")
+    if pv_width == 512 and not (head_tile == 64 and kv_tile == 32 and batch_pv):
+        raise ValueError("512-column PV requires the batched 64-head KV32 path")
     if kv_tile not in (32, 64) or (kv_tile == 64 and head_tile != 64):
         raise ValueError("64-row KV tiles require 64-head tiles")
     br, bc, rows, part = head_tile, kv_tile, head_tile // 2, pv_width

@@ -31,6 +31,7 @@ def main():
             "simd-pv-long-full",
             "simd-pv-long-discrete",
             "batched-pv-long",
+            "pv512-long",
         ),
         default="full",
     )
@@ -41,7 +42,7 @@ def main():
     )
     args = parser.parse_args()
     profile_cases = ("staged-nz", "simd-softmax", "simd-pv", "simd-pv-long-discrete")
-    profile_cases += ("batched-pv-long",)
+    profile_cases += ("batched-pv-long", "pv512-long")
     if args.profile_dir and args.case not in profile_cases:
         parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
@@ -57,7 +58,8 @@ def main():
         )
 
     sq, sk, h, d, tail = 1024, 2048, 128, 512, 64
-    batched_pv = args.case == "batched-pv-long"
+    wide_pv_long = args.case == "pv512-long"
+    batched_pv = args.case == "batched-pv-long" or wide_pv_long
     long_pv = batched_pv or args.case in ("simd-pv-long-full", "simd-pv-long-discrete")
     full_indices = args.case in ("full", "simd-pv-long-full")
     if not full_indices:
@@ -375,7 +377,7 @@ def main():
             torch.testing.assert_close(
                 padded_out[0], torch.zeros_like(padded_out[0]), atol=0, rtol=0
             )
-    if simd_pv_diagnostic:
+    if simd_pv_diagnostic and not wide_pv_long:
         print("Compiling SIMD PV accumulation", flush=True)
         pv_kernel = build_kernel(
             sq,
@@ -430,6 +432,31 @@ def main():
 
         outputs["tilelang_batched_pv"] = tilelang_batched_pv().cpu()
         calls["tilelang_batched_pv"] = tilelang_batched_pv
+    if wide_pv_long:
+        print("Compiling one 512-column PV and one FIXPIPE per KV tile", flush=True)
+        wide_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=512,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+            batch_pv=True,
+        )
+
+        def tilelang_pv512():
+            return wide_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_pv512"] = tilelang_pv512().cpu()
+        calls["tilelang_pv512"] = tilelang_pv512
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -554,7 +581,7 @@ def main():
             report["padding_checks_passed"] = True
             report["simd_speedup_vs_staged"] = medians["tilelang_staged"] / simd
         report["simd_speedup_vs_sfa"] = medians["native_sfa"] / simd
-    if simd_pv_diagnostic:
+    if simd_pv_diagnostic and not wide_pv_long:
         pv = medians["tilelang_simd_pv"]
         if not batched_pv:
             report["simd_pv_speedup_vs_simd_softmax"] = (
@@ -563,8 +590,15 @@ def main():
         report["simd_pv_speedup_vs_sfa"] = medians["native_sfa"] / pv
     if batched_pv:
         batched = medians["tilelang_batched_pv"]
-        report["batched_pv_speedup_vs_simd_pv"] = medians["tilelang_simd_pv"] / batched
+        if not wide_pv_long:
+            report["batched_pv_speedup_vs_simd_pv"] = (
+                medians["tilelang_simd_pv"] / batched
+            )
         report["batched_pv_speedup_vs_sfa"] = medians["native_sfa"] / batched
+    if wide_pv_long:
+        wide = medians["tilelang_pv512"]
+        report["pv512_speedup_vs_batched_pv256"] = medians["tilelang_batched_pv"] / wide
+        report["pv512_speedup_vs_sfa"] = medians["native_sfa"] / wide
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
