@@ -33,7 +33,7 @@ def source_markers(path):
     return qk, pv, prob
 
 
-def events_at(root, core, markers, *, inspect=False):
+def events_at(root, core, markers, *, inspect=False, include_sync=False):
     paths = sorted(root.rglob(f"core0.{core}/trace.json"))
     if len(paths) != 1:
         raise ValueError(f"{root}: expected one trace for {core}, got {len(paths)}")
@@ -50,8 +50,13 @@ def events_at(root, core, markers, *, inspect=False):
                 detail = json.loads(detail)
             except ValueError:
                 continue
-        if isinstance(detail, dict) and any(
-            detail.get(key) for key in ("is_sync", "is_wait", "is_duration_excluded")
+        if (
+            not include_sync
+            and isinstance(detail, dict)
+            and any(
+                detail.get(key)
+                for key in ("is_sync", "is_wait", "is_duration_excluded")
+            )
         ):
             continue
         source_lines = {
@@ -102,12 +107,83 @@ def summarize(root, impl):
     return rows
 
 
+def prefetch_summary(root, impl):
+    source = root / f"{impl}.asc"
+    qk_end_line, pv_line, _ = source_markers(source)
+    patterns = {
+        "qk_mmad": r"asc_mmad\(.*\), 64, 96, 128,.*section == 0",
+        "kv_ready_vec1_wait": r"asc_sync_intra_wait\(PIPE_MTE1, \(\(block & 1\) \+ 17\)\)",
+        "kv_ready_vec0_wait": r"asc_sync_intra_wait\(PIPE_MTE1, \(\(block & 1\) \+ 1\)\)",
+    }
+    lines = source.read_text().splitlines()
+    markers = {}
+    for label, pattern in patterns.items():
+        matches = [i for i, line in enumerate(lines, 1) if re.search(pattern, line)]
+        if len(matches) != 1:
+            raise ValueError(f"{impl}: expected one {label} marker, got {matches}")
+        markers[label] = matches[0]
+    events = events_at(
+        root / impl,
+        "cubecore0",
+        (qk_end_line, pv_line, *markers.values()),
+        include_sync=True,
+    )
+    qk = [event for event in events[markers["qk_mmad"]] if event[2] == "MMAD"]
+    pv = [event for event in events[pv_line] if event[2] == "MMAD"]
+    ends = [event for event in events[qk_end_line] if event[2] == "FIX_L0C_TO_DST"]
+    if len(ends) != 4 or len(qk) != 24 or len(pv) != 16:
+        raise ValueError(f"{impl}: expected 4 QK writes, 24 QK MMADs and 16 PV MMADs")
+    origin = qk[0][0]
+    blocks = []
+    for i, end in enumerate(ends):
+        start = qk[6 * i][0]
+        prior_mmad_ends = [e[1] for e in qk + pv if e[0] < start]
+        prior_end = max(prior_mmad_ends, default=start)
+        blocks.append(
+            {
+                "task": i // 2,
+                "kv_block": i % 2,
+                "qk_start_us": round(start - origin, 5),
+                "preceding_no_mmad_us": round(max(0, start - prior_end), 5),
+                "qk_start_to_writeback_us": round(end[1] - start, 5),
+            }
+        )
+    return {
+        "blocks": blocks,
+        "kv_wait_source_events": {
+            label: [
+                {
+                    "event": name,
+                    "start_us": round(start - origin, 5),
+                    "duration_us": round(end - start, 5),
+                }
+                for start, end, name in events[line]
+            ]
+            for label, line in markers.items()
+            if label.endswith("_wait")
+        },
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("report", type=Path)
-    parser.add_argument("--inspect-markers", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--inspect-markers", action="store_true")
+    mode.add_argument("--prefetch", action="store_true")
     args = parser.parse_args()
     try:
+        if args.prefetch:
+            print(
+                json.dumps(
+                    {
+                        impl: prefetch_summary(args.report, impl)
+                        for impl in ("tilelang", "tilelang-packed")
+                    },
+                    indent=2,
+                )
+            )
+            return
         if args.inspect_markers:
             report = {}
             for impl in ("tilelang", "tilelang-packed"):
