@@ -1,15 +1,4 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# export PIP_CERT=/etc/ssl/certs/ca-certificates.crt
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# curl -fsSI --cacert "$PIP_CERT" \
->   'https://download-r2.pytorch.org/whl/cpu/torch-2.10.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata'
-HTTP/1.1 200 Connection established
-Proxy-agent: netentsec
-Connection: close
+curl --noproxy download-r2.pytorch.org --connect-timeout 5 -fsSI \
+  'https://download-r2.pytorch.org/whl/cpu/torch-2.10.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata'
 
-curl: (60) SSL certificate problem: self signed certificate in certificate chain
-More details here: https://curl.haxx.se/docs/sslcerts.html
-
-curl failed to verify the legitimacy of the server and therefore could not
-establish a secure connection to it. To learn more about this situation and
-how to fix it, please visit the web page mentioned above.
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+python -m pip show torch torch-npu vllm | grep -E '^(Name|Version):'
