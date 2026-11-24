@@ -1,4 +1,139 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach FETCH_HEAD
-python -m benchmarks.dsa_block_timeline \
-  reports/dsa/instructions.TPSrVVdf --inspect-markers
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -m benchmarks.dsa_block_timeline \
+>   reports/dsa/instructions.TPSrVVdf --inspect-markers
+{
+  "tilelang": {
+    "qk_and_pv_source_lines": [
+      324,
+      343
+    ],
+    "cube": {
+      "324": [
+        {
+          "event": "FIX_L0C_TO_DST",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/npu_arch_3510/cube_datamove_intf_impl.h:1492\n/tmp/tmp7wnn3bt_/tl_kernel.asc:324",
+          "count": 4
+        },
+        {
+          "event": "MOV_XD_IMM",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/npu_arch_3510/cube_datamove_intf_impl.h:1492\n/tmp/tmp7wnn3bt_/tl_kernel.asc:324",
+          "count": 2
+        }
+      ],
+      "343": [
+        {
+          "event": "MMAD",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/cube_compute_intf_impl.h:130\n/tmp/tmp7wnn3bt_/tl_kernel.asc:343",
+          "count": 16
+        },
+        {
+          "event": "MOV_XD_IMM",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/cube_compute_intf_impl.h:130\n/tmp/tmp7wnn3bt_/tl_kernel.asc:343",
+          "count": 8
+        },
+        {
+          "event": "MOV_XD_IMM",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/cube_compute_intf_impl.h:0\n/tmp/tmp7wnn3bt_/tl_kernel.asc:343",
+          "count": 4
+        }
+      ]
+    },
+    "probability_dma": {
+      "vec0": {
+        "597": [
+          {
+            "event": "MOVK",
+            "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/vector_datamove_intf_impl.h:62\n/tmp/tmp7wnn3bt_/tl_kernel.asc:597",
+            "count": 20
+          },
+          {
+            "event": "MOV_XD_IMM",
+            "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/vector_datamove_intf_impl.h:62\n/tmp/tmp7wnn3bt_/tl_kernel.asc:597",
+            "count": 12
+          }
+        ]
+      },
+      "vec1": {
+        "602": [
+          {
+            "event": "MOVK",
+            "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/vector_datamove_intf_impl.h:62\n/tmp/tmp7wnn3bt_/tl_kernel.asc:602",
+            "count": 20
+          },
+          {
+            "event": "MOV_XD_IMM",
+            "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/vector_datamove_intf_impl.h:62\n/tmp/tmp7wnn3bt_/tl_kernel.asc:602",
+            "count": 12
+          }
+        ]
+      }
+    }
+  },
+  "tilelang-packed": {
+    "qk_and_pv_source_lines": [
+      266,
+      285
+    ],
+    "cube": {
+      "266": [
+        {
+          "event": "FIX_L0C_TO_DST",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/npu_arch_3510/cube_datamove_intf_impl.h:1492\n/tmp/tmp1gx2pvx0/tl_kernel.asc:266",
+          "count": 4
+        },
+        {
+          "event": "MOV_XD_IMM",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/npu_arch_3510/cube_datamove_intf_impl.h:1492\n/tmp/tmp1gx2pvx0/tl_kernel.asc:266",
+          "count": 2
+        }
+      ],
+      "285": [
+        {
+          "event": "MMAD",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/cube_compute_intf_impl.h:130\n/tmp/tmp1gx2pvx0/tl_kernel.asc:285",
+          "count": 16
+        },
+        {
+          "event": "MOV_XD_IMM",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/cube_compute_intf_impl.h:130\n/tmp/tmp1gx2pvx0/tl_kernel.asc:285",
+          "count": 8
+        },
+        {
+          "event": "MOV_XD_IMM",
+          "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/cube_compute_intf_impl.h:0\n/tmp/tmp1gx2pvx0/tl_kernel.asc:285",
+          "count": 4
+        }
+      ]
+    },
+    "probability_dma": {
+      "vec0": {
+        "539": [
+          {
+            "event": "MOVK",
+            "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/vector_datamove_intf_impl.h:62\n/tmp/tmp1gx2pvx0/tl_kernel.asc:539",
+            "count": 20
+          },
+          {
+            "event": "MOV_XD_IMM",
+            "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/vector_datamove_intf_impl.h:62\n/tmp/tmp1gx2pvx0/tl_kernel.asc:539",
+            "count": 12
+          }
+        ]
+      },
+      "vec1": {
+        "544": [
+          {
+            "event": "MOVK",
+            "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/vector_datamove_intf_impl.h:62\n/tmp/tmp1gx2pvx0/tl_kernel.asc:544",
+            "count": 20
+          },
+          {
+            "event": "MOV_XD_IMM",
+            "source": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/asc/impl/c_api/reg_base_impl/vector_datamove_intf_impl.h:62\n/tmp/tmp1gx2pvx0/tl_kernel.asc:544",
+            "count": 12
+          }
+        ]
+      }
+    }
+  }
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
