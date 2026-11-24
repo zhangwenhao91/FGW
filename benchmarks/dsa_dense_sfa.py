@@ -34,6 +34,7 @@ def main():
             "pv512-long",
             "kv-nz-diagnostic",
             "direct-kv-nz",
+            "gather-once",
         ),
         default="full",
     )
@@ -67,7 +68,8 @@ def main():
     sq, sk, h, d, tail = 1024, 2048, 128, 512, 64
     kv_nz_diagnostic = args.case == "kv-nz-diagnostic"
     direct_nz = args.case == "direct-kv-nz"
-    short_pv512 = kv_nz_diagnostic or direct_nz
+    gather_once = args.case == "gather-once"
+    short_pv512 = kv_nz_diagnostic or direct_nz or gather_once
     wide_pv_long = args.case == "pv512-long" or short_pv512
     batched_pv = args.case == "batched-pv-long" or wide_pv_long
     long_pv = batched_pv or args.case in ("simd-pv-long-full", "simd-pv-long-discrete")
@@ -557,6 +559,47 @@ def main():
         torch.testing.assert_close(
             padded_out[0], torch.zeros_like(padded_out[0]), atol=0, rtol=0
         )
+    if gather_once:
+        from operators.dsa.gather_once import build_gather
+
+        print("Compiling shared KV gather and packed ND attention", flush=True)
+        gather_kernel = build_gather(sq, sk, topk)
+        packed_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=512,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+            batch_pv=True,
+            packed_nd=True,
+        )
+        workspace = torch.empty((sq * topk, d + tail), dtype=kv.dtype, device=device)
+        flat_kv = kvn.view(sk, d + tail)
+        flat_indices = indices.view(sq, topk)
+
+        def collect():
+            gather_kernel(flat_kv, flat_indices, workspace)
+
+        def attend():
+            return packed_kernel(qn[0], workspace, flat_indices).unsqueeze(0)
+
+        def shared_kv():
+            collect()
+            return attend()
+
+        outputs["tilelang_gather_once"] = shared_kv().cpu()
+        expected_workspace = kv[0, :, 0][selected.long()].reshape_as(workspace)
+        torch.testing.assert_close(workspace.cpu(), expected_workspace, rtol=0, atol=0)
+        calls["tilelang_gather_once"] = shared_kv
+        calls["gather_only"] = collect
+        calls["packed_attention_only"] = attend
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -713,6 +756,14 @@ def main():
         report["padding_checks_passed"] = True
         report["direct_nz_speedup_vs_indexed_pv512"] = medians["tilelang_pv512"] / nz
         report["direct_nz_speedup_vs_sfa"] = medians["native_sfa"] / nz
+    if gather_once:
+        shared = medians["tilelang_gather_once"]
+        report["workspace_bytes"] = workspace.numel() * workspace.element_size()
+        report["workspace_exact"] = True
+        report["gather_once_speedup_vs_indexed_pv512"] = (
+            medians["tilelang_pv512"] / shared
+        )
+        report["gather_once_speedup_vs_sfa"] = medians["native_sfa"] / shared
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
