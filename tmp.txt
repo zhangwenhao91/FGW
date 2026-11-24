@@ -1,9 +1,20 @@
-find "$ASCEND_OPP_PATH" -type f \
-  -path '*/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_*.o' \
-  -exec sh -c '
-    for f do
-      printf "\n=== %s ===\n" "$f"
-      readelf -WS "$f" | grep -E "\.(z?debug_|symtab)" || true
-      readelf -Ws "$f" | grep -Ei "ProcessVec[012]|FlashUpdate|SoftmaxFlash" | head -20
-    done
-  ' sh {} +
+(zwh) root@ubuntu162:/home/z30086261/FGW# find "$ASCEND_OPP_PATH" -type f \
+>   -path '*/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_*.o' \
+>   -exec sh -c '
+>     for f do
+>       printf "\n=== %s ===\n" "$f"
+>       readelf -WS "$f" | grep -E "\.(z?debug_|symtab)" || true
+>       readelf -Ws "$f" | grep -Ei "ProcessVec[012]|FlashUpdate|SoftmaxFlash" | head -20
+>     done
+>   ' sh {} +
+
+=== /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_7e7db7f3a1a08a0d5e1b6cd1dac4b926.o ===
+  [ 8] .debug_frame      PROGBITS        0000000000000000 234a08 008c00 00      0   0  8
+  [ 9] .rela.debug_frame RELA            0000000000000000 23d608 00c000 18   I 138   8  8
+  [138] .symtab           SYMTAB          0000000000000000 254ca8 009720 18     140 1351  8
+
+=== /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_9ec0bacf213f2b2dce3ba70149a4903b.o ===
+  [ 8] .debug_frame      PROGBITS        0000000000000000 234a08 008c00 00      0   0  8
+  [ 9] .rela.debug_frame RELA            0000000000000000 23d608 00c000 18   I 138   8  8
+  [138] .symtab           SYMTAB          0000000000000000 254ca8 009720 18     140 1351  8
+(zwh) root@ubuntu162:/home/z30086261/FGW#
