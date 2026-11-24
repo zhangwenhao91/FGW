@@ -1,6 +1,17 @@
-git pull --ff-only
-python -m pytest -q tests/test_mhc.py &&
-python bench_vllm_ascend.py --backend tilelang --projection cube --device npu:0 \
-  --output tilelang-cube-pair.csv &&
-python bench_vllm_ascend.py --merge tilelang-cube-pair.csv vllm-pair.csv \
-  --output vllm-ascend-cube-results.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python -m pytest -q tests/test_mhc.py &&
+> python bench_vllm_ascend.py --backend tilelang --projection cube --device npu:0 \
+>   --output tilelang-cube-pair.csv &&
+> python bench_vllm_ascend.py --merge tilelang-cube-pair.csv vllm-pair.csv \
+>   --output vllm-ascend-cube-results.csv
+........                                                                                                                                                                                                                                                                                                                                                          [100%]
+8 passed in 46.04s
+2026-11-24 20:37:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+2026-11-24 20:37:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+tilelang B=1 hidden=1280: 54.787 us
+2026-11-24 20:37:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+2026-11-24 20:37:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+tilelang B=2 hidden=1920: 53.997 us
+2026-11-24 20:37:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+2026-11-24 20:37:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+tilelang B=4 hidden=2560: 50.538 us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
