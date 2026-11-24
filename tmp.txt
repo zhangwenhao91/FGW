@@ -1,8 +1,63 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# cat results-ba80f01.csv 
-stage,batch,hidden,baseline,tilelang_us,baseline_us,speedup
-pre,1,1280,cann_eager_composite,54.201,158.220,2.919
-post,1,1280,cann_addcmul_with_casts,18.366,29.174,1.588
-pre,2,1920,cann_eager_composite,58.339,189.530,3.249
-post,2,1920,cann_addcmul_with_casts,18.920,28.053,1.483
-pre,4,2560,cann_eager_composite,79.200,159.113,2.009
-post,4,2560,cann_addcmul_with_casts,18.295,26.981,1.475
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# npu-smi info -l
+	Total Count                    : 8
+
+	NPU ID                         : 0
+	Product Name                   : A310-50-C00MM304A1
+	Serial Number                  : 10265L527786
+
+	NPU ID                         : 1
+	Product Name                   : A310-50-C00MM304A1
+	Serial Number                  : 10265L527785
+
+	NPU ID                         : 2
+	Product Name                   : A310-50-C00MM304A1
+	Serial Number                  : 10265L527887
+
+	NPU ID                         : 3
+	Product Name                   : A310-50-C00MM304A1
+	Serial Number                  : 10265L527784
+
+	NPU ID                         : 4
+	Product Name                   : A310-50-C00MM304A1
+	Serial Number                  : 10265L527876
+
+	NPU ID                         : 5
+	Product Name                   : A310-50-C00MM304A1
+	Serial Number                  : 10265L527873
+
+	NPU ID                         : 6
+	Product Name                   : A310-50-C00MM304A1
+	Serial Number                  : 10265L527788
+
+	NPU ID                         : 7
+	Product Name                   : A310-50-C00MM304A1
+	Serial Number                  : 10265L527886
+
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# npu-smi info -t board -i 0
+	NPU ID                         : 0
+	Product Name                   : A310-50-C00MM304A1
+	NPU Name                       : 9579
+	Chip Name                      : Ascend950PR
+	Chip Version                   : V100
+	Model                          : A310-50-C00MM304A1
+	Manufacturer                   : Huawei
+	Serial Number                  : 10265L527786
+	Software Version               : 26.2.rc1
+	Firmware Version               : 9.2.0.103.201
+	Compatibility                  : OK
+	Board ID                       : 0x1a
+	Main Board ID                  : 0x68(1P)
+	PCB ID                         : A
+	BOM ID                         : 1
+	PCIe Bus Info                  : 0000:0D:00.0
+	Slot ID                        : 73
+	Part Number                    : 03036NTH
+	Class ID                       : NA
+	PCI Vendor ID                  : 0x19E5
+	PCI Device ID                  : 0xD806
+	Subsystem Vendor ID            : 0x19E5
+	Subsystem Device ID            : 0x4003
+	Chip Count                     : 1
+	DDie ID                        : 870310F3 2080AB24 01413927 C3B40A0A 73100003
+	Chip Position ID               : 73
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
