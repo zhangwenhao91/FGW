@@ -1,3 +1,14 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach 30e2f54
-bash scripts/dsa/build_sfa_lineinfo.sh /path/to/ops-transformer
+(zwh) root@ubuntu162:/home/z30086261/FGW# git fetch origin test/dsa-dense-ascend
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 5 (delta 1), reused 5 (delta 1), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 1.42 KiB | 1.42 MiB/s, done.
+From https://github.com/zhangwenhao91/FGW
+ * branch            test/dsa-dense-ascend -> FETCH_HEAD
+   f273823..30e2f54  test/dsa-dense-ascend -> origin/test/dsa-dense-ascend
+(zwh) root@ubuntu162:/home/z30086261/FGW# git switch --detach 30e2f54
+Previous HEAD position was f273823 Probe installed sparse attention device debug symbols
+HEAD is now at 30e2f54 Add isolated Ascend SFA line-table build helper
+(zwh) root@ubuntu162:/home/z30086261/FGW# bash scripts/dsa/build_sfa_lineinfo.sh /path/to/ops-transformer
+scripts/dsa/build_sfa_lineinfo.sh: line 9: cd: /path/to/ops-transformer: No such file or directory
