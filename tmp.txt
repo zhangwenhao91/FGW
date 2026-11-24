@@ -1,4 +1,3 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach FETCH_HEAD
-python -m benchmarks.dsa_block_timeline \
-  reports/dsa/instructions.TPSrVVdf --prefetch
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -m benchmarks.dsa_block_timeline \
+>   reports/dsa/instructions.TPSrVVdf --prefetch
+tilelang: expected one kv_ready_vec1_wait marker, got []
