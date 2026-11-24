@@ -1,7 +1,101 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach FETCH_HEAD
-mkdir -p reports/dsa
-python -u benchmarks/dsa_dense_sfa.py \
-  --device npu:0 \
-  --case prefetch-indices-long \
-  --output reports/dsa/prefetch_indices_long.json
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u benchmarks/dsa_dense_sfa.py \
+>   --device npu:0 \
+>   --case prefetch-indices-long \
+>   --output reports/dsa/prefetch_indices_long.json
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (prefetch-indices-long)
+Compiling KV128: two-stage pipeline and four PV K slices
+2026-11-24 17:03:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 17:03:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Compiling KV128 with packed SIMD probability stores
+2026-11-24 17:03:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 17:03:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Compiling KV128 with next-task index prefetch
+2026-11-24 17:03:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 17:03:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Accuracy passed. Starting alternating Event measurements
+timing 1/6
+timing 2/6
+timing 3/6
+timing 4/6
+timing 5/6
+timing 6/6
+{
+  "case": "prefetch-indices-long",
+  "shape": [
+    1,
+    1024,
+    4096,
+    128,
+    1,
+    1024,
+    512,
+    64
+  ],
+  "dtype": "bfloat16",
+  "torch": "2.13.0+cpu",
+  "torch_npu": "2.13.0",
+  "accuracy": {
+    "native_sfa": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_kv128_simd": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_softmax_pack": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_prefetch_indices": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    }
+  },
+  "samples_us": {
+    "native_sfa": [
+      1791.2249565124512,
+      1792.8210496902466,
+      1933.7760210037231,
+      1785.8690023422241,
+      1847.048044204712,
+      1784.9210500717163
+    ],
+    "tilelang_kv128_simd": [
+      4069.685935974121,
+      4057.2361946105957,
+      4059.037208557129,
+      4061.5720748901367,
+      4054.286003112793,
+      4058.588981628418
+    ],
+    "tilelang_softmax_pack": [
+      4034.5311164855957,
+      4031.3072204589844,
+      4031.1508178710938,
+      4031.622886657715,
+      4030.238151550293,
+      4029.7770500183105
+    ],
+    "tilelang_prefetch_indices": [
+      3994.863986968994,
+      3994.97389793396,
+      3995.227098464966,
+      3997.157096862793,
+      3991.503953933716,
+      3995.1469898223877
+    ]
+  },
+  "median_us": {
+    "native_sfa": 1792.0230031013489,
+    "tilelang_kv128_simd": 4058.8130950927734,
+    "tilelang_softmax_pack": 4031.229019165039,
+    "tilelang_prefetch_indices": 3995.060443878174
+  },
+  "softmax_pack_speedup_vs_kv128": 1.006842597083072,
+  "softmax_pack_speedup_vs_sfa": 0.44453515158325546,
+  "prefetch_indices_speedup_vs_pack": 1.0090533236718078,
+  "prefetch_indices_speedup_vs_sfa": 0.4485596721940348
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
