@@ -1,3 +1,2 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach FETCH_HEAD
-python -m benchmarks.dsa_block_timeline reports/dsa/instructions.TPSrVVdf
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -m benchmarks.dsa_block_timeline reports/dsa/instructions.TPSrVVdf
+tilelang: unexpected QK/Vec0 DMA/Vec1 DMA/PV counts [6, 28, 28, 28]
