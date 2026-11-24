@@ -1,7 +1,140 @@
-mkdir -p reports/dsa
-set -o pipefail
-python -u benchmarks/dsa_dense_sfa.py \
-  --device npu:0 \
-  --case softmax-pack-long \
-  --profile-dir reports/dsa/profile \
-  2>&1 | tee reports/dsa/softmax_pack_profile.log
+{
+  "case": "softmax-pack-long",
+  "shape": {
+    "batch": 1,
+    "q": 1024,
+    "kv": 4096,
+    "heads": 128,
+    "kv_heads": 1,
+    "topk": 1024,
+    "d": 512,
+    "tail": 64
+  },
+  "dtype": "bfloat16",
+  "profiles": {
+    "native_sfa": {
+      "files": [
+        "native_sfa/ubuntu162_386618_20261124160653776_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "native_sfa/ubuntu162_386618_20261124160653776_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "SparseFlashAttention": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795536413962644.2,
+            "Task Duration(us)": 1770.381,
+            "Task Wait Time(us)": 0.0,
+            "Block Num": 28.0,
+            "Mix Block Num": 56.0,
+            "aicore_time(us)": 1770.08,
+            "aic_mac_time(us)": 851.394,
+            "aic_mac_ratio": 0.481,
+            "aic_scalar_time(us)": 442.761,
+            "aic_scalar_ratio": 0.25,
+            "aic_mte1_time(us)": 590.923,
+            "aic_mte1_ratio": 0.334,
+            "aic_mte2_time(us)": 937.814,
+            "aic_mte2_ratio": 0.53,
+            "aic_mte3_time(us)": 0.001,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 273.02,
+            "aic_fixpipe_ratio": 0.154,
+            "aiv_time(us)": 1769.07,
+            "aiv_vec_time(us)": 363.17,
+            "aiv_vec_ratio": 0.205,
+            "aiv_scalar_time(us)": 1047.052,
+            "aiv_scalar_ratio": 0.592,
+            "aiv_mte2_time(us)": 475.674,
+            "aiv_mte2_ratio": 0.269,
+            "aiv_mte3_time(us)": 340.617,
+            "aiv_mte3_ratio": 0.193,
+            "cube_utilization(%)": 98.036
+          }
+        }
+      }
+    },
+    "tilelang_kv128_simd": {
+      "files": [
+        "tilelang_kv128_simd/ubuntu162_386618_20261124160657485_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "tilelang_kv128_simd/ubuntu162_386618_20261124160657485_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "forward_kernel": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795536417703474.2,
+            "Task Duration(us)": 4049.762,
+            "Task Wait Time(us)": 0.029,
+            "Block Num": 28.0,
+            "Mix Block Num": 56.0,
+            "aicore_time(us)": 4049.43,
+            "aic_mac_time(us)": 1075.194,
+            "aic_mac_ratio": 0.266,
+            "aic_scalar_time(us)": 36.892,
+            "aic_scalar_ratio": 0.009,
+            "aic_mte1_time(us)": 616.382,
+            "aic_mte1_ratio": 0.152,
+            "aic_mte2_time(us)": 62.785,
+            "aic_mte2_ratio": 0.016,
+            "aic_mte3_time(us)": 0.001,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 282.143,
+            "aic_fixpipe_ratio": 0.07,
+            "aiv_time(us)": 3993.74,
+            "aiv_vec_time(us)": 1941.976,
+            "aiv_vec_ratio": 0.486,
+            "aiv_scalar_time(us)": 858.146,
+            "aiv_scalar_ratio": 0.215,
+            "aiv_mte2_time(us)": 594.894,
+            "aiv_mte2_ratio": 0.149,
+            "aiv_mte3_time(us)": 620.608,
+            "aiv_mte3_ratio": 0.155,
+            "cube_utilization(%)": 98.549
+          }
+        }
+      }
+    },
+    "tilelang_softmax_pack": {
+      "files": [
+        "tilelang_softmax_pack/ubuntu162_386618_20261124160701213_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "tilelang_softmax_pack/ubuntu162_386618_20261124160701213_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "forward_kernel": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795536421425178.2,
+            "Task Duration(us)": 4024.76,
+            "Task Wait Time(us)": 0.0,
+            "Block Num": 28.0,
+            "Mix Block Num": 56.0,
+            "aicore_time(us)": 4024.45,
+            "aic_mac_time(us)": 1075.051,
+            "aic_mac_ratio": 0.267,
+            "aic_scalar_time(us)": 36.83,
+            "aic_scalar_ratio": 0.009,
+            "aic_mte1_time(us)": 616.513,
+            "aic_mte1_ratio": 0.153,
+            "aic_mte2_time(us)": 62.595,
+            "aic_mte2_ratio": 0.016,
+            "aic_mte3_time(us)": 0.001,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 282.026,
+            "aic_fixpipe_ratio": 0.07,
+            "aiv_time(us)": 3969.51,
+            "aiv_vec_time(us)": 1678.232,
+            "aiv_vec_ratio": 0.423,
+            "aiv_scalar_time(us)": 857.481,
+            "aiv_scalar_ratio": 0.216,
+            "aiv_mte2_time(us)": 607.48,
+            "aiv_mte2_ratio": 0.153,
+            "aiv_mte3_time(us)": 624.141,
+            "aiv_mte3_ratio": 0.157,
+            "cube_utilization(%)": 98.563
+          }
+        }
+      }
+    }
+  },
+  "status": "passed"
+}
