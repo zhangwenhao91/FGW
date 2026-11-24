@@ -1,36 +1,3 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case staged-nz --device npu:0 --profile-dir reports/dsa/profile
-torch=2.13.0+cpu torch_npu=2.13.0
-Checking native SFA output (staged-nz)
-Compiling three-stage NZ pipeline
-Profiling native_sfa in /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k
-[2026-11-24 09:38:27] [WARNING] [4067819] profiler.py: Profiler won't be using warmup, this can skew profiler results
-[2026-11-24 09:38:27] [INFO] [4068177] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt
-[2026-11-24 09:38:29] [INFO] [4068199] profiler.py: CANN profiling data parsed in a total time of 0:00:02.014043
-[2026-11-24 09:38:30] [INFO] [4068177] profiler.py: All profiling data parsed in a total time of 0:00:02.909348
-Profiling tilelang_staged in /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k
-[2026-11-24 09:38:30] [WARNING] [4067819] profiler.py: Profiler won't be using warmup, this can skew profiler results
-[2026-11-24 09:38:31] [INFO] [4068544] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt
-[2026-11-24 09:38:32] [ERROR] [4068544] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/logs
-[2026-11-24 09:38:33] [INFO] [4068561] profiler.py: CANN profiling data parsed in a total time of 0:00:02.020774
-[2026-11-24 09:38:34] [INFO] [4068544] profiler.py: All profiling data parsed in a total time of 0:00:02.914589
-/home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k/summary.json
-{
-  "shape": "B1 Q64 KV4096 H128 Hkv1 topk1024 BF16 D512+64",
-  "profiles": {
-    "native_sfa": {
-      "files": [
-        "native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
-        "native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
-      ],
-      "kernels": {}
-    },
-    "tilelang_staged": {
-      "files": [
-        "tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
-        "tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
-      ],
-      "kernels": {}
-    }
-  },
-  "status": "missing_op_summary"
-}
+dir=reports/dsa/profile/staged-nz-l1euoo7k
+find "$dir" -type f \( -name '*.csv' -o -name 'trace_view.json' \) -printf '%s %p\n'
+find "$dir" -name op_statistic.csv -print -exec head -n 12 {} \;
