@@ -1,101 +1,20 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# python -u benchmarks/dsa_dense_sfa.py \
->   --device npu:0 \
->   --case prefetch-indices-long \
->   --output reports/dsa/prefetch_indices_long.json
-torch=2.13.0+cpu torch_npu=2.13.0
-Checking native SFA output (prefetch-indices-long)
-Compiling KV128: two-stage pipeline and four PV K slices
-2026-11-24 17:03:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
-2026-11-24 17:03:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
-Compiling KV128 with packed SIMD probability stores
-2026-11-24 17:03:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
-2026-11-24 17:03:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
-Compiling KV128 with next-task index prefetch
-2026-11-24 17:03:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
-2026-11-24 17:03:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
-Accuracy passed. Starting alternating Event measurements
-timing 1/6
-timing 2/6
-timing 3/6
-timing 4/6
-timing 5/6
-timing 6/6
-{
-  "case": "prefetch-indices-long",
-  "shape": [
-    1,
-    1024,
-    4096,
-    128,
-    1,
-    1024,
-    512,
-    64
-  ],
-  "dtype": "bfloat16",
-  "torch": "2.13.0+cpu",
-  "torch_npu": "2.13.0",
-  "accuracy": {
-    "native_sfa": {
-      "passed": true,
-      "max_abs_error": 0.001953125
-    },
-    "tilelang_kv128_simd": {
-      "passed": true,
-      "max_abs_error": 0.001953125
-    },
-    "tilelang_softmax_pack": {
-      "passed": true,
-      "max_abs_error": 0.001953125
-    },
-    "tilelang_prefetch_indices": {
-      "passed": true,
-      "max_abs_error": 0.001953125
-    }
-  },
-  "samples_us": {
-    "native_sfa": [
-      1791.2249565124512,
-      1792.8210496902466,
-      1933.7760210037231,
-      1785.8690023422241,
-      1847.048044204712,
-      1784.9210500717163
-    ],
-    "tilelang_kv128_simd": [
-      4069.685935974121,
-      4057.2361946105957,
-      4059.037208557129,
-      4061.5720748901367,
-      4054.286003112793,
-      4058.588981628418
-    ],
-    "tilelang_softmax_pack": [
-      4034.5311164855957,
-      4031.3072204589844,
-      4031.1508178710938,
-      4031.622886657715,
-      4030.238151550293,
-      4029.7770500183105
-    ],
-    "tilelang_prefetch_indices": [
-      3994.863986968994,
-      3994.97389793396,
-      3995.227098464966,
-      3997.157096862793,
-      3991.503953933716,
-      3995.1469898223877
-    ]
-  },
-  "median_us": {
-    "native_sfa": 1792.0230031013489,
-    "tilelang_kv128_simd": 4058.8130950927734,
-    "tilelang_softmax_pack": 4031.229019165039,
-    "tilelang_prefetch_indices": 3995.060443878174
-  },
-  "softmax_pack_speedup_vs_kv128": 1.006842597083072,
-  "softmax_pack_speedup_vs_sfa": 0.44453515158325546,
-  "prefetch_indices_speedup_vs_pack": 1.0090533236718078,
-  "prefetch_indices_speedup_vs_sfa": 0.4485596721940348
-}
-(zwh) root@ubuntu162:/home/z30086261/FGW#
+(zwh) root@ubuntu162:/home/z30086261# git clone https://github.com/zhangwenhao91/FGW-mHC.git
+Cloning into 'FGW-mHC'...
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (12/12), done.
+remote: Total 15 (delta 0), reused 12 (delta 0), pack-reused 0 (from 0)
+Unpacking objects: 100% (15/15), 8.82 KiB | 2.94 MiB/s, done.
+(zwh) root@ubuntu162:/home/z30086261# cd FGW-mHC/
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# bash run_npu.sh --device npu:0 --output results.csv
+....                                                                                                                                                                                                                                                                                                                                                              [100%]
+4 passed in 40.19s
+2026-11-24 18:52:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+[18:52:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/thread_storage_sync.cc:1081: Warning: [ThreadSync] Hoisting sync out of an if whose condition is not safe for an in-if sync. This is not a fix: both ends of the conflict are inside the branch, so the hoisted barrier no longer separates them and the race remains. Constraining the condition -- a T.assume on the parameters it reads -- keeps the barrier in place instead. Condition: simtvf_tx < 1
+2026-11-24 18:52:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+2026-11-24 18:52:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+[18:52:48] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/thread_storage_sync.cc:1081: Warning: [ThreadSync] Hoisting sync out of an if whose condition is not safe for an in-if sync. This is not a fix: both ends of the conflict are inside the branch, so the hoisted barrier no longer separates them and the race remains. Constraining the condition -- a T.assume on the parameters it reads -- keeps the barrier in place instead. Condition: simtvf_tx < 1
+2026-11-24 18:52:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+2026-11-24 18:52:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+[18:52:51] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/thread_storage_sync.cc:1081: Warning: [ThreadSync] Hoisting sync out of an if whose condition is not safe for an in-if sync. This is not a fix: both ends of the conflict are inside the branch, so the hoisted barrier no longer separates them and the race remains. Constraining the condition -- a T.assume on the parameters it reads -- keeps the barrier in place instead. Condition: simtvf_tx < 1
+2026-11-24 18:52:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
