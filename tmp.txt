@@ -1,5 +1,59 @@
-log="$(ls -t reports/dsa/sfa-lines.*/build.log | head -n 1)"
-printf 'log=%s\n' "$log"
-grep -inE -m 15 -C 4 \
-  'fatal error|error:|CMake Error|undefined reference|not found|No such file|Killed|Error 1' \
-  "$log"
+(zwh) root@ubuntu162:/home/z30086261/FGW# log="$(ls -t reports/dsa/sfa-lines.*/build.log | head -n 1)"
+(zwh) root@ubuntu162:/home/z30086261/FGW# printf 'log=%s\n' "$log"
+log=reports/dsa/sfa-lines.yQvkcNCM/build.log
+(zwh) root@ubuntu162:/home/z30086261/FGW# grep -inE -m 15 -C 4 \
+>   'fatal error|error:|CMake Error|undefined reference|not found|No such file|Killed|Error 1' \
+>   "$log"
+22-[2026-11-24 14:30:36] -- Detecting CXX compiler ABI info - done
+23-[2026-11-24 14:30:36] -- Check for working CXX compiler: /root/miniconda3/envs/zwh/bin/x86_64-conda-linux-gnu-c++ - skipped
+24-[2026-11-24 14:30:36] -- Detecting CXX compile features
+25-[2026-11-24 14:30:36] -- Detecting CXX compile features - done
+26:[2026-11-24 14:30:37] -- Initialization summary: Ccache not found, TARGET_ARCH: x86_64
+27-[2026-11-24 14:30:37] -- ASCEND_CANN_PACKAGE_PATH=/home/CANN/9.3.0.weekly.20260930/cann-9.3.0
+28-[2026-11-24 14:30:37] -- compile project with library
+29-CMake Warning (author) at /root/miniconda3/envs/zwh/lib/python3.12/site-packages/cmake/data/share/cmake-4.4/Modules/FetchContent.cmake:1968 (message):
+30-  Calling FetchContent_Populate(opbase) is deprecated, call
+--
+274-  CMakeLists.txt:214 (add_cann_third_party)
+275-This warning is for project developers.  Use -Wno-author to suppress it.
+276-
+277-[2026-11-24 14:32:31] -- Could NOT find abseil-cpp (missing: ABSL_SOURCE_DIR) 
+278:[2026-11-24 14:32:31] -- [ThirdParty][abseil-cpp] not found, need download.
+279-[2026-11-24 14:32:31] -- [ThirdParty][abseil-cpp] cve patch need download to: /home/z30086261/ops-transformer-sfa/third_party/patch/backport-CVE-2025-0838.patch
+280-[2026-11-24 14:32:31] -- [ThirdParty][abseil-cpp] cve patch use cache: /home/z30086261/ops-transformer-sfa/third_party/patch/backport-CVE-2025-0838.patch
+281-CMake Warning (author) at /root/miniconda3/envs/zwh/lib/python3.12/site-packages/cmake/data/share/cmake-4.4/Modules/ExternalProject/shared_internal_commands.cmake:1277 (message):
+282-  The DOWNLOAD_EXTRACT_TIMESTAMP option was not given and policy CMP0135 is
+--
+294-  build/_deps/cann-cmake-src/function/prepare.cmake:314 (include)
+295-  CMakeLists.txt:215 (add_cann_third_party)
+296-This warning is for project developers.  Use -Wno-author to suppress it.
+297-
+298:[2026-11-24 14:32:31] -- [ThirdParty][protobuf] /home/z30086261/ops-transformer-sfa/third_party/protobuf/protobuf-25.1.tar.gz not found, need download.
+299-CMake Warning (author) at /root/miniconda3/envs/zwh/lib/python3.12/site-packages/cmake/data/share/cmake-4.4/Modules/ExternalProject/shared_internal_commands.cmake:1277 (message):
+300-  The DOWNLOAD_EXTRACT_TIMESTAMP option was not given and policy CMP0135 is
+301-  not set.  The policy's OLD behavior will be used.  When using a URL
+302-  download, the timestamps of extracted files should preferably be that of
+--
+416-In file included from /home/z30086261/ops-transformer-sfa/common/include/fallback/fallback_comm.h:21:
+417-/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/x86_64-linux/include/exe_graph/runtime/tensor.h:14:111: note: '#pragma message: Warning: tensor.h is deprecated and will be removed after 2027-06. Include "runtime_tensor.h" instead.'
+418-   14 |     "Warning: tensor.h is deprecated and will be removed after 2027-06. Include \"runtime_tensor.h\" instead.")
+419-      |                                                                                                               ^
+420:CMake Error at /home/z30086261/ops-transformer-sfa/build/third_party_json-prefix/src/third_party_json-stamp/download-third_party_json.cmake:163 (message):
+421-  Each download failed!
+422-
+423:    error: downloading 'https://cann-3rd.obs.cn-north-4.myhuaweicloud.com/json/json-3.12.0.tar.gz' failed
+424-          status_code: 60
+425-          status_string: "SSL peer certificate or SSH remote key was not OK.  If this is due to https certificate verification failure, one may set environment variable CMAKE_TLS_VERIFY=0 to suppress it."
+426-          log:
+427-          --- LOG BEGIN ---
+--
+551-          
+552-    
+553-
+554-
+555:make[3]: *** [CMakeFiles/third_party_json.dir/build.make:99: third_party_json-prefix/src/third_party_json-stamp/third_party_json-download] Error 1
+556-make[2]: *** [CMakeFiles/Makefile2:500: CMakeFiles/third_party_json.dir/all] Error 2
+557-make[2]: *** Waiting for unfinished jobs....
+558-[2026-11-24 14:32:32] [ 14%] Building CXX object common/CMakeFiles/common_transformer_fallback_obj.dir/src/fallback/fallback_comm_2stages.cpp.o
+559-[2026-11-24 14:32:32] [ 17%] Building CXX object attention/sparse_flash_attention/op_host/CMakeFiles/opbase_tiling_objs.dir/__/__/__/third_party/opbase/src/op_common/atvoss/broadcast/broadcast_tiling_base.cpp.o
+(zwh) root@ubuntu162:/home/z30086261/FGW#
