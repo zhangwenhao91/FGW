@@ -35,11 +35,13 @@ def main():
     )
     parser.add_argument("--output")
     parser.add_argument(
-        "--profile-dir", help="Capture native SFA and staged NZ in separate traces"
+        "--profile-dir",
+        help="Capture each selected implementation in a separate NPU trace",
     )
     args = parser.parse_args()
-    if args.profile_dir and args.case not in ("staged-nz", "simd-softmax", "simd-pv"):
-        parser.error("--profile-dir requires staged-nz, simd-softmax, or simd-pv")
+    profile_cases = ("staged-nz", "simd-softmax", "simd-pv", "simd-pv-long-discrete")
+    if args.profile_dir and args.case not in profile_cases:
+        parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
 
     from operators.dsa.dense_tilelang import build_kernel
@@ -336,7 +338,7 @@ def main():
         torch.testing.assert_close(
             padded_out[0], torch.zeros_like(padded_out[0]), atol=0, rtol=0
         )
-    if simd_diagnostic:
+    if simd_diagnostic and not (long_pv and args.profile_dir):
         print("Compiling SIMD softmax with direct NZ stores", flush=True)
         simd_kernel = build_kernel(
             sq,
@@ -428,7 +430,15 @@ def main():
     if args.profile_dir:
         from benchmarks.dsa_profile import capture
 
-        capture(calls, args.profile_dir)
+        if long_pv:
+            calls = {name: calls[name] for name in ("native_sfa", "tilelang_simd_pv")}
+        capture(
+            calls,
+            args.profile_dir,
+            case=args.case,
+            shape=report["shape"],
+            dtype=report["dtype"],
+        )
         return
 
     def measure(call):

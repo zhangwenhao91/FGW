@@ -50,14 +50,25 @@ def summarize(directory):
     }
 
 
-def capture(calls, root):
+def capture(calls, root, *, case, shape, dtype):
     import torch
     import torch_npu.profiler as profiler
 
     parent = Path(root)
     parent.mkdir(parents=True, exist_ok=True)
-    directory = Path(tempfile.mkdtemp(prefix="staged-nz-", dir=parent))
-    report = {"shape": "B1 Q64 KV4096 H128 Hkv1 topk1024 BF16 D512+64", "profiles": {}}
+    directory = Path(tempfile.mkdtemp(prefix=f"{case}-", dir=parent))
+    report = {
+        "case": case,
+        "shape": dict(
+            zip(
+                ("batch", "q", "kv", "heads", "kv_heads", "topk", "d", "tail"),
+                shape,
+                strict=True,
+            )
+        ),
+        "dtype": dtype,
+        "profiles": {},
+    }
     for name, call in calls.items():
         print(f"Profiling {name} in {directory}", flush=True)
         for _ in range(5):
