@@ -10,10 +10,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("implementation", choices=("sfa", "tilelang"))
     parser.add_argument("--source", type=Path)
+    parser.add_argument("--kv-tile", type=int, choices=(32, 128), default=32)
     args = parser.parse_args()
     import torch_npu
 
     sq, sk, topk, h, d, tail = 16, 256, 128, 128, 512, 64
+    if args.kv_tile == 128:
+        sk, topk = 512, 256
     width = d + tail
     g = torch.Generator().manual_seed(7)
     q = torch.randn((1, sq, h, width), generator=g).to(torch.bfloat16)
@@ -72,6 +75,7 @@ def main():
             persistent=True,
             simd_output=True,
             lineinfo=True,
+            kv_tile=args.kv_tile,
         )
         if args.source:
             args.source.write_text(kernel.get_kernel_source())
