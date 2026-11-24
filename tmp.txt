@@ -1,3 +1,11 @@
-find "$ASCEND_OPP_PATH" -type f \
-  \( -iname 'SparseFlashAttention*.o' -o -iname 'SparseFlashAttention*.json' \) \
-  -print
+(zwh) root@ubuntu162:/home/z30086261/FGW# find "$ASCEND_OPP_PATH" -type f \
+>   \( -iname 'SparseFlashAttention*.o' -o -iname 'SparseFlashAttention*.json' \) \
+>   -print
+/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention_grad/SparseFlashAttentionGrad_548fb9a53789ca778271fd9be306d517.json
+/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention_grad/SparseFlashAttentionGrad_548fb9a53789ca778271fd9be306d517.o
+/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention_grad/SparseFlashAttentionGrad_ecdedf297118bbcd87ce0445eedfc881.o
+/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention_grad/SparseFlashAttentionGrad_ecdedf297118bbcd87ce0445eedfc881.json
+/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_7e7db7f3a1a08a0d5e1b6cd1dac4b926.json
+/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_9ec0bacf213f2b2dce3ba70149a4903b.json
+/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_7e7db7f3a1a08a0d5e1b6cd1dac4b926.o
+/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_9ec0bacf213f2b2dce3ba70149a4903b.o
