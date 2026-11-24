@@ -463,6 +463,31 @@ def main():
         print("Packing KV into per-query NZ slabs outside timing", flush=True)
         # [query, tile, AIV, row, C0-group, C0] -> compact NZ with one pad row.
         gathered = kv[0, :, 0][selected.long()].reshape(sq, topk // 32, 2, 16, 36, 16)
+        packed_nd = gathered.view(sq * topk, d + tail).to(device)
+        packed_nd_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=512,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+            batch_pv=True,
+            packed_nd=True,
+        )
+
+        def tilelang_packed_kv_nd():
+            return packed_nd_kernel(qn[0], packed_nd, indices.view(sq, topk)).unsqueeze(
+                0
+            )
+
+        outputs["tilelang_packed_kv_nd"] = tilelang_packed_kv_nd().cpu()
+        calls["tilelang_packed_kv_nd"] = tilelang_packed_kv_nd
         slabs = torch.zeros((sq, topk // 32, 2, 36, 17, 16), dtype=kv.dtype)
         slabs[..., :16, :] = gathered.transpose(3, 4)
         packed_nz = slabs.view(-1, 36 * 17 * 16).to(device)
@@ -634,6 +659,10 @@ def main():
         report["pv512_speedup_vs_sfa"] = medians["native_sfa"] / wide
     if kv_nz_diagnostic:
         nz = medians["tilelang_packed_kv_nz"]
+        nd = medians["tilelang_packed_kv_nd"]
+        report["packed_nd_bytes"] = packed_nd.numel() * packed_nd.element_size()
+        report["packed_nd_speedup_vs_indexed_pv512"] = medians["tilelang_pv512"] / nd
+        report["packed_nz_speedup_vs_packed_nd"] = nd / nz
         report["packed_nz_bytes"] = packed_nz.numel() * packed_nz.element_size()
         report["packed_nz_speedup_vs_indexed_pv512"] = medians["tilelang_pv512"] / nz
         report["packed_nz_speedup_vs_sfa"] = medians["native_sfa"] / nz

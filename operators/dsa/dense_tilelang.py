@@ -28,11 +28,14 @@ def build_kernel(
     simd_pv=False,
     batch_pv=False,
     packed_nz=False,
+    packed_nd=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
-    if packed_nz and not (
+    if packed_nd and packed_nz:
+        raise ValueError("choose one prepacked KV layout")
+    if (packed_nz or packed_nd) and not (
         batch_pv
         and pv_width == 512
         and kv_tile == 32
@@ -40,7 +43,7 @@ def build_kernel(
         and not prepacked
     ):
         raise ValueError(
-            "packed NZ diagnostic requires the KV32/PV512 path and aligned topk"
+            "packed KV diagnostic requires the KV32/PV512 path and aligned topk"
         )
     if batch_pv and not simd_pv:
         raise ValueError("batched PV handoff requires SIMD PV")
@@ -70,7 +73,7 @@ def build_kernel(
     qk_width = width if br == 32 else 192
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
-    kv_rows = sq * topk if prepacked else sk
+    kv_rows = sq * topk if prepacked or packed_nd else sk
     nz_slab = (gather_rows + 1) * width
     kv_shape = (sq * (topk // bc) * 2, nz_slab) if packed_nz else (kv_rows, width)
 
@@ -87,6 +90,11 @@ def build_kernel(
             physical_nz = T.view(kn, (nz_slab,), dtype=dtype)
             slab = (qi * (topk // bc) + block) * 2 + sid
             T.copy(KV[slab, :], physical_nz)
+            T.dual_copy(kn[:gather_rows, :], k_l1)
+        elif packed_nd:
+            first = qi * topk + block * bc + sid * gather_rows
+            T.copy(KV[first : first + gather_rows, :], k)
+            T.copy(k, kn[:gather_rows, :])
             T.dual_copy(kn[:gather_rows, :], k_l1)
         elif dma_gather:
             # Reuse a 16-row UB staging area for each AIV half-tile.
