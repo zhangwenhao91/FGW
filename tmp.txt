@@ -1,9 +1,5 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# bash scripts/dsa/compare_sfa_isolated.sh \
->   ../ops-transformer-sfa/build/binary/ascend950/bin/sparse_flash_attention \
->   npu:0
-report=/home/z30086261/FGW/reports/dsa/sfa-isolated.gUh4b4Qh
-Copying OPP to an independent directory (copy-on-write when supported).
-696f12e8321a36d603b26eff85f03fd6898b30f932587b6471464394ae348fb1  /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_9ec0bacf213f2b2dce3ba70149a4903b.o
-414256947c7e334417f2fbc8595cef17ace6f5b8d9b065bc647730b9902453b8  /home/z30086261/FGW/reports/dsa/sfa-isolated.gUh4b4Qh/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_9ec0bacf213f2b2dce3ba70149a4903b.o
-Auditing device object opens: installed
-strace: invalid system call 'openat2'
+git fetch origin test/dsa-dense-ascend
+git switch --detach 1ab7f28
+bash scripts/dsa/compare_sfa_isolated.sh \
+  ../ops-transformer-sfa/build/binary/ascend950/bin/sparse_flash_attention \
+  npu:0 reports/dsa/sfa-isolated.gUh4b4Qh
