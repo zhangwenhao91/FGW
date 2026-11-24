@@ -1,10 +1,17 @@
-ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
-mindstudio-kpp 26.2.0 requires plotly>=5.11.0, which is not installed.
-cannsim 0.1.0 requires plotly, which is not installed.
-msboost 26.2.0 requires colorlog, which is not installed.
-ms-service-profiler 26.0.0 requires matplotlib, which is not installed.
-ms-service-profiler 26.0.0 requires msguard, which is not installed.
-ms-service-profiler 26.0.0 requires opentelemetry-exporter-otlp-proto-grpc<2.0.0,>=1.33.1, which is not installed.
-ms-service-profiler 26.0.0 requires opentelemetry-exporter-otlp-proto-http<2.0.0,>=1.33.1, which is not installed.
-schedule-search 0.0.1 requires absl-py, which is not installed.
-ml-dtypes 0.6.0 requires numpy>=2.0.0, but you have numpy 1.26.4 which is incompatible.
+python - <<'PY'
+import torch
+import torch_npu
+import tilelang.ascend.language
+print("torch:", torch.__version__)
+print("torch_npu:", torch_npu.__version__)
+assert torch.npu.is_available(), "NPU unavailable"
+print("NPU:", torch.ones(1, device="npu:0").cpu())
+PY
+
+
+VLLM_TARGET_DEVICE=empty \
+  python -m pip install --no-build-isolation -c "$constraints" -e ../vllm \
+    --extra-index-url https://repo.huaweicloud.com/ascend/repos/pypi \
+    --extra-index-url https://repo.huaweicloud.com/ascend/repos/pypi/nightly && \
+SOC_VERSION=ascend950pr_9579 COMPILE_CUSTOM_KERNELS=1 \
+  python -m pip install --no-build-isolation --no-deps -e ../vllm-ascend
