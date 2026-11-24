@@ -1,64 +1,36 @@
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case staged-nz --device npu:0 --profile-dir reports/dsa/profile
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (staged-nz)
+Compiling three-stage NZ pipeline
+Profiling native_sfa in /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k
+[2026-11-24 09:38:27] [WARNING] [4067819] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 09:38:27] [INFO] [4068177] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k/native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt
+[2026-11-24 09:38:29] [INFO] [4068199] profiler.py: CANN profiling data parsed in a total time of 0:00:02.014043
+[2026-11-24 09:38:30] [INFO] [4068177] profiler.py: All profiling data parsed in a total time of 0:00:02.909348
+Profiling tilelang_staged in /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k
+[2026-11-24 09:38:30] [WARNING] [4067819] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 09:38:31] [INFO] [4068544] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt
+[2026-11-24 09:38:32] [ERROR] [4068544] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k/tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/logs
+[2026-11-24 09:38:33] [INFO] [4068561] profiler.py: CANN profiling data parsed in a total time of 0:00:02.020774
+[2026-11-24 09:38:34] [INFO] [4068544] profiler.py: All profiling data parsed in a total time of 0:00:02.914589
+/home/z30086261/FGW/reports/dsa/profile/staged-nz-l1euoo7k/summary.json
 {
-  "case": "selective-zero",
-  "shape": [
-    1,
-    64,
-    4096,
-    128,
-    1,
-    1024,
-    512,
-    64
-  ],
-  "dtype": "bfloat16",
-  "torch": "2.13.0+cpu",
-  "torch_npu": "2.13.0",
-  "accuracy": {
+  "shape": "B1 Q64 KV4096 H128 Hkv1 topk1024 BF16 D512+64",
+  "profiles": {
     "native_sfa": {
-      "passed": true,
-      "max_abs_error": 0.001953125
+      "files": [
+        "native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "native_sfa/ubuntu162_4067819_20261124093827207_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {}
     },
     "tilelang_staged": {
-      "passed": true,
-      "max_abs_error": 0.001953125
-    },
-    "tilelang_selective_zero": {
-      "passed": true,
-      "max_abs_error": 0.001953125
+      "files": [
+        "tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "tilelang_staged/ubuntu162_4067819_20261124093830900_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {}
     }
   },
-  "samples_us": {
-    "native_sfa": [
-      135.22100448608398,
-      135.81499457359314,
-      137.67099380493164,
-      135.83999872207642,
-      135.97500324249268,
-      133.63100588321686
-    ],
-    "tilelang_staged": [
-      1231.3870191574097,
-      1236.3320589065552,
-      1229.4909954071045,
-      1232.4470281600952,
-      1230.571985244751,
-      1233.3699464797974
-    ],
-    "tilelang_selective_zero": [
-      1390.9039497375488,
-      1397.92799949646,
-      1395.2620029449463,
-      1393.6810493469238,
-      1392.7249908447266,
-      1396.021008491516
-    ]
-  },
-  "median_us": {
-    "native_sfa": 135.82749664783478,
-    "tilelang_staged": 1231.9170236587524,
-    "tilelang_selective_zero": 1394.471526145935
-  },
-  "padding_checks_passed": true,
-  "selective_zero_speedup_vs_staged": 0.8834293139448651,
-  "selective_zero_speedup_vs_sfa": 0.09740428119263016
+  "status": "missing_op_summary"
 }
