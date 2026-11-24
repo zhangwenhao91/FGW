@@ -1,63 +1,6 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# npu-smi info -l
-	Total Count                    : 8
-
-	NPU ID                         : 0
-	Product Name                   : A310-50-C00MM304A1
-	Serial Number                  : 10265L527786
-
-	NPU ID                         : 1
-	Product Name                   : A310-50-C00MM304A1
-	Serial Number                  : 10265L527785
-
-	NPU ID                         : 2
-	Product Name                   : A310-50-C00MM304A1
-	Serial Number                  : 10265L527887
-
-	NPU ID                         : 3
-	Product Name                   : A310-50-C00MM304A1
-	Serial Number                  : 10265L527784
-
-	NPU ID                         : 4
-	Product Name                   : A310-50-C00MM304A1
-	Serial Number                  : 10265L527876
-
-	NPU ID                         : 5
-	Product Name                   : A310-50-C00MM304A1
-	Serial Number                  : 10265L527873
-
-	NPU ID                         : 6
-	Product Name                   : A310-50-C00MM304A1
-	Serial Number                  : 10265L527788
-
-	NPU ID                         : 7
-	Product Name                   : A310-50-C00MM304A1
-	Serial Number                  : 10265L527886
-
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# npu-smi info -t board -i 0
-	NPU ID                         : 0
-	Product Name                   : A310-50-C00MM304A1
-	NPU Name                       : 9579
-	Chip Name                      : Ascend950PR
-	Chip Version                   : V100
-	Model                          : A310-50-C00MM304A1
-	Manufacturer                   : Huawei
-	Serial Number                  : 10265L527786
-	Software Version               : 26.2.rc1
-	Firmware Version               : 9.2.0.103.201
-	Compatibility                  : OK
-	Board ID                       : 0x1a
-	Main Board ID                  : 0x68(1P)
-	PCB ID                         : A
-	BOM ID                         : 1
-	PCIe Bus Info                  : 0000:0D:00.0
-	Slot ID                        : 73
-	Part Number                    : 03036NTH
-	Class ID                       : NA
-	PCI Vendor ID                  : 0x19E5
-	PCI Device ID                  : 0xD806
-	Subsystem Vendor ID            : 0x19E5
-	Subsystem Device ID            : 0x4003
-	Chip Count                     : 1
-	DDie ID                        : 870310F3 2080AB24 01413927 C3B40A0A 73100003
-	Chip Position ID               : 73
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+conda activate zwh
+SOC_VERSION=ascend950pr_9579 COMPILE_CUSTOM_KERNELS=1 \
+  python -m pip install -e ./vllm-ascend \
+  --extra-index-url https://download.pytorch.org/whl/cpu/ \
+  --extra-index-url https://repo.huaweicloud.com/ascend/repos/pypi \
+  --extra-index-url https://repo.huaweicloud.com/ascend/repos/pypi/nightly
