@@ -1,3 +1,117 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach db6ca78
-bash scripts/dsa/trace_sfa_stages.sh reports/dsa/sfa-isolated.gUh4b4Qh/opp 128
+(zwh) root@ubuntu162:/home/z30086261/FGW# bash scripts/dsa/trace_sfa_stages.sh reports/dsa/sfa-isolated.gUh4b4Qh/opp 128
+report=/home/z30086261/FGW/reports/dsa/instructions.WDUqHg1c
+Simulating sfa (Q16-KV512-topk256, TileLang KV tile 128, core 0)
+[INFO] Thread 32 is running. Cycle Count: 250000
+launch_completed=sfa output_shape=(1, 16, 128, 512)
+Parallel Simulation: All threads are joined.
+ESL_TOP: parallel threads joined
+[INFO]  Extract 6376 relations from kernel
+[INFO]  Parse 44480 addr2line relations
+[INFO]  Core operator results run in simulator as follow:
+core_name           duration_time(us)   running_time(us)    
+core0.cubecore0     22.21               22.21               
+core0.veccore0      23.06               23.05               
+core0.veccore1      23.07               23.07               
+ESL_TOP: system destructed
+[INFO] Model stopped successfully.
+[INFO]  Profiling running finished. All task success.
+[INFO]  Start parse dump file
+[INFO]  Profiling results saved in /home/z30086261/FGW/reports/dsa/instructions.WDUqHg1c/sfa/OPPROF_20261124155158_WLCBMFMCZUVAGRIT
+[INFO]  Profiling data parse finished.
+[INFO]  Op profiling finish. Welcome to next use.
+simulation_driver_completed=sfa
+{
+  "trace_files": 2,
+  "vector_cores": {
+    "OPPROF_20261124155158_WLCBMFMCZUVAGRIT/simulator/core0.veccore0/trace.json": {
+      "pv_update_including_possible_final": {
+        "events": 6716,
+        "active_interval_union_us": 0.74545
+      },
+      "softmax": {
+        "events": 5472,
+        "active_interval_union_us": 1.14303
+      },
+      "unattributed": {
+        "events": 18208,
+        "active_interval_union_us": 18.6703
+      }
+    },
+    "OPPROF_20261124155158_WLCBMFMCZUVAGRIT/simulator/core0.veccore1/trace.json": {
+      "pv_update_including_possible_final": {
+        "events": 6716,
+        "active_interval_union_us": 0.76485
+      },
+      "softmax": {
+        "events": 5472,
+        "active_interval_union_us": 1.18182
+      },
+      "unattributed": {
+        "events": 18203,
+        "active_interval_union_us": 18.57091
+      }
+    }
+  }
+}
+Simulating tilelang (Q16-KV512-topk256, TileLang KV tile 128, core 0)
+[INFO] Thread 32 is running. Cycle Count: 630000
+launch_completed=tilelang output_shape=(1, 16, 128, 512)
+Parallel Simulation: All threads are joined.
+ESL_TOP: parallel threads joined
+[INFO]  Extract 1529 relations from kernel
+[INFO]  Parse 2432 addr2line relations
+[INFO]  Core operator results run in simulator as follow:
+core_name           duration_time(us)   running_time(us)    
+core0.cubecore0     32.89               32.89               
+core0.veccore0      36.18               35.47               
+core0.veccore1      36.08               36.08               
+ESL_TOP: system destructed
+[INFO] Model stopped successfully.
+[INFO]  Profiling running finished. All task success.
+[INFO]  Start parse dump file
+[INFO]  Profiling results saved in /home/z30086261/FGW/reports/dsa/instructions.WDUqHg1c/tilelang/OPPROF_20261124155305_DITAYZRDYPFIQLFI
+[INFO]  Profiling data parse finished.
+[INFO]  Op profiling finish. Welcome to next use.
+simulation_driver_completed=tilelang
+{
+  "trace_files": 2,
+  "vector_cores": {
+    "OPPROF_20261124155305_DITAYZRDYPFIQLFI/simulator/core0.veccore0/trace.json": {
+      "output_normalize": {
+        "events": 25508,
+        "active_interval_union_us": 4.58121
+      },
+      "pv_update": {
+        "events": 12368,
+        "active_interval_union_us": 1.32242
+      },
+      "softmax": {
+        "events": 14960,
+        "active_interval_union_us": 3.55575
+      },
+      "unattributed": {
+        "events": 19982,
+        "active_interval_union_us": 27.7509
+      }
+    },
+    "OPPROF_20261124155305_DITAYZRDYPFIQLFI/simulator/core0.veccore1/trace.json": {
+      "output_normalize": {
+        "events": 25508,
+        "active_interval_union_us": 4.58121
+      },
+      "pv_update": {
+        "events": 12368,
+        "active_interval_union_us": 1.32242
+      },
+      "softmax": {
+        "events": 14960,
+        "active_interval_union_us": 3.55575
+      },
+      "unattributed": {
+        "events": 20054,
+        "active_interval_union_us": 28.65938
+      }
+    }
+  }
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
