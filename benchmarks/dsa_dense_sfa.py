@@ -32,6 +32,7 @@ def main():
             "simd-pv-long-discrete",
             "batched-pv-long",
             "pv512-long",
+            "kv-nz-diagnostic",
         ),
         default="full",
     )
@@ -42,7 +43,7 @@ def main():
     )
     args = parser.parse_args()
     profile_cases = ("staged-nz", "simd-softmax", "simd-pv", "simd-pv-long-discrete")
-    profile_cases += ("batched-pv-long", "pv512-long")
+    profile_cases += ("batched-pv-long", "pv512-long", "kv-nz-diagnostic")
     if args.profile_dir and args.case not in profile_cases:
         parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
@@ -58,7 +59,8 @@ def main():
         )
 
     sq, sk, h, d, tail = 1024, 2048, 128, 512, 64
-    wide_pv_long = args.case == "pv512-long"
+    kv_nz_diagnostic = args.case == "kv-nz-diagnostic"
+    wide_pv_long = args.case in ("pv512-long", "kv-nz-diagnostic")
     batched_pv = args.case == "batched-pv-long" or wide_pv_long
     long_pv = batched_pv or args.case in ("simd-pv-long-full", "simd-pv-long-discrete")
     full_indices = args.case in ("full", "simd-pv-long-full")
@@ -89,7 +91,7 @@ def main():
         or zero_diagnostic
         or simd_diagnostic
     ):
-        sq = 1024 if long_pv else 64
+        sq = 1024 if long_pv and not kv_nz_diagnostic else 64
     topk = sk if full_indices else 1024
     scale = (d + tail) ** -0.5
     generator = torch.Generator().manual_seed(7)
@@ -407,7 +409,7 @@ def main():
             torch.testing.assert_close(
                 padded_pv[0], torch.zeros_like(padded_pv[0]), atol=0, rtol=0
             )
-    if batched_pv:
+    if batched_pv and not kv_nz_diagnostic:
         print("Compiling one SIMD accumulation per KV tile", flush=True)
         batched_kernel = build_kernel(
             sq,
@@ -457,6 +459,37 @@ def main():
 
         outputs["tilelang_pv512"] = tilelang_pv512().cpu()
         calls["tilelang_pv512"] = tilelang_pv512
+    if kv_nz_diagnostic:
+        print("Packing KV into per-query NZ slabs outside timing", flush=True)
+        # [query, tile, AIV, row, C0-group, C0] -> compact NZ with one pad row.
+        gathered = kv[0, :, 0][selected.long()].reshape(sq, topk // 32, 2, 16, 36, 16)
+        slabs = torch.zeros((sq, topk // 32, 2, 36, 17, 16), dtype=kv.dtype)
+        slabs[..., :16, :] = gathered.transpose(3, 4)
+        packed_nz = slabs.view(-1, 36 * 17 * 16).to(device)
+        packed_nz_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=512,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+            batch_pv=True,
+            packed_nz=True,
+        )
+
+        def tilelang_packed_kv_nz():
+            return packed_nz_kernel(qn[0], packed_nz, indices.view(sq, topk)).unsqueeze(
+                0
+            )
+
+        outputs["tilelang_packed_kv_nz"] = tilelang_packed_kv_nz().cpu()
+        calls["tilelang_packed_kv_nz"] = tilelang_packed_kv_nz
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -588,17 +621,22 @@ def main():
                 medians["tilelang_simd_softmax"] / pv
             )
         report["simd_pv_speedup_vs_sfa"] = medians["native_sfa"] / pv
-    if batched_pv:
+    if batched_pv and not kv_nz_diagnostic:
         batched = medians["tilelang_batched_pv"]
         if not wide_pv_long:
             report["batched_pv_speedup_vs_simd_pv"] = (
                 medians["tilelang_simd_pv"] / batched
             )
         report["batched_pv_speedup_vs_sfa"] = medians["native_sfa"] / batched
-    if wide_pv_long:
+    if wide_pv_long and not kv_nz_diagnostic:
         wide = medians["tilelang_pv512"]
         report["pv512_speedup_vs_batched_pv256"] = medians["tilelang_batched_pv"] / wide
         report["pv512_speedup_vs_sfa"] = medians["native_sfa"] / wide
+    if kv_nz_diagnostic:
+        nz = medians["tilelang_packed_kv_nz"]
+        report["packed_nz_bytes"] = packed_nz.numel() * packed_nz.element_size()
+        report["packed_nz_speedup_vs_indexed_pv512"] = medians["tilelang_pv512"] / nz
+        report["packed_nz_speedup_vs_sfa"] = medians["native_sfa"] / nz
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

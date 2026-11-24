@@ -27,10 +27,21 @@ def build_kernel(
     simd_softmax=False,
     simd_pv=False,
     batch_pv=False,
+    packed_nz=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
+    if packed_nz and not (
+        batch_pv
+        and pv_width == 512
+        and kv_tile == 32
+        and topk % 32 == 0
+        and not prepacked
+    ):
+        raise ValueError(
+            "packed NZ diagnostic requires the KV32/PV512 path and aligned topk"
+        )
     if batch_pv and not simd_pv:
         raise ValueError("batched PV handoff requires SIMD PV")
     if simd_pv and not simd_softmax:
@@ -60,6 +71,8 @@ def build_kernel(
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
     kv_rows = sq * topk if prepacked else sk
+    nz_slab = (gather_rows + 1) * width
+    kv_shape = (sq * (topk // bc) * 2, nz_slab) if packed_nz else (kv_rows, width)
 
     @T.macro
     def gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1):
@@ -70,7 +83,12 @@ def build_kernel(
                     index = Indices[qi, block * bc + j]
                     if index >= 0 and index <= sk - sq + qi:
                         valid[j] = index
-        if dma_gather:
+        if packed_nz:
+            physical_nz = T.view(kn, (nz_slab,), dtype=dtype)
+            slab = (qi * (topk // bc) + block) * 2 + sid
+            T.copy(KV[slab, :], physical_nz)
+            T.dual_copy(kn[:gather_rows, :], k_l1)
+        elif dma_gather:
             # Reuse a 16-row UB staging area for each AIV half-tile.
             for segment in T.serial(bc // (2 * gather_rows)):
                 with T.SimtVF(threads=128):
@@ -341,7 +359,7 @@ def build_kernel(
     @T.prim_func
     def forward(
         Q: T.Tensor((sq, heads, width), dtype),
-        KV: T.Tensor((kv_rows, width), dtype),
+        KV: T.Tensor(kv_shape, dtype),
         Indices: T.Tensor((sq, topk), "int32"),
         Out: T.Tensor((sq, heads, dim), dtype),
     ):
