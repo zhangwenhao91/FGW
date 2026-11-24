@@ -1,3 +1,86 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach FETCH_HEAD
-python -m benchmarks.dsa_block_timeline reports/dsa/instructions.TPSrVVdf
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -m benchmarks.dsa_block_timeline reports/dsa/instructions.TPSrVVdf
+{
+  "timestamp_origin": "first QK writeback end in each trace",
+  "tilelang": [
+    {
+      "task": 0,
+      "kv_block": 0,
+      "qk_end_us": 0.0,
+      "pv_start_us": 3.80545,
+      "qk_to_pv_us": 3.80545
+    },
+    {
+      "task": 0,
+      "kv_block": 1,
+      "qk_end_us": 3.9297,
+      "pv_start_us": 6.59636,
+      "qk_to_pv_us": 2.66667
+    },
+    {
+      "task": 1,
+      "kv_block": 0,
+      "qk_end_us": 16.67757,
+      "pv_start_us": 18.91151,
+      "qk_to_pv_us": 2.23394
+    },
+    {
+      "task": 1,
+      "kv_block": 1,
+      "qk_end_us": 19.03576,
+      "pv_start_us": 21.69697,
+      "qk_to_pv_us": 2.66121
+    }
+  ],
+  "tilelang_packed": [
+    {
+      "task": 0,
+      "kv_block": 0,
+      "qk_end_us": 0.0,
+      "pv_start_us": 3.26,
+      "qk_to_pv_us": 3.26
+    },
+    {
+      "task": 0,
+      "kv_block": 1,
+      "qk_end_us": 3.38424,
+      "pv_start_us": 5.58667,
+      "qk_to_pv_us": 2.20242
+    },
+    {
+      "task": 1,
+      "kv_block": 0,
+      "qk_end_us": 15.54909,
+      "pv_start_us": 17.98121,
+      "qk_to_pv_us": 2.43212
+    },
+    {
+      "task": 1,
+      "kv_block": 1,
+      "qk_end_us": 18.10545,
+      "pv_start_us": 20.30424,
+      "qk_to_pv_us": 2.19879
+    }
+  ],
+  "baseline_minus_packed_us": [
+    {
+      "qk_end_us": 0.0,
+      "pv_start_us": 0.54545,
+      "qk_to_pv_us": 0.54545
+    },
+    {
+      "qk_end_us": 0.54546,
+      "pv_start_us": 1.00969,
+      "qk_to_pv_us": 0.46425
+    },
+    {
+      "qk_end_us": 1.12848,
+      "pv_start_us": 0.9303,
+      "qk_to_pv_us": -0.19818
+    },
+    {
+      "qk_end_us": 0.93031,
+      "pv_start_us": 1.39273,
+      "qk_to_pv_us": 0.46242
+    }
+  ]
+}
