@@ -30,7 +30,12 @@ def main():
         default="full",
     )
     parser.add_argument("--output")
+    parser.add_argument(
+        "--profile-dir", help="Capture native SFA and staged NZ in separate traces"
+    )
     args = parser.parse_args()
+    if args.profile_dir and args.case != "staged-nz":
+        parser.error("--profile-dir requires --case staged-nz")
     import torch_npu
 
     from operators.dsa.dense_tilelang import build_kernel
@@ -244,7 +249,7 @@ def main():
 
         outputs["tilelang_kv64"] = tilelang_kv64().cpu()
         calls["tilelang_kv64"] = tilelang_kv64
-    if nz_diagnostic or staged_diagnostic:
+    if nz_diagnostic or (staged_diagnostic and not args.profile_dir):
         print("Compiling direct NZ softmax writeback", flush=True)
         nz_kernel = build_kernel(
             sq,
@@ -345,6 +350,12 @@ def main():
             torch.testing.assert_close(actual, ref, atol=0.012, rtol=0.012)
             errors.append((actual.float() - ref.float()).abs().max().item())
         report["accuracy"][name] = {"passed": True, "max_abs_error": max(errors)}
+
+    if args.profile_dir:
+        from benchmarks.dsa_profile import capture
+
+        capture(calls, args.profile_dir)
+        return
 
     def measure(call):
         call()
