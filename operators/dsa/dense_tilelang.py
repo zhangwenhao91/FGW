@@ -62,8 +62,10 @@ def build_kernel(
         raise ValueError("batched PV handoff requires SIMD PV")
     if simd_pv and not simd_softmax:
         raise ValueError("SIMD PV requires the SIMD softmax baseline")
-    if simd_softmax and not (staged and kv_tile == 32 and not selective_zero):
-        raise ValueError("SIMD softmax requires staged NZ, KV32, and full zero fill")
+    if simd_softmax and not (staged and kv_tile in (32, 64) and not selective_zero):
+        raise ValueError(
+            "SIMD softmax requires staged NZ, KV32/KV64, and full zero fill"
+        )
     if selective_zero and not dma_gather:
         raise ValueError("selective zero requires DMA gather")
     if staged and not (pipeline and softmax_nz):
@@ -77,12 +79,16 @@ def build_kernel(
         raise ValueError("pv_width must be 128, 256 or 512")
     if head_tile not in (32, 64) or (head_tile == 64 and not pipeline):
         raise ValueError("64-head tiles require the DMA prefetch path")
-    if pv_width == 512 and not (head_tile == 64 and kv_tile == 32 and batch_pv):
-        raise ValueError("512-column PV requires the batched 64-head KV32 path")
+    if pv_width == 512 and not (
+        head_tile == 64 and batch_pv and (kv_tile == 32 or simd_softmax)
+    ):
+        raise ValueError("512-column PV requires the batched 64-head path")
     if kv_tile not in (32, 64) or (kv_tile == 64 and head_tile != 64):
         raise ValueError("64-row KV tiles require 64-head tiles")
     br, bc, rows, part = head_tile, kv_tile, head_tile // 2, pv_width
     gather_rows = 16
+    split_pv_k = bc == 64 and part == 512
+    pv_k = 32 if split_pv_k else bc
     qk_width = width if br == 32 else 192
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
@@ -207,7 +213,7 @@ def build_kernel(
     def compute_softmax(valid, scores, maximum, alpha, total, p, pn, p_l1):
         if simd_softmax:
             with T.SimdVF():
-                active = S.pset(32, "PAT_VL32")
+                active = S.pset(32, "PAT_VL32" if bc == 32 else "PAT_ALL")
                 one = S.pset(32, "PAT_VL1")
                 half = S.pset(32, "PAT_VL16")
                 full = S.pset(32, "PAT_ALL")
@@ -248,6 +254,22 @@ def build_kernel(
                     )
                     S.vsts(pn[r, 0], low, half, "PK_B32", extent=16)
                     S.vsts(pn[r, 16], high, half, "PK_B32", extent=16)
+                    if bc == 64:
+                        for group in T.unroll(2, 4, explicit=True):
+                            lane = S.vand(
+                                T.reinterpret(S.vci(group * 16, "int32"), "uint32x64"),
+                                S.vdup(T.uint32(63), "uint32", full),
+                                full,
+                            )
+                            value = S.vcvt(
+                                S.vselr(prob, lane),
+                                dtype,
+                                half,
+                                round="ROUND_R",
+                                sat=False,
+                                part=0,
+                            )
+                            S.vsts(pn[r, group * 16], value, half, "PK_B32", extent=16)
         else:
             with T.SimtVF(threads=128):
                 peaks = T.alloc_reducer((rows,), fp32, op="max")
@@ -301,9 +323,21 @@ def build_kernel(
         output,
         alpha,
     ):
-        T.copy(p_l1, pa)
+        if not split_pv_k:
+            T.copy(p_l1, pa)
         for chunk in T.serial(dim // part):
-            if reuse_kv:
+            if split_pv_k:
+                # Accumulate K in two L0-sized slices, then emit one FIXPIPE.
+                for piece in T.serial(bc // pv_k):
+                    first = piece * pv_k
+                    T.copy(p_l1[:, first : first + pv_k], pa)
+                    T.copy(
+                        k_l1[first : first + pv_k, chunk * part : (chunk + 1) * part],
+                        vb,
+                        transpose=False,
+                    )
+                    T.gemm(pa, vb, pv, transpose_B=False, clear_accum=(piece == 0))
+            elif reuse_kv:
                 # The latent prefix already in L1 is also the value tile.
                 T.copy(
                     k_l1[:, chunk * part : (chunk + 1) * part],
@@ -421,8 +455,8 @@ def build_kernel(
             p_l1 = T.alloc_l1((br, bc), dtype)
             qa = T.alloc_l0a((br, qk_width), dtype)
             kb = T.alloc_l0b((bc, qk_width), dtype)
-            pa = T.alloc_l0a((br, bc), dtype)
-            vb = T.alloc_l0b((bc, part) if reuse_kv else (part, bc), dtype)
+            pa = T.alloc_l0a((br, pv_k), dtype)
+            vb = T.alloc_l0b((pv_k, part) if reuse_kv else (part, bc), dtype)
             qk = T.alloc_l0c((br, bc), fp32)
             pv = T.alloc_l0c((br, part), fp32)
             k = T.alloc_shared((gather_rows, width), dtype)

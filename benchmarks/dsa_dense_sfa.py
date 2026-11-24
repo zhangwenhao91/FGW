@@ -35,6 +35,7 @@ def main():
             "persistent-long",
             "native-sfa-long",
             "simd-output-long",
+            "kv64-simd-long",
             "kv-nz-diagnostic",
             "direct-kv-nz",
             "gather-once",
@@ -56,7 +57,12 @@ def main():
         "kv-nz-diagnostic",
         "direct-kv-nz",
     )
-    profile_cases += ("persistent-long", "simd-output-long", "native-sfa-long")
+    profile_cases += (
+        "persistent-long",
+        "simd-output-long",
+        "native-sfa-long",
+        "kv64-simd-long",
+    )
     if args.profile_dir and args.case not in profile_cases:
         parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
@@ -79,7 +85,8 @@ def main():
     rolling = args.case == "rolling-gather"
     gather_once = args.case in ("gather-once", "rolling-gather")
     short_pv512 = kv_nz_diagnostic or direct_nz or gather_once
-    simd_output = args.case == "simd-output-long"
+    kv64_simd = args.case == "kv64-simd-long"
+    simd_output = args.case == "simd-output-long" or kv64_simd
     persistent = args.case == "persistent-long" or simd_output
     wide_pv_long = args.case == "pv512-long" or persistent or short_pv512
     batched_pv = args.case == "batched-pv-long" or wide_pv_long
@@ -456,7 +463,7 @@ def main():
 
         outputs["tilelang_batched_pv"] = tilelang_batched_pv().cpu()
         calls["tilelang_batched_pv"] = tilelang_batched_pv
-    if wide_pv_long:
+    if wide_pv_long and not kv64_simd:
         print("Compiling one 512-column PV and one FIXPIPE per KV tile", flush=True)
         wide_kernel = build_kernel(
             sq,
@@ -623,7 +630,7 @@ def main():
         outputs["tilelang_rolling_serial"] = serial_chunks().cpu()
         calls["tilelang_rolling_serial"] = serial_chunks
         calls["tilelang_rolling_overlap"] = overlapped_chunks
-    if persistent:
+    if persistent and not kv64_simd:
         print("Compiling fixed-28-core indexed PV512", flush=True)
         persistent_kernel = build_kernel(
             sq,
@@ -676,6 +683,34 @@ def main():
 
         outputs["tilelang_simd_output"] = tilelang_simd_output().cpu()
         calls["tilelang_simd_output"] = tilelang_simd_output
+    if kv64_simd:
+        print("Compiling SIMD KV64 with two PV K slices and one FIXPIPE", flush=True)
+        wide_kv = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=512,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+            batch_pv=True,
+            persistent=True,
+            simd_output=True,
+            kv_tile=64,
+        )
+
+        def tilelang_kv64_simd():
+            return wide_kv(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_kv64_simd"] = tilelang_kv64_simd().cpu()
+        calls["tilelang_kv64_simd"] = tilelang_kv64_simd
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -856,18 +891,22 @@ def main():
         report["rolling_overlap_speedup_vs_indexed"] = (
             medians["tilelang_pv512"] / overlap
         )
-    if persistent:
+    if persistent and not kv64_simd:
         fixed = medians["tilelang_persistent"]
         report["persistent_speedup_vs_indexed_pv512"] = (
             medians["tilelang_pv512"] / fixed
         )
         report["persistent_speedup_vs_sfa"] = medians["native_sfa"] / fixed
-    if simd_output:
+    if simd_output and not kv64_simd:
         new = medians["tilelang_simd_output"]
         report["simd_output_speedup_vs_persistent"] = (
             medians["tilelang_persistent"] / new
         )
         report["simd_output_speedup_vs_sfa"] = medians["native_sfa"] / new
+    if kv64_simd:
+        wide = medians["tilelang_kv64_simd"]
+        report["kv64_speedup_vs_kv32"] = medians["tilelang_simd_output"] / wide
+        report["kv64_speedup_vs_sfa"] = medians["native_sfa"] / wide
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
