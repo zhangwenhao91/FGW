@@ -1,33 +1,6 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
-remote: Enumerating objects: 8, done.
-remote: Counting objects: 100% (8/8), done.
-remote: Compressing objects: 100% (4/4), done.
-remote: Total 6 (delta 4), reused 4 (delta 2), pack-reused 0 (from 0)
-Unpacking objects: 100% (6/6), 1005 bytes | 1005.00 KiB/s, done.
-From https://github.com/zhangwenhao91/FGW-mHC
-   3f90c35..26f12c8  main       -> origin/main
-Updating 3f90c35..26f12c8
-Fast-forward
- bench_vllm_ascend.py | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# docker run --rm --pull=never --shm-size=1g   "${devices[@]}"   -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro   -v /usr/local/dcmi:/usr/local/dcmi:ro   -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro"   -v /etc/ascend_install.info:/etc/ascend_install.info:ro   -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python   quay.io/ascend/vllm-ascend:v0.30.0-a5   bench_vllm_ascend.py --backend vllm --device npu:0 --output vllm-pair.csv && python bench_vllm_ascend.py --merge tilelang-pair.csv vllm-pair.csv   --output vllm-ascend-results.csv && cat vllm-ascend-results.csv
-grep: write error: Broken pipe
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-24 20:28:03 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-24 20:28:03 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-24 20:28:03 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-24 20:28:03 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-24 20:28:03 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-vllm B=1 hidden=1280: 34.911 us
-vllm B=2 hidden=1920: 35.408 us
-vllm B=4 hidden=2560: 34.921 us
-batch,hidden,sinkhorn_iters,warmup,repeat,tilelang_pair_us,vllm_ascendc_pair_us,vllm_over_tilelang_speedup
-1,1280,20,30,100,43.830,34.911,0.797
-2,1920,20,30,100,60.752,35.408,0.583
-4,2560,20,30,100,83.040,34.921,0.421
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+git pull --ff-only
+python -m pytest -q tests/test_mhc.py &&
+python bench_vllm_ascend.py --backend tilelang --projection cube --device npu:0 \
+  --output tilelang-cube-pair.csv &&
+python bench_vllm_ascend.py --merge tilelang-cube-pair.csv vllm-pair.csv \
+  --output vllm-ascend-cube-results.csv
