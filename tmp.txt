@@ -1,6 +1,31 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach 7552dad
-python -m benchmarks.dsa_sfa_compare_elf \
-  "$ASCEND_OPP_PATH/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention" \
-  ../ops-transformer-sfa/build/binary/ascend950/bin/sparse_flash_attention \
-  | tee dsa_sfa_elf_compare.json
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -m benchmarks.dsa_sfa_compare_elf \
+>   "$ASCEND_OPP_PATH/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention" \
+>   ../ops-transformer-sfa/build/binary/ascend950/bin/sparse_flash_attention \
+>   | tee dsa_sfa_elf_compare.json
+{
+  "installed": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention/SparseFlashAttention_9ec0bacf213f2b2dce3ba70149a4903b.o",
+  "rebuilt": "../ops-transformer-sfa/build/binary/ascend950/bin/sparse_flash_attention/SparseFlashAttention_9ec0bacf213f2b2dce3ba70149a4903b.o",
+  "installed_exec_sections": 1,
+  "rebuilt_exec_sections": 1,
+  "identical_exec_sections": 0,
+  "all_exec_sections_match": false,
+  "only_installed": [],
+  "only_rebuilt": [],
+  "changed_count": 1,
+  "changed_examples": [
+    {
+      "section": ".text",
+      "installed": {
+        "address": 0,
+        "bytes": 2258096,
+        "sha256": "147c441ce06feb333fc18b440908dd35e33aa8ab7b514a0c8a097a0020969303"
+      },
+      "rebuilt": {
+        "address": 0,
+        "bytes": 2260464,
+        "sha256": "fc6d02e55877c9523911079a0fd98796233f3c5ae84241e3b8dce0ca8c141b3c"
+      }
+    }
+  ]
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
