@@ -26,6 +26,7 @@ def main():
             "softmax-nz",
             "staged-nz",
             "selective-zero",
+            "simd-softmax",
         ),
         default="full",
     )
@@ -34,8 +35,8 @@ def main():
         "--profile-dir", help="Capture native SFA and staged NZ in separate traces"
     )
     args = parser.parse_args()
-    if args.profile_dir and args.case != "staged-nz":
-        parser.error("--profile-dir requires --case staged-nz")
+    if args.profile_dir and args.case not in ("staged-nz", "simd-softmax"):
+        parser.error("--profile-dir requires staged-nz or simd-softmax")
     import torch_npu
 
     from operators.dsa.dense_tilelang import build_kernel
@@ -62,6 +63,7 @@ def main():
     nz_diagnostic = args.case == "softmax-nz"
     staged_diagnostic = args.case == "staged-nz"
     zero_diagnostic = args.case == "selective-zero"
+    simd_diagnostic = args.case == "simd-softmax"
     if (
         diagnostic
         or pv_diagnostic
@@ -72,6 +74,7 @@ def main():
         or nz_diagnostic
         or staged_diagnostic
         or zero_diagnostic
+        or simd_diagnostic
     ):
         sq = 64
     topk = sk if args.case == "full" else 1024
@@ -126,6 +129,7 @@ def main():
         or nz_diagnostic
         or staged_diagnostic
         or zero_diagnostic
+        or simd_diagnostic
     ):
         print("Compiling TileLang DSA", flush=True)
         kernel = build_kernel(sq, sk, topk)
@@ -270,7 +274,7 @@ def main():
 
         outputs["tilelang_softmax_nz"] = tilelang_softmax_nz().cpu()
         calls["tilelang_softmax_nz"] = tilelang_softmax_nz
-    if staged_diagnostic or zero_diagnostic:
+    if staged_diagnostic or zero_diagnostic or simd_diagnostic:
         print("Compiling three-stage NZ pipeline", flush=True)
         staged_kernel = build_kernel(
             sq,
@@ -322,6 +326,39 @@ def main():
         padded[0, :] = sk
         padded_ref = staged_kernel(qn[0], kvn.view(sk, d + tail), padded).cpu()
         padded_out = zero_kernel(qn[0], kvn.view(sk, d + tail), padded).cpu()
+        torch.testing.assert_close(padded_out, padded_ref, atol=0.002, rtol=0.002)
+        torch.testing.assert_close(
+            padded_out[0], torch.zeros_like(padded_out[0]), atol=0, rtol=0
+        )
+    if simd_diagnostic:
+        print("Compiling SIMD softmax with direct NZ stores", flush=True)
+        simd_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=256,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+        )
+
+        def tilelang_simd_softmax():
+            return simd_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_simd_softmax"] = tilelang_simd_softmax().cpu()
+        calls["tilelang_simd_softmax"] = tilelang_simd_softmax
+
+        padded = indices.view(sq, topk).clone()
+        padded[:, -17:] = sk
+        padded[0, :] = sk
+        padded_ref = staged_kernel(qn[0], kvn.view(sk, d + tail), padded).cpu()
+        padded_out = simd_kernel(qn[0], kvn.view(sk, d + tail), padded).cpu()
         torch.testing.assert_close(padded_out, padded_ref, atol=0.002, rtol=0.002)
         torch.testing.assert_close(
             padded_out[0], torch.zeros_like(padded_out[0]), atol=0, rtol=0
@@ -436,6 +473,11 @@ def main():
             medians["tilelang_staged"] / selective
         )
         report["selective_zero_speedup_vs_sfa"] = medians["native_sfa"] / selective
+    if simd_diagnostic:
+        simd = medians["tilelang_simd_softmax"]
+        report["padding_checks_passed"] = True
+        report["simd_speedup_vs_staged"] = medians["tilelang_staged"] / simd
+        report["simd_speedup_vs_sfa"] = medians["native_sfa"] / simd
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

@@ -10,7 +10,8 @@ from pathlib import Path
 def summarize(directory):
     """Keep per-kernel medians, leaving full trace and CSV files on disk."""
     groups = {}
-    for path in sorted(directory.rglob("op_summary.csv")):
+    raw = sorted(directory.rglob("op_summary_*.csv"))
+    for path in raw or sorted(directory.rglob("op_summary.csv")):
         with path.open(encoding="utf-8-sig", newline="") as stream:
             for row in csv.DictReader(stream):
                 name = row.get("OP Name") or row.get("Op Name") or row.get("OP Type")

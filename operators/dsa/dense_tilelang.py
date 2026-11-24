@@ -4,6 +4,7 @@ from functools import lru_cache
 
 import tilelang
 import tilelang.ascend.language as T
+from tilelang.ascend.language import simd as S
 from tilelang.layout import make_ascend_compact_nz_layout
 
 
@@ -23,10 +24,13 @@ def build_kernel(
     softmax_nz=False,
     staged=False,
     selective_zero=False,
+    simd_softmax=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
+    if simd_softmax and not (staged and kv_tile == 32 and not selective_zero):
+        raise ValueError("SIMD softmax requires staged NZ, KV32, and full zero fill")
     if selective_zero and not dma_gather:
         raise ValueError("selective zero requires DMA gather")
     if staged and not (pipeline and softmax_nz):
@@ -120,39 +124,83 @@ def build_kernel(
                 T.copy(q_l1[:, lo : lo + qk_width], qa)
                 T.copy(k_l1[:, lo : lo + qk_width], kb)
                 T.gemm(qa, kb, qk, transpose_B=True, clear_accum=(section == 0))
-        T.dual_copy(qk, scores)
+        T.dual_copy(qk, scores[:rows, :])
 
     @T.macro
     def compute_softmax(valid, scores, maximum, alpha, total, p, pn, p_l1):
-        with T.SimtVF(threads=128):
-            peaks = T.alloc_reducer((rows,), fp32, op="max")
-            T.reducer_init(peaks)
-            for r, j in T.Parallel(rows, bc):
-                scores[r, j] = T.if_then_else(
-                    valid[j] >= 0, scores[r, j] * scale, -1.0e30
+        if simd_softmax:
+            with T.SimdVF():
+                active = S.pset(32, "PAT_VL32")
+                one = S.pset(32, "PAT_VL1")
+                half = S.pset(32, "PAT_VL16")
+                full = S.pset(32, "PAT_ALL")
+                live = S.vcmps(S.vld(valid[0]), T.int32(0), active, "ge")
+                neg_inf = S.vdup(-T.infinity(fp32), fp32, full)
+                rotate = S.vand(
+                    T.reinterpret(S.vci(16, "int32"), "uint32x64"),
+                    S.vdup(T.uint32(63), "uint32", full),
+                    full,
                 )
-                T.reducer_update(peaks[r], scores[r, j])
-            tile_max = T.alloc_fragment((rows,), fp32)
-            T.finalize_reducer(peaks, tile_max)
-            for r in T.Parallel(rows):
-                peak = T.max(maximum[r], tile_max[r])
-                alpha[r] = T.exp(maximum[r] - peak)
-                maximum[r] = peak
-            sums = T.alloc_reducer((rows,), fp32, op="sum")
-            T.reducer_init(sums)
-            for r, j in T.Parallel(rows, bc):
-                prob = T.if_then_else(
-                    valid[j] >= 0, T.exp(scores[r, j] - maximum[r]), 0
-                )
-                T.reducer_update(sums[r], prob)
-                if softmax_nz:
-                    pn[r, j] = T.cast(prob, dtype)
-                else:
-                    p[r, j] = T.cast(prob, dtype)
-            tile_sum = T.alloc_fragment((rows,), fp32)
-            T.finalize_reducer(sums, tile_sum)
-            for r in T.Parallel(rows):
-                total[r] = total[r] * alpha[r] + tile_sum[r]
+                for r in T.serial(rows):
+                    scaled = S.vmuls(S.vld(scores[r, 0]), T.float32(scale), active)
+                    masked = S.vsel(scaled, neg_inf, live)
+                    previous = S.vld(maximum[r], "BRC_B32")
+                    block_max = S.vdupv(S.vcmax(masked, active), active)
+                    peak = S.vmax(previous, block_max, active)
+                    weight = S.vexpdif(previous, peak, active)
+                    prob = S.vexpdif(masked, peak, active)
+                    previous_sum = S.vld(total[r], "BRC_B32")
+                    updated = S.vadd(
+                        S.vmul(previous_sum, weight, active),
+                        S.vcadd(prob, active),
+                        active,
+                    )
+                    S.vsts(maximum[r], peak, one, "ONEPT_B32")
+                    S.vsts(total[r], updated, one, "ONEPT_B32")
+                    S.vsts(alpha[r], weight, one, "ONEPT_B32")
+                    low = S.vcvt(
+                        prob, dtype, active, round="ROUND_R", sat=False, part=0
+                    )
+                    high = S.vcvt(
+                        S.vselr(prob, rotate),
+                        dtype,
+                        half,
+                        round="ROUND_R",
+                        sat=False,
+                        part=0,
+                    )
+                    S.vsts(pn[r, 0], low, half, "PK_B32", extent=16)
+                    S.vsts(pn[r, 16], high, half, "PK_B32", extent=16)
+        else:
+            with T.SimtVF(threads=128):
+                peaks = T.alloc_reducer((rows,), fp32, op="max")
+                T.reducer_init(peaks)
+                for r, j in T.Parallel(rows, bc):
+                    scores[r, j] = T.if_then_else(
+                        valid[j] >= 0, scores[r, j] * scale, -1.0e30
+                    )
+                    T.reducer_update(peaks[r], scores[r, j])
+                tile_max = T.alloc_fragment((rows,), fp32)
+                T.finalize_reducer(peaks, tile_max)
+                for r in T.Parallel(rows):
+                    peak = T.max(maximum[r], tile_max[r])
+                    alpha[r] = T.exp(maximum[r] - peak)
+                    maximum[r] = peak
+                sums = T.alloc_reducer((rows,), fp32, op="sum")
+                T.reducer_init(sums)
+                for r, j in T.Parallel(rows, bc):
+                    prob = T.if_then_else(
+                        valid[j] >= 0, T.exp(scores[r, j] - maximum[r]), 0
+                    )
+                    T.reducer_update(sums[r], prob)
+                    if softmax_nz:
+                        pn[r, j] = T.cast(prob, dtype)
+                    else:
+                        p[r, j] = T.cast(prob, dtype)
+                tile_sum = T.alloc_fragment((rows,), fp32)
+                T.finalize_reducer(sums, tile_sum)
+                for r in T.Parallel(rows):
+                    total[r] = total[r] * alpha[r] + tile_sum[r]
         if not softmax_nz:
             T.copy(p, pn[:rows, :])
         T.dual_copy(pn[:rows, :], p_l1)
@@ -286,13 +334,13 @@ def build_kernel(
                     pn: make_ascend_compact_nz_layout(pn),
                 }
             )
-            scores = T.alloc_shared((rows, bc), fp32)
+            scores = T.alloc_shared((rows + (1 if simd_softmax else 0), bc), fp32)
             current = T.alloc_shared((rows, part), fp32)
             output = T.alloc_shared((rows, dim), fp32)
             maximum = T.alloc_shared((rows,), fp32)
             total = T.alloc_shared((rows,), fp32)
             alpha = T.alloc_shared((rows,), fp32)
-            valid = T.alloc_shared((bc,), "int32")
+            valid = T.alloc_shared((64 if simd_softmax else bc,), "int32")
             T.copy(Q[qi, hi : hi + br, :], q_l1)
             if br == 32:
                 T.copy(q_l1, qa)
