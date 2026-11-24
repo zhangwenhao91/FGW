@@ -1,5 +1,22 @@
-git fetch origin main &&
-git restore --source=FETCH_HEAD --worktree -- json-3.12.0.tar.gz &&
+set -o pipefail
 printf '%s  %s\n' \
   4b92eb0c06d10683f7447ce9406cb97cd4b453be18d7279320f7b2f025c10187 \
-  json-3.12.0.tar.gz | sha256sum -c -
+  json-3.12.0.tar.gz | sha256sum -c - &&
+python - <<'PY' &&
+from pathlib import Path
+
+archive = Path("json-3.12.0.tar.gz").resolve()
+script = Path(
+    "../ops-transformer-sfa/build/third_party_json-prefix/src/"
+    "third_party_json-stamp/download-third_party_json.cmake"
+)
+url = "https://cann-3rd.obs.cn-north-4.myhuaweicloud.com/json/json-3.12.0.tar.gz"
+text = script.read_text()
+if url not in text:
+    raise SystemExit(f"未找到原下载地址：{script}")
+script.write_text(text.replace(url, archive.as_uri()))
+print("CMake 将从本地读取：", archive)
+PY
+cmake --build ../ops-transformer-sfa/build \
+  --target ops_transformer_kernel --parallel 4 \
+  2>&1 | tee reports/dsa/sfa-lines.yQvkcNCM/resume.log
