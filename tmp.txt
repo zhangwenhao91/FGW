@@ -1,6 +1,307 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach e579290
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case simd-output-long --device npu:0 &&
+> python -u -m benchmarks.dsa_dense_sfa --case simd-output-long --device npu:0 \
+>   --profile-dir reports/dsa/profile
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (simd-output-long)
+Compiling one 512-column PV and one FIXPIPE per KV tile
+Compiling fixed-28-core indexed PV512
+Compiling SIMD normalization and DMA output
+2026-11-24 11:18:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 11:18:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Accuracy passed. Starting alternating Event measurements
+timing 1/6
+timing 2/6
+timing 3/6
+timing 4/6
+timing 5/6
+timing 6/6
+{
+  "case": "simd-output-long",
+  "shape": [
+    1,
+    1024,
+    4096,
+    128,
+    1,
+    1024,
+    512,
+    64
+  ],
+  "dtype": "bfloat16",
+  "torch": "2.13.0+cpu",
+  "torch_npu": "2.13.0",
+  "accuracy": {
+    "native_sfa": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_pv512": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_persistent": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_simd_output": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    }
+  },
+  "samples_us": {
+    "native_sfa": [
+      1786.4700555801392,
+      1797.1309423446655,
+      1786.9980335235596,
+      1785.7190370559692,
+      1785.4690551757812,
+      1787.7700328826904
+    ],
+    "tilelang_pv512": [
+      6767.263889312744,
+      6733.940124511719,
+      6737.06579208374,
+      6735.566139221191,
+      6734.510898590088,
+      6738.92879486084
+    ],
+    "tilelang_persistent": [
+      6554.6112060546875,
+      6539.938926696777,
+      6537.511825561523,
+      6540.264129638672,
+      6536.397933959961,
+      6537.759780883789
+    ],
+    "tilelang_simd_output": [
+      6542.622089385986,
+      6421.7400550842285,
+      6424.084186553955,
+      6422.23596572876,
+      6417.830944061279,
+      6421.964168548584
+    ]
+  },
+  "median_us": {
+    "native_sfa": 1786.7340445518494,
+    "tilelang_pv512": 6736.315965652466,
+    "tilelang_persistent": 6538.849353790283,
+    "tilelang_simd_output": 6422.100067138672
+  },
+  "persistent_speedup_vs_indexed_pv512": 1.0301989847415156,
+  "persistent_speedup_vs_sfa": 0.2732489996143065,
+  "simd_output_speedup_vs_persistent": 1.0181793004517334,
+  "simd_output_speedup_vs_sfa": 0.27821647527643056
+}
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (simd-output-long)
+Compiling one 512-column PV and one FIXPIPE per KV tile
+Compiling fixed-28-core indexed PV512
+Compiling SIMD normalization and DMA output
+Profiling native_sfa in /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv
+[2026-11-24 11:18:59] [WARNING] [777] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 11:18:59] [INFO] [1943] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv/native_sfa/ubuntu162_777_20261124111859270_ascend_pt
+[2026-11-24 11:19:01] [INFO] [1961] profiler.py: CANN profiling data parsed in a total time of 0:00:02.012699
+[2026-11-24 11:19:02] [INFO] [1943] profiler.py: All profiling data parsed in a total time of 0:00:02.910471
+Profiling tilelang_pv512 in /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv
+[2026-11-24 11:19:03] [WARNING] [777] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 11:19:03] [INFO] [2304] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv/tilelang_pv512/ubuntu162_777_20261124111903002_ascend_pt
+[2026-11-24 11:19:04] [ERROR] [2304] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv/tilelang_pv512/ubuntu162_777_20261124111903002_ascend_pt/logs
+[2026-11-24 11:19:05] [INFO] [2320] profiler.py: CANN profiling data parsed in a total time of 0:00:02.014129
+[2026-11-24 11:19:06] [INFO] [2304] profiler.py: All profiling data parsed in a total time of 0:00:02.924883
+Profiling tilelang_persistent in /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv
+[2026-11-24 11:19:06] [WARNING] [777] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 11:19:07] [INFO] [2870] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv/tilelang_persistent/ubuntu162_777_20261124111906761_ascend_pt
+[2026-11-24 11:19:08] [ERROR] [2870] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv/tilelang_persistent/ubuntu162_777_20261124111906761_ascend_pt/logs
+[2026-11-24 11:19:09] [INFO] [2891] profiler.py: CANN profiling data parsed in a total time of 0:00:02.014346
+[2026-11-24 11:19:10] [INFO] [2870] profiler.py: All profiling data parsed in a total time of 0:00:02.952321
+Profiling tilelang_simd_output in /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv
+[2026-11-24 11:19:10] [WARNING] [777] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 11:19:11] [INFO] [3226] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv/tilelang_simd_output/ubuntu162_777_20261124111910534_ascend_pt
+[2026-11-24 11:19:12] [ERROR] [3226] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv/tilelang_simd_output/ubuntu162_777_20261124111910534_ascend_pt/logs
+[2026-11-24 11:19:13] [INFO] [3243] profiler.py: CANN profiling data parsed in a total time of 0:00:02.016541
+[2026-11-24 11:19:14] [INFO] [3226] profiler.py: All profiling data parsed in a total time of 0:00:02.981892
+/home/z30086261/FGW/reports/dsa/profile/simd-output-long-e_4b3amv/summary.json
+{
+  "case": "simd-output-long",
+  "shape": {
+    "batch": 1,
+    "q": 1024,
+    "kv": 4096,
+    "heads": 128,
+    "kv_heads": 1,
+    "topk": 1024,
+    "d": 512,
+    "tail": 64
+  },
+  "dtype": "bfloat16",
+  "profiles": {
+    "native_sfa": {
+      "files": [
+        "native_sfa/ubuntu162_777_20261124111859270_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "native_sfa/ubuntu162_777_20261124111859270_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "SparseFlashAttention": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795519139445626.5,
+            "Task Duration(us)": 1768.309,
+            "Task Wait Time(us)": 0.008,
+            "Block Num": 28.0,
+            "Mix Block Num": 56.0,
+            "aicore_time(us)": 1767.88,
+            "aic_mac_time(us)": 851.401,
+            "aic_mac_ratio": 0.482,
+            "aic_scalar_time(us)": 442.488,
+            "aic_scalar_ratio": 0.25,
+            "aic_mte1_time(us)": 590.94,
+            "aic_mte1_ratio": 0.334,
+            "aic_mte2_time(us)": 937.002,
+            "aic_mte2_ratio": 0.53,
+            "aic_mte3_time(us)": 0.001,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 273.002,
+            "aic_fixpipe_ratio": 0.154,
+            "aiv_time(us)": 1766.9,
+            "aiv_vec_time(us)": 363.277,
+            "aiv_vec_ratio": 0.206,
+            "aiv_scalar_time(us)": 1046.764,
+            "aiv_scalar_ratio": 0.592,
+            "aiv_mte2_time(us)": 475.481,
+            "aiv_mte2_ratio": 0.269,
+            "aiv_mte3_time(us)": 341.751,
+            "aiv_mte3_ratio": 0.193,
+            "cube_utilization(%)": 98.03
+          }
+        }
+      }
+    },
+    "tilelang_pv512": {
+      "files": [
+        "tilelang_pv512/ubuntu162_777_20261124111903002_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "tilelang_pv512/ubuntu162_777_20261124111903002_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "forward_kernel": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795519143212299.2,
+            "Task Duration(us)": 6743.578,
+            "Task Wait Time(us)": 0.0,
+            "Block Num": 2048.0,
+            "Mix Block Num": 4096.0,
+            "aicore_time(us)": 6743.21,
+            "aic_mac_time(us)": 1222.268,
+            "aic_mac_ratio": 0.181,
+            "aic_scalar_time(us)": 134.236,
+            "aic_scalar_ratio": 0.02,
+            "aic_mte1_time(us)": 1016.002,
+            "aic_mte1_ratio": 0.151,
+            "aic_mte2_time(us)": 84.401,
+            "aic_mte2_ratio": 0.013,
+            "aic_mte3_time(us)": 0.093,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 968.861,
+            "aic_fixpipe_ratio": 0.144,
+            "aiv_time(us)": 6705.84,
+            "aiv_vec_time(us)": 3665.091,
+            "aiv_vec_ratio": 0.547,
+            "aiv_scalar_time(us)": 1150.837,
+            "aiv_scalar_ratio": 0.172,
+            "aiv_mte2_time(us)": 738.535,
+            "aiv_mte2_ratio": 0.11,
+            "aiv_mte3_time(us)": 344.646,
+            "aiv_mte3_ratio": 0.051,
+            "cube_utilization(%)": 94.871
+          }
+        }
+      }
+    },
+    "tilelang_persistent": {
+      "files": [
+        "tilelang_persistent/ubuntu162_777_20261124111906761_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "tilelang_persistent/ubuntu162_777_20261124111906761_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "forward_kernel": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795519146984457.8,
+            "Task Duration(us)": 6528.502,
+            "Task Wait Time(us)": 0.011,
+            "Block Num": 28.0,
+            "Mix Block Num": 56.0,
+            "aicore_time(us)": 6528.19,
+            "aic_mac_time(us)": 1175.12,
+            "aic_mac_ratio": 0.18,
+            "aic_scalar_time(us)": 127.609,
+            "aic_scalar_ratio": 0.02,
+            "aic_mte1_time(us)": 977.114,
+            "aic_mte1_ratio": 0.15,
+            "aic_mte2_time(us)": 74.612,
+            "aic_mte2_ratio": 0.011,
+            "aic_mte3_time(us)": 0.001,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 929.322,
+            "aic_fixpipe_ratio": 0.142,
+            "aiv_time(us)": 6445.66,
+            "aiv_vec_time(us)": 3494.457,
+            "aiv_vec_ratio": 0.542,
+            "aiv_scalar_time(us)": 1134.792,
+            "aiv_scalar_ratio": 0.176,
+            "aiv_mte2_time(us)": 694.488,
+            "aiv_mte2_ratio": 0.108,
+            "aiv_mte3_time(us)": 344.084,
+            "aiv_mte3_ratio": 0.053,
+            "cube_utilization(%)": 98.677
+          }
+        }
+      }
+    },
+    "tilelang_simd_output": {
+      "files": [
+        "tilelang_simd_output/ubuntu162_777_20261124111910534_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "tilelang_simd_output/ubuntu162_777_20261124111910534_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "forward_kernel": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795519150749396.5,
+            "Task Duration(us)": 6411.343,
+            "Task Wait Time(us)": 0.009,
+            "Block Num": 28.0,
+            "Mix Block Num": 56.0,
+            "aicore_time(us)": 6411.03,
+            "aic_mac_time(us)": 1176.551,
+            "aic_mac_ratio": 0.184,
+            "aic_scalar_time(us)": 127.735,
+            "aic_scalar_ratio": 0.02,
+            "aic_mte1_time(us)": 979.36,
+            "aic_mte1_ratio": 0.153,
+            "aic_mte2_time(us)": 62.627,
+            "aic_mte2_ratio": 0.01,
+            "aic_mte3_time(us)": 0.001,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 928.591,
+            "aic_fixpipe_ratio": 0.145,
+            "aiv_time(us)": 6321.9,
+            "aiv_vec_time(us)": 3359.405,
+            "aiv_vec_ratio": 0.531,
+            "aiv_scalar_time(us)": 1112.463,
+            "aiv_scalar_ratio": 0.176,
+            "aiv_mte2_time(us)": 680.268,
+            "aiv_mte2_ratio": 0.108,
+            "aiv_mte3_time(us)": 373.429,
+            "aiv_mte3_ratio": 0.059,
+            "cube_utilization(%)": 98.558
+          }
+        }
+      }
+    }
+  },
+  "status": "passed"
+}
 
-python -u -m benchmarks.dsa_dense_sfa --case simd-output-long --device npu:0 &&
-python -u -m benchmarks.dsa_dense_sfa --case simd-output-long --device npu:0 \
-  --profile-dir reports/dsa/profile
+(zwh) root@ubuntu162:/home/z30086261/FGW#
