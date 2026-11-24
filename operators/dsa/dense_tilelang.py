@@ -33,6 +33,7 @@ def build_kernel(
     direct_nz=False,
     persistent=False,
     simd_output=False,
+    lineinfo=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -597,5 +598,9 @@ def build_kernel(
                             )
 
     return tilelang.compile(
-        forward, out_idx=[3], target="ascend", execution_backend="auto"
+        forward,
+        out_idx=[3],
+        target="ascend",
+        execution_backend="auto",
+        compile_flags=["-g"] if lineinfo else None,
     )
