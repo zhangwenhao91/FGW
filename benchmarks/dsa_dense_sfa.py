@@ -36,6 +36,7 @@ def main():
             "native-sfa-long",
             "simd-output-long",
             "kv64-simd-long",
+            "kv128-simd-long",
             "kv-nz-diagnostic",
             "direct-kv-nz",
             "gather-once",
@@ -63,6 +64,7 @@ def main():
         "native-sfa-long",
         "kv64-simd-long",
     )
+    profile_cases += ("kv128-simd-long",)
     if args.profile_dir and args.case not in profile_cases:
         parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
@@ -85,7 +87,8 @@ def main():
     rolling = args.case == "rolling-gather"
     gather_once = args.case in ("gather-once", "rolling-gather")
     short_pv512 = kv_nz_diagnostic or direct_nz or gather_once
-    kv64_simd = args.case == "kv64-simd-long"
+    kv128_simd = args.case == "kv128-simd-long"
+    kv64_simd = args.case == "kv64-simd-long" or kv128_simd
     simd_output = args.case == "simd-output-long" or kv64_simd
     persistent = args.case == "persistent-long" or simd_output
     wide_pv_long = args.case == "pv512-long" or persistent or short_pv512
@@ -656,7 +659,7 @@ def main():
 
         outputs["tilelang_persistent"] = tilelang_persistent().cpu()
         calls["tilelang_persistent"] = tilelang_persistent
-    if simd_output:
+    if simd_output and not kv128_simd:
         print("Compiling SIMD normalization and DMA output", flush=True)
         output_kernel = build_kernel(
             sq,
@@ -711,6 +714,34 @@ def main():
 
         outputs["tilelang_kv64_simd"] = tilelang_kv64_simd().cpu()
         calls["tilelang_kv64_simd"] = tilelang_kv64_simd
+    if kv128_simd:
+        print("Compiling KV128: two-stage pipeline and four PV K slices", flush=True)
+        kv128_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=512,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+            batch_pv=True,
+            persistent=True,
+            simd_output=True,
+            kv_tile=128,
+        )
+
+        def tilelang_kv128_simd():
+            return kv128_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_kv128_simd"] = tilelang_kv128_simd().cpu()
+        calls["tilelang_kv128_simd"] = tilelang_kv128_simd
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -903,10 +934,14 @@ def main():
             medians["tilelang_persistent"] / new
         )
         report["simd_output_speedup_vs_sfa"] = medians["native_sfa"] / new
-    if kv64_simd:
+    if kv64_simd and not kv128_simd:
         wide = medians["tilelang_kv64_simd"]
         report["kv64_speedup_vs_kv32"] = medians["tilelang_simd_output"] / wide
         report["kv64_speedup_vs_sfa"] = medians["native_sfa"] / wide
+    if kv128_simd:
+        wide = medians["tilelang_kv128_simd"]
+        report["kv128_speedup_vs_kv64"] = medians["tilelang_kv64_simd"] / wide
+        report["kv128_speedup_vs_sfa"] = medians["native_sfa"] / wide
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

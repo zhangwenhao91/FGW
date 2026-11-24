@@ -62,9 +62,11 @@ def build_kernel(
         raise ValueError("batched PV handoff requires SIMD PV")
     if simd_pv and not simd_softmax:
         raise ValueError("SIMD PV requires the SIMD softmax baseline")
-    if simd_softmax and not (staged and kv_tile in (32, 64) and not selective_zero):
+    if simd_softmax and not (
+        staged and kv_tile in (32, 64, 128) and not selective_zero
+    ):
         raise ValueError(
-            "SIMD softmax requires staged NZ, KV32/KV64, and full zero fill"
+            "SIMD softmax requires staged NZ, KV32/KV64/KV128, and full zero fill"
         )
     if selective_zero and not dma_gather:
         raise ValueError("selective zero requires DMA gather")
@@ -83,13 +85,15 @@ def build_kernel(
         head_tile == 64 and batch_pv and (kv_tile == 32 or simd_softmax)
     ):
         raise ValueError("512-column PV requires the batched 64-head path")
-    if kv_tile not in (32, 64) or (kv_tile == 64 and head_tile != 64):
-        raise ValueError("64-row KV tiles require 64-head tiles")
+    if kv_tile not in (32, 64, 128) or (kv_tile > 32 and head_tile != 64):
+        raise ValueError("wide KV tiles require 64-head tiles")
+    if kv_tile == 128 and not (simd_softmax and pv_width == 512 and persistent):
+        raise ValueError("KV128 requires the persistent SIMD/PV512 path")
     br, bc, rows, part = head_tile, kv_tile, head_tile // 2, pv_width
     gather_rows = 16
-    split_pv_k = bc == 64 and part == 512
+    split_pv_k = bc >= 64 and part == 512
     pv_k = 32 if split_pv_k else bc
-    qk_width = width if br == 32 else 192
+    qk_width = width if br == 32 else (96 if bc == 128 else 192)
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
     tasks = sq * (heads // br)
@@ -200,7 +204,7 @@ def build_kernel(
             T.copy(k_l1, kb)
             T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
         else:
-            # Full-width Q exceeds L0A with 64 heads. Accumulate three K slices
+            # Full-width Q exceeds L0A with 64 heads. Accumulate K slices
             # in FP32 before applying scale and softmax.
             for section in T.serial(width // qk_width):
                 lo = section * qk_width
@@ -218,6 +222,8 @@ def build_kernel(
                 half = S.pset(32, "PAT_VL16")
                 full = S.pset(32, "PAT_ALL")
                 live = S.vcmps(S.vld(valid[0]), T.int32(0), active, "ge")
+                if bc == 128:
+                    live_hi = S.vcmps(S.vld(valid[64]), T.int32(0), full, "ge")
                 neg_inf = S.vdup(-T.infinity(fp32), fp32, full)
                 rotate = S.vand(
                     T.reinterpret(S.vci(16, "int32"), "uint32x64"),
@@ -228,15 +234,27 @@ def build_kernel(
                     scaled = S.vmuls(S.vld(scores[r, 0]), T.float32(scale), active)
                     masked = S.vsel(scaled, neg_inf, live)
                     previous = S.vld(maximum[r], "BRC_B32")
-                    block_max = S.vdupv(S.vcmax(masked, active), active)
+                    if bc == 128:
+                        scaled_hi = S.vmuls(
+                            S.vld(scores[r, 64]), T.float32(scale), full
+                        )
+                        masked_hi = S.vsel(scaled_hi, neg_inf, live_hi)
+                        block_max = S.vdupv(
+                            S.vcmax(S.vmax(masked, masked_hi, full), full), full
+                        )
+                    else:
+                        block_max = S.vdupv(S.vcmax(masked, active), active)
                     peak = S.vmax(previous, block_max, active)
                     weight = S.vexpdif(previous, peak, active)
                     prob = S.vexpdif(masked, peak, active)
                     previous_sum = S.vld(total[r], "BRC_B32")
+                    if bc == 128:
+                        prob_hi = S.vexpdif(masked_hi, peak, full)
+                        block_sum = S.vcadd(S.vadd(prob, prob_hi, full), full)
+                    else:
+                        block_sum = S.vcadd(prob, active)
                     updated = S.vadd(
-                        S.vmul(previous_sum, weight, active),
-                        S.vcadd(prob, active),
-                        active,
+                        S.vmul(previous_sum, weight, active), block_sum, active
                     )
                     S.vsts(maximum[r], peak, one, "ONEPT_B32")
                     S.vsts(total[r], updated, one, "ONEPT_B32")
@@ -254,7 +272,7 @@ def build_kernel(
                     )
                     S.vsts(pn[r, 0], low, half, "PK_B32", extent=16)
                     S.vsts(pn[r, 16], high, half, "PK_B32", extent=16)
-                    if bc == 64:
+                    if bc >= 64:
                         for group in T.unroll(2, 4, explicit=True):
                             lane = S.vand(
                                 T.reinterpret(S.vci(group * 16, "int32"), "uint32x64"),
@@ -270,6 +288,28 @@ def build_kernel(
                                 part=0,
                             )
                             S.vsts(pn[r, group * 16], value, half, "PK_B32", extent=16)
+                    if bc == 128:
+                        for group in T.unroll(4, explicit=True):
+                            lane_hi = S.vand(
+                                T.reinterpret(S.vci(group * 16, "int32"), "uint32x64"),
+                                S.vdup(T.uint32(63), "uint32", full),
+                                full,
+                            )
+                            value_hi = S.vcvt(
+                                S.vselr(prob_hi, lane_hi),
+                                dtype,
+                                half,
+                                round="ROUND_R",
+                                sat=False,
+                                part=0,
+                            )
+                            S.vsts(
+                                pn[r, 64 + group * 16],
+                                value_hi,
+                                half,
+                                "PK_B32",
+                                extent=16,
+                            )
         else:
             with T.SimtVF(threads=128):
                 peaks = T.alloc_reducer((rows,), fp32, op="max")
@@ -327,7 +367,7 @@ def build_kernel(
             T.copy(p_l1, pa)
         for chunk in T.serial(dim // part):
             if split_pv_k:
-                # Accumulate K in two L0-sized slices, then emit one FIXPIPE.
+                # Accumulate K in L0-sized slices, then emit one FIXPIPE.
                 for piece in T.serial(bc // pv_k):
                     first = piece * pv_k
                     T.copy(p_l1[:, first : first + pv_k], pa)
@@ -478,7 +518,7 @@ def build_kernel(
             maximum = T.alloc_shared((rows,), fp32)
             total = T.alloc_shared((rows,), fp32)
             alpha = T.alloc_shared((rows,), fp32)
-            valid = T.alloc_shared((64 if simd_softmax else bc,), "int32")
+            valid = T.alloc_shared((max(64, bc) if simd_softmax else bc,), "int32")
             # Distribute the remainder across the first cores. Each core
             # owns a contiguous range of (query, head group) tasks.
             count = tasks // grid + T.if_then_else(core < tasks % grid, 1, 0)
@@ -499,7 +539,7 @@ def build_kernel(
                 if staged:
                     for block in T.Pipelined(
                         T.ceildiv(topk, bc),
-                        num_stages=3,
+                        num_stages=2 if bc == 128 else 3,
                         annotations={"enable_offset": True},
                     ):
                         with T.Stage(0):
@@ -512,7 +552,7 @@ def build_kernel(
                             compute_softmax(
                                 valid, scores, maximum, alpha, total, p, pn, p_l1
                             )
-                        with T.Stage(2):
+                        with T.Stage(1 if bc == 128 else 2):
                             compute_pv(
                                 block,
                                 qi,
