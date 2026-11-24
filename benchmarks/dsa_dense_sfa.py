@@ -33,6 +33,7 @@ def main():
             "batched-pv-long",
             "pv512-long",
             "persistent-long",
+            "simd-output-long",
             "kv-nz-diagnostic",
             "direct-kv-nz",
             "gather-once",
@@ -53,7 +54,7 @@ def main():
         "kv-nz-diagnostic",
         "direct-kv-nz",
     )
-    profile_cases += ("persistent-long",)
+    profile_cases += ("persistent-long", "simd-output-long")
     if args.profile_dir and args.case not in profile_cases:
         parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
@@ -74,7 +75,8 @@ def main():
     rolling = args.case == "rolling-gather"
     gather_once = args.case in ("gather-once", "rolling-gather")
     short_pv512 = kv_nz_diagnostic or direct_nz or gather_once
-    persistent = args.case == "persistent-long"
+    simd_output = args.case == "simd-output-long"
+    persistent = args.case == "persistent-long" or simd_output
     wide_pv_long = args.case == "pv512-long" or persistent or short_pv512
     batched_pv = args.case == "batched-pv-long" or wide_pv_long
     long_pv = batched_pv or args.case in ("simd-pv-long-full", "simd-pv-long-discrete")
@@ -642,6 +644,33 @@ def main():
 
         outputs["tilelang_persistent"] = tilelang_persistent().cpu()
         calls["tilelang_persistent"] = tilelang_persistent
+    if simd_output:
+        print("Compiling SIMD normalization and DMA output", flush=True)
+        output_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=512,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+            batch_pv=True,
+            persistent=True,
+            simd_output=True,
+        )
+
+        def tilelang_simd_output():
+            return output_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_simd_output"] = tilelang_simd_output().cpu()
+        calls["tilelang_simd_output"] = tilelang_simd_output
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -824,6 +853,12 @@ def main():
             medians["tilelang_pv512"] / fixed
         )
         report["persistent_speedup_vs_sfa"] = medians["native_sfa"] / fixed
+    if simd_output:
+        new = medians["tilelang_simd_output"]
+        report["simd_output_speedup_vs_persistent"] = (
+            medians["tilelang_persistent"] / new
+        )
+        report["simd_output_speedup_vs_sfa"] = medians["native_sfa"] / new
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

@@ -32,6 +32,7 @@ def build_kernel(
     packed_nd=False,
     direct_nz=False,
     persistent=False,
+    simd_output=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -564,11 +565,36 @@ def build_kernel(
                             current,
                             output,
                         )
-                with T.SimtVF(threads=128):
-                    for r, d in T.Parallel(rows, dim):
-                        Out[qi, hi + sid * rows + r, d] = T.cast(
-                            output[r, d] / T.max(total[r], 1e-30), dtype
-                        )
+                if simd_output:
+                    final = T.view(output, (rows, dim * 2), dtype=dtype)
+                    with T.SimdVF():
+                        mask = S.pset(32, "PAT_ALL")
+                        floor = S.vdup(T.float32(1e-30), fp32, mask)
+                        for r in T.serial(rows):
+                            denominator = S.vmax(
+                                S.vld(total[r], "BRC_B32"), floor, mask
+                            )
+                            for c in T.serial(dim // 64):
+                                value = S.vdiv(
+                                    S.vld(output[r, c * 64]), denominator, mask
+                                )
+                                converted = S.vcvt(
+                                    value,
+                                    dtype,
+                                    mask,
+                                    round="ROUND_R",
+                                    sat=False,
+                                    part=0,
+                                )
+                                S.vsts(final[r, c * 64], converted, mask, "PK_B32")
+                    start = hi + sid * rows
+                    T.copy(final[:, :dim], Out[qi, start : start + rows, :])
+                else:
+                    with T.SimtVF(threads=128):
+                        for r, d in T.Parallel(rows, dim):
+                            Out[qi, hi + sid * rows + r, d] = T.cast(
+                                output[r, d] / T.max(total[r], 1e-30), dtype
+                            )
 
     return tilelang.compile(
         forward, out_idx=[3], target="ascend", execution_backend="auto"
