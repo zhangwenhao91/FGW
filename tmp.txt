@@ -1,58 +1,8 @@
-      [2026-11-24 20:11:55] -- [download 100% complete]
-      [2026-11-24 20:11:55] -- Downloading... done
-      [2026-11-24 20:11:56] [165/497] Performing configure step for 'tiling_sink_task'
-      [2026-11-24 20:11:56] FAILED: [code=1] common/tiling_sink_task-prefix/src/tiling_sink_task-stamp/tiling_sink_task-configure /home/z30086261/vllm-ascend/csrc/build/common/tiling_sink_task-prefix/src/tiling_sink_task-stamp/tiling_sink_task-configure
-      [2026-11-24 20:11:56] cd /home/z30086261/vllm-ascend/csrc/build/common/tiling_sink_task-prefix/src/tiling_sink_task-build && /root/miniconda3/envs/zwh/lib/python3.12/site-packages/cmake/data/bin/cmake -G Ninja -DBUILD_OPEN_PROJECT=ON -DCMAKE_BUILD_TYPE=Release -DASCEND_CANN_PACKAGE_PATH=/home/CANN/9.3.0.weekly.20260930/cann-9.3.0 -DCMAKE_C_COMPILER=/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-g++ -DCMAKE_C_COMPILER_LAUNCHER= -DCMAKE_CXX_COMPILER_LAUNCHER= -DSYS_VERSION=9.1 -DOPS_ADV_CMAKE_DIR=/home/z30086261/vllm-ascend/csrc/cmake -DPRODUCT_SIDE=device -DENABLE_BUILT_IN=OFF /home/z30086261/vllm-ascend/csrc/common/src/tiling_sink && /root/miniconda3/envs/zwh/lib/python3.12/site-packages/cmake/data/bin/cmake -E touch /home/z30086261/vllm-ascend/csrc/build/common/tiling_sink_task-prefix/src/tiling_sink_task-stamp/tiling_sink_task-configure
-      [2026-11-24 20:11:56] -- The C compiler identification is GNU 14.3.0
-      [2026-11-24 20:11:56] -- The CXX compiler identification is GNU 14.3.0
-      [2026-11-24 20:11:56] -- Detecting C compiler ABI info
-      [2026-11-24 20:11:56] -- Detecting C compiler ABI info - failed
-      [2026-11-24 20:11:56] -- Check for working C compiler: /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-gcc
-      [2026-11-24 20:11:56] -- Check for working C compiler: /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-gcc - broken
-      [2026-11-24 20:11:56] CMake Error at /root/miniconda3/envs/zwh/lib/python3.12/site-packages/cmake/data/share/cmake-4.4/Modules/CMakeTestCCompiler.cmake:65 (message):
-      [2026-11-24 20:11:56]   The C compiler
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]     "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-gcc"
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]   is not able to compile a simple test program.
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]   It fails with the following output:
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]     Change Dir: '/home/z30086261/vllm-ascend/csrc/build/common/tiling_sink_task-prefix/src/tiling_sink_task-build/CMakeFiles/CMakeScratch/TryCompile-PNgiwT'
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]     Run Build Command(s): /root/miniconda3/envs/zwh/bin/ninja -v cmTC_32bbf
-      [2026-11-24 20:11:56]     [1/2] /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-gcc   -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /root/miniconda3/envs/zwh/include -o CMakeFiles/cmTC_32bbf.dir/testCCompiler.c.o -c /home/z30086261/vllm-ascend/csrc/build/common/tiling_sink_task-prefix/src/tiling_sink_task-build/CMakeFiles/CMakeScratch/TryCompile-PNgiwT/testCCompiler.c
-      [2026-11-24 20:11:56]     FAILED: [code=1] CMakeFiles/cmTC_32bbf.dir/testCCompiler.c.o
-      [2026-11-24 20:11:56]     /home/CANN/9.3.0.weekly.20260930/cann-9.3.0/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-gcc   -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /root/miniconda3/envs/zwh/include -o CMakeFiles/cmTC_32bbf.dir/testCCompiler.c.o -c /home/z30086261/vllm-ascend/csrc/build/common/tiling_sink_task-prefix/src/tiling_sink_task-build/CMakeFiles/CMakeScratch/TryCompile-PNgiwT/testCCompiler.c
-      [2026-11-24 20:11:56]     Assembler messages:
-      [2026-11-24 20:11:56]     Error: unknown architecture `nocona'
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]     Error: unrecognized option -march=nocona
-      [2026-11-24 20:11:56]     cc1: error: unknown value 'nocona' for '-march'
-      [2026-11-24 20:11:56]     cc1: note: valid arguments are: armv8-a armv8.1-a armv8.2-a armv8.3-a armv8.4-a armv8.5-a armv8.6-a armv8.7-a armv8.8-a armv8.9-a armv8-r armv9-a armv9.1-a armv9.2-a armv9.3-a armv9.4-a
-      [2026-11-24 20:11:56]     cc1: error: unknown value 'haswell' for '-mtune'
-      [2026-11-24 20:11:56]     cc1: note: valid arguments are: cortex-a34 cortex-a35 cortex-a53 cortex-a57 cortex-a72 cortex-a73 thunderx thunderxt88p1 thunderxt88 octeontx octeontx81 octeontx83 thunderxt81 thunderxt83 ampere1 ampere1a ampere1b emag xgene1 falkor qdf24xx exynos-m1 phecda thunderx2t99p1 vulcan thunderx2t99 cortex-a55 cortex-a75 cortex-a76 cortex-a76ae cortex-a77 cortex-a78 cortex-a78ae cortex-a78c cortex-a65 cortex-a65ae cortex-x1 cortex-x1c neoverse-n1 ares neoverse-e1 octeontx2 octeontx2t98 octeontx2t96 octeontx2t93 octeontx2f95 octeontx2f95n octeontx2f95mm a64fx fujitsu-monaka tsv110 thunderx3t110 neoverse-v1 zeus neoverse-512tvb saphira cortex-a57.cortex-a53 cortex-a72.cortex-a53 cortex-a73.cortex-a35 cortex-a73.cortex-a53 cortex-a75.cortex-a55 cortex-a76.cortex-a55 cortex-r82 cortex-a510 cortex-a520 cortex-a710 cortex-a715 cortex-a720 cortex-a725 cortex-x2 cortex-x3 cortex-x4 cortex-x925 neoverse-n2 cobalt-100 neoverse-n3 neoverse-v2 grace neoverse-v3 neoverse-v3ae demeter generic generic-armv8-a generic-armv9-a
-      [2026-11-24 20:11:56]     ninja: build stopped: subcommand failed.
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]   CMake will not be able to correctly generate this project.
-      [2026-11-24 20:11:56] Call Stack (most recent call first):
-      [2026-11-24 20:11:56]   CMakeLists.txt:12 (project)
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56]
-      [2026-11-24 20:11:56] -- Configuring incomplete, errors occurred!
-      [2026-11-24 20:11:56] ninja: build stopped: subcommand failed.
-      Running bash build_aclnn.sh ...
-      Error running build_aclnn.sh: Command '['bash', 'csrc/build_aclnn.sh', '/home/z30086261/vllm-ascend', 'ascend950pr_9579']' returned non-zero exit status 1.
-      [end of output]
-  
-  note: This error originates from a subprocess, and is likely not a problem with pip.
-  ERROR: Failed building editable for vllm_ascend
-Failed to build vllm_ascend
-error: failed-wheel-build-for-install
+tiling_build=../vllm-ascend/csrc/build/common/tiling_sink_task-prefix/src/tiling_sink_task-build
+if [ -d "$tiling_build" ]; then
+  mv -- "$tiling_build" "${tiling_build}.before-retry-$(date +%s)"
+fi
 
-× Failed to build installable wheels for some pyproject.toml based projects
-╰─> vllm_ascend
+env -u CFLAGS -u CXXFLAGS -u CPPFLAGS -u LDFLAGS \
+  SOC_VERSION=ascend950pr_9579 COMPILE_CUSTOM_KERNELS=1 \
+  python -m pip install --no-build-isolation --no-deps -e ../vllm-ascend
