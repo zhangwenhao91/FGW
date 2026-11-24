@@ -1,11 +1,24 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# curl --noproxy download-r2.pytorch.org --connect-timeout 5 -fsSI \
->   'https://download-r2.pytorch.org/whl/cpu/torch-2.10.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata'
-curl: (6) Could not resolve host: download-r2.pytorch.org
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python -m pip show torch torch-npu vllm | grep -E '^(Name|Version):'
-WARNING: Package(s) not found: vllm
-Name: torch
-Version: 2.13.0+cpu
-Name: torch_npu
-Version: 2.13.0
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+if [ ! -f ../vllm/pyproject.toml ]; then
+  git clone --depth 1 --branch v0.32.0 \
+    https://github.com/vllm-project/vllm.git ../vllm
+fi
+
+constraints=$(mktemp)
+python - <<'PY' > "$constraints"
+from importlib.metadata import version
+
+for name in ("torch", "torch-npu"):
+    print(f"{name}=={version(name)}")
+PY
+
+python - <<'PY' | python -m pip install -c "$constraints" -r /dev/stdin
+from pathlib import Path
+import re
+import tomllib
+
+for path in ("../vllm/pyproject.toml", "../vllm-ascend/pyproject.toml"):
+    for req in tomllib.loads(Path(path).read_text())["build-system"]["requires"]:
+        name = re.split(r"[\s<>=!~;\[]", req, maxsplit=1)[0].replace("_", "-")
+        if name not in {"torch", "torch-npu", "torchvision", "torchaudio"}:
+            print(req)
+PY
