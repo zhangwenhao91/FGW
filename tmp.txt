@@ -1,6 +1,246 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach 32adf96
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case kv-nz-diagnostic --device npu:0 &&
+> python -u -m benchmarks.dsa_dense_sfa --case kv-nz-diagnostic --device npu:0 \
+>   --profile-dir reports/dsa/profile
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (kv-nz-diagnostic)
+Compiling one 512-column PV and one FIXPIPE per KV tile
+2026-11-24 10:33:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 10:33:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Packing KV into per-query NZ slabs outside timing
+2026-11-24 10:33:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 10:33:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Accuracy passed. Starting alternating Event measurements
+timing 1/6
+timing 2/6
+timing 3/6
+timing 4/6
+timing 5/6
+timing 6/6
+{
+  "case": "kv-nz-diagnostic",
+  "shape": [
+    1,
+    64,
+    4096,
+    128,
+    1,
+    1024,
+    512,
+    64
+  ],
+  "dtype": "bfloat16",
+  "torch": "2.13.0+cpu",
+  "torch_npu": "2.13.0",
+  "accuracy": {
+    "native_sfa": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_pv512": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_packed_kv_nz": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    }
+  },
+  "samples_us": {
+    "native_sfa": [
+      136.42799854278564,
+      135.50199568271637,
+      136.09999418258667,
+      136.53500378131866,
+      136.25100255012512,
+      134.10399854183197
+    ],
+    "tilelang_pv512": [
+      437.7959966659546,
+      432.32598900794983,
+      434.5119893550873,
+      431.8299889564514,
+      433.79199504852295,
+      432.2809875011444
+    ],
+    "tilelang_packed_kv_nz": [
+      263.714998960495,
+      260.82900166511536,
+      262.51599192619324,
+      265.83999395370483,
+      262.0849907398224,
+      264.61300253868103
+    ]
+  },
+  "median_us": {
+    "native_sfa": 136.1754983663559,
+    "tilelang_pv512": 433.0589920282364,
+    "tilelang_packed_kv_nz": 263.1154954433441
+  },
+  "packed_nz_bytes": 80216064,
+  "packed_nz_speedup_vs_indexed_pv512": 1.6458893509807966,
+  "packed_nz_speedup_vs_sfa": 0.5175502801038115
+}
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (kv-nz-diagnostic)
+Compiling one 512-column PV and one FIXPIPE per KV tile
+Packing KV into per-query NZ slabs outside timing
+Profiling native_sfa in /home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr
+[2026-11-24 10:33:47] [WARNING] [4142022] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 10:33:48] [INFO] [4142394] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr/native_sfa/ubuntu162_4142022_20261124103347922_ascend_pt
+[2026-11-24 10:33:50] [INFO] [4142410] profiler.py: CANN profiling data parsed in a total time of 0:00:02.014575
+[2026-11-24 10:33:51] [INFO] [4142394] profiler.py: All profiling data parsed in a total time of 0:00:02.891359
+Profiling tilelang_pv512 in /home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr
+[2026-11-24 10:33:51] [WARNING] [4142022] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 10:33:52] [INFO] [4142760] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr/tilelang_pv512/ubuntu162_4142022_20261124103351593_ascend_pt
+[2026-11-24 10:33:53] [ERROR] [4142760] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr/tilelang_pv512/ubuntu162_4142022_20261124103351593_ascend_pt/logs
+[2026-11-24 10:33:54] [INFO] [4142776] profiler.py: CANN profiling data parsed in a total time of 0:00:02.016420
+[2026-11-24 10:33:55] [INFO] [4142760] profiler.py: All profiling data parsed in a total time of 0:00:03.018046
+Profiling tilelang_packed_kv_nz in /home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr
+[2026-11-24 10:33:55] [WARNING] [4142022] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-24 10:33:55] [INFO] [4143121] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr/tilelang_packed_kv_nz/ubuntu162_4142022_20261124103355314_ascend_pt
+[2026-11-24 10:33:57] [ERROR] [4143121] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr/tilelang_packed_kv_nz/ubuntu162_4142022_20261124103355314_ascend_pt/logs
+[2026-11-24 10:33:58] [INFO] [4143137] profiler.py: CANN profiling data parsed in a total time of 0:00:02.034852
+[2026-11-24 10:33:58] [INFO] [4143121] profiler.py: All profiling data parsed in a total time of 0:00:02.917250
+/home/z30086261/FGW/reports/dsa/profile/kv-nz-diagnostic-rsaf_vhr/summary.json
+{
+  "case": "kv-nz-diagnostic",
+  "shape": {
+    "batch": 1,
+    "q": 64,
+    "kv": 4096,
+    "heads": 128,
+    "kv_heads": 1,
+    "topk": 1024,
+    "d": 512,
+    "tail": 64
+  },
+  "dtype": "bfloat16",
+  "profiles": {
+    "native_sfa": {
+      "files": [
+        "native_sfa/ubuntu162_4142022_20261124103347922_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "native_sfa/ubuntu162_4142022_20261124103347922_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "SparseFlashAttention": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795516428097345.2,
+            "Task Duration(us)": 122.312,
+            "Task Wait Time(us)": 0.0,
+            "Block Num": 28.0,
+            "Mix Block Num": 56.0,
+            "aicore_time(us)": 122.03,
+            "aic_mac_time(us)": 57.504,
+            "aic_mac_ratio": 0.471,
+            "aic_scalar_time(us)": 32.966,
+            "aic_scalar_ratio": 0.27,
+            "aic_mte1_time(us)": 40.083,
+            "aic_mte1_ratio": 0.328,
+            "aic_mte2_time(us)": 57.982,
+            "aic_mte2_ratio": 0.474,
+            "aic_mte3_time(us)": 0.001,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 18.417,
+            "aic_fixpipe_ratio": 0.151,
+            "aiv_time(us)": 121.35,
+            "aiv_vec_time(us)": 22.715,
+            "aiv_vec_ratio": 0.187,
+            "aiv_scalar_time(us)": 61.105,
+            "aiv_scalar_ratio": 0.504,
+            "aiv_mte2_time(us)": 29.742,
+            "aiv_mte2_ratio": 0.245,
+            "aiv_mte3_time(us)": 19.603,
+            "aiv_mte3_ratio": 0.161,
+            "cube_utilization(%)": 90.374
+          }
+        }
+      }
+    },
+    "tilelang_pv512": {
+      "files": [
+        "tilelang_pv512/ubuntu162_4142022_20261124103351593_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "tilelang_pv512/ubuntu162_4142022_20261124103351593_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "forward_kernel": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795516431798594.5,
+            "Task Duration(us)": 426.672,
+            "Task Wait Time(us)": 0.0,
+            "Block Num": 128.0,
+            "Mix Block Num": 256.0,
+            "aicore_time(us)": 426.34,
+            "aic_mac_time(us)": 82.799,
+            "aic_mac_ratio": 0.194,
+            "aic_scalar_time(us)": 9.61,
+            "aic_scalar_ratio": 0.023,
+            "aic_mte1_time(us)": 68.877,
+            "aic_mte1_ratio": 0.162,
+            "aic_mte2_time(us)": 3.029,
+            "aic_mte2_ratio": 0.007,
+            "aic_mte3_time(us)": 0.006,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 65.214,
+            "aic_fixpipe_ratio": 0.153,
+            "aiv_time(us)": 423.49,
+            "aiv_vec_time(us)": 219.21,
+            "aiv_vec_ratio": 0.518,
+            "aiv_scalar_time(us)": 78.418,
+            "aiv_scalar_ratio": 0.185,
+            "aiv_mte2_time(us)": 48.244,
+            "aiv_mte2_ratio": 0.114,
+            "aiv_mte3_time(us)": 23.267,
+            "aiv_mte3_ratio": 0.055,
+            "cube_utilization(%)": 87.461
+          }
+        }
+      }
+    },
+    "tilelang_packed_kv_nz": {
+      "files": [
+        "tilelang_packed_kv_nz/ubuntu162_4142022_20261124103355314_ascend_pt/ASCEND_PROFILER_OUTPUT/op_statistic.csv",
+        "tilelang_packed_kv_nz/ubuntu162_4142022_20261124103355314_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json"
+      ],
+      "kernels": {
+        "forward_kernel": {
+          "rows": 5,
+          "median": {
+            "Task Start Time(us)": 1795516435514045.5,
+            "Task Duration(us)": 257.797,
+            "Task Wait Time(us)": 0.0,
+            "Block Num": 128.0,
+            "Mix Block Num": 256.0,
+            "aicore_time(us)": 257.47,
+            "aic_mac_time(us)": 85.829,
+            "aic_mac_ratio": 0.333,
+            "aic_scalar_time(us)": 10.827,
+            "aic_scalar_ratio": 0.042,
+            "aic_mte1_time(us)": 70.534,
+            "aic_mte1_ratio": 0.274,
+            "aic_mte2_time(us)": 4.751,
+            "aic_mte2_ratio": 0.018,
+            "aic_mte3_time(us)": 0.007,
+            "aic_mte3_ratio": 0.0,
+            "aic_fixpipe_time(us)": 82.022,
+            "aic_fixpipe_ratio": 0.319,
+            "aiv_time(us)": 253.0,
+            "aiv_vec_time(us)": 165.935,
+            "aiv_vec_ratio": 0.656,
+            "aiv_scalar_time(us)": 11.7,
+            "aiv_scalar_ratio": 0.046,
+            "aiv_mte2_time(us)": 45.916,
+            "aiv_mte2_ratio": 0.181,
+            "aiv_mte3_time(us)": 31.53,
+            "aiv_mte3_ratio": 0.125,
+            "cube_utilization(%)": 84.24
+          }
+        }
+      }
+    }
+  },
+  "status": "passed"
+}
 
-python -u -m benchmarks.dsa_dense_sfa --case kv-nz-diagnostic --device npu:0 &&
-python -u -m benchmarks.dsa_dense_sfa --case kv-nz-diagnostic --device npu:0 \
-  --profile-dir reports/dsa/profile
+(zwh) root@ubuntu162:/home/z30086261/FGW#
