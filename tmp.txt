@@ -1,3 +1,92 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach f273823
-python -u -m benchmarks.dsa_sfa_symbols | tee dsa_sfa_symbols.json
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_sfa_symbols | tee dsa_sfa_symbols.json
+{
+  "roots": [
+    {
+      "path": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp",
+      "exists": true
+    },
+    {
+      "path": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp_kernel",
+      "exists": false
+    }
+  ],
+  "readelf": "/usr/bin/readelf",
+  "binary_candidates": 14,
+  "inspected_device_files": 14,
+  "truncated": false,
+  "metadata_examples": [
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_1d33f80b1c514fbcb0cc47a23137b51d.json",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_3d14f524479765a79511c73f006f496b.json",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_7365c0cc94042180cf972f06df31e9a7.json",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_9eba9a47d79ed83d4b4597db967d0561.json",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_d0509e4ca2175ab5f5a82e3c46c787f8.json",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_dad16912c789bfddf2955b1ca0413425.json",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention_v2/KvQuantSparseFlashAttentionV2_0f05302959c150de4f1bbee4a9ff6a3d.json",
+    "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention_v2/KvQuantSparseFlashAttentionV2_18cb1b399677c62393d5d6a85ecd58de.json"
+  ],
+  "with_line_table": [],
+  "with_stage_symbols": [],
+  "other_examples": [
+    {
+      "path": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_1d33f80b1c514fbcb0cc47a23137b51d.o",
+      "elf": true,
+      "sections": [
+        ".debug_frame",
+        ".symtab"
+      ],
+      "has_line_table": false,
+      "stage_symbols": []
+    },
+    {
+      "path": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_3d14f524479765a79511c73f006f496b.o",
+      "elf": true,
+      "sections": [
+        ".debug_frame",
+        ".symtab"
+      ],
+      "has_line_table": false,
+      "stage_symbols": []
+    },
+    {
+      "path": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_7365c0cc94042180cf972f06df31e9a7.o",
+      "elf": true,
+      "sections": [
+        ".debug_frame",
+        ".symtab"
+      ],
+      "has_line_table": false,
+      "stage_symbols": []
+    },
+    {
+      "path": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_9eba9a47d79ed83d4b4597db967d0561.o",
+      "elf": true,
+      "sections": [
+        ".debug_frame",
+        ".symtab"
+      ],
+      "has_line_table": false,
+      "stage_symbols": []
+    },
+    {
+      "path": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_d0509e4ca2175ab5f5a82e3c46c787f8.o",
+      "elf": true,
+      "sections": [
+        ".debug_frame",
+        ".symtab"
+      ],
+      "has_line_table": false,
+      "stage_symbols": []
+    },
+    {
+      "path": "/home/CANN/9.3.0.weekly.20260930/cann-9.3.0/opp/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/kv_quant_sparse_flash_attention/KvQuantSparseFlashAttention_dad16912c789bfddf2955b1ca0413425.o",
+      "elf": true,
+      "sections": [
+        ".debug_frame",
+        ".symtab"
+      ],
+      "has_line_table": false,
+      "stage_symbols": []
+    }
+  ]
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
