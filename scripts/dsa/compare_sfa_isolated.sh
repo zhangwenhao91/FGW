@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Compare installed and rebuilt SFA in separate processes without installing either.
 set -euo pipefail
-if [[ $# -lt 1 || $# -gt 2 ]]; then
-    echo "Usage: bash $0 /path/to/rebuilt/sparse_flash_attention [npu:0]" >&2
+if [[ $# -lt 1 || $# -gt 3 ]]; then
+    echo "Usage: bash $0 /path/to/rebuilt/sparse_flash_attention [npu:0] [existing-report-dir]" >&2
     exit 2
 fi
 
@@ -21,12 +21,21 @@ done
 
 cd "$fgw"
 mkdir -p reports/dsa
-report="$(mktemp -d "$fgw/reports/dsa/sfa-isolated.XXXXXXXX")"
+if [[ $# == 3 ]]; then
+    report="$(cd "$3" && pwd -P)"
+    case "$report" in
+        "$fgw"/reports/dsa/sfa-isolated.*) ;;
+        *) echo "Expected a report directory under FGW/reports/dsa." >&2; exit 2 ;;
+    esac
+    test -d "$report/opp" && test ! -L "$report/opp"
+else
+    report="$(mktemp -d "$fgw/reports/dsa/sfa-isolated.XXXXXXXX")"
+    echo "Copying OPP to an independent directory (copy-on-write when supported)."
+    mkdir "$report/opp"
+    cp -a --reflink=auto -- "$installed/." "$report/opp/"
+fi
 isolated="$report/opp"
 printf 'report=%s\n' "$report"
-echo "Copying OPP to an independent directory (copy-on-write when supported)."
-mkdir "$isolated"
-cp -a --reflink=auto -- "$installed/." "$isolated/"
 target="$(realpath "$isolated/$relative")"
 if [[ "$target" != "$isolated/"* ]]; then
     echo "Isolated destination resolves outside the copied OPP: $target" >&2
@@ -42,7 +51,11 @@ for variant in installed rebuilt; do
     if [[ "$variant" == rebuilt ]]; then opp="$isolated"; fi
     if command -v strace >/dev/null; then
         echo "Auditing device object opens: $variant"
-        env ASCEND_OPP_PATH="$opp" strace -f -yy -e trace=open,openat,openat2 \
+        trace_calls=open,openat
+        if strace -e trace=openat2 true >/dev/null 2>&1; then
+            trace_calls+=,openat2
+        fi
+        env ASCEND_OPP_PATH="$opp" strace -f -yy -e "trace=$trace_calls" \
             -o "$report/$variant.open.log" python -u -m benchmarks.dsa_dense_sfa \
             --case native-sfa-long --device "$device" --verify-only \
             2>&1 | tee "$report/$variant.verify.log"
