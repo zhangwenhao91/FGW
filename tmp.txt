@@ -1,46 +1,6 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW# git -C ../ops-transformer-sfa rev-parse HEAD
-5b7058b68bd1b561261f37db3cfd23853c3d4597
-(zwh) root@ubuntu162:/home/z30086261/FGW# 
-(zwh) root@ubuntu162:/home/z30086261/FGW# find ../ops-transformer-sfa/build -type f -iname 'SparseFlashAttention_*.o' \
->   -exec sh -c '
->     for f do
->       printf "\n=== %s ===\n" "$f"
->       readelf -WS "$f" | grep -E "\.(z?debug_line|debug_info|symtab)[[:space:]]" || true
->       readelf -Ws "$f" | grep -Ei "ProcessVec[012]|FlashUpdate|SoftmaxFlash" | head -n 10
->     done
->   ' sh {} +
-
-=== ../ops-transformer-sfa/build/binary/ascend950/bin/sparse_flash_attention/SparseFlashAttention_7e7db7f3a1a08a0d5e1b6cd1dac4b926.o ===
-  [ 9] .debug_info       PROGBITS        0000000000000000 5fac2a f9ebfe 00      0   0  1
-  [10] .rela.debug_info  RELA            0000000000000000 1599828 004800 18   I 151   9  8
-  [20] .debug_line       PROGBITS        0000000000000000 264b7e8 2ab546 00      0   0  1
-  [21] .rela.debug_line  RELA            0000000000000000 28f6d30 da8e60 18   I 151  20  8
-  [151] .symtab           SYMTAB          0000000000000000 36aeb58 128bd70 18     153 810037  8
-  7720: 00000000000c9f88   152 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL26ProcessVec1UpdateImpl128VFIfDhLj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_.vector.thread
-  7812: 00000000000c9ef8   144 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL25ProcessVec1UpdateImpl64VFIfDhLj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_jj.vector.thread
-  7826: 00000000000ca134   132 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL28ProcessVec1NoUpdateImpl128VFIfDhLj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_PU3AS6hjjtS4_S4_.vector.thread
-  8013: 00000000000ca224    52 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL18FlashUpdateBasicVFIfDhDhLt512ELt1ELb0ELb0EEEvPU3AS6fS2_S2_S2_S2_ttff.vector.thread
-  8029: 00000000000ca1e8    60 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL22FlashUpdateLastBasicVFIfDhDhLt512ELt1ELb0ELb0EEEvPU3AS6fS2_S2_S2_S2_S2_ttff.vector.thread
-  8093: 00000000000c9e44   180 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL33ProcessVec1UpdateGeneralImpl128VFIfDhLj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_jjj.vector.thread
-  8102: 00000000000ca0bc   120 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL27ProcessVec1NoUpdateImpl64VFIfDhLj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_PU3AS6hjjtS4_S4_jj.vector.thread
-  8118: 00000000000ca020   156 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL35ProcessVec1NoUpdateGeneralImpl128VFIfDhLj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_PU3AS6hjjtS4_S4_jj.vector.thread
- 20281: 00000000000cf674   152 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL26ProcessVec1UpdateImpl128VFIfDhLj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_.vector.thread
- 20369: 00000000000cf5e4   144 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL25ProcessVec1UpdateImpl64VFIfDhLj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_jj.vector.thread
-
-=== ../ops-transformer-sfa/build/binary/ascend950/bin/sparse_flash_attention/SparseFlashAttention_9ec0bacf213f2b2dce3ba70149a4903b.o ===
-  [ 9] .debug_info       PROGBITS        0000000000000000 5fafea fa0b3e 00      0   0  1
-  [10] .rela.debug_info  RELA            0000000000000000 159bb28 004800 18   I 151   9  8
-  [20] .debug_line       PROGBITS        0000000000000000 2676760 2ab546 00      0   0  1
-  [21] .rela.debug_line  RELA            0000000000000000 2921ca8 da8e60 18   I 151  20  8
-  [151] .symtab           SYMTAB          0000000000000000 36d9ad0 128c970 18     153 810165  8
-  7721: 00000000000c9f88   152 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL26ProcessVec1UpdateImpl128VFIfu6__bf16Lj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_.vector.thread
-  7813: 00000000000c9ef8   144 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL25ProcessVec1UpdateImpl64VFIfu6__bf16Lj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_jj.vector.thread
-  7827: 00000000000ca134   132 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL28ProcessVec1NoUpdateImpl128VFIfu6__bf16Lj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_PU3AS6hjjtS4_S4_.vector.thread
-  8014: 00000000000ca224    52 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL18FlashUpdateBasicVFIfu6__bf16u6__bf16Lt512ELt1ELb0ELb0EEEvPU3AS6fS2_S2_S2_S2_ttff.vector.thread
-  8030: 00000000000ca1e8    60 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL22FlashUpdateLastBasicVFIfu6__bf16u6__bf16Lt512ELt1ELb0ELb0EEEvPU3AS6fS2_S2_S2_S2_S2_ttff.vector.thread
-  8094: 00000000000c9e44   180 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL33ProcessVec1UpdateGeneralImpl128VFIfu6__bf16Lj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_jjj.vector.thread
-  8103: 00000000000ca0bc   120 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL27ProcessVec1NoUpdateImpl64VFIfu6__bf16Lj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_PU3AS6hjjtS4_S4_jj.vector.thread
-  8119: 00000000000ca020   156 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL35ProcessVec1NoUpdateGeneralImpl128VFIfu6__bf16Lj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_PU3AS6hjjtS4_S4_jj.vector.thread
- 20284: 00000000000cf674   152 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL26ProcessVec1UpdateImpl128VFIfu6__bf16Lj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_.vector.thread
- 20372: 00000000000cf5e4   144 FUNC    LOCAL  DEFAULT    1 _ZN11FaVectorApiL25ProcessVec1UpdateImpl64VFIfu6__bf16Lj64ELj128EEEvPU3AS6T0_PU3AS6T_S6_S6_S6_S6_PU3AS6hjjtS4_S4_jj.vector.thread
-(zwh) root@ubuntu162:/home/z30086261/FGW#
+git fetch origin test/dsa-dense-ascend
+git switch --detach 7552dad
+python -m benchmarks.dsa_sfa_compare_elf \
+  "$ASCEND_OPP_PATH/built-in/op_impl/ai_core/tbe/kernel/ascend950/ops_transformer/sparse_flash_attention" \
+  ../ops-transformer-sfa/build/binary/ascend950/bin/sparse_flash_attention \
+  | tee dsa_sfa_elf_compare.json
