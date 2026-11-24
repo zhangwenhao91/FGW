@@ -1,7 +1,236 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach e67f8fd
-
-dir=reports/dsa/instructions.gf6YqyoZ
-python -m benchmarks.dsa_vf_calls "$dir/sfa"
-python -m benchmarks.dsa_vf_calls "$dir/tilelang" \
-  --tilelang-source "$dir/tilelang.asc"
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -m benchmarks.dsa_vf_calls "$dir/sfa"
+{
+  "trace_files": 2,
+  "tilelang_query_head_rows_per_compute_vf": null,
+  "vector_cores": {
+    "OPPROF_20261124151742_MVGYJVFEFRURRJIL/simulator/core0.veccore0/trace.json": {
+      "vf_launches": 6,
+      "launch_pc_groups": {
+        "0x91578be4ac": {
+          "count": 2,
+          "labels": {
+            "pv_update_including_possible_final": 2
+          }
+        },
+        "0x91578bf73c": {
+          "count": 2,
+          "labels": {
+            "softmax": 2
+          }
+        },
+        "0x91578bfc8c": {
+          "count": 2,
+          "labels": {
+            "pv_update_including_possible_final": 2
+          }
+        }
+      },
+      "calls": {
+        "pv_update_including_possible_final": {
+          "count": 4,
+          "with_attributed_rv_instructions": 4,
+          "median_attributed_active_us_per_call": 0.18636,
+          "vcmax_events_per_attributed_call_histogram": {
+            "0": 4
+          }
+        },
+        "softmax": {
+          "count": 2,
+          "with_attributed_rv_instructions": 2,
+          "median_attributed_active_us_per_call": 0.22788,
+          "vcmax_events_per_attributed_call_histogram": {
+            "64": 2
+          }
+        }
+      }
+    },
+    "OPPROF_20261124151742_MVGYJVFEFRURRJIL/simulator/core0.veccore1/trace.json": {
+      "vf_launches": 6,
+      "launch_pc_groups": {
+        "0x91578be4ac": {
+          "count": 2,
+          "labels": {
+            "pv_update_including_possible_final": 2
+          }
+        },
+        "0x91578bf73c": {
+          "count": 2,
+          "labels": {
+            "softmax": 2
+          }
+        },
+        "0x91578bfc8c": {
+          "count": 2,
+          "labels": {
+            "pv_update_including_possible_final": 2
+          }
+        }
+      },
+      "calls": {
+        "pv_update_including_possible_final": {
+          "count": 4,
+          "with_attributed_rv_instructions": 4,
+          "median_attributed_active_us_per_call": 0.18636,
+          "vcmax_events_per_attributed_call_histogram": {
+            "0": 4
+          }
+        },
+        "softmax": {
+          "count": 2,
+          "with_attributed_rv_instructions": 2,
+          "median_attributed_active_us_per_call": 0.22788,
+          "vcmax_events_per_attributed_call_histogram": {
+            "64": 2
+          }
+        }
+      }
+    }
+  }
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -m benchmarks.dsa_vf_calls "$dir/tilelang" \
+>   --tilelang-source "$dir/tilelang.asc"
+{
+  "trace_files": 2,
+  "tilelang_query_head_rows_per_compute_vf": 32,
+  "vector_cores": {
+    "OPPROF_20261124151832_ZZTAIAOTVEOWLSJS/simulator/core0.veccore0/trace.json": {
+      "vf_launches": 26,
+      "launch_pc_groups": {
+        "0x9000d0dc38": {
+          "count": 8,
+          "labels": {
+            "kv_nd2nz": 8
+          }
+        },
+        "0x9000d0ddb0": {
+          "count": 8,
+          "labels": {
+            "softmax": 6,
+            "mixed": 2
+          }
+        },
+        "0x9000d0de3c": {
+          "count": 8,
+          "labels": {
+            "pv_update": 4,
+            "mixed": 4
+          }
+        },
+        "0x9000d0e004": {
+          "count": 2,
+          "labels": {
+            "output_normalize": 2
+          }
+        }
+      },
+      "calls": {
+        "kv_nd2nz": {
+          "count": 8,
+          "with_attributed_rv_instructions": 0,
+          "median_attributed_active_us_per_call": null,
+          "vcmax_events_per_attributed_call_histogram": {}
+        },
+        "mixed": {
+          "count": 6,
+          "with_attributed_rv_instructions": 0,
+          "median_attributed_active_us_per_call": null,
+          "vcmax_events_per_attributed_call_histogram": {}
+        },
+        "output_normalize": {
+          "count": 2,
+          "with_attributed_rv_instructions": 2,
+          "median_attributed_active_us_per_call": 2.2906050000000002,
+          "vcmax_events_per_attributed_call_histogram": {
+            "0": 2
+          }
+        },
+        "pv_update": {
+          "count": 4,
+          "with_attributed_rv_instructions": 4,
+          "median_attributed_active_us_per_call": 0.33273,
+          "vcmax_events_per_attributed_call_histogram": {
+            "0": 4
+          }
+        },
+        "softmax": {
+          "count": 6,
+          "with_attributed_rv_instructions": 6,
+          "median_attributed_active_us_per_call": 0.324245,
+          "vcmax_events_per_attributed_call_histogram": {
+            "64": 6
+          }
+        }
+      }
+    },
+    "OPPROF_20261124151832_ZZTAIAOTVEOWLSJS/simulator/core0.veccore1/trace.json": {
+      "vf_launches": 26,
+      "launch_pc_groups": {
+        "0x9000d0dcac": {
+          "count": 8,
+          "labels": {
+            "kv_nd2nz": 8
+          }
+        },
+        "0x9000d0ddb0": {
+          "count": 8,
+          "labels": {
+            "softmax": 6,
+            "mixed": 2
+          }
+        },
+        "0x9000d0de3c": {
+          "count": 8,
+          "labels": {
+            "pv_update": 4,
+            "mixed": 4
+          }
+        },
+        "0x9000d0df54": {
+          "count": 2,
+          "labels": {
+            "output_normalize": 2
+          }
+        }
+      },
+      "calls": {
+        "kv_nd2nz": {
+          "count": 8,
+          "with_attributed_rv_instructions": 0,
+          "median_attributed_active_us_per_call": null,
+          "vcmax_events_per_attributed_call_histogram": {}
+        },
+        "mixed": {
+          "count": 6,
+          "with_attributed_rv_instructions": 0,
+          "median_attributed_active_us_per_call": null,
+          "vcmax_events_per_attributed_call_histogram": {}
+        },
+        "output_normalize": {
+          "count": 2,
+          "with_attributed_rv_instructions": 2,
+          "median_attributed_active_us_per_call": 2.2906050000000002,
+          "vcmax_events_per_attributed_call_histogram": {
+            "0": 2
+          }
+        },
+        "pv_update": {
+          "count": 4,
+          "with_attributed_rv_instructions": 4,
+          "median_attributed_active_us_per_call": 0.33273,
+          "vcmax_events_per_attributed_call_histogram": {
+            "0": 4
+          }
+        },
+        "softmax": {
+          "count": 6,
+          "with_attributed_rv_instructions": 6,
+          "median_attributed_active_us_per_call": 0.324245,
+          "vcmax_events_per_attributed_call_histogram": {
+            "64": 6
+          }
+        }
+      }
+    }
+  }
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
