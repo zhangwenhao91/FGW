@@ -1,20 +1,22 @@
-(zwh) root@ubuntu162:/home/z30086261# git clone https://github.com/zhangwenhao91/FGW-mHC.git
-Cloning into 'FGW-mHC'...
-remote: Enumerating objects: 15, done.
-remote: Counting objects: 100% (15/15), done.
-remote: Compressing objects: 100% (12/12), done.
-remote: Total 15 (delta 0), reused 12 (delta 0), pack-reused 0 (from 0)
-Unpacking objects: 100% (15/15), 8.82 KiB | 2.94 MiB/s, done.
-(zwh) root@ubuntu162:/home/z30086261# cd FGW-mHC/
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# bash run_npu.sh --device npu:0 --output results.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 4 (delta 2), reused 4 (delta 2), pack-reused 0 (from 0)
+Unpacking objects: 100% (4/4), 645 bytes | 645.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   e9390ab..ba80f01  main       -> origin/main
+Updating e9390ab..ba80f01
+Fast-forward
+ fgw_mhc/_kernels.py | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# bash run_npu.sh --device npu:0 --output results-ba80f01.csv
 ....                                                                                                                                                                                                                                                                                                                                                              [100%]
-4 passed in 40.19s
-2026-11-24 18:52:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-[18:52:46] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/thread_storage_sync.cc:1081: Warning: [ThreadSync] Hoisting sync out of an if whose condition is not safe for an in-if sync. This is not a fix: both ends of the conflict are inside the branch, so the hoisted barrier no longer separates them and the race remains. Constraining the condition -- a T.assume on the parameters it reads -- keeps the barrier in place instead. Condition: simtvf_tx < 1
-2026-11-24 18:52:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
-2026-11-24 18:52:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-[18:52:48] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/thread_storage_sync.cc:1081: Warning: [ThreadSync] Hoisting sync out of an if whose condition is not safe for an in-if sync. This is not a fix: both ends of the conflict are inside the branch, so the hoisted barrier no longer separates them and the race remains. Constraining the condition -- a T.assume on the parameters it reads -- keeps the barrier in place instead. Condition: simtvf_tx < 1
-2026-11-24 18:52:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
-2026-11-24 18:52:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-[18:52:51] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/thread_storage_sync.cc:1081: Warning: [ThreadSync] Hoisting sync out of an if whose condition is not safe for an in-if sync. This is not a fix: both ends of the conflict are inside the branch, so the hoisted barrier no longer separates them and the race remains. Constraining the condition -- a T.assume on the parameters it reads -- keeps the barrier in place instead. Condition: simtvf_tx < 1
-2026-11-24 18:52:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+4 passed in 25.23s
+2026-11-24 19:00:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+2026-11-24 19:00:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+2026-11-24 19:00:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+2026-11-24 19:00:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+2026-11-24 19:00:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+2026-11-24 19:00:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
