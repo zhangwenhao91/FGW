@@ -1,6 +1,179 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach FETCH_HEAD
-mkdir -p reports/dsa
-set -o pipefail
-bash scripts/dsa/trace_sfa_stages.sh reports/dsa/sfa-isolated.gUh4b4Qh/opp 128 \
-  2>&1 | tee reports/dsa/softmax_pack_instruction.log
+(zwh) root@ubuntu162:/home/z30086261/FGW# bash scripts/dsa/trace_sfa_stages.sh reports/dsa/sfa-isolated.gUh4b4Qh/opp 128 \
+>   2>&1 | tee reports/dsa/softmax_pack_instruction.log
+report=/home/z30086261/FGW/reports/dsa/instructions.TPSrVVdf
+Simulating sfa (Q16-KV512-topk256, TileLang KV tile 128, core 0)
+[INFO] Thread 32 is running. Cycle Count: 240000
+launch_completed=sfa output_shape=(1, 16, 128, 512)
+Parallel Simulation: All threads are joined.
+ESL_TOP: parallel threads joined
+[INFO]  Extract 6376 relations from kernel
+[INFO]  Parse 44480 addr2line relations
+[INFO]  Core operator results run in simulator as follow:
+core_name           duration_time(us)   running_time(us)    
+core0.cubecore0     22.19               22.19               
+core0.veccore0      22.98               22.97               
+core0.veccore1      23.02               23.02               
+ESL_TOP: system destructed
+[INFO] Model stopped successfully.
+[INFO]  Profiling running finished. All task success.
+[INFO]  Start parse dump file
+[INFO]  Profiling results saved in /home/z30086261/FGW/reports/dsa/instructions.TPSrVVdf/sfa/OPPROF_20261124161147_PXUSIPXUUMFSAPPM
+[INFO]  Profiling data parse finished.
+[INFO]  Op profiling finish. Welcome to next use.
+simulation_driver_completed=sfa
+{
+  "trace_files": 2,
+  "vector_cores": {
+    "OPPROF_20261124161147_PXUSIPXUUMFSAPPM/simulator/core0.veccore0/trace.json": {
+      "pv_update_including_possible_final": {
+        "events": 6716,
+        "active_interval_union_us": 0.74545
+      },
+      "softmax": {
+        "events": 5472,
+        "active_interval_union_us": 1.14303
+      },
+      "unattributed": {
+        "events": 18208,
+        "active_interval_union_us": 18.56485
+      }
+    },
+    "OPPROF_20261124161147_PXUSIPXUUMFSAPPM/simulator/core0.veccore1/trace.json": {
+      "pv_update_including_possible_final": {
+        "events": 6716,
+        "active_interval_union_us": 0.76485
+      },
+      "softmax": {
+        "events": 5472,
+        "active_interval_union_us": 1.18182
+      },
+      "unattributed": {
+        "events": 18203,
+        "active_interval_union_us": 18.8103
+      }
+    }
+  }
+}
+Simulating tilelang (Q16-KV512-topk256, TileLang KV tile 128, core 0)
+[INFO] Thread 32 is running. Cycle Count: 540000
+launch_completed=tilelang output_shape=(1, 16, 128, 512)
+Parallel Simulation: All threads are joined.
+ESL_TOP: parallel threads joined
+[INFO]  Extract 1529 relations from kernel
+[INFO]  Parse 2432 addr2line relations
+[INFO]  Core operator results run in simulator as follow:
+core_name           duration_time(us)   running_time(us)    
+core0.cubecore0     34.18               34.18               
+core0.veccore0      37.5                37.49               
+core0.veccore1      37.38               37.38               
+ESL_TOP: system destructed
+[INFO] Model stopped successfully.
+[INFO]  Profiling running finished. All task success.
+[INFO]  Start parse dump file
+[INFO]  Profiling results saved in /home/z30086261/FGW/reports/dsa/instructions.TPSrVVdf/tilelang/OPPROF_20261124161253_QYYJKUWRCURZNGDL
+[INFO]  Profiling data parse finished.
+[INFO]  Op profiling finish. Welcome to next use.
+simulation_driver_completed=tilelang
+{
+  "trace_files": 2,
+  "vector_cores": {
+    "OPPROF_20261124161253_QYYJKUWRCURZNGDL/simulator/core0.veccore0/trace.json": {
+      "output_normalize": {
+        "events": 25508,
+        "active_interval_union_us": 4.58121
+      },
+      "pv_update": {
+        "events": 12368,
+        "active_interval_union_us": 1.32242
+      },
+      "softmax": {
+        "events": 14960,
+        "active_interval_union_us": 3.55575
+      },
+      "unattributed": {
+        "events": 19982,
+        "active_interval_union_us": 29.24363
+      }
+    },
+    "OPPROF_20261124161253_QYYJKUWRCURZNGDL/simulator/core0.veccore1/trace.json": {
+      "output_normalize": {
+        "events": 25508,
+        "active_interval_union_us": 4.58121
+      },
+      "pv_update": {
+        "events": 12368,
+        "active_interval_union_us": 1.32242
+      },
+      "softmax": {
+        "events": 14960,
+        "active_interval_union_us": 3.55575
+      },
+      "unattributed": {
+        "events": 20054,
+        "active_interval_union_us": 29.97273
+      }
+    }
+  }
+}
+Simulating tilelang-packed (Q16-KV512-topk256, TileLang KV tile 128, core 0)
+[INFO] Thread 32 is running. Cycle Count: 540000
+launch_completed=tilelang-packed output_shape=(1, 16, 128, 512)
+Parallel Simulation: All threads are joined.
+ESL_TOP: parallel threads joined
+[INFO]  Extract 1475 relations from kernel
+[INFO]  Parse 2208 addr2line relations
+[INFO]  Core operator results run in simulator as follow:
+core_name           duration_time(us)   running_time(us)    
+core0.cubecore0     31.28               31.28               
+core0.veccore0      34.55               34.21               
+core0.veccore1      34.49               34.48               
+ESL_TOP: system destructed
+[INFO] Model stopped successfully.
+[INFO]  Profiling running finished. All task success.
+[INFO]  Start parse dump file
+[INFO]  Profiling results saved in /home/z30086261/FGW/reports/dsa/instructions.TPSrVVdf/tilelang-packed/OPPROF_20261124161450_ZNOXWHGYYBTUBGVF
+[INFO]  Profiling data parse finished.
+[INFO]  Op profiling finish. Welcome to next use.
+simulation_driver_completed=tilelang-packed
+{
+  "trace_files": 2,
+  "vector_cores": {
+    "OPPROF_20261124161450_ZNOXWHGYYBTUBGVF/simulator/core0.veccore0/trace.json": {
+      "output_normalize": {
+        "events": 25508,
+        "active_interval_union_us": 4.58121
+      },
+      "pv_update": {
+        "events": 12368,
+        "active_interval_union_us": 1.32121
+      },
+      "softmax": {
+        "events": 7136,
+        "active_interval_union_us": 1.74546
+      },
+      "unattributed": {
+        "events": 19983,
+        "active_interval_union_us": 25.62121
+      }
+    },
+    "OPPROF_20261124161450_ZNOXWHGYYBTUBGVF/simulator/core0.veccore1/trace.json": {
+      "output_normalize": {
+        "events": 25508,
+        "active_interval_union_us": 4.58121
+      },
+      "pv_update": {
+        "events": 12368,
+        "active_interval_union_us": 1.32121
+      },
+      "softmax": {
+        "events": 7136,
+        "active_interval_union_us": 1.74546
+      },
+      "unattributed": {
+        "events": 20055,
+        "active_interval_union_us": 26.14
+      }
+    }
+  }
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
