@@ -27,6 +27,7 @@ def main():
             "staged-nz",
             "selective-zero",
             "simd-softmax",
+            "simd-pv",
         ),
         default="full",
     )
@@ -35,8 +36,8 @@ def main():
         "--profile-dir", help="Capture native SFA and staged NZ in separate traces"
     )
     args = parser.parse_args()
-    if args.profile_dir and args.case not in ("staged-nz", "simd-softmax"):
-        parser.error("--profile-dir requires staged-nz or simd-softmax")
+    if args.profile_dir and args.case not in ("staged-nz", "simd-softmax", "simd-pv"):
+        parser.error("--profile-dir requires staged-nz, simd-softmax, or simd-pv")
     import torch_npu
 
     from operators.dsa.dense_tilelang import build_kernel
@@ -63,7 +64,8 @@ def main():
     nz_diagnostic = args.case == "softmax-nz"
     staged_diagnostic = args.case == "staged-nz"
     zero_diagnostic = args.case == "selective-zero"
-    simd_diagnostic = args.case == "simd-softmax"
+    simd_pv_diagnostic = args.case == "simd-pv"
+    simd_diagnostic = args.case in ("simd-softmax", "simd-pv")
     if (
         diagnostic
         or pv_diagnostic
@@ -363,6 +365,35 @@ def main():
         torch.testing.assert_close(
             padded_out[0], torch.zeros_like(padded_out[0]), atol=0, rtol=0
         )
+    if simd_pv_diagnostic:
+        print("Compiling SIMD PV accumulation", flush=True)
+        pv_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=256,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+        )
+
+        def tilelang_simd_pv():
+            return pv_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_simd_pv"] = tilelang_simd_pv().cpu()
+        calls["tilelang_simd_pv"] = tilelang_simd_pv
+        padded_pv = pv_kernel(qn[0], kvn.view(sk, d + tail), padded).cpu()
+        torch.testing.assert_close(padded_pv, padded_ref, atol=0.002, rtol=0.002)
+        torch.testing.assert_close(
+            padded_pv[0], torch.zeros_like(padded_pv[0]), atol=0, rtol=0
+        )
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -478,6 +509,12 @@ def main():
         report["padding_checks_passed"] = True
         report["simd_speedup_vs_staged"] = medians["tilelang_staged"] / simd
         report["simd_speedup_vs_sfa"] = medians["native_sfa"] / simd
+    if simd_pv_diagnostic:
+        pv = medians["tilelang_simd_pv"]
+        report["simd_pv_speedup_vs_simd_softmax"] = (
+            medians["tilelang_simd_softmax"] / pv
+        )
+        report["simd_pv_speedup_vs_sfa"] = medians["native_sfa"] / pv
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

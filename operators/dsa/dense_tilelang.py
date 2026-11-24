@@ -25,10 +25,13 @@ def build_kernel(
     staged=False,
     selective_zero=False,
     simd_softmax=False,
+    simd_pv=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
+    if simd_pv and not simd_softmax:
+        raise ValueError("SIMD PV requires the SIMD softmax baseline")
     if simd_softmax and not (staged and kv_tile == 32 and not selective_zero):
         raise ValueError("SIMD softmax requires staged NZ, KV32, and full zero fill")
     if selective_zero and not dma_gather:
@@ -247,10 +250,24 @@ def build_kernel(
                 T.copy(v_l1, vb)
                 T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
             T.dual_copy(pv, current)
-            with T.SimtVF(threads=128):
-                for r, d in T.Parallel(rows, part):
-                    col = chunk * part + d
-                    output[r, col] = output[r, col] * alpha[r] + current[r, d]
+            if simd_pv:
+                with T.SimdVF():
+                    full = S.pset(32, "PAT_ALL")
+                    for r in T.serial(rows):
+                        factor = S.vld(alpha[r], "BRC_B32")
+                        for c in T.serial(part // 64):
+                            col = chunk * part + c * 64
+                            previous = S.vld(output[r, col])
+                            contribution = S.vld(current[r, c * 64])
+                            updated = S.vadd(
+                                S.vmul(previous, factor, full), contribution, full
+                            )
+                            S.vsts(output[r, col], updated, full, "NORM_B32")
+            else:
+                with T.SimtVF(threads=128):
+                    for r, d in T.Parallel(rows, part):
+                        col = chunk * part + d
+                        output[r, col] = output[r, col] * alpha[r] + current[r, d]
 
     @T.macro
     def attend_block(
