@@ -5,6 +5,7 @@ from functools import lru_cache
 import tilelang
 import tilelang.ascend.language as T
 from tilelang.ascend.language import simd as S
+from tvm.ir import Op
 from tilelang.layout import make_ascend_compact_nz_layout
 
 
@@ -29,10 +30,19 @@ def build_kernel(
     batch_pv=False,
     packed_nz=False,
     packed_nd=False,
+    direct_nz=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
+    if direct_nz and not (
+        dma_gather
+        and batch_pv
+        and pv_width == 512
+        and kv_tile == 32
+        and not (prepacked or packed_nd or packed_nz or selective_zero)
+    ):
+        raise ValueError("direct NZ requires the indexed KV32/PV512 DMA path")
     if packed_nd and packed_nz:
         raise ValueError("choose one prepacked KV layout")
     if (packed_nz or packed_nd) and not (
@@ -95,6 +105,34 @@ def build_kernel(
             first = qi * topk + block * bc + sid * gather_rows
             T.copy(KV[first : first + gather_rows, :], k)
             T.copy(k, kn[:gather_rows, :])
+            T.dual_copy(kn[:gather_rows, :], k_l1)
+        elif direct_nz:
+            # Each BF16 C0 group is one 32-byte DMA burst. The destination
+            # advances by a full NZ column-group pitch between bursts.
+            c0 = 16
+            groups = width // c0
+            pitch = (gather_rows + 1) * c0
+            with T.SimtVF(threads=128):
+                for row, col in T.Parallel(gather_rows, width):
+                    kn[row, col] = 0
+            for row in T.serial(gather_rows):
+                index = valid[sid * gather_rows + row]
+                if index >= 0:
+                    T.call_intrin(
+                        "void",
+                        Op.get("tl.ascend_copy_gm_to_ubuf"),
+                        T.access_ptr(kn[row, 0], "w", (groups - 1) * pitch + c0),
+                        T.access_ptr(KV[index, 0], "r", width),
+                        sid,
+                        groups,
+                        c0 * 2,
+                        0,
+                        0,
+                        0,
+                        0,
+                        c0 * 2,
+                        pitch * 2,
+                    )
             T.dual_copy(kn[:gather_rows, :], k_l1)
         elif dma_gather:
             # Reuse a 16-row UB staging area for each AIV half-tile.
