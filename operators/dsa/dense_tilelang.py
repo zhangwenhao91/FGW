@@ -34,6 +34,7 @@ def build_kernel(
     persistent=False,
     simd_output=False,
     lineinfo=False,
+    pv_fma=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -58,6 +59,8 @@ def build_kernel(
         raise ValueError(
             "packed KV diagnostic requires the KV32/PV512 path and aligned topk"
         )
+    if pv_fma and not (batch_pv and kv_tile == 128):
+        raise ValueError("PV FMA requires the batched KV128 path")
     if batch_pv and not simd_pv:
         raise ValueError("batched PV handoff requires SIMD PV")
     if simd_pv and not simd_softmax:
@@ -422,15 +425,23 @@ def build_kernel(
         if batch_pv:
             with T.SimdVF():
                 mask = S.pset(32, "PAT_ALL")
+                accumulator = S.alloc_local((1,), fp32)
                 for r in T.serial(rows):
                     factor = S.vld(alpha[r], "BRC_B32")
                     for col in T.serial(dim // 64):
                         previous = S.vld(output[r, col * 64])
                         contribution = S.vld(current[r, col * 64])
-                        accumulated = S.vadd(
-                            S.vmul(previous, factor, mask), contribution, mask
-                        )
-                        S.vsts(output[r, col * 64], accumulated, mask, "NORM_B32")
+                        if pv_fma:
+                            accumulator[0] = contribution
+                            S.vmula(accumulator[0], previous, factor, mask)
+                            S.vsts(
+                                output[r, col * 64], accumulator[0], mask, "NORM_B32"
+                            )
+                        else:
+                            accumulated = S.vadd(
+                                S.vmul(previous, factor, mask), contribution, mask
+                            )
+                            S.vsts(output[r, col * 64], accumulated, mask, "NORM_B32")
 
     @T.macro
     def attend_block(
