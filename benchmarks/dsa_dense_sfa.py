@@ -35,6 +35,7 @@ def main():
             "kv-nz-diagnostic",
             "direct-kv-nz",
             "gather-once",
+            "rolling-gather",
         ),
         default="full",
     )
@@ -68,7 +69,8 @@ def main():
     sq, sk, h, d, tail = 1024, 2048, 128, 512, 64
     kv_nz_diagnostic = args.case == "kv-nz-diagnostic"
     direct_nz = args.case == "direct-kv-nz"
-    gather_once = args.case == "gather-once"
+    rolling = args.case == "rolling-gather"
+    gather_once = args.case in ("gather-once", "rolling-gather")
     short_pv512 = kv_nz_diagnostic or direct_nz or gather_once
     wide_pv_long = args.case == "pv512-long" or short_pv512
     batched_pv = args.case == "batched-pv-long" or wide_pv_long
@@ -600,6 +602,17 @@ def main():
         calls["tilelang_gather_once"] = shared_kv
         calls["gather_only"] = collect
         calls["packed_attention_only"] = attend
+    if rolling:
+        from benchmarks.dsa_rolling import build_rolling
+
+        print("Compiling 16-query double-buffered KV gather", flush=True)
+        serial_chunks, overlapped_chunks, rolling_bytes = build_rolling(
+            qn[0], flat_kv, flat_indices, chunk=16
+        )
+        outputs["tilelang_rolling_overlap"] = overlapped_chunks().cpu()
+        outputs["tilelang_rolling_serial"] = serial_chunks().cpu()
+        calls["tilelang_rolling_serial"] = serial_chunks
+        calls["tilelang_rolling_overlap"] = overlapped_chunks
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -764,6 +777,18 @@ def main():
             medians["tilelang_pv512"] / shared
         )
         report["gather_once_speedup_vs_sfa"] = medians["native_sfa"] / shared
+    if rolling:
+        overlap = medians["tilelang_rolling_overlap"]
+        report["rolling_workspace_bytes"] = rolling_bytes
+        report["rolling_overlap_speedup_vs_serial_chunks"] = (
+            medians["tilelang_rolling_serial"] / overlap
+        )
+        report["rolling_overlap_speedup_vs_full_gather"] = (
+            medians["tilelang_gather_once"] / overlap
+        )
+        report["rolling_overlap_speedup_vs_indexed"] = (
+            medians["tilelang_pv512"] / overlap
+        )
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
