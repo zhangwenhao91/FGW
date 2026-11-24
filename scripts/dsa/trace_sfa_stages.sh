@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Run comparable instruction simulations on an isolated SFA OPP and TileLang.
 set -euo pipefail
-if [[ $# -lt 1 || $# -gt 2 ]]; then
-    echo "Usage: bash $0 reports/dsa/sfa-isolated.XXXX/opp [32|128]" >&2
+if [[ $# -lt 1 || $# -gt 3 ]]; then
+    echo "Usage: bash $0 reports/dsa/sfa-isolated.XXXX/opp [32|128] [--long-topk]" >&2
     exit 2
 fi
 fgw="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
@@ -28,6 +28,18 @@ implementations=(sfa tilelang)
 if [[ "$tile" == 128 ]]; then
     implementations+=(tilelang-packed)
 fi
+driver_options=()
+timeout=8
+if [[ -n "${3:-}" ]]; then
+    if [[ "$3" != --long-topk || "$tile" != 128 ]]; then
+        echo "Expected 128 --long-topk." >&2
+        exit 2
+    fi
+    shape=Q16-KV4096-topk1024
+    implementations=(tilelang tilelang-packed)
+    driver_options+=(--long-topk)
+    timeout=20
+fi
 for impl in "${implementations[@]}"; do
     trace="$report/$impl"
     mkdir "$trace"
@@ -39,8 +51,8 @@ for impl in "${implementations[@]}"; do
     fi
     printf 'Simulating %s (%s, TileLang KV tile %s, core 0)\n' "$impl" "$shape" "$tile"
     ASCEND_OPP_PATH="$opp" msprof op simulator --soc-version "$soc" \
-        --core-id 0 --kernel-name "$kernel" --launch-count 1 --timeout 8 \
-        --output "$trace" "$python_bin" -u -m benchmarks.dsa_instruction_driver "$impl" --kv-tile "$tile" "${extra[@]}" \
+        --core-id 0 --kernel-name "$kernel" --launch-count 1 --timeout "$timeout" \
+        --output "$trace" "$python_bin" -u -m benchmarks.dsa_instruction_driver "$impl" --kv-tile "$tile" "${driver_options[@]}" "${extra[@]}" \
         >"$report/$impl.log" 2>&1 || true
     tail -n 18 "$report/$impl.log"
     if grep -q "launch_completed=$impl" "$report/$impl.log" &&
@@ -57,3 +69,7 @@ for impl in "${implementations[@]}"; do
         | tee "$report/$impl.summary.json"
     python -m benchmarks.dsa_vf_calls "$trace" "${source_opt[@]}"         > "$report/$impl.vf-calls.json"
 done
+
+if [[ "${3:-}" == --long-topk ]]; then
+    "$python_bin" -m benchmarks.dsa_block_timeline "$report"         --prefetch --blocks-per-task 8 | tee "$report/prefetch.json"
+fi

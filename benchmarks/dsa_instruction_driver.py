@@ -13,7 +13,10 @@ def main():
     )
     parser.add_argument("--source", type=Path)
     parser.add_argument("--kv-tile", type=int, choices=(32, 128), default=32)
+    parser.add_argument("--long-topk", action="store_true")
     args = parser.parse_args()
+    if args.long_topk and args.kv_tile != 128:
+        parser.error("--long-topk requires --kv-tile 128")
     packed_prob = args.implementation == "tilelang-packed"
     if packed_prob and args.kv_tile != 128:
         parser.error("tilelang-packed requires --kv-tile 128")
@@ -21,7 +24,7 @@ def main():
 
     sq, sk, topk, h, d, tail = 16, 256, 128, 128, 512, 64
     if args.kv_tile == 128:
-        sk, topk = 512, 256
+        sk, topk = (4096, 1024) if args.long_topk else (512, 256)
     width = d + tail
     g = torch.Generator().manual_seed(7)
     q = torch.randn((1, sq, h, width), generator=g).to(torch.bfloat16)

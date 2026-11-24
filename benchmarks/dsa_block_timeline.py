@@ -107,7 +107,7 @@ def summarize(root, impl):
     return rows
 
 
-def prefetch_summary(root, impl):
+def prefetch_summary(root, impl, blocks_per_task):
     source = root / f"{impl}.asc"
     qk_end_line, pv_line, _ = source_markers(source)
     lines = source.read_text().splitlines()
@@ -143,8 +143,17 @@ def prefetch_summary(root, impl):
     qk = [event for event in events[qk_mmad + 1] if event[2] == "MMAD"]
     pv = [event for event in events[pv_line] if event[2] == "MMAD"]
     ends = [event for event in events[qk_end_line] if event[2] == "FIX_L0C_TO_DST"]
-    if len(ends) != 4 or len(qk) != 24 or len(pv) != 16:
-        raise ValueError(f"{impl}: expected 4 QK writes, 24 QK MMADs and 16 PV MMADs")
+    block_count = 2 * blocks_per_task  # Core 0 owns two tasks at Q16.
+    if (len(ends), len(qk), len(pv)) != (block_count, 6 * block_count, 4 * block_count):
+        raise ValueError(
+            f"{impl}: QK writes/QK MMADs/PV MMADs = {len(ends)}/{len(qk)}/{len(pv)}, "
+            f"expected {block_count}/{6 * block_count}/{4 * block_count}"
+        )
+    ready = [
+        [event for event in events[line] if event[2] == "WAIT_INTRA_BLOCK"]
+        for line in waits
+    ]
+    matched = len(ready) == 2 and all(len(group) == block_count for group in ready)
     origin = qk[0][0]
     blocks = []
     for i, end in enumerate(ends):
@@ -153,15 +162,33 @@ def prefetch_summary(root, impl):
         prior_end = max(prior_mmad_ends, default=start)
         blocks.append(
             {
-                "task": i // 2,
-                "kv_block": i % 2,
+                "task": i // blocks_per_task,
+                "kv_block": i % blocks_per_task,
                 "qk_start_us": round(start - origin, 5),
                 "preceding_no_mmad_us": round(max(0, start - prior_end), 5),
                 "qk_start_to_writeback_us": round(end[1] - start, 5),
             }
         )
+        if matched:
+            ready_end = max(group[i][1] for group in ready)
+            if ready_end > start:
+                raise ValueError(f"{impl}: K/V wait for block {i} ended after QK start")
+            blocks[-1]["kv_ready_to_qk_us"] = round(start - ready_end, 5)
+            blocks[-1]["cube_gap_overlapping_kv_wait_us"] = round(
+                max(
+                    0,
+                    min(start, ready_end)
+                    - max(prior_end, min(group[i][0] for group in ready)),
+                ),
+                5,
+            )
     return {
         "blocks": blocks,
+        "kv_waits_matched": matched,
+        "task_boundary_gap_us": blocks[blocks_per_task]["preceding_no_mmad_us"],
+        "max_within_task_gap_us": max(
+            block["preceding_no_mmad_us"] for block in blocks if block["kv_block"]
+        ),
         "kv_wait_source_events": {
             f"{line}: {statement}": [
                 {
@@ -182,13 +209,14 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--inspect-markers", action="store_true")
     mode.add_argument("--prefetch", action="store_true")
+    parser.add_argument("--blocks-per-task", type=int, choices=(2, 8), default=2)
     args = parser.parse_args()
     try:
         if args.prefetch:
             print(
                 json.dumps(
                     {
-                        impl: prefetch_summary(args.report, impl)
+                        impl: prefetch_summary(args.report, impl, args.blocks_per_task)
                         for impl in ("tilelang", "tilelang-packed")
                     },
                     indent=2,
