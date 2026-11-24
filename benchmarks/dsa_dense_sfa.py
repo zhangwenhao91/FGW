@@ -32,6 +32,7 @@ def main():
             "simd-pv-long-discrete",
             "batched-pv-long",
             "pv512-long",
+            "persistent-long",
             "kv-nz-diagnostic",
             "direct-kv-nz",
             "gather-once",
@@ -52,6 +53,7 @@ def main():
         "kv-nz-diagnostic",
         "direct-kv-nz",
     )
+    profile_cases += ("persistent-long",)
     if args.profile_dir and args.case not in profile_cases:
         parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
@@ -72,7 +74,8 @@ def main():
     rolling = args.case == "rolling-gather"
     gather_once = args.case in ("gather-once", "rolling-gather")
     short_pv512 = kv_nz_diagnostic or direct_nz or gather_once
-    wide_pv_long = args.case == "pv512-long" or short_pv512
+    persistent = args.case == "persistent-long"
+    wide_pv_long = args.case == "pv512-long" or persistent or short_pv512
     batched_pv = args.case == "batched-pv-long" or wide_pv_long
     long_pv = batched_pv or args.case in ("simd-pv-long-full", "simd-pv-long-discrete")
     full_indices = args.case in ("full", "simd-pv-long-full")
@@ -421,7 +424,7 @@ def main():
             torch.testing.assert_close(
                 padded_pv[0], torch.zeros_like(padded_pv[0]), atol=0, rtol=0
             )
-    if batched_pv and not short_pv512:
+    if batched_pv and not (short_pv512 or persistent):
         print("Compiling one SIMD accumulation per KV tile", flush=True)
         batched_kernel = build_kernel(
             sq,
@@ -613,6 +616,32 @@ def main():
         outputs["tilelang_rolling_serial"] = serial_chunks().cpu()
         calls["tilelang_rolling_serial"] = serial_chunks
         calls["tilelang_rolling_overlap"] = overlapped_chunks
+    if persistent:
+        print("Compiling fixed-28-core indexed PV512", flush=True)
+        persistent_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=512,
+            softmax_nz=True,
+            staged=True,
+            simd_softmax=True,
+            simd_pv=True,
+            batch_pv=True,
+            persistent=True,
+        )
+
+        def tilelang_persistent():
+            return persistent_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_persistent"] = tilelang_persistent().cpu()
+        calls["tilelang_persistent"] = tilelang_persistent
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -744,14 +773,14 @@ def main():
                 medians["tilelang_simd_softmax"] / pv
             )
         report["simd_pv_speedup_vs_sfa"] = medians["native_sfa"] / pv
-    if batched_pv and not short_pv512:
+    if batched_pv and not (short_pv512 or persistent):
         batched = medians["tilelang_batched_pv"]
         if not wide_pv_long:
             report["batched_pv_speedup_vs_simd_pv"] = (
                 medians["tilelang_simd_pv"] / batched
             )
         report["batched_pv_speedup_vs_sfa"] = medians["native_sfa"] / batched
-    if wide_pv_long and not short_pv512:
+    if wide_pv_long and not (short_pv512 or persistent):
         wide = medians["tilelang_pv512"]
         report["pv512_speedup_vs_batched_pv256"] = medians["tilelang_batched_pv"] / wide
         report["pv512_speedup_vs_sfa"] = medians["native_sfa"] / wide
@@ -789,6 +818,12 @@ def main():
         report["rolling_overlap_speedup_vs_indexed"] = (
             medians["tilelang_pv512"] / overlap
         )
+    if persistent:
+        fixed = medians["tilelang_persistent"]
+        report["persistent_speedup_vs_indexed_pv512"] = (
+            medians["tilelang_pv512"] / fixed
+        )
+        report["persistent_speedup_vs_sfa"] = medians["native_sfa"] / fixed
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

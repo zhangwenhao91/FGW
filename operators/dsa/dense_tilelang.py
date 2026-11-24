@@ -31,6 +31,7 @@ def build_kernel(
     packed_nz=False,
     packed_nd=False,
     direct_nz=False,
+    persistent=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -83,6 +84,8 @@ def build_kernel(
     qk_width = width if br == 32 else 192
     dtype, fp32 = "bfloat16", "float32"
     scale = width**-0.5
+    tasks = sq * (heads // br)
+    grid = min(28, tasks) if persistent else tasks
     kv_rows = sq * topk if prepacked or packed_nd else sk
     nz_slab = (gather_rows + 1) * width
     kv_shape = (sq * (topk // bc) * 2, nz_slab) if packed_nz else (kv_rows, width)
@@ -409,9 +412,7 @@ def build_kernel(
         Indices: T.Tensor((sq, topk), "int32"),
         Out: T.Tensor((sq, heads, dim), dtype),
     ):
-        with T.MixedKernel(sq * (heads // br), sids=2) as (task, sid):
-            qi = task // (heads // br)
-            hi = task % (heads // br) * br
+        with T.MixedKernel(grid, sids=2) as (core, sid):
             q_l1 = T.alloc_l1((br, width), dtype)
             k_l1 = T.alloc_l1((bc, width), dtype)
             v_l1 = T.alloc_l1((part, bc), dtype)
@@ -442,58 +443,100 @@ def build_kernel(
             total = T.alloc_shared((rows,), fp32)
             alpha = T.alloc_shared((rows,), fp32)
             valid = T.alloc_shared((64 if simd_softmax else bc,), "int32")
-            T.copy(Q[qi, hi : hi + br, :], q_l1)
-            if br == 32:
-                T.copy(q_l1, qa)
-            with T.SimtVF(threads=128):
-                for r, d in T.Parallel(rows, dim):
-                    output[r, d] = 0
-                for r in T.Parallel(rows):
-                    maximum[r] = -1.0e30
-                    total[r] = 0
-            if staged:
-                for block in T.Pipelined(
-                    T.ceildiv(topk, bc),
-                    num_stages=3,
-                    annotations={"enable_offset": True},
-                ):
-                    with T.Stage(0):
+            # Distribute the remainder across the first cores. Each core
+            # owns a contiguous range of (query, head group) tasks.
+            count = tasks // grid + T.if_then_else(core < tasks % grid, 1, 0)
+            first = core * (tasks // grid) + T.min(core, tasks % grid)
+            for local_task in T.serial(count):
+                task = first + local_task
+                qi = task // (heads // br)
+                hi = task % (heads // br) * br
+                T.copy(Q[qi, hi : hi + br, :], q_l1)
+                if br == 32:
+                    T.copy(q_l1, qa)
+                with T.SimtVF(threads=128):
+                    for r, d in T.Parallel(rows, dim):
+                        output[r, d] = 0
+                    for r in T.Parallel(rows):
+                        maximum[r] = -1.0e30
+                        total[r] = 0
+                if staged:
+                    for block in T.Pipelined(
+                        T.ceildiv(topk, bc),
+                        num_stages=3,
+                        annotations={"enable_offset": True},
+                    ):
+                        with T.Stage(0):
+                            gather_block(
+                                block, qi, sid, KV, Indices, valid, k, kn, k_l1
+                            )
+                        with T.Stage(0):
+                            compute_qk(k_l1, q_l1, kb, qa, qk, scores)
+                        with T.Stage(1):
+                            compute_softmax(
+                                valid, scores, maximum, alpha, total, p, pn, p_l1
+                            )
+                        with T.Stage(2):
+                            compute_pv(
+                                block,
+                                qi,
+                                sid,
+                                KV,
+                                valid,
+                                k_l1,
+                                p_l1,
+                                pa,
+                                v,
+                                vn,
+                                v_l1,
+                                vb,
+                                pv,
+                                current,
+                                output,
+                                alpha,
+                            )
+                elif pipeline:
+                    T.annotate_buffer_versions({k: 2, kn: 2, k_l1: 2, valid: 2})
+                    for block in T.Pipelined(
+                        T.ceildiv(topk, bc),
+                        num_stages=2,
+                        annotations={"enable_offset": True},
+                    ):
+                        with T.Stage(0):
+                            gather_block(
+                                block, qi, sid, KV, Indices, valid, k, kn, k_l1
+                            )
+                        with T.Stage(1):
+                            attend_block(
+                                block,
+                                qi,
+                                sid,
+                                KV,
+                                valid,
+                                k_l1,
+                                q_l1,
+                                kb,
+                                qa,
+                                qk,
+                                scores,
+                                maximum,
+                                alpha,
+                                total,
+                                p,
+                                pn,
+                                p_l1,
+                                pa,
+                                v,
+                                vn,
+                                v_l1,
+                                vb,
+                                pv,
+                                current,
+                                output,
+                            )
+                else:
+                    for block in T.serial(T.ceildiv(topk, bc)):
                         gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1)
-                    with T.Stage(0):
-                        compute_qk(k_l1, q_l1, kb, qa, qk, scores)
-                    with T.Stage(1):
-                        compute_softmax(
-                            valid, scores, maximum, alpha, total, p, pn, p_l1
-                        )
-                    with T.Stage(2):
-                        compute_pv(
-                            block,
-                            qi,
-                            sid,
-                            KV,
-                            valid,
-                            k_l1,
-                            p_l1,
-                            pa,
-                            v,
-                            vn,
-                            v_l1,
-                            vb,
-                            pv,
-                            current,
-                            output,
-                            alpha,
-                        )
-            elif pipeline:
-                T.annotate_buffer_versions({k: 2, kn: 2, k_l1: 2, valid: 2})
-                for block in T.Pipelined(
-                    T.ceildiv(topk, bc),
-                    num_stages=2,
-                    annotations={"enable_offset": True},
-                ):
-                    with T.Stage(0):
-                        gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1)
-                    with T.Stage(1):
                         attend_block(
                             block,
                             qi,
@@ -521,41 +564,11 @@ def build_kernel(
                             current,
                             output,
                         )
-            else:
-                for block in T.serial(T.ceildiv(topk, bc)):
-                    gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1)
-                    attend_block(
-                        block,
-                        qi,
-                        sid,
-                        KV,
-                        valid,
-                        k_l1,
-                        q_l1,
-                        kb,
-                        qa,
-                        qk,
-                        scores,
-                        maximum,
-                        alpha,
-                        total,
-                        p,
-                        pn,
-                        p_l1,
-                        pa,
-                        v,
-                        vn,
-                        v_l1,
-                        vb,
-                        pv,
-                        current,
-                        output,
-                    )
-            with T.SimtVF(threads=128):
-                for r, d in T.Parallel(rows, dim):
-                    Out[qi, hi + sid * rows + r, d] = T.cast(
-                        output[r, d] / T.max(total[r], 1e-30), dtype
-                    )
+                with T.SimtVF(threads=128):
+                    for r, d in T.Parallel(rows, dim):
+                        Out[qi, hi + sid * rows + r, d] = T.cast(
+                            output[r, d] / T.max(total[r], 1e-30), dtype
+                        )
 
     return tilelang.compile(
         forward, out_idx=[3], target="ascend", execution_backend="auto"
