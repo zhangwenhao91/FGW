@@ -1,8 +1,21 @@
-tiling_build=../vllm-ascend/csrc/build/common/tiling_sink_task-prefix/src/tiling_sink_task-build
-if [ -d "$tiling_build" ]; then
-  mv -- "$tiling_build" "${tiling_build}.before-retry-$(date +%s)"
-fi
+conda env list
 
-env -u CFLAGS -u CXXFLAGS -u CPPFLAGS -u LDFLAGS \
-  SOC_VERSION=ascend950pr_9579 COMPILE_CUSTOM_KERNELS=1 \
-  python -m pip install --no-build-isolation --no-deps -e ../vllm-ascend
+while IFS= read -r prefix; do
+  [ -x "$prefix/bin/python" ] || continue
+  echo "=== $prefix ==="
+  "$prefix/bin/python" - <<'PY'
+from importlib.metadata import PackageNotFoundError, version
+
+for name in ("torch", "torch-npu", "tilelang", "vllm", "vllm-ascend"):
+    try:
+        print(f"  {name} {version(name)}")
+    except PackageNotFoundError:
+        pass
+PY
+done < <(conda env list --json | python -c \
+  'import json,sys; print(*json.load(sys.stdin)["envs"], sep="\n")')
+
+if command -v docker >/dev/null; then
+  docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}'
+  docker image ls --format 'table {{.Repository}}\t{{.Tag}}\t{{.Size}}'
+fi
