@@ -1,8 +1,161 @@
-git fetch origin test/dsa-dense-ascend
-git switch --detach 1e09906
-
-# KV=2048、top-k=2048，全候选并应用因果裁剪
-python -u -m benchmarks.dsa_dense_sfa --case simd-pv-long-full --device npu:0
-
-# KV=4096、top-k=1024，离散索引
-python -u -m benchmarks.dsa_dense_sfa --case simd-pv-long-discrete --device npu:0
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case simd-pv-long-full --device npu:0
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (simd-pv-long-full)
+Compiling SIMD softmax with direct NZ stores
+2026-11-24 10:12:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 10:12:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Compiling SIMD PV accumulation
+2026-11-24 10:12:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 10:12:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Accuracy passed. Starting alternating Event measurements
+timing 1/6
+timing 2/6
+timing 3/6
+timing 4/6
+timing 5/6
+timing 6/6
+{
+  "case": "simd-pv-long-full",
+  "shape": [
+    1,
+    1024,
+    2048,
+    128,
+    1,
+    2048,
+    512,
+    64
+  ],
+  "dtype": "bfloat16",
+  "torch": "2.13.0+cpu",
+  "torch_npu": "2.13.0",
+  "accuracy": {
+    "native_sfa": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_simd_softmax": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_simd_pv": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    }
+  },
+  "samples_us": {
+    "native_sfa": [
+      3377.068042755127,
+      3356.3339710235596,
+      3352.3929119110107,
+      3350.3189086914062,
+      3356.168031692505,
+      3358.8340282440186
+    ],
+    "tilelang_simd_softmax": [
+      33376.22833251953,
+      33375.56457519531,
+      33374.66812133789,
+      33376.91116333008,
+      33371.25015258789,
+      33372.04360961914
+    ],
+    "tilelang_simd_pv": [
+      14030.978202819824,
+      14046.433448791504,
+      14031.837463378906,
+      14030.55477142334,
+      14030.719757080078,
+      14036.185264587402
+    ]
+  },
+  "median_us": {
+    "native_sfa": 3356.251001358032,
+    "tilelang_simd_softmax": 33375.1163482666,
+    "tilelang_simd_pv": 14031.407833099365
+  },
+  "simd_speedup_vs_sfa": 0.10056147718964717,
+  "simd_pv_speedup_vs_simd_softmax": 2.378600689628337,
+  "simd_pv_speedup_vs_sfa": 0.23919559899333906
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW# python -u -m benchmarks.dsa_dense_sfa --case simd-pv-long-discrete --device npu:0
+torch=2.13.0+cpu torch_npu=2.13.0
+Checking native SFA output (simd-pv-long-discrete)
+Compiling SIMD softmax with direct NZ stores
+2026-11-24 10:13:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 10:13:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Compiling SIMD PV accumulation
+2026-11-24 10:13:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `forward` with `out_idx=[3]`
+2026-11-24 10:13:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `forward`
+Accuracy passed. Starting alternating Event measurements
+timing 1/6
+timing 2/6
+timing 3/6
+timing 4/6
+timing 5/6
+timing 6/6
+{
+  "case": "simd-pv-long-discrete",
+  "shape": [
+    1,
+    1024,
+    4096,
+    128,
+    1,
+    1024,
+    512,
+    64
+  ],
+  "dtype": "bfloat16",
+  "torch": "2.13.0+cpu",
+  "torch_npu": "2.13.0",
+  "accuracy": {
+    "native_sfa": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_simd_softmax": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    },
+    "tilelang_simd_pv": {
+      "passed": true,
+      "max_abs_error": 0.001953125
+    }
+  },
+  "samples_us": {
+    "native_sfa": [
+      1798.4919548034668,
+      1790.4609441757202,
+      1788.424015045166,
+      1790.9619808197021,
+      1792.0989990234375,
+      1785.9729528427124
+    ],
+    "tilelang_simd_softmax": [
+      16930.187225341797,
+      16927.574157714844,
+      16935.583114624023,
+      16931.59294128418,
+      16937.122344970703,
+      16923.622131347656
+    ],
+    "tilelang_simd_pv": [
+      7225.482940673828,
+      7231.9231033325195,
+      7237.101078033447,
+      7213.544845581055,
+      7214.479923248291,
+      7217.838764190674
+    ]
+  },
+  "median_us": {
+    "native_sfa": 1790.7114624977112,
+    "tilelang_simd_softmax": 16930.89008331299,
+    "tilelang_simd_pv": 7221.660852432251
+  },
+  "simd_speedup_vs_sfa": 0.10576593750748099,
+  "simd_pv_speedup_vs_simd_softmax": 2.344459318885167,
+  "simd_pv_speedup_vs_sfa": 0.24796393781004
+}
+(zwh) root@ubuntu162:/home/z30086261/FGW#
