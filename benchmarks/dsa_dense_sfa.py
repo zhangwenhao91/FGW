@@ -23,6 +23,7 @@ def main():
             "head-tile",
             "head64-pv",
             "kv-tile",
+            "softmax-nz",
         ),
         default="full",
     )
@@ -51,6 +52,7 @@ def main():
     dma_diagnostic = args.case in ("dma-gather", "dma-pipeline", "head-tile")
     head_pv_diagnostic = args.case == "head64-pv"
     kv_diagnostic = args.case == "kv-tile"
+    nz_diagnostic = args.case == "softmax-nz"
     if (
         diagnostic
         or pv_diagnostic
@@ -58,6 +60,7 @@ def main():
         or dma_diagnostic
         or head_pv_diagnostic
         or kv_diagnostic
+        or nz_diagnostic
     ):
         sq = 64
     topk = sk if args.case == "full" else 1024
@@ -106,7 +109,7 @@ def main():
     native_out = ascendc().cpu()
     calls = {"native_sfa": ascendc}
     outputs = {"native_sfa": native_out}
-    if not (head_pv_diagnostic or kv_diagnostic):
+    if not (head_pv_diagnostic or kv_diagnostic or nz_diagnostic):
         print("Compiling TileLang DSA", flush=True)
         kernel = build_kernel(sq, sk, topk)
 
@@ -188,7 +191,7 @@ def main():
 
         outputs["tilelang_head64"] = tilelang_head64().cpu()
         calls["tilelang_head64"] = tilelang_head64
-    if head_pv_diagnostic or kv_diagnostic:
+    if head_pv_diagnostic or kv_diagnostic or nz_diagnostic:
         print("Compiling 64-head candidate with 256-column PV", flush=True)
         wide_pv_kernel = build_kernel(
             sq,
@@ -229,6 +232,27 @@ def main():
 
         outputs["tilelang_kv64"] = tilelang_kv64().cpu()
         calls["tilelang_kv64"] = tilelang_kv64
+    if nz_diagnostic:
+        print("Compiling direct NZ softmax writeback", flush=True)
+        nz_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=256,
+            softmax_nz=True,
+        )
+
+        def tilelang_softmax_nz():
+            return nz_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_softmax_nz"] = tilelang_softmax_nz().cpu()
+        calls["tilelang_softmax_nz"] = tilelang_softmax_nz
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -318,6 +342,10 @@ def main():
         wide = medians["tilelang_kv64"]
         report["kv64_speedup_vs_kv32"] = medians["tilelang_head64_pv256"] / wide
         report["kv64_speedup_vs_sfa"] = medians["native_sfa"] / wide
+    if nz_diagnostic:
+        nz = medians["tilelang_softmax_nz"]
+        report["softmax_nz_speedup_vs_baseline"] = medians["tilelang_head64_pv256"] / nz
+        report["softmax_nz_speedup_vs_sfa"] = medians["native_sfa"] / nz
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

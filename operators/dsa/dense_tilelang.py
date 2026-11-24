@@ -20,6 +20,7 @@ def build_kernel(
     pipeline=False,
     head_tile=32,
     kv_tile=32,
+    softmax_nz=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -154,12 +155,16 @@ def build_kernel(
                     valid[j] >= 0, T.exp(scores[r, j] - maximum[r]), 0
                 )
                 T.reducer_update(sums[r], prob)
-                p[r, j] = T.cast(prob, dtype)
+                if softmax_nz:
+                    pn[r, j] = T.cast(prob, dtype)
+                else:
+                    p[r, j] = T.cast(prob, dtype)
             tile_sum = T.alloc_fragment((rows,), fp32)
             T.finalize_reducer(sums, tile_sum)
             for r in T.Parallel(rows):
                 total[r] = total[r] * alpha[r] + tile_sum[r]
-        T.copy(p, pn[:rows, :])
+        if not softmax_nz:
+            T.copy(p, pn[:rows, :])
         T.dual_copy(pn[:rows, :], p_l1)
         T.copy(p_l1, pa)
         for chunk in T.serial(dim // part):
