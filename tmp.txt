@@ -1,19 +1,66 @@
-devices=(--device /dev/davinci0 --device /dev/davinci_manager)
-for node in /dev/hisi_hdc /dev/ummu /dev/uburma; do
-  if [ -e "$node" ]; then
-    devices+=(--device "$node")
-  fi
-done
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# devices=(--device /dev/davinci0 --device /dev/davinci_manager)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# for node in /dev/hisi_hdc /dev/ummu /dev/uburma; do
+>   if [ -e "$node" ]; then
+>     devices+=(--device "$node")
+>   fi
+> done
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# docker run --rm --pull=never --shm-size=1g \
+>   "${devices[@]}" \
+>   -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
+>   -v /usr/local/dcmi:/usr/local/dcmi:ro \
+>   -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
+>   -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
+>   -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
+>   quay.io/ascend/vllm-ascend:v0.30.0-a5 \
+>   bench_vllm_ascend.py --backend vllm --device npu:0 --output vllm-pair.csv &&
+> python bench_vllm_ascend.py --merge tilelang-pair.csv vllm-pair.csv \
+>   --output vllm-ascend-results.csv &&
+> cat vllm-ascend-results.csv
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-24 20:25:40 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-24 20:25:40 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-24 20:25:40 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-24 20:25:40 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-24 20:25:41 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+Traceback (most recent call last):
+  File "/fgw-mhc/bench_vllm_ascend.py", line 123, in main
+    baseline = vllm_pair()
+               ^^^^^^^^^^^
+  File "/fgw-mhc/bench_vllm_ascend.py", line 113, in vllm_pair
+    layer_in, post, comb = vllm_pre(*vllm_args)
+                           ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.12.16/lib/python3.12/site-packages/torch/_ops.py", line 1209, in __call__
+    return self._op(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: call aclnnHcPre failed, detail:[PID: 1] 2026-11-24-20:25:41.979.607 Execution_Error(EZ1008): Failed to execute operator HcPre_0. Reason: The tiling function does not exist.
+        Solution: 1.If the tiling function does not exist, check whether the tiling function is registered successfully. 2.If the tiling function fails to be executed, check the implementation logic of the tiling function.
+TraceBack (most recent call last):
+        Check NnopbaseExecutorDoTiling(executor) failed
+        Check NnopbaseExecutorTilingAndUpdateBinInfo(executor) failed
+        Check NnopbaseExecutorMatchCache(executor) failed
+        Check NnopbaseRunForWorkspace(*executor, workspaceSize) failed
 
-docker run --rm --pull=never --shm-size=1g \
-  "${devices[@]}" \
-  -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
-  -v /usr/local/dcmi:/usr/local/dcmi:ro \
-  -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
-  -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
-  -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
-  quay.io/ascend/vllm-ascend:v0.30.0-a5 \
-  bench_vllm_ascend.py --backend vllm --device npu:0 --output vllm-pair.csv &&
-python bench_vllm_ascend.py --merge tilelang-pair.csv vllm-pair.csv \
-  --output vllm-ascend-results.csv &&
-cat vllm-ascend-results.csv
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/fgw-mhc/bench_vllm_ascend.py", line 159, in <module>
+    main()
+  File "/fgw-mhc/bench_vllm_ascend.py", line 126, in main
+    raise RuntimeError(f"vLLM AscendC failed for B={batch}, hidden={hidden}: {exc}") from exc
+RuntimeError: vLLM AscendC failed for B=1, hidden=1280: call aclnnHcPre failed, detail:[PID: 1] 2026-11-24-20:25:41.979.607 Execution_Error(EZ1008): Failed to execute operator HcPre_0. Reason: The tiling function does not exist.
+        Solution: 1.If the tiling function does not exist, check whether the tiling function is registered successfully. 2.If the tiling function fails to be executed, check the implementation logic of the tiling function.
+TraceBack (most recent call last):
+        Check NnopbaseExecutorDoTiling(executor) failed
+        Check NnopbaseExecutorTilingAndUpdateBinInfo(executor) failed
+        Check NnopbaseExecutorMatchCache(executor) failed
+        Check NnopbaseRunForWorkspace(*executor, workspaceSize) failed
+
+[ERROR] 2026-11-24-20:25:43 (PID:1, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
