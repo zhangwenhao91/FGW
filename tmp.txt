@@ -1,3 +1,13 @@
-ERROR: Ignored the following versions that require a different python version: 0.23.0 Requires-Python >=3.13; 0.23.1 Requires-Python >=3.13; 0.52.0 Requires-Python >=3.6,<3.9; 0.52.0rc3 Requires-Python >=3.6,<3.9; 0.53.0 Requires-Python >=3.6,<3.10; 0.53.0rc1.post1 Requires-Python >=3.6,<3.10; 0.53.0rc2 Requires-Python >=3.6,<3.10; 0.53.0rc3 Requires-Python >=3.6,<3.10; 0.53.1 Requires-Python >=3.6,<3.10; 0.54.0 Requires-Python >=3.7,<3.10; 0.54.0rc2 Requires-Python >=3.7,<3.10; 0.54.0rc3 Requires-Python >=3.7,<3.10; 0.54.1 Requires-Python >=3.7,<3.10; 0.55.0 Requires-Python >=3.7,<3.11; 0.55.0rc1 Requires-Python >=3.7,<3.11; 0.55.1 Requires-Python >=3.7,<3.11; 0.55.2 Requires-Python >=3.7,<3.11; 1.4.2.220622 Requires-Python >=3.8,<3.11; 1.4.2.220626 Requires-Python >=3.8,<3.11; 1.4.3.220702 Requires-Python >=3.8,<3.11; 1.4.3.220703 Requires-Python >=3.8,<3.11; 1.4.3.220704 Requires-Python >=3.8,<3.11; 1.4.3.220710 Requires-Python >=3.8,<3.11; 1.4.3.220718 Requires-Python >=3.8,<3.11; 1.4.3.220724 Requires-Python >=3.8,<3.11; 1.4.3.220801 Requires-Python >=3.8,<3.11; 1.4.3.220807 Requires-Python >=3.8,<3.11; 1.4.3.220815 Requires-Python >=3.8,<3.11; 1.4.3.220822 Requires-Python >=3.8,<3.11; 1.4.3.220829 Requires-Python >=3.8,<3.11; 1.4.4.220906 Requires-Python >=3.8,<3.11; 1.4.4.220912 Requires-Python >=3.8,<3.11; 1.4.4.220919 Requires-Python >=3.8,<3.11; 1.5.0.220926 Requires-Python >=3.8,<3.11; 1.5.0.221003 Requires-Python >=3.8,<3.11; 1.5.0.221010 Requires-Python >=3.8,<3.11; 1.5.0.221012 Requires-Python >=3.8,<3.11; 1.5.1.221024 Requires-Python >=3.8,<3.11; 1.5.2.221124 Requires-Python >=3.8,<3.12; 1.5.2.221213 Requires-Python >=3.8,<3.12; 1.5.2.230105 Requires-Python >=3.8,<3.12; 1.5.3.230203 Requires-Python >=3.8,<3.12; 1.5.3.230214 Requires-Python >=3.8,<3.12; 1.5.3.230227 Requires-Python >=3.8,<3.12; 1.5.3.230304 Requires-Python >=3.8,<3.12; 1.5.3.230320 Requires-Python >=3.8,<3.12; 1.5.3.230321 Requires-Python >=3.8,<3.12
-ERROR: Could not find a version that satisfies the requirement triton-ascend==3.6.0.post2 (from versions: none)
-ERROR: No matching distribution found for triton-ascend==3.6.0.post2
+python - <<'PY' | python -m pip install -c "$constraints" -r /dev/stdin \
+  --extra-index-url https://repo.huaweicloud.com/ascend/repos/pypi \
+  --extra-index-url https://repo.huaweicloud.com/ascend/repos/pypi/nightly
+from pathlib import Path
+import re
+import tomllib
+
+for path in ("../vllm/pyproject.toml", "../vllm-ascend/pyproject.toml"):
+    for req in tomllib.loads(Path(path).read_text())["build-system"]["requires"]:
+        name = re.split(r"[\s<>=!~;\[]", req, maxsplit=1)[0].replace("_", "-")
+        if name not in {"torch", "torch-npu", "torchvision", "torchaudio"}:
+            print(req)
+PY
