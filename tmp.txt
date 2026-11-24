@@ -1,9 +1,19 @@
-ca=/etc/ssl/certs/ca-certificates.crt
-url=https://cann-3rd.obs.cn-north-4.myhuaweicloud.com/json/json-3.12.0.tar.gz
-set -o pipefail
+(zwh) root@ubuntu162:/home/z30086261/FGW# ca=/etc/ssl/certs/ca-certificates.crt
+(zwh) root@ubuntu162:/home/z30086261/FGW# url=https://cann-3rd.obs.cn-north-4.myhuaweicloud.com/json/json-3.12.0.tar.gz
+(zwh) root@ubuntu162:/home/z30086261/FGW# set -o pipefail
+(zwh) root@ubuntu162:/home/z30086261/FGW# 
+(zwh) root@ubuntu162:/home/z30086261/FGW# curl --cacert "$ca" -fIL "$url" &&
+> CMAKE_TLS_CAINFO="$ca" \
+>   cmake --build ../ops-transformer-sfa/build \
+>   --target ops_transformer_kernel --parallel 4 \
+>   2>&1 | tee reports/dsa/sfa-lines.yQvkcNCM/resume.log
+HTTP/1.1 200 Connection established
+Proxy-agent: netentsec
+Connection: close
 
-curl --cacert "$ca" -fIL "$url" &&
-CMAKE_TLS_CAINFO="$ca" \
-  cmake --build ../ops-transformer-sfa/build \
-  --target ops_transformer_kernel --parallel 4 \
-  2>&1 | tee reports/dsa/sfa-lines.yQvkcNCM/resume.log
+curl: (60) SSL certificate problem: self signed certificate in certificate chain
+More details here: https://curl.haxx.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
