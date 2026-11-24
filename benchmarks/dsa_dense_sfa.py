@@ -25,6 +25,7 @@ def main():
             "kv-tile",
             "softmax-nz",
             "staged-nz",
+            "selective-zero",
         ),
         default="full",
     )
@@ -55,6 +56,7 @@ def main():
     kv_diagnostic = args.case == "kv-tile"
     nz_diagnostic = args.case == "softmax-nz"
     staged_diagnostic = args.case == "staged-nz"
+    zero_diagnostic = args.case == "selective-zero"
     if (
         diagnostic
         or pv_diagnostic
@@ -64,6 +66,7 @@ def main():
         or kv_diagnostic
         or nz_diagnostic
         or staged_diagnostic
+        or zero_diagnostic
     ):
         sq = 64
     topk = sk if args.case == "full" else 1024
@@ -112,7 +115,13 @@ def main():
     native_out = ascendc().cpu()
     calls = {"native_sfa": ascendc}
     outputs = {"native_sfa": native_out}
-    if not (head_pv_diagnostic or kv_diagnostic or nz_diagnostic or staged_diagnostic):
+    if not (
+        head_pv_diagnostic
+        or kv_diagnostic
+        or nz_diagnostic
+        or staged_diagnostic
+        or zero_diagnostic
+    ):
         print("Compiling TileLang DSA", flush=True)
         kernel = build_kernel(sq, sk, topk)
 
@@ -256,7 +265,7 @@ def main():
 
         outputs["tilelang_softmax_nz"] = tilelang_softmax_nz().cpu()
         calls["tilelang_softmax_nz"] = tilelang_softmax_nz
-    if staged_diagnostic:
+    if staged_diagnostic or zero_diagnostic:
         print("Compiling three-stage NZ pipeline", flush=True)
         staged_kernel = build_kernel(
             sq,
@@ -278,6 +287,40 @@ def main():
 
         outputs["tilelang_staged"] = tilelang_staged().cpu()
         calls["tilelang_staged"] = tilelang_staged
+    if zero_diagnostic:
+        print("Compiling selective KV zero fill", flush=True)
+        zero_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=256,
+            softmax_nz=True,
+            staged=True,
+            selective_zero=True,
+        )
+
+        def tilelang_selective_zero():
+            return zero_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_selective_zero"] = tilelang_selective_zero().cpu()
+        calls["tilelang_selective_zero"] = tilelang_selective_zero
+
+        print("Checking mixed padding and fully masked query", flush=True)
+        padded = indices.view(sq, topk).clone()
+        padded[:, -17:] = sk
+        padded[0, :] = sk
+        padded_ref = staged_kernel(qn[0], kvn.view(sk, d + tail), padded).cpu()
+        padded_out = zero_kernel(qn[0], kvn.view(sk, d + tail), padded).cpu()
+        torch.testing.assert_close(padded_out, padded_ref, atol=0.002, rtol=0.002)
+        torch.testing.assert_close(
+            padded_out[0], torch.zeros_like(padded_out[0]), atol=0, rtol=0
+        )
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -375,6 +418,13 @@ def main():
         staged = medians["tilelang_staged"]
         report["staged_speedup_vs_prefetch"] = medians["tilelang_softmax_nz"] / staged
         report["staged_speedup_vs_sfa"] = medians["native_sfa"] / staged
+    if zero_diagnostic:
+        selective = medians["tilelang_selective_zero"]
+        report["padding_checks_passed"] = True
+        report["selective_zero_speedup_vs_staged"] = (
+            medians["tilelang_staged"] / selective
+        )
+        report["selective_zero_speedup_vs_sfa"] = medians["native_sfa"] / selective
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

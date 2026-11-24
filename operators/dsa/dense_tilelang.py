@@ -22,10 +22,13 @@ def build_kernel(
     kv_tile=32,
     softmax_nz=False,
     staged=False,
+    selective_zero=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
+    if selective_zero and not dma_gather:
+        raise ValueError("selective zero requires DMA gather")
     if staged and not (pipeline and softmax_nz):
         raise ValueError("staged attention requires DMA pipeline and direct NZ softmax")
     if pipeline and not dma_gather:
@@ -60,7 +63,14 @@ def build_kernel(
             for segment in T.serial(bc // (2 * gather_rows)):
                 with T.SimtVF(threads=128):
                     for j, d in T.Parallel(gather_rows, width):
-                        k[j, d] = 0
+                        if (
+                            not selective_zero
+                            or valid[
+                                segment * (2 * gather_rows) + sid * gather_rows + j
+                            ]
+                            < 0
+                        ):
+                            k[j, d] = 0
                 # Fixed pairs give DMA static extents. Disjoint or masked
                 # rows fall back to one DMA per valid row.
                 for pair in T.serial(gather_rows // 2):
