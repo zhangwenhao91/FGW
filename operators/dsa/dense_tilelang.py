@@ -26,10 +26,13 @@ def build_kernel(
     selective_zero=False,
     simd_softmax=False,
     simd_pv=False,
+    batch_pv=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
+    if batch_pv and not simd_pv:
+        raise ValueError("batched PV handoff requires SIMD PV")
     if simd_pv and not simd_softmax:
         raise ValueError("SIMD PV requires the SIMD softmax baseline")
     if simd_softmax and not (staged and kv_tile == 32 and not selective_zero):
@@ -249,25 +252,40 @@ def build_kernel(
                 T.dual_copy(vn[: part // 2, :], v_l1)
                 T.copy(v_l1, vb)
                 T.gemm(pa, vb, pv, transpose_B=True, clear_accum=True)
-            T.dual_copy(pv, current)
-            if simd_pv:
-                with T.SimdVF():
-                    full = S.pset(32, "PAT_ALL")
-                    for r in T.serial(rows):
-                        factor = S.vld(alpha[r], "BRC_B32")
-                        for c in T.serial(part // 64):
-                            col = chunk * part + c * 64
-                            previous = S.vld(output[r, col])
-                            contribution = S.vld(current[r, c * 64])
-                            updated = S.vadd(
-                                S.vmul(previous, factor, full), contribution, full
-                            )
-                            S.vsts(output[r, col], updated, full, "NORM_B32")
+            if batch_pv:
+                T.dual_copy(pv, current[:, chunk * part : (chunk + 1) * part])
             else:
-                with T.SimtVF(threads=128):
-                    for r, d in T.Parallel(rows, part):
-                        col = chunk * part + d
-                        output[r, col] = output[r, col] * alpha[r] + current[r, d]
+                T.dual_copy(pv, current)
+                if simd_pv:
+                    with T.SimdVF():
+                        full = S.pset(32, "PAT_ALL")
+                        for r in T.serial(rows):
+                            factor = S.vld(alpha[r], "BRC_B32")
+                            for c in T.serial(part // 64):
+                                col = chunk * part + c * 64
+                                previous = S.vld(output[r, col])
+                                contribution = S.vld(current[r, c * 64])
+                                updated = S.vadd(
+                                    S.vmul(previous, factor, full), contribution, full
+                                )
+                                S.vsts(output[r, col], updated, full, "NORM_B32")
+                else:
+                    with T.SimtVF(threads=128):
+                        for r, d in T.Parallel(rows, part):
+                            col = chunk * part + d
+                            output[r, col] = output[r, col] * alpha[r] + current[r, d]
+        if batch_pv:
+            with T.SimdVF():
+                mask = S.pset(32, "PAT_ALL")
+                for r in T.serial(rows):
+                    factor = S.vld(alpha[r], "BRC_B32")
+                    for col in T.serial(dim // 64):
+                        previous = S.vld(output[r, col * 64])
+                        contribution = S.vld(current[r, col * 64])
+                        accumulated = S.vadd(
+                            S.vmul(previous, factor, mask), contribution, mask
+                        )
+                        S.vsts(output[r, col * 64], accumulated, mask, "NORM_B32")
 
     @T.macro
     def attend_block(
@@ -352,7 +370,7 @@ def build_kernel(
                 }
             )
             scores = T.alloc_shared((rows + (1 if simd_softmax else 0), bc), fp32)
-            current = T.alloc_shared((rows, part), fp32)
+            current = T.alloc_shared((rows, dim if batch_pv else part), fp32)
             output = T.alloc_shared((rows, dim), fp32)
             maximum = T.alloc_shared((rows,), fp32)
             total = T.alloc_shared((rows,), fp32)
