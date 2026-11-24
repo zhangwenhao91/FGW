@@ -3,6 +3,7 @@
 import argparse
 import json
 import re
+from collections import Counter
 from pathlib import Path
 
 
@@ -32,12 +33,13 @@ def source_markers(path):
     return qk, pv, prob
 
 
-def events_at(root, core, markers):
+def events_at(root, core, markers, *, inspect=False):
     paths = sorted(root.rglob(f"core0.{core}/trace.json"))
     if len(paths) != 1:
         raise ValueError(f"{root}: expected one trace for {core}, got {len(paths)}")
     data = json.loads(paths[0].read_text())
     groups = {line: set() for line in markers}
+    details = {line: Counter() for line in markers}
     for event in data if isinstance(data, list) else data["traceEvents"]:
         if event.get("ph") != "X" or event.get("dur", 0) <= 0:
             continue
@@ -56,9 +58,21 @@ def events_at(root, core, markers):
             int(line) for line in re.findall(r"\.asc:(\d+)", str(args.get("code", "")))
         }
         for line in source_lines.intersection(groups):
+            if inspect:
+                details[line][
+                    (str(event.get("name", "")), str(args.get("code", ""))[:350])
+                ] += 1
             groups[line].add(
                 (event["ts"], event["ts"] + event["dur"], event.get("name", ""))
             )
+    if inspect:
+        return {
+            line: [
+                {"event": name, "source": code, "count": count}
+                for (name, code), count in counts.most_common()
+            ]
+            for line, counts in details.items()
+        }
     return {line: sorted(items) for line, items in groups.items()}
 
 
@@ -100,8 +114,26 @@ def summarize(root, impl):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("report", type=Path)
+    parser.add_argument("--inspect-markers", action="store_true")
     args = parser.parse_args()
     try:
+        if args.inspect_markers:
+            report = {}
+            for impl in ("tilelang", "tilelang-packed"):
+                qk, pv, prob = source_markers(args.report / f"{impl}.asc")
+                trace = args.report / impl
+                report[impl] = {
+                    "qk_and_pv_source_lines": [qk, pv],
+                    "cube": events_at(trace, "cubecore0", (qk, pv), inspect=True),
+                    "probability_dma": {
+                        f"vec{sid}": events_at(
+                            trace, f"veccore{sid}", (line,), inspect=True
+                        )
+                        for sid, line in prob.items()
+                    },
+                }
+            print(json.dumps(report, indent=2))
+            return
         baseline = summarize(args.report, "tilelang")
         packed = summarize(args.report, "tilelang-packed")
         paired = list(zip(baseline, packed, strict=True))
