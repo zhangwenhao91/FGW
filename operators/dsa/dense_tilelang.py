@@ -36,6 +36,7 @@ def build_kernel(
     lineinfo=False,
     pv_fma=False,
     packed_prob=False,
+    prefetch_indices=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -59,6 +60,10 @@ def build_kernel(
     ):
         raise ValueError(
             "packed KV diagnostic requires the KV32/PV512 path and aligned topk"
+        )
+    if prefetch_indices and not (packed_prob and staged and dma_gather and topk >= 128):
+        raise ValueError(
+            "prefetch_indices requires staged KV128 DMA gather and packed softmax"
         )
     if packed_prob and not (simd_softmax and kv_tile == 128):
         raise ValueError("packed_prob requires the KV128 SIMD softmax")
@@ -109,7 +114,7 @@ def build_kernel(
     kv_shape = (sq * (topk // bc) * 2, nz_slab) if packed_nz else (kv_rows, width)
 
     @T.macro
-    def gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1):
+    def load_indices(block, qi, Indices, valid):
         with T.SimtVF(threads=128):
             for j in T.Parallel(bc):
                 valid[j] = -1
@@ -117,6 +122,20 @@ def build_kernel(
                     index = Indices[qi, block * bc + j]
                     if index >= 0 and index <= sk - sq + qi:
                         valid[j] = index
+
+    @T.macro
+    def gather_block(
+        block, qi, sid, KV, Indices, valid, k, kn, k_l1, local_task, next_valid
+    ):
+        if prefetch_indices:
+            if block == 0 and local_task > 0:
+                with T.SimtVF(threads=128):
+                    for j in T.Parallel(bc):
+                        valid[j] = next_valid[j]
+            else:
+                load_indices(block, qi, Indices, valid)
+        else:
+            load_indices(block, qi, Indices, valid)
         if packed_nz:
             physical_nz = T.view(kn, (nz_slab,), dtype=dtype)
             slab = (qi * (topk // bc) + block) * 2 + sid
@@ -567,6 +586,10 @@ def build_kernel(
             total = T.alloc_shared((rows,), fp32)
             alpha = T.alloc_shared((rows,), fp32)
             valid = T.alloc_shared((max(64, bc) if simd_softmax else bc,), "int32")
+            if prefetch_indices:
+                next_valid = T.alloc_shared((bc,), "int32")
+            else:
+                next_valid = valid
             # Distribute the remainder across the first cores. Each core
             # owns a contiguous range of (query, head group) tasks.
             count = tasks // grid + T.if_then_else(core < tasks % grid, 1, 0)
@@ -592,7 +615,17 @@ def build_kernel(
                     ):
                         with T.Stage(0):
                             gather_block(
-                                block, qi, sid, KV, Indices, valid, k, kn, k_l1
+                                block,
+                                qi,
+                                sid,
+                                KV,
+                                Indices,
+                                valid,
+                                k,
+                                kn,
+                                k_l1,
+                                local_task,
+                                next_valid,
                             )
                         with T.Stage(0):
                             compute_qk(k_l1, q_l1, kb, qa, qk, scores)
@@ -628,7 +661,17 @@ def build_kernel(
                     ):
                         with T.Stage(0):
                             gather_block(
-                                block, qi, sid, KV, Indices, valid, k, kn, k_l1
+                                block,
+                                qi,
+                                sid,
+                                KV,
+                                Indices,
+                                valid,
+                                k,
+                                kn,
+                                k_l1,
+                                local_task,
+                                next_valid,
                             )
                         with T.Stage(1):
                             attend_block(
@@ -660,7 +703,19 @@ def build_kernel(
                             )
                 else:
                     for block in T.serial(T.ceildiv(topk, bc)):
-                        gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1)
+                        gather_block(
+                            block,
+                            qi,
+                            sid,
+                            KV,
+                            Indices,
+                            valid,
+                            k,
+                            kn,
+                            k_l1,
+                            local_task,
+                            next_valid,
+                        )
                         attend_block(
                             block,
                             qi,
@@ -688,6 +743,9 @@ def build_kernel(
                             current,
                             output,
                         )
+                if prefetch_indices and local_task + 1 < count:
+                    next_qi = (task + 1) // (heads // br)
+                    load_indices(0, next_qi, Indices, next_valid)
                 if simd_output:
                     final = T.view(output, (rows, dim * 2), dtype=dtype)
                     with T.SimdVF():

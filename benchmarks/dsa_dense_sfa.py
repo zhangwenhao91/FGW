@@ -39,6 +39,7 @@ def main():
             "kv128-simd-long",
             "pv-fma-long",
             "softmax-pack-long",
+            "prefetch-indices-long",
             "kv-nz-diagnostic",
             "direct-kv-nz",
             "gather-once",
@@ -90,7 +91,8 @@ def main():
     gather_once = args.case in ("gather-once", "rolling-gather")
     short_pv512 = kv_nz_diagnostic or direct_nz or gather_once
     pv_fma = args.case == "pv-fma-long"
-    softmax_pack = args.case == "softmax-pack-long"
+    prefetch_indices = args.case == "prefetch-indices-long"
+    softmax_pack = args.case == "softmax-pack-long" or prefetch_indices
     kv128_diagnostic = pv_fma or softmax_pack
     kv128_simd = args.case == "kv128-simd-long" or kv128_diagnostic
     kv64_simd = args.case == "kv64-simd-long" or kv128_simd
@@ -721,7 +723,7 @@ def main():
         calls["tilelang_kv64_simd"] = tilelang_kv64_simd
     if kv128_simd:
 
-        def make_kv128_call(*, packed_prob=False):
+        def make_kv128_call(*, packed_prob=False, prefetch_indices=False):
             kernel = build_kernel(
                 sq,
                 sk,
@@ -740,6 +742,7 @@ def main():
                 simd_output=True,
                 kv_tile=128,
                 packed_prob=packed_prob,
+                prefetch_indices=prefetch_indices,
             )
 
             def run():
@@ -756,6 +759,14 @@ def main():
             print("Compiling KV128 with packed SIMD probability stores", flush=True)
             calls["tilelang_softmax_pack"] = make_kv128_call(packed_prob=True)
             outputs["tilelang_softmax_pack"] = calls["tilelang_softmax_pack"]().cpu()
+        if prefetch_indices:
+            print("Compiling KV128 with next-task index prefetch", flush=True)
+            calls["tilelang_prefetch_indices"] = make_kv128_call(
+                packed_prob=True, prefetch_indices=True
+            )
+            outputs["tilelang_prefetch_indices"] = calls[
+                "tilelang_prefetch_indices"
+            ]().cpu()
     if pv_fma:
         print("Compiling KV128 with fused SIMD PV multiply-add", flush=True)
         fma_kernel = build_kernel(
@@ -995,6 +1006,12 @@ def main():
             medians["tilelang_kv128_simd"] / packed
         )
         report["softmax_pack_speedup_vs_sfa"] = medians["native_sfa"] / packed
+    if prefetch_indices:
+        prefetched = medians["tilelang_prefetch_indices"]
+        report["prefetch_indices_speedup_vs_pack"] = (
+            medians["tilelang_softmax_pack"] / prefetched
+        )
+        report["prefetch_indices_speedup_vs_sfa"] = medians["native_sfa"] / prefetched
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
