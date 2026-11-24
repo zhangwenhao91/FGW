@@ -1,4 +1,4 @@
-"""Compare matched KV128 QK, probability DMA, and PV events on simulator core 0."""
+"""Compare matched KV128 QK writeback and PV launch events on simulator core 0."""
 
 import argparse
 import json
@@ -77,34 +77,25 @@ def events_at(root, core, markers, *, inspect=False):
 
 
 def summarize(root, impl):
-    qk_line, pv_line, prob_lines = source_markers(root / f"{impl}.asc")
-    trace = root / impl
-    cube = events_at(trace, "cubecore0", (qk_line, pv_line))
-    qk, pv = cube[qk_line], cube[pv_line]
-    prob = [
-        events_at(trace, f"veccore{sid}", (line,))[line]
-        for sid, line in prob_lines.items()
-    ]
-    counts = [len(qk), len(prob[0]), len(prob[1]), len(pv)]
-    if not counts[0] or counts[0] % 2 or counts != [len(qk)] * 3 + [4 * len(qk)]:
-        raise ValueError(f"{impl}: unexpected QK/Vec0 DMA/Vec1 DMA/PV counts {counts}")
+    qk_line, pv_line, _ = source_markers(root / f"{impl}.asc")
+    cube = events_at(root / impl, "cubecore0", (qk_line, pv_line))
+    # Scalar setup instructions can carry the same source location.
+    qk = [event for event in cube[qk_line] if event[2] == "FIX_L0C_TO_DST"]
+    pv = [event for event in cube[pv_line] if event[2] == "MMAD"]
+    if not qk or len(qk) % 2 or len(pv) != 4 * len(qk):
+        raise ValueError(f"{impl}: unexpected QK/PV counts {[len(qk), len(pv)]}")
     rows = []
     origin = qk[0][1]
     for i, score in enumerate(qk):
-        dma = [events[i] for events in prob]
-        ready = max(event[1] for event in dma)
         start = pv[4 * i][0]
-        if not score[1] <= min(event[0] for event in dma) <= ready <= start:
+        if score[1] > start:
             raise ValueError(f"{impl}: timestamps for block {i} fail causal ordering")
         rows.append(
             {
                 "task": i // 2,
                 "kv_block": i % 2,
                 "qk_end_us": round(score[1] - origin, 5),
-                "probability_l1_ready_us": round(ready - origin, 5),
                 "pv_start_us": round(start - origin, 5),
-                "qk_to_probability_us": round(ready - score[1], 5),
-                "probability_to_pv_us": round(start - ready, 5),
                 "qk_to_pv_us": round(start - score[1], 5),
             }
         )
