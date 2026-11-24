@@ -21,10 +21,13 @@ def build_kernel(
     head_tile=32,
     kv_tile=32,
     softmax_nz=False,
+    staged=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
         raise ValueError("expected positive sizes and right-aligned causal queries")
+    if staged and not (pipeline and softmax_nz):
+        raise ValueError("staged attention requires DMA pipeline and direct NZ softmax")
     if pipeline and not dma_gather:
         raise ValueError("pipeline requires DMA gather")
     if dma_gather and (not reuse_kv or prepacked):
@@ -95,33 +98,7 @@ def build_kernel(
             T.dual_copy(kn[:gather_rows, :], k_l1)
 
     @T.macro
-    def attend_block(
-        block,
-        qi,
-        sid,
-        KV,
-        valid,
-        k_l1,
-        q_l1,
-        kb,
-        qa,
-        qk,
-        scores,
-        maximum,
-        alpha,
-        total,
-        p,
-        pn,
-        p_l1,
-        pa,
-        v,
-        vn,
-        v_l1,
-        vb,
-        pv,
-        current,
-        output,
-    ):
+    def compute_qk(k_l1, q_l1, kb, qa, qk, scores):
         if br == 32:
             T.copy(k_l1, kb)
             T.gemm(qa, kb, qk, transpose_B=True, clear_accum=True)
@@ -134,6 +111,9 @@ def build_kernel(
                 T.copy(k_l1[:, lo : lo + qk_width], kb)
                 T.gemm(qa, kb, qk, transpose_B=True, clear_accum=(section == 0))
         T.dual_copy(qk, scores)
+
+    @T.macro
+    def compute_softmax(valid, scores, maximum, alpha, total, p, pn, p_l1):
         with T.SimtVF(threads=128):
             peaks = T.alloc_reducer((rows,), fp32, op="max")
             T.reducer_init(peaks)
@@ -166,6 +146,26 @@ def build_kernel(
         if not softmax_nz:
             T.copy(p, pn[:rows, :])
         T.dual_copy(pn[:rows, :], p_l1)
+
+    @T.macro
+    def compute_pv(
+        block,
+        qi,
+        sid,
+        KV,
+        valid,
+        k_l1,
+        p_l1,
+        pa,
+        v,
+        vn,
+        v_l1,
+        vb,
+        pv,
+        current,
+        output,
+        alpha,
+    ):
         T.copy(p_l1, pa)
         for chunk in T.serial(dim // part):
             if reuse_kv:
@@ -193,6 +193,55 @@ def build_kernel(
                 for r, d in T.Parallel(rows, part):
                     col = chunk * part + d
                     output[r, col] = output[r, col] * alpha[r] + current[r, d]
+
+    @T.macro
+    def attend_block(
+        block,
+        qi,
+        sid,
+        KV,
+        valid,
+        k_l1,
+        q_l1,
+        kb,
+        qa,
+        qk,
+        scores,
+        maximum,
+        alpha,
+        total,
+        p,
+        pn,
+        p_l1,
+        pa,
+        v,
+        vn,
+        v_l1,
+        vb,
+        pv,
+        current,
+        output,
+    ):
+        compute_qk(k_l1, q_l1, kb, qa, qk, scores)
+        compute_softmax(valid, scores, maximum, alpha, total, p, pn, p_l1)
+        compute_pv(
+            block,
+            qi,
+            sid,
+            KV,
+            valid,
+            k_l1,
+            p_l1,
+            pa,
+            v,
+            vn,
+            v_l1,
+            vb,
+            pv,
+            current,
+            output,
+            alpha,
+        )
 
     @T.prim_func
     def forward(
@@ -243,7 +292,40 @@ def build_kernel(
                 for r in T.Parallel(rows):
                     maximum[r] = -1.0e30
                     total[r] = 0
-            if pipeline:
+            if staged:
+                for block in T.Pipelined(
+                    T.ceildiv(topk, bc),
+                    num_stages=3,
+                    annotations={"enable_offset": True},
+                ):
+                    with T.Stage(0):
+                        gather_block(block, qi, sid, KV, Indices, valid, k, kn, k_l1)
+                    with T.Stage(0):
+                        compute_qk(k_l1, q_l1, kb, qa, qk, scores)
+                    with T.Stage(1):
+                        compute_softmax(
+                            valid, scores, maximum, alpha, total, p, pn, p_l1
+                        )
+                    with T.Stage(2):
+                        compute_pv(
+                            block,
+                            qi,
+                            sid,
+                            KV,
+                            valid,
+                            k_l1,
+                            p_l1,
+                            pa,
+                            v,
+                            vn,
+                            v_l1,
+                            vb,
+                            pv,
+                            current,
+                            output,
+                            alpha,
+                        )
+            elif pipeline:
                 T.annotate_buffer_versions({k: 2, kn: 2, k_l1: 2, valid: 2})
                 for block in T.Pipelined(
                     T.ceildiv(topk, bc),

@@ -24,6 +24,7 @@ def main():
             "head64-pv",
             "kv-tile",
             "softmax-nz",
+            "staged-nz",
         ),
         default="full",
     )
@@ -53,6 +54,7 @@ def main():
     head_pv_diagnostic = args.case == "head64-pv"
     kv_diagnostic = args.case == "kv-tile"
     nz_diagnostic = args.case == "softmax-nz"
+    staged_diagnostic = args.case == "staged-nz"
     if (
         diagnostic
         or pv_diagnostic
@@ -61,6 +63,7 @@ def main():
         or head_pv_diagnostic
         or kv_diagnostic
         or nz_diagnostic
+        or staged_diagnostic
     ):
         sq = 64
     topk = sk if args.case == "full" else 1024
@@ -109,7 +112,7 @@ def main():
     native_out = ascendc().cpu()
     calls = {"native_sfa": ascendc}
     outputs = {"native_sfa": native_out}
-    if not (head_pv_diagnostic or kv_diagnostic or nz_diagnostic):
+    if not (head_pv_diagnostic or kv_diagnostic or nz_diagnostic or staged_diagnostic):
         print("Compiling TileLang DSA", flush=True)
         kernel = build_kernel(sq, sk, topk)
 
@@ -232,7 +235,7 @@ def main():
 
         outputs["tilelang_kv64"] = tilelang_kv64().cpu()
         calls["tilelang_kv64"] = tilelang_kv64
-    if nz_diagnostic:
+    if nz_diagnostic or staged_diagnostic:
         print("Compiling direct NZ softmax writeback", flush=True)
         nz_kernel = build_kernel(
             sq,
@@ -253,6 +256,28 @@ def main():
 
         outputs["tilelang_softmax_nz"] = tilelang_softmax_nz().cpu()
         calls["tilelang_softmax_nz"] = tilelang_softmax_nz
+    if staged_diagnostic:
+        print("Compiling three-stage NZ pipeline", flush=True)
+        staged_kernel = build_kernel(
+            sq,
+            sk,
+            topk,
+            reuse_kv=True,
+            dma_gather=True,
+            pipeline=True,
+            head_tile=64,
+            pv_width=256,
+            softmax_nz=True,
+            staged=True,
+        )
+
+        def tilelang_staged():
+            return staged_kernel(
+                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+            ).unsqueeze(0)
+
+        outputs["tilelang_staged"] = tilelang_staged().cpu()
+        calls["tilelang_staged"] = tilelang_staged
     report = {
         "case": args.case,
         "shape": [1, sq, sk, h, 1, topk, d, tail],
@@ -346,6 +371,10 @@ def main():
         nz = medians["tilelang_softmax_nz"]
         report["softmax_nz_speedup_vs_baseline"] = medians["tilelang_head64_pv256"] / nz
         report["softmax_nz_speedup_vs_sfa"] = medians["native_sfa"] / nz
+    if staged_diagnostic:
+        staged = medians["tilelang_staged"]
+        report["staged_speedup_vs_prefetch"] = medians["tilelang_softmax_nz"] / staged
+        report["staged_speedup_vs_sfa"] = medians["native_sfa"] / staged
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"
