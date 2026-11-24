@@ -110,25 +110,37 @@ def summarize(root, impl):
 def prefetch_summary(root, impl):
     source = root / f"{impl}.asc"
     qk_end_line, pv_line, _ = source_markers(source)
-    patterns = {
-        "qk_mmad": r"asc_mmad\(.*\), 64, 96, 128,.*section == 0",
-        "kv_ready_vec1_wait": r"asc_sync_intra_wait\(PIPE_MTE1, \(\(block & 1\) \+ 17\)\)",
-        "kv_ready_vec0_wait": r"asc_sync_intra_wait\(PIPE_MTE1, \(\(block & 1\) \+ 1\)\)",
-    }
     lines = source.read_text().splitlines()
-    markers = {}
-    for label, pattern in patterns.items():
-        matches = [i for i, line in enumerate(lines, 1) if re.search(pattern, line)]
-        if len(matches) != 1:
-            raise ValueError(f"{impl}: expected one {label} marker, got {matches}")
-        markers[label] = matches[0]
+    mmads = [
+        i
+        for i, line in enumerate(lines)
+        if re.search(r"asc_mmad\(.*\), 64, 96, 128,", line)
+    ]
+    if len(mmads) != 1:
+        raise ValueError(f"{impl}: expected one QK MMAD marker, got {mmads}")
+    qk_mmad = mmads[0]
+    k_load = next(
+        i for i in range(qk_mmad - 1, -1, -1) if "asc_copy_l12l0b(" in lines[i]
+    )
+    section_start = next(
+        i
+        for i in range(k_load - 1, -1, -1)
+        if re.search(r"for \(int32_t section\b", lines[i])
+    )
+    # Event IDs vary with buffer lowering. Find waits by their position
+    # before the K load in the QK section loop.
+    waits = {
+        i + 1: lines[i].strip()
+        for i in range(section_start + 1, k_load)
+        if "asc_sync_intra_wait(PIPE_MTE1," in lines[i]
+    }
     events = events_at(
         root / impl,
         "cubecore0",
-        (qk_end_line, pv_line, *markers.values()),
+        (qk_end_line, pv_line, qk_mmad + 1, *waits),
         include_sync=True,
     )
-    qk = [event for event in events[markers["qk_mmad"]] if event[2] == "MMAD"]
+    qk = [event for event in events[qk_mmad + 1] if event[2] == "MMAD"]
     pv = [event for event in events[pv_line] if event[2] == "MMAD"]
     ends = [event for event in events[qk_end_line] if event[2] == "FIX_L0C_TO_DST"]
     if len(ends) != 4 or len(qk) != 24 or len(pv) != 16:
@@ -151,7 +163,7 @@ def prefetch_summary(root, impl):
     return {
         "blocks": blocks,
         "kv_wait_source_events": {
-            label: [
+            f"{line}: {statement}": [
                 {
                     "event": name,
                     "start_us": round(start - origin, 5),
@@ -159,8 +171,7 @@ def prefetch_summary(root, impl):
                 }
                 for start, end, name in events[line]
             ]
-            for label, line in markers.items()
-            if label.endswith("_wait")
+            for line, statement in waits.items()
         },
     }
 
@@ -204,6 +215,8 @@ def main():
         baseline = summarize(args.report, "tilelang")
         packed = summarize(args.report, "tilelang-packed")
         paired = list(zip(baseline, packed, strict=True))
+    except StopIteration:
+        parser.exit(1, "QK section loop or K load missing from generated source\n")
     except (OSError, ValueError, KeyError) as error:
         parser.exit(1, f"{error}\n")
     print(
