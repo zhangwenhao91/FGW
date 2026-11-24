@@ -38,6 +38,7 @@ def main():
             "kv64-simd-long",
             "kv128-simd-long",
             "pv-fma-long",
+            "softmax-pack-long",
             "kv-nz-diagnostic",
             "direct-kv-nz",
             "gather-once",
@@ -65,7 +66,7 @@ def main():
         "native-sfa-long",
         "kv64-simd-long",
     )
-    profile_cases += ("kv128-simd-long", "pv-fma-long")
+    profile_cases += ("kv128-simd-long", "pv-fma-long", "softmax-pack-long")
     if args.profile_dir and args.case not in profile_cases:
         parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
@@ -89,7 +90,9 @@ def main():
     gather_once = args.case in ("gather-once", "rolling-gather")
     short_pv512 = kv_nz_diagnostic or direct_nz or gather_once
     pv_fma = args.case == "pv-fma-long"
-    kv128_simd = args.case == "kv128-simd-long" or pv_fma
+    softmax_pack = args.case == "softmax-pack-long"
+    kv128_diagnostic = pv_fma or softmax_pack
+    kv128_simd = args.case == "kv128-simd-long" or kv128_diagnostic
     kv64_simd = args.case == "kv64-simd-long" or kv128_simd
     simd_output = args.case == "simd-output-long" or kv64_simd
     persistent = args.case == "persistent-long" or simd_output
@@ -688,7 +691,7 @@ def main():
 
         outputs["tilelang_simd_output"] = tilelang_simd_output().cpu()
         calls["tilelang_simd_output"] = tilelang_simd_output
-    if kv64_simd and not pv_fma:
+    if kv64_simd and not kv128_diagnostic:
         print("Compiling SIMD KV64 with two PV K slices and one FIXPIPE", flush=True)
         wide_kv = build_kernel(
             sq,
@@ -717,33 +720,42 @@ def main():
         outputs["tilelang_kv64_simd"] = tilelang_kv64_simd().cpu()
         calls["tilelang_kv64_simd"] = tilelang_kv64_simd
     if kv128_simd:
+
+        def make_kv128_call(*, packed_prob=False):
+            kernel = build_kernel(
+                sq,
+                sk,
+                topk,
+                reuse_kv=True,
+                dma_gather=True,
+                pipeline=True,
+                head_tile=64,
+                pv_width=512,
+                softmax_nz=True,
+                staged=True,
+                simd_softmax=True,
+                simd_pv=True,
+                batch_pv=True,
+                persistent=True,
+                simd_output=True,
+                kv_tile=128,
+                packed_prob=packed_prob,
+            )
+
+            def run():
+                return kernel(
+                    qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
+                ).unsqueeze(0)
+
+            return run
+
         print("Compiling KV128: two-stage pipeline and four PV K slices", flush=True)
-        kv128_kernel = build_kernel(
-            sq,
-            sk,
-            topk,
-            reuse_kv=True,
-            dma_gather=True,
-            pipeline=True,
-            head_tile=64,
-            pv_width=512,
-            softmax_nz=True,
-            staged=True,
-            simd_softmax=True,
-            simd_pv=True,
-            batch_pv=True,
-            persistent=True,
-            simd_output=True,
-            kv_tile=128,
-        )
-
-        def tilelang_kv128_simd():
-            return kv128_kernel(
-                qn[0], kvn.view(sk, d + tail), indices.view(sq, topk)
-            ).unsqueeze(0)
-
-        outputs["tilelang_kv128_simd"] = tilelang_kv128_simd().cpu()
-        calls["tilelang_kv128_simd"] = tilelang_kv128_simd
+        calls["tilelang_kv128_simd"] = make_kv128_call()
+        outputs["tilelang_kv128_simd"] = calls["tilelang_kv128_simd"]().cpu()
+        if softmax_pack:
+            print("Compiling KV128 with packed SIMD probability stores", flush=True)
+            calls["tilelang_softmax_pack"] = make_kv128_call(packed_prob=True)
+            outputs["tilelang_softmax_pack"] = calls["tilelang_softmax_pack"]().cpu()
     if pv_fma:
         print("Compiling KV128 with fused SIMD PV multiply-add", flush=True)
         fma_kernel = build_kernel(
@@ -969,7 +981,7 @@ def main():
         wide = medians["tilelang_kv64_simd"]
         report["kv64_speedup_vs_kv32"] = medians["tilelang_simd_output"] / wide
         report["kv64_speedup_vs_sfa"] = medians["native_sfa"] / wide
-    if kv128_simd and not pv_fma:
+    if kv128_simd and not kv128_diagnostic:
         wide = medians["tilelang_kv128_simd"]
         report["kv128_speedup_vs_kv64"] = medians["tilelang_kv64_simd"] / wide
         report["kv128_speedup_vs_sfa"] = medians["native_sfa"] / wide
@@ -977,6 +989,12 @@ def main():
         fused = medians["tilelang_pv_fma"]
         report["pv_fma_speedup_vs_kv128"] = medians["tilelang_kv128_simd"] / fused
         report["pv_fma_speedup_vs_sfa"] = medians["native_sfa"] / fused
+    if softmax_pack:
+        packed = medians["tilelang_softmax_pack"]
+        report["softmax_pack_speedup_vs_kv128"] = (
+            medians["tilelang_kv128_simd"] / packed
+        )
+        report["softmax_pack_speedup_vs_sfa"] = medians["native_sfa"] / packed
     result = json.dumps(report, indent=2)
     with open(
         args.output or f"dsa_dense_sfa_{args.case}.json", "w", encoding="utf-8"

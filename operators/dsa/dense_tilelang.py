@@ -35,6 +35,7 @@ def build_kernel(
     simd_output=False,
     lineinfo=False,
     pv_fma=False,
+    packed_prob=False,
 ):
     """Run on unique indices, stride one, optionally with KV packed in index order."""
     if min(sq, sk, topk) < 1 or sq > sk:
@@ -59,6 +60,8 @@ def build_kernel(
         raise ValueError(
             "packed KV diagnostic requires the KV32/PV512 path and aligned topk"
         )
+    if packed_prob and not (simd_softmax and kv_tile == 128):
+        raise ValueError("packed_prob requires the KV128 SIMD softmax")
     if pv_fma and not (batch_pv and kv_tile == 128):
         raise ValueError("PV FMA requires the batched KV128 path")
     if batch_pv and not simd_pv:
@@ -228,11 +231,17 @@ def build_kernel(
                 if bc == 128:
                     live_hi = S.vcmps(S.vld(valid[64]), T.int32(0), full, "ge")
                 neg_inf = S.vdup(-T.infinity(fp32), fp32, full)
-                rotate = S.vand(
-                    T.reinterpret(S.vci(16, "int32"), "uint32x64"),
-                    S.vdup(T.uint32(63), "uint32", full),
-                    full,
-                )
+                if packed_prob:
+                    packed_mask = S.pset(16, "PAT_VL128")
+                    probability_dst = S.make_ubuf_ptr(
+                        T.access_ptr(pn[0, 0], "w", rows + 1, bc), dtype
+                    )
+                else:
+                    rotate = S.vand(
+                        T.reinterpret(S.vci(16, "int32"), "uint32x64"),
+                        S.vdup(T.uint32(63), "uint32", full),
+                        full,
+                    )
                 for r in T.serial(rows):
                     scaled = S.vmuls(S.vld(scores[r, 0]), T.float32(scale), active)
                     masked = S.vsel(scaled, neg_inf, live)
@@ -262,57 +271,85 @@ def build_kernel(
                     S.vsts(maximum[r], peak, one, "ONEPT_B32")
                     S.vsts(total[r], updated, one, "ONEPT_B32")
                     S.vsts(alpha[r], weight, one, "ONEPT_B32")
-                    low = S.vcvt(
-                        prob, dtype, active, round="ROUND_R", sat=False, part=0
-                    )
-                    high = S.vcvt(
-                        S.vselr(prob, rotate),
-                        dtype,
-                        half,
-                        round="ROUND_R",
-                        sat=False,
-                        part=0,
-                    )
-                    S.vsts(pn[r, 0], low, half, "PK_B32", extent=16)
-                    S.vsts(pn[r, 16], high, half, "PK_B32", extent=16)
-                    if bc >= 64:
-                        for group in T.unroll(2, 4, explicit=True):
-                            lane = S.vand(
-                                T.reinterpret(S.vci(group * 16, "int32"), "uint32x64"),
-                                S.vdup(T.uint32(63), "uint32", full),
-                                full,
-                            )
-                            value = S.vcvt(
-                                S.vselr(prob, lane),
-                                dtype,
-                                half,
-                                round="ROUND_R",
-                                sat=False,
-                                part=0,
-                            )
-                            S.vsts(pn[r, group * 16], value, half, "PK_B32", extent=16)
-                    if bc == 128:
-                        for group in T.unroll(4, explicit=True):
-                            lane_hi = S.vand(
-                                T.reinterpret(S.vci(group * 16, "int32"), "uint32x64"),
-                                S.vdup(T.uint32(63), "uint32", full),
-                                full,
-                            )
-                            value_hi = S.vcvt(
-                                S.vselr(prob_hi, lane_hi),
-                                dtype,
-                                half,
-                                round="ROUND_R",
-                                sat=False,
-                                part=0,
-                            )
-                            S.vsts(
-                                pn[r, 64 + group * 16],
-                                value_hi,
-                                half,
-                                "PK_B32",
-                                extent=16,
-                            )
+                    if packed_prob:
+                        even, odd = S.vdintlv(prob, prob_hi)
+                        even_bf16 = S.vcvt(
+                            even, dtype, full, round="ROUND_R", sat=False, part=0
+                        )
+                        odd_bf16 = S.vcvt(
+                            odd, dtype, full, round="ROUND_R", sat=False, part=1
+                        )
+                        packed = S.vor(
+                            T.reinterpret(even_bf16, "uint16x128"),
+                            T.reinterpret(odd_bf16, "uint16x128"),
+                            packed_mask,
+                        )
+                        # Advance by one row, with each 16-column group in its NZ block.
+                        probability_dst = S.vsstb(
+                            T.reinterpret(packed, "bfloat16x128"),
+                            probability_dst,
+                            T.int32(((rows + 1) << 16) | 1),
+                            packed_mask,
+                            update=True,
+                        )
+                    else:
+                        low = S.vcvt(
+                            prob, dtype, active, round="ROUND_R", sat=False, part=0
+                        )
+                        high = S.vcvt(
+                            S.vselr(prob, rotate),
+                            dtype,
+                            half,
+                            round="ROUND_R",
+                            sat=False,
+                            part=0,
+                        )
+                        S.vsts(pn[r, 0], low, half, "PK_B32", extent=16)
+                        S.vsts(pn[r, 16], high, half, "PK_B32", extent=16)
+                        if bc >= 64:
+                            for group in T.unroll(2, 4, explicit=True):
+                                lane = S.vand(
+                                    T.reinterpret(
+                                        S.vci(group * 16, "int32"), "uint32x64"
+                                    ),
+                                    S.vdup(T.uint32(63), "uint32", full),
+                                    full,
+                                )
+                                value = S.vcvt(
+                                    S.vselr(prob, lane),
+                                    dtype,
+                                    half,
+                                    round="ROUND_R",
+                                    sat=False,
+                                    part=0,
+                                )
+                                S.vsts(
+                                    pn[r, group * 16], value, half, "PK_B32", extent=16
+                                )
+                        if bc == 128:
+                            for group in T.unroll(4, explicit=True):
+                                lane_hi = S.vand(
+                                    T.reinterpret(
+                                        S.vci(group * 16, "int32"), "uint32x64"
+                                    ),
+                                    S.vdup(T.uint32(63), "uint32", full),
+                                    full,
+                                )
+                                value_hi = S.vcvt(
+                                    S.vselr(prob_hi, lane_hi),
+                                    dtype,
+                                    half,
+                                    round="ROUND_R",
+                                    sat=False,
+                                    part=0,
+                                )
+                                S.vsts(
+                                    pn[r, 64 + group * 16],
+                                    value_hi,
+                                    half,
+                                    "PK_B32",
+                                    extent=16,
+                                )
         else:
             with T.SimtVF(threads=128):
                 peaks = T.alloc_reducer((rows,), fp32, op="max")
