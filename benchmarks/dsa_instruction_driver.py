@@ -8,10 +8,15 @@ import torch
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("implementation", choices=("sfa", "tilelang"))
+    parser.add_argument(
+        "implementation", choices=("sfa", "tilelang", "tilelang-packed")
+    )
     parser.add_argument("--source", type=Path)
     parser.add_argument("--kv-tile", type=int, choices=(32, 128), default=32)
     args = parser.parse_args()
+    packed_prob = args.implementation == "tilelang-packed"
+    if packed_prob and args.kv_tile != 128:
+        parser.error("tilelang-packed requires --kv-tile 128")
     import torch_npu
 
     sq, sk, topk, h, d, tail = 16, 256, 128, 128, 512, 64
@@ -76,6 +81,7 @@ def main():
             simd_output=True,
             lineinfo=True,
             kv_tile=args.kv_tile,
+            packed_prob=packed_prob,
         )
         if args.source:
             args.source.write_text(kernel.get_kernel_source())

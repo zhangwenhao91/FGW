@@ -24,14 +24,18 @@ case "$tile" in
     128) shape=Q16-KV512-topk256 ;;
     *) echo "Expected tile size 32 or 128." >&2; exit 2 ;;
 esac
-for impl in sfa tilelang; do
+implementations=(sfa tilelang)
+if [[ "$tile" == 128 ]]; then
+    implementations+=(tilelang-packed)
+fi
+for impl in "${implementations[@]}"; do
     trace="$report/$impl"
     mkdir "$trace"
     kernel=SparseFlashAttention
     extra=()
-    if [[ "$impl" == tilelang ]]; then
+    if [[ "$impl" != sfa ]]; then
         kernel=forward_kernel
-        extra=(--source "$report/tilelang.asc")
+        extra=(--source "$report/$impl.asc")
     fi
     printf 'Simulating %s (%s, TileLang KV tile %s, core 0)\n' "$impl" "$shape" "$tile"
     ASCEND_OPP_PATH="$opp" msprof op simulator --soc-version "$soc" \
@@ -46,8 +50,8 @@ for impl in sfa tilelang; do
         echo "simulation_driver_not_confirmed=$impl (any trace may be partial)"
     fi
     source_opt=()
-    if [[ "$impl" == tilelang && -f "$report/tilelang.asc" ]]; then
-        source_opt=(--tilelang-source "$report/tilelang.asc")
+    if [[ "$impl" != sfa && -f "$report/$impl.asc" ]]; then
+        source_opt=(--tilelang-source "$report/$impl.asc")
     fi
     python -m benchmarks.dsa_instruction_summary "$trace" "${source_opt[@]}" \
         | tee "$report/$impl.summary.json"
