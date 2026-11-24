@@ -1,13 +1,10 @@
-python - <<'PY' | python -m pip install -c "$constraints" -r /dev/stdin \
-  --extra-index-url https://repo.huaweicloud.com/ascend/repos/pypi \
-  --extra-index-url https://repo.huaweicloud.com/ascend/repos/pypi/nightly
-from pathlib import Path
-import re
-import tomllib
-
-for path in ("../vllm/pyproject.toml", "../vllm-ascend/pyproject.toml"):
-    for req in tomllib.loads(Path(path).read_text())["build-system"]["requires"]:
-        name = re.split(r"[\s<>=!~;\[]", req, maxsplit=1)[0].replace("_", "-")
-        if name not in {"torch", "torch-npu", "torchvision", "torchaudio"}:
-            print(req)
-PY
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+mindstudio-kpp 26.2.0 requires plotly>=5.11.0, which is not installed.
+cannsim 0.1.0 requires plotly, which is not installed.
+msboost 26.2.0 requires colorlog, which is not installed.
+ms-service-profiler 26.0.0 requires matplotlib, which is not installed.
+ms-service-profiler 26.0.0 requires msguard, which is not installed.
+ms-service-profiler 26.0.0 requires opentelemetry-exporter-otlp-proto-grpc<2.0.0,>=1.33.1, which is not installed.
+ms-service-profiler 26.0.0 requires opentelemetry-exporter-otlp-proto-http<2.0.0,>=1.33.1, which is not installed.
+schedule-search 0.0.1 requires absl-py, which is not installed.
+ml-dtypes 0.6.0 requires numpy>=2.0.0, but you have numpy 1.26.4 which is incompatible.
