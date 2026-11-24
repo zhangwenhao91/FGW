@@ -33,6 +33,7 @@ def main():
             "batched-pv-long",
             "pv512-long",
             "persistent-long",
+            "native-sfa-long",
             "simd-output-long",
             "kv-nz-diagnostic",
             "direct-kv-nz",
@@ -42,6 +43,7 @@ def main():
         default="full",
     )
     parser.add_argument("--output")
+    parser.add_argument("--verify-only", action="store_true")
     parser.add_argument(
         "--profile-dir",
         help="Capture each selected implementation in a separate NPU trace",
@@ -54,12 +56,14 @@ def main():
         "kv-nz-diagnostic",
         "direct-kv-nz",
     )
-    profile_cases += ("persistent-long", "simd-output-long")
+    profile_cases += ("persistent-long", "simd-output-long", "native-sfa-long")
     if args.profile_dir and args.case not in profile_cases:
         parser.error("--profile-dir requires one of: " + ", ".join(profile_cases))
     import torch_npu
 
-    from operators.dsa.dense_tilelang import build_kernel
+    native_only = args.case == "native-sfa-long"
+    if not native_only:
+        from operators.dsa.dense_tilelang import build_kernel
 
     torch.npu.set_device(args.device)
     print(f"torch={torch.__version__} torch_npu={torch_npu.__version__}", flush=True)
@@ -156,7 +160,8 @@ def main():
     calls = {"native_sfa": ascendc}
     outputs = {"native_sfa": native_out}
     if not (
-        head_pv_diagnostic
+        native_only
+        or head_pv_diagnostic
         or kv_diagnostic
         or nz_diagnostic
         or staged_diagnostic
@@ -696,7 +701,11 @@ def main():
             errors.append((actual.float() - ref.float()).abs().max().item())
         report["accuracy"][name] = {"passed": True, "max_abs_error": max(errors)}
 
-    if args.profile_dir:
+    if args.verify_only:
+        print(json.dumps(report, indent=2))
+        return
+
+    if args.profile_dir and not native_only:
         from benchmarks.dsa_profile import capture
 
         if long_pv and not batched_pv:
@@ -865,6 +874,16 @@ def main():
     ) as file:
         file.write(result + "\n")
     print(result)
+    if args.profile_dir and native_only:
+        from benchmarks.dsa_profile import capture
+
+        capture(
+            calls,
+            args.profile_dir,
+            case=args.case,
+            shape=report["shape"],
+            dtype=report["dtype"],
+        )
 
 
 if __name__ == "__main__":
