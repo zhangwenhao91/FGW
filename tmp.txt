@@ -1,7 +1,12 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python bench_vllm_ascend.py \
->   --backend tilelang --projection cube_full --device npu:0 \
->   --output tilelang-adaptive-pair-card4.csv
-al/dcmi:/usr/local/dcmi:ro \
+devices=(--device /dev/davinci_manager)
+for node in /dev/davinci[0-9]* /dev/hisi_hdc /dev/ummu /dev/uburma; do
+  if [ -c "$node" ]; then devices+=(--device "$node"); fi
+done
+
+docker run --rm --pull=never --shm-size=1g "${devices[@]}" \
+  -e ASCEND_RT_VISIBLE_DEVICES=4 \
+  -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
+  -v /usr/local/dcmi:/usr/local/dcmi:ro \
   -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
   -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
   -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
@@ -12,60 +17,3 @@ python bench_vllm_ascend.py \
   --merge tilelang-adaptive-pair-card4.csv vllm-pair-card4.csv \
   --output vllm-adaptive-results-card4.csv &&
 cat vllm-adaptive-results-card4.csv
-tilelang B=1 hidden=1280: 38.039 us
-tilelang B=2 hidden=1920: 37.377 us
-tilelang B=4 hidden=2560: 36.162 us
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# devices=(--device /dev/davinci4 --device /dev/davinci_manager)
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# for node in /dev/hisi_hdc /dev/ummu /dev/uburma; do
->   if [ -e "$node" ]; then devices+=(--device "$node"); fi
-> done
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# docker run --rm --pull=never --shm-size=1g "${devices[@]}" \
->   -e ASCEND_RT_VISIBLE_DEVICES=4 \
->   -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
->   -v /usr/local/dcmi:/usr/local/dcmi:ro \
->   -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
->   -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
->   -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
->   quay.io/ascend/vllm-ascend:v0.30.0-a5 \
->   bench_vllm_ascend.py --backend vllm --device npu:0 \
->   --output vllm-pair-card4.csv &&
-> python bench_vllm_ascend.py \
->   --merge tilelang-adaptive-pair-card4.csv vllm-pair-card4.csv \
->   --output vllm-adaptive-results-card4.csv &&
-> cat vllm-adaptive-results-card4.csv
-grep: write error: Broken pipe
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-27 11:42:32 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-27 11:42:32 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-27 11:42:32 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-27 11:42:32 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-27 11:42:32 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-Traceback (most recent call last):
-  File "/fgw-mhc/bench_vllm_ascend.py", line 189, in <module>
-    main()
-  File "/fgw-mhc/bench_vllm_ascend.py", line 110, in main
-    torch.npu.set_device(device)
-  File "/usr/local/python3.12.16/lib/python3.12/site-packages/torch_npu/npu/utils.py", line 94, in set_device
-    torch_npu._C._npu_setDevice(device_id)
-  File "/usr/local/python3.12.16/lib/python3.12/site-packages/torch_npu/npu/__init__.py", line 321, in _lazy_init
-    torch_npu._C._npu_init()
-RuntimeError: Initialize:../torch_npu/csrc/core/npu/sys_ctrl/npu_sys_ctrl.cpp:198 NPU function error: aclInit, error code is 107001
-[ERROR] 2026-11-27-11:42:33 (PID:1, Device:0, RankID:-1) ERR00100 PTA call acl api failed
-[Error]: Invalid device ID.
-        Check whether the device ID is valid.
-[PID: 1] 2026-11-27-11:42:33.257.431 Invalid_Argument(EE1003): Obtaining the logical device ID based on the user device ID failed because value 0 for parameter userDevId is invalid. Expected value: [0, 0).
-        Solution: 1. Check the input parameter range of the function. 2. Check the function invocation relationship.
-TraceBack (most recent call last):
-        rtSetDefaultDeviceId execution failed, reason=device id error[FUNC:FuncErrorReason][FILE:error_message_manage.cc][LINE:76]
-        [Process][DefaultDevice]process HandleDefaultDevice failed[FUNC:ReportInnerError][FILE:log_inner.cpp][LINE:133]
-        Context validation failed. Reason: No valid context is bound to the current thread. Call aclrtSetDevice or aclrtSetCurrentContext to bind a valid context to the current thread before calling this API.
-        The argument is invalid. Reason: rtGetDevMsg execution failed, the context is a null pointer.
-
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
