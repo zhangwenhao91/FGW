@@ -1,4 +1,46 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --m-only --debug-m-only --pre-only --batch 1 --device npu:0 \
-  --output m-only-pre-b1-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
+>   --m-only --debug-m-only --pre-only --batch 1 --device npu:0 \
+>   --output m-only-pre-b1-card4.csv
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 4 (delta 3), reused 4 (delta 3), pack-reused 0 (from 0)
+Unpacking objects: 100% (4/4), 582 bytes | 582.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   3fff27f..6fb34c1  main       -> origin/main
+Updating 3fff27f..6fb34c1
+Fast-forward
+ fgw_mhc/_kernels.py | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+2026-11-27 17:02:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-27 17:02:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+projection actual=[[0.7041045427322388, 9.952893257141113, 0.7978383302688599, 0.8603363037109375, 1.3691123723983765, 0.0530381053686142, 0.14574730396270752, 0.07628937065601349, 0.24633841216564178, 0.45164602994918823, 1.1191121339797974, 1.4609375, 1.1112651824951172, 0.8330186605453491, 0.30908066034317017, 0.04791134595870972, 1.5644279718399048, 0.15648861229419708, 0.3969656825065613, 2.2495044247806288e-41, 0.05279500037431717, 0.11828199028968811, 4.632702827453613, 0.1574675291776657]] expected=[[-0.1851208508014679, -0.8600485920906067, -0.9528356790542603, 0.2582535147666931, 0.012216076254844666, -1.7132824659347534, 1.1590224504470825, 0.028700970113277435, -1.0559825897216797, 1.2426578998565674, 1.0867702960968018, 0.5534966588020325, 1.2326916456222534, -0.2669244110584259, 1.414433240890503, 0.10898160934448242, -0.7361425161361694, -0.4481338560581207, -0.7599213719367981, -0.4603310525417328, -0.13844068348407745, 1.2594497203826904, -0.7767526507377625, 1.2353119850158691]]
+squares actual=[5145.85595703125] expected=[5145.8564453125]
+2026-11-27 17:02:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-27 17:02:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 127, in main
+    torch.testing.assert_close(value, reference, atol=0.01, rtol=0.01)
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch/testing/_comparison.py", line 1631, in assert_close
+    raise error_metas[0].to_error(msg)
+AssertionError: Tensor-likes are not close!
+
+Mismatched elements: 4858 / 5120 (94.9%)
+Greatest absolute difference: 1.109375 at index (0, 1372) (up to 0.01 allowed)
+Greatest relative difference: 7744.0 at index (0, 3878) (up to 0.01 allowed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 157, in <module>
+    main()
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 129, in main
+    raise AssertionError(f"{route}, B={batch}, H={hidden}, {name}: {exc}") from exc
+AssertionError: cube_m_only, B=1, H=1280, x_res: Tensor-likes are not close!
+
+Mismatched elements: 4858 / 5120 (94.9%)
+Greatest absolute difference: 1.109375 at index (0, 1372) (up to 0.01 allowed)
+Greatest relative difference: 7744.0 at index (0, 3878) (up to 0.01 allowed)
+[ERROR] 2026-11-27-17:02:15 (PID:3041326, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
