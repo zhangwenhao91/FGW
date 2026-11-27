@@ -1,26 +1,12 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# (
->   set -e
->   export ASCEND_RT_VISIBLE_DEVICES=4
->   for batch in 2 4; do
->     python bench_cube_b2.py --m-only --pre-only \
->       --batch "$batch" --device npu:0 --output "m-only-pre-b${batch}-card4.csv"
->   done
->   for batch in 1 2 4; do
->     python bench_cube_b2.py --m-only \
->       --batch "$batch" --device npu:0 --output "m-only-pair-b${batch}-card4.csv"
->   done
-> )
-2026-11-27 17:06:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-27 17:06:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-cube_full: median 26.268 us, range 26.175–26.937 us; position medians [26.556, 26.268] us
-cube_m_only: median 24.999 us, range 24.733–25.039 us; position medians [24.860, 25.025] us
-2026-11-27 17:07:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-27 17:07:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-cube_full: median 23.655 us, range 23.199–60.733 us; position medians [41.966, 23.655] us
-cube_m_only: median 39.805 us, range 37.548–45.207 us; position medians [39.799, 41.384] us
-cube_full: median 37.404 us, range 36.599–37.941 us; position medians [37.270, 37.404] us
-cube_m_only: median 29.771 us, range 29.558–30.076 us; position medians [29.771, 29.817] us
-cube_full: median 39.392 us, range 38.727–39.611 us; position medians [39.169, 39.392] us
-cube_m_only: median 31.644 us, range 31.460–32.095 us; position medians [31.482, 31.939] us
-cube_full: median 36.190 us, range 35.754–36.890 us; position medians [36.371, 36.141] us
-cube_m_only: median 39.623 us, range 39.468–39.827 us; position medians [39.677, 39.593] us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# (   set -e;   export ASCEND_RT_VISIBLE_DEVICES=4;   for batch in 2 4; do     python bench_cube_b2.py --m-only --pre-only       --batch "$batch" --device npu:0 --output "m-only-pre-b${batch}-card4.csv";   done;   for batch in 1 2 4; do     python bench_cube_b2.py --m-only       --batch "$batch" --device npu:0 --output "m-only-pair-b${batch}-card4.csv";   done; )
+cube_full: median 29.543 us, range 29.194–29.865 us; position medians [29.815, 29.258] us
+cube_m_only: median 25.476 us, range 25.172–26.138 us; position medians [25.476, 25.655] us
+cube_full: median 27.221 us, range 27.074–27.322 us; position medians [27.184, 27.235] us
+cube_m_only: median 37.338 us, range 37.222–37.398 us; position medians [37.353, 37.296] us
+cube_full: median 35.773 us, range 35.038–36.660 us; position medians [36.001, 35.621] us
+cube_m_only: median 28.975 us, range 28.497–29.573 us; position medians [28.919, 29.091] us
+cube_full: median 39.720 us, range 39.119–41.432 us; position medians [40.276, 39.720] us
+cube_m_only: median 37.843 us, range 37.380–38.332 us; position medians [37.545, 38.154] us
+cube_full: median 35.334 us, range 35.159–36.206 us; position medians [35.763, 35.254] us
+cube_m_only: median 39.745 us, range 39.684–39.838 us; position medians [39.709, 39.796] us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
