@@ -1,7 +1,19 @@
-git pull --ff-only
-ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py -k post_pipeline -x &&
-for batch in 2 4; do
-  ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py --post-pipeline \
-    --batch "$batch" --post-cores 8 --device npu:0 \
-    --output "post-pipeline-b${batch}-card4.csv" || break
-done
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py -k post_pipeline -x &&
+> for batch in 2 4; do
+>   ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py --post-pipeline \
+>     --batch "$batch" --post-cores 8 --device npu:0 \
+>     --output "post-pipeline-b${batch}-card4.csv" || break
+> done
+...                                                                                                                                                                                                                                                                                                                                                               [100%]
+3 passed, 32 deselected in 10.40s
+2026-11-27 10:34:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
+2026-11-27 10:34:27  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
+post_default: median 34.626 us, range 34.435–36.226 us; position medians [35.004, 34.700, 34.589] us
+post_capped: median 34.880 us, range 34.662–35.779 us; position medians [34.883, 34.882, 34.830] us
+post_triple: median 34.707 us, range 34.573–35.308 us; position medians [34.664, 34.694, 34.823] us
+2026-11-27 10:34:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
+2026-11-27 10:34:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
+post_default: median 34.882 us, range 34.706–35.862 us; position medians [35.131, 34.793, 34.944] us
+post_capped: median 35.016 us, range 34.704–35.466 us; position medians [35.065, 35.037, 34.921] us
+post_triple: median 34.920 us, range 34.714–35.380 us; position medians [34.900, 34.914, 34.920] us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
