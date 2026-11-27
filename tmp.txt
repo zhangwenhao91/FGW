@@ -1,54 +1,7 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# bash run_tileops_spec_vllm.sh 4
-tilelang pre B=1 hidden=1280: 32.158 us
-tilelang post B=1 hidden=1280: 22.643 us
-tilelang pre B=2 hidden=1920: 30.497 us
-tilelang post B=2 hidden=1920: 25.180 us
-tilelang pre B=4 hidden=2560: 29.423 us
-tilelang post B=4 hidden=2560: 24.930 us
-grep: write error: Broken pipe
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-27 16:30:43 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-27 16:30:43 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-27 16:30:43 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-27 16:30:43 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-27 16:30:43 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-vllm pre B=1 hidden=1280: 25.137 us
-vllm post B=1 hidden=1280: 19.884 us
-vllm pre B=2 hidden=1920: 26.311 us
-vllm post B=2 hidden=1920: 18.573 us
-vllm pre B=4 hidden=2560: 26.712 us
-vllm post B=4 hidden=2560: 18.304 us
-batch,hidden,sinkhorn_iters,warmup,repeat,sinkhorn_eps,stage,tilelang_projection,tilelang_stage_us,vllm_ascendc_stage_us,vllm_over_tilelang_speedup
-1,1280,1,30,100,0.02,pre,cube_full,32.158,25.137,0.782
-1,1280,1,30,100,0.02,post,cube_full,22.643,19.884,0.878
-2,1920,1,30,100,0.02,pre,cube_full,30.497,26.311,0.863
-2,1920,1,30,100,0.02,post,cube_full,25.180,18.573,0.738
-4,2560,1,30,100,0.02,pre,cube_full,29.423,26.712,0.908
-4,2560,1,30,100,0.02,post,cube_full,24.930,18.305,0.734
-tilelang B=1 hidden=1280: 41.993 us
-tilelang B=2 hidden=1920: 45.965 us
-tilelang B=4 hidden=2560: 39.244 us
-grep: write error: Broken pipe
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-27 16:31:21 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-27 16:31:21 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-27 16:31:21 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-27 16:31:21 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-27 16:31:22 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-vllm B=1 hidden=1280: 34.435 us
-vllm B=2 hidden=1920: 32.171 us
-vllm B=4 hidden=2560: 32.370 us
-batch,hidden,sinkhorn_iters,warmup,repeat,sinkhorn_eps,tilelang_projection,tilelang_pair_us,vllm_ascendc_pair_us,vllm_over_tilelang_speedup
-1,1280,1,30,100,0.02,cube_full,41.993,34.435,0.820
-2,1920,1,30,100,0.02,cube_full,45.965,32.171,0.700
-4,2560,1,30,100,0.02,cube_full,39.244,32.370,0.825
+git pull --ff-only &&
+ASCEND_RT_VISIBLE_DEVICES=4 python bench_tileops_mhc.py \
+  --tileops-repo ../TileOPs-mhc-baseline \
+  --device npu:0 --projection cube_full \
+  --sinkhorn-iters 1 20 --rounds 4 \
+  --output tileops-mhc-rerun-card4.csv &&
+cat tileops-mhc-rerun-card4.csv
