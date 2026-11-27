@@ -1,52 +1,8 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python bench_tileops_mhc.py \
->   --tileops-repo ../TileOPs-mhc-baseline --device npu:0 \
->   --output tileops-mhc-card4.csv
-2026-11-27 11:01:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2]`
-2026-11-27 11:01:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-2026-11-27 11:01:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:01:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-2026-11-27 11:01:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:01:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-pre B=1 H=1280 iters=1: FGW 29.778 us, TileOPs 52.870 us, 1.775x
-2026-11-27 11:01:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
-2026-11-27 11:01:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
-2026-11-27 11:01:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:01:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-pre B=1 H=1280 iters=20: FGW 30.076 us, TileOPs 54.148 us, 1.800x
-2026-11-27 11:01:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[3]`
-2026-11-27 11:01:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-post B=1 H=1280 iters=: FGW 21.443 us, TileOPs 25.973 us, 1.211x
-2026-11-27 11:01:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
-2026-11-27 11:01:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
-2026-11-27 11:01:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2]`
-2026-11-27 11:01:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-2026-11-27 11:01:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:01:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-2026-11-27 11:01:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:02:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-pre B=2 H=1920 iters=1: FGW 30.914 us, TileOPs 73.283 us, 2.371x
-2026-11-27 11:02:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
-2026-11-27 11:02:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
-2026-11-27 11:02:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:02:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-pre B=2 H=1920 iters=20: FGW 23.947 us, TileOPs 76.470 us, 3.193x
-2026-11-27 11:02:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[3]`
-2026-11-27 11:02:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-post B=2 H=1920 iters=: FGW 18.248 us, TileOPs 22.015 us, 1.206x
-2026-11-27 11:02:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
-2026-11-27 11:02:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
-2026-11-27 11:02:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2]`
-2026-11-27 11:02:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-2026-11-27 11:02:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:02:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-2026-11-27 11:02:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:02:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-pre B=4 H=2560 iters=1: FGW 26.837 us, TileOPs 118.461 us, 4.414x
-2026-11-27 11:02:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
-2026-11-27 11:02:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
-2026-11-27 11:02:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[2, 3]`
-2026-11-27 11:02:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-pre B=4 H=2560 iters=20: FGW 26.798 us, TileOPs 123.039 us, 4.591x
-2026-11-27 11:02:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `main` with `out_idx=[3]`
-2026-11-27 11:02:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `main`
-post B=4 H=2560 iters=: FGW 22.597 us, TileOPs 27.200 us, 1.204x
+git pull --ff-only
+ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py \
+  -k post_streams_and_pipeline -x &&
+for batch in 1 2 4; do
+  ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py --post-streams \
+    --batch "$batch" --device npu:0 \
+    --output "post-streams-b${batch}-card4.csv" || break
+done
