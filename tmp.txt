@@ -1,4 +1,24 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
-  --device npu:0 --batch 4 --tileops-spec --launches-per-event 32 \
-  --output cube-pre-breakdown-b4-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+>   --device npu:0 --batch 4 --tileops-spec --launches-per-event 32 \
+>   --output cube-pre-breakdown-b4-card4.csv
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 929 bytes | 929.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   f6bfddc..21645ba  main       -> origin/main
+Updating f6bfddc..21645ba
+Fast-forward
+ bench_cube_stages.py | 42 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 36 insertions(+), 6 deletions(-)
+2026-11-27 17:42:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 17:42:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+2026-11-27 17:42:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
+2026-11-27 17:42:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
+B=4 H=2560 cube: project=5.400 us, mix=6.679 us, apply_mix=4.481 us, post=9.210 us, project_plus_mix=12.078 us, pair=56.361 us
+2026-11-27 17:42:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 17:42:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=4 H=2560 cube_mk: project_and_mix=9.606 us, apply_mix=4.525 us, post=9.303 us, pair=87.266 us
+B=4 H=2560 cube_full: pre=10.283 us, post=9.159 us, pair=41.556 us
