@@ -1,19 +1,23 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python bench_tileops_mhc.py \
->   --tileops-repo ../TileOPs-mhc-baseline --device npu:0 \
->   --output tileops-mhc-adaptive-card4.csv
-pre B=1 H=1280 iters=1: FGW 24.540 us, TileOPs 49.319 us, 2.010x
-pre B=1 H=1280 iters=20: FGW 24.120 us, TileOPs 49.685 us, 2.060x
-2026-11-27 11:39:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
-2026-11-27 11:39:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
-post B=1 H=1280 iters=: FGW 19.506 us, TileOPs 23.502 us, 1.205x
-pre B=2 H=1920 iters=1: FGW 27.525 us, TileOPs 70.451 us, 2.559x
-pre B=2 H=1920 iters=20: FGW 28.091 us, TileOPs 75.477 us, 2.687x
-2026-11-27 11:39:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
-2026-11-27 11:39:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
-post B=2 H=1920 iters=: FGW 19.510 us, TileOPs 25.305 us, 1.297x
-pre B=4 H=2560 iters=1: FGW 27.928 us, TileOPs 118.208 us, 4.233x
-pre B=4 H=2560 iters=20: FGW 27.579 us, TileOPs 123.481 us, 4.477x
-2026-11-27 11:39:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
-2026-11-27 11:39:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
-post B=4 H=2560 iters=: FGW 19.305 us, TileOPs 25.290 us, 1.310x
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+ASCEND_RT_VISIBLE_DEVICES=4 python bench_vllm_ascend.py \
+  --backend tilelang --projection cube_full --device npu:0 \
+  --output tilelang-adaptive-pair-card4.csv
+
+devices=(--device /dev/davinci4 --device /dev/davinci_manager)
+for node in /dev/hisi_hdc /dev/ummu /dev/uburma; do
+  if [ -e "$node" ]; then devices+=(--device "$node"); fi
+done
+
+docker run --rm --pull=never --shm-size=1g "${devices[@]}" \
+  -e ASCEND_RT_VISIBLE_DEVICES=4 \
+  -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
+  -v /usr/local/dcmi:/usr/local/dcmi:ro \
+  -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
+  -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
+  -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
+  quay.io/ascend/vllm-ascend:v0.30.0-a5 \
+  bench_vllm_ascend.py --backend vllm --device npu:0 \
+  --output vllm-pair-card4.csv &&
+python bench_vllm_ascend.py \
+  --merge tilelang-adaptive-pair-card4.csv vllm-pair-card4.csv \
+  --output vllm-adaptive-results-card4.csv &&
+cat vllm-adaptive-results-card4.csv
