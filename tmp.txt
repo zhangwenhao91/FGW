@@ -1,4 +1,33 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --m-only --pre-only --batch 1 --device npu:0 \
-  --output m-only-pre-b1-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
+>   --m-only --pre-only --batch 1 --device npu:0 \
+>   --output m-only-pre-b1-card4.csv
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 4 (delta 3), reused 4 (delta 3), pack-reused 0 (from 0)
+Unpacking objects: 100% (4/4), 485 bytes | 485.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   5f9fc1a..353e117  main       -> origin/main
+Updating 5f9fc1a..353e117
+Fast-forward
+ fgw_mhc/_kernels.py | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+2026-11-27 16:47:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-27 16:47:20  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 125, in <module>
+    main()
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 97, in main
+    torch.testing.assert_close(run(route), expected, atol=0.01, rtol=0.01)
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/torch/testing/_comparison.py", line 1631, in assert_close
+    raise error_metas[0].to_error(msg)
+AssertionError: Tensor-likes are not close!
+
+Mismatched elements: 4860 / 5120 (94.9%)
+Greatest absolute difference: 1.109375 at index (0, 1372) (up to 0.01 allowed)
+Greatest relative difference: 7712.0 at index (0, 3878) (up to 0.01 allowed)
+
+The failure occurred for item [0]
+[ERROR] 2026-11-27-16:47:21 (PID:3020139, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
