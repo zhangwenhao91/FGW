@@ -1,7 +1,27 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_tileops_mhc.py \
-  --tileops-repo ../TileOPs-mhc-baseline \
-  --device npu:0 --projection cube_full \
-  --sinkhorn-iters 1 20 --rounds 4 \
-  --output tileops-mhc-rerun-card4.csv &&
-cat tileops-mhc-rerun-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_tileops_mhc.py \
+>   --tileops-repo ../TileOPs-mhc-baseline \
+>   --device npu:0 --projection cube_full \
+>   --sinkhorn-iters 1 20 --rounds 4 \
+>   --output tileops-mhc-rerun-card4.csv &&
+> cat tileops-mhc-rerun-card4.csv
+Already up to date.
+pre B=1 H=1280 iters=1: FGW 28.594 us, TileOPs 53.159 us, 1.859x
+pre B=1 H=1280 iters=20: FGW 27.670 us, TileOPs 51.588 us, 1.864x
+post B=1 H=1280 iters=: FGW 18.044 us, TileOPs 20.467 us, 1.134x
+pre B=2 H=1920 iters=1: FGW 28.098 us, TileOPs 71.649 us, 2.550x
+pre B=2 H=1920 iters=20: FGW 27.523 us, TileOPs 75.803 us, 2.754x
+post B=2 H=1920 iters=: FGW 18.081 us, TileOPs 21.044 us, 1.164x
+pre B=4 H=2560 iters=1: FGW 27.933 us, TileOPs 118.887 us, 4.256x
+pre B=4 H=2560 iters=20: FGW 27.296 us, TileOPs 123.204 us, 4.514x
+post B=4 H=2560 iters=: FGW 17.629 us, TileOPs 20.568 us, 1.167x
+stage,batch,hidden,sinkhorn_iters,sinkhorn_eps,fgw_variant,fgw_us,tileops_ascend_us,speedup
+pre,1,1280,1,0.02,cube_full,28.594,53.159,1.859
+pre,1,1280,20,0.02,cube_full,27.670,51.588,1.864
+post,1,1280,,,default,18.044,20.467,1.134
+pre,2,1920,1,0.02,cube_full,28.098,71.649,2.550
+pre,2,1920,20,0.02,cube_full,27.523,75.803,2.754
+post,2,1920,,,default,18.081,21.044,1.164
+pre,4,2560,1,0.02,cube_full,27.933,118.887,4.256
+pre,4,2560,20,0.02,cube_full,27.296,123.204,4.514
+post,4,2560,,,default,17.629,20.568,1.167
