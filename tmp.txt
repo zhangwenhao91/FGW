@@ -1,8 +1,34 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  python bench_cube_b2.py --grouped-k --pre-only --batch 4 \
-    --device npu:0 --output grouped-k-pre-b4-card4.csv
-  python bench_cube_b2.py --grouped-k --batch 4 \
-    --device npu:0 --output grouped-k-pair-b4-card4.csv
-)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && (
+>   set -e
+>   export ASCEND_RT_VISIBLE_DEVICES=4
+>   python bench_cube_b2.py --grouped-k --pre-only --batch 4 \
+>     --device npu:0 --output grouped-k-pre-b4-card4.csv
+>   python bench_cube_b2.py --grouped-k --batch 4 \
+>     --device npu:0 --output grouped-k-pair-b4-card4.csv
+> )
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11/11), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 6 (delta 4), reused 6 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (6/6), 1.57 KiB | 802.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   24f4db7..ce162d3  main       -> origin/main
+Updating 24f4db7..ce162d3
+Fast-forward
+ bench_cube_b2.py    |   9 ++++++---
+ fgw_mhc/__init__.py |  14 +++++++++-----
+ fgw_mhc/_kernels.py | 139 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------
+ 3 files changed, 111 insertions(+), 51 deletions(-)
+2026-11-27 17:24:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 17:24:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+2026-11-27 17:24:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 17:24:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+2026-11-27 17:24:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 17:24:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+cube_full: median 26.042 us, range 25.925–61.490 us; position medians [26.587, 26.117, 26.026] us
+cube_full_g2: median 25.958 us, range 25.735–39.618 us; position medians [25.932, 25.996, 25.972] us
+cube_full_g4: median 26.004 us, range 25.851–31.253 us; position medians [25.995, 26.009, 25.995] us
+cube_full: median 35.935 us, range 35.759–36.850 us; position medians [36.084, 35.957, 35.908] us
+cube_full_g2: median 35.947 us, range 35.798–36.724 us; position medians [35.937, 35.940, 35.947] us
+cube_full_g4: median 36.063 us, range 35.842–36.348 us; position medians [36.005, 36.063, 36.246] us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
