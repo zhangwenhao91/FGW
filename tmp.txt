@@ -1,11 +1,7 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py -k cube_full_simd -x &&
-> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py --simd \
->   --device npu:0 --output cube-b2-simd-card4.csv
-....                                                                                                                                                                                                                                                                                                                                                              [100%]
-4 passed, 20 deselected in 6.30s
-2026-11-27 10:19:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
-2026-11-27 10:19:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
-2026-11-27 10:19:19  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
-2026-11-27 10:19:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
-cube_full: median 30.904 us, range 30.627–31.446 us; position medians [31.212, 30.729] us
-cube_full_simd: median 30.648 us, range 30.450–30.689 us; position medians [30.569, 30.648] us
+git pull --ff-only
+ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py \
+  -k 'cube_full_tail or cube_split' -x &&
+for batch in 1 2 4; do
+  ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py --tail --batch "$batch" \
+    --device npu:0 --output "cube-tail-b${batch}-card4.csv" || break
+done
