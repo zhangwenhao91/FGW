@@ -1,16 +1,40 @@
-git pull --ff-only
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python bench_vllm_ascend.py \
+>   --backend tilelang --projection cube_full --device npu:0 \
+>   --batch 1 --sweep-pairs 1 8 32 --output tilelang-sweep-card4.csv
 
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_vllm_ascend.py \
-  --backend tilelang --projection cube_full --device npu:0 \
-  --batch 1 --sweep-pairs 1 8 32 --output tilelang-sweep-card4.csv
-
-docker run --rm --pull=never --shm-size=1g "${devices[@]}" \
-  -e ASCEND_RT_VISIBLE_DEVICES=4 \
-  -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
-  -v /usr/local/dcmi:/usr/local/dcmi:ro \
-  -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
-  -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
-  -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
-  quay.io/ascend/vllm-ascend:v0.30.0-a5 \
-  bench_vllm_ascend.py --backend vllm --device npu:0 \
-  --batch 1 --sweep-pairs 1 8 32 --output vllm-sweep-card4.csv
+tilelang B=1 H=1280 1 pairs/event forward: 35.355 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 26.857 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 25.574 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 25.596 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 27.477 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 38.645 us/pair
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# docker run --rm --pull=never --shm-size=1g "${devices[@]}" \
+>   -e ASCEND_RT_VISIBLE_DEVICES=4 \
+>   -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
+>   -v /usr/local/dcmi:/usr/local/dcmi:ro \
+>   -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
+>   -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
+>   -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
+>   quay.io/ascend/vllm-ascend:v0.30.0-a5 \
+>   bench_vllm_ascend.py --backend vllm --device npu:0 \
+>   --batch 1 --sweep-pairs 1 8 32 --output vllm-sweep-card4.csv
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-27 15:29:21 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-27 15:29:21 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-27 15:29:21 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-27 15:29:21 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-27 15:29:22 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=1 H=1280 1 pairs/event forward: 42.580 us/pair
+vllm B=1 H=1280 8 pairs/event forward: 25.573 us/pair
+vllm B=1 H=1280 32 pairs/event forward: 29.451 us/pair
+vllm B=1 H=1280 32 pairs/event reverse: 27.331 us/pair
+vllm B=1 H=1280 8 pairs/event reverse: 28.093 us/pair
+vllm B=1 H=1280 1 pairs/event reverse: 32.670 us/pair
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
