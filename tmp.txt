@@ -1,3 +1,32 @@
-git pull --ff-only
-python -m pytest -q tests/test_mhc.py -k cube_full -x &&
-python bench_cube_stages.py --device npu:0 --output cube-full-stage-results.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python -m pytest -q tests/test_mhc.py -k cube_full -x &&
+> python bench_cube_stages.py --device npu:0 --output cube-full-stage-results.csv
+....                                                                                                                                                                                                                                                                                                                                                              [100%]
+4 passed, 16 deselected in 19.78s
+2026-11-27 10:00:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:00:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=1 H=1280 cube: project=30.532 us, mix=26.752 us, apply_mix=26.760 us, post=25.359 us, project_plus_mix=57.284 us, pair=54.209 us
+2026-11-27 10:00:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:00:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=1 H=1280 cube_mk: project_and_mix=15.707 us, apply_mix=13.753 us, post=15.901 us, pair=38.822 us
+2026-11-27 10:00:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:00:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=1 H=1280 cube_full: pre=20.923 us, post=18.273 us, pair=39.410 us
+2026-11-27 10:01:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:01:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=2 H=1920 cube: project=23.581 us, mix=21.091 us, apply_mix=21.941 us, post=18.692 us, project_plus_mix=44.672 us, pair=46.072 us
+2026-11-27 10:01:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:01:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=2 H=1920 cube_mk: project_and_mix=21.899 us, apply_mix=21.742 us, post=20.049 us, pair=60.125 us
+2026-11-27 10:01:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:01:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=2 H=1920 cube_full: pre=26.215 us, post=24.477 us, pair=75.057 us
+2026-11-27 10:01:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:01:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=4 H=2560 cube: project=21.645 us, mix=20.102 us, apply_mix=20.395 us, post=17.808 us, project_plus_mix=41.747 us, pair=45.844 us
+2026-11-27 10:01:08  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:01:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=4 H=2560 cube_mk: project_and_mix=21.089 us, apply_mix=19.873 us, post=17.522 us, pair=40.741 us
+2026-11-27 10:01:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:01:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=4 H=2560 cube_full: pre=21.196 us, post=17.881 us, pair=35.004 us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
