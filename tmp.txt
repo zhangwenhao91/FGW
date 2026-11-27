@@ -1,3 +1,20 @@
-git pull --ff-only
-ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py \
-  -k 'general_shapes or post_streams_and_pipeline' -x
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 8 (delta 5), reused 8 (delta 5), pack-reused 0 (from 0)
+Unpacking objects: 100% (8/8), 2.18 KiB | 2.18 MiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   9c7ddff..0cb6392  main       -> origin/main
+Updating 9c7ddff..0cb6392
+Fast-forward
+ fgw_mhc/__init__.py  | 65 +++++++++++++++++++++++++++++++++++++++++++----------------------
+ fgw_mhc/_kernels.py  | 19 ++++++++++---------
+ fgw_mhc/reference.py | 13 ++++++++-----
+ tests/test_mhc.py    | 31 +++++++++++++++++++++++++++++++
+ 4 files changed, 92 insertions(+), 36 deletions(-)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py \
+>   -k 'general_shapes or post_streams_and_pipeline' -x
+...................                                                                                                                                                                                                                                                                                                                                               [100%]
+19 passed, 32 deselected in 31.71s
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
