@@ -1,54 +1,16 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python bench_vllm_ascend.py \
->   --backend tilelang --projection cube_full --split-stages \
->   --device npu:0 --output tilelang-stages-card4.csv
+git pull --ff-only
 
+ASCEND_RT_VISIBLE_DEVICES=4 python bench_vllm_ascend.py \
+  --backend tilelang --projection cube_full --device npu:0 \
+  --profile-batch 1 --profile-dir profiles-card4
 
-tilelang pre B=1 hidden=1280: 28.951 us
-tilelang post B=1 hidden=1280: 18.045 us
-tilelang pre B=2 hidden=1920: 28.641 us
-tilelang post B=2 hidden=1920: 19.088 us
-tilelang pre B=4 hidden=2560: 27.597 us
-tilelang post B=4 hidden=2560: 18.668 us
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# docker run --rm --pull=never --shm-size=1g "${devices[@]}" \
->   -e ASCEND_RT_VISIBLE_DEVICES=4 \
->   -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
->   -v /usr/local/dcmi:/usr/local/dcmi:ro \
->   -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
->   -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
->   -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
->   quay.io/ascend/vllm-ascend:v0.30.0-a5 \
->   bench_vllm_ascend.py --backend vllm --split-stages \
->   --device npu:0 --output vllm-stages-card4.csv &&
-> python bench_vllm_ascend.py \
->   --merge tilelang-stages-card4.csv vllm-stages-card4.csv \
->   --output vllm-stage-results-card4.csv &&
-> cat vllm-stage-results-card4.csv
-grep: write error: Broken pipe
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-27 11:49:33 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-27 11:49:33 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-27 11:49:33 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-27 11:49:33 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-27 11:49:33 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-vllm pre B=1 hidden=1280: 29.349 us
-vllm post B=1 hidden=1280: 18.649 us
-vllm pre B=2 hidden=1920: 29.708 us
-vllm post B=2 hidden=1920: 18.245 us
-vllm pre B=4 hidden=2560: 30.079 us
-vllm post B=4 hidden=2560: 17.718 us
-batch,hidden,sinkhorn_iters,warmup,repeat,stage,tilelang_projection,tilelang_stage_us,vllm_ascendc_stage_us,vllm_over_tilelang_speedup
-1,1280,20,30,100,pre,cube_full,28.951,29.349,1.014
-1,1280,20,30,100,post,cube_full,18.045,18.649,1.034
-2,1920,20,30,100,pre,cube_full,28.640,29.708,1.037
-2,1920,20,30,100,post,cube_full,19.088,18.245,0.956
-4,2560,20,30,100,pre,cube_full,27.597,30.079,1.090
-4,2560,20,30,100,post,cube_full,18.668,17.718,0.949
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+docker run --rm --pull=never --shm-size=1g "${devices[@]}" \
+  -e ASCEND_RT_VISIBLE_DEVICES=4 \
+  -v /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro \
+  -v /usr/local/dcmi:/usr/local/dcmi:ro \
+  -v "$(command -v npu-smi):/usr/local/bin/npu-smi:ro" \
+  -v /etc/ascend_install.info:/etc/ascend_install.info:ro \
+  -v "$PWD:/fgw-mhc" -w /fgw-mhc --entrypoint python \
+  quay.io/ascend/vllm-ascend:v0.30.0-a5 \
+  bench_vllm_ascend.py --backend vllm --device npu:0 \
+  --profile-batch 1 --profile-dir profiles-card4
