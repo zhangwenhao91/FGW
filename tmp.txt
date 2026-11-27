@@ -1,39 +1,7 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
-ut vllm-ascend-cube-fused-results.csv &&
-cat vllm-ascend-cube-fused-results.csvremote: Enumerating objects: 17, done.
-remote: Counting objects: 100% (17/17), done.
-remote: Compressing objects: 100% (2/2), done.
-remote: Total 9 (delta 6), reused 9 (delta 6), pack-reused 0 (from 0)
-Unpacking objects: 100% (9/9), 2.93 KiB | 2.93 MiB/s, done.
-From https://github.com/zhangwenhao91/FGW-mHC
-   8756f0f..1907593  main       -> origin/main
-Updating 8756f0f..1907593
-Fast-forward
- README.md            | 25 ++++++++++++++-----------
- bench_vllm_ascend.py | 10 ++++++----
- fgw_mhc/__init__.py  | 37 +++++++++++++++++++++++--------------
- fgw_mhc/_kernels.py  | 83 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
- tests/test_mhc.py    |  5 +++--
- 5 files changed, 124 insertions(+), 36 deletions(-)
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python -m pytest -q tests/test_mhc.py &&
-> python bench_vllm_ascend.py --backend tilelang --device npu:0 \
->   --output tilelang-cube-fused-pair.csv &&
-> python bench_vllm_ascend.py --merge tilelang-cube-fused-pair.csv vllm-pair.csv \
->   --output vllm-ascend-cube-fused-results.csv &&
-> cat vllm-ascend-cube-fused-results.csv
-............                                                                                                                                                                                                                                                                                                                                                      [100%]
-12 passed in 23.28s
-2026-11-24 20:44:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-2026-11-24 20:44:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
-tilelang B=1 hidden=1280: 50.858 us
-2026-11-24 20:44:24  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-2026-11-24 20:44:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
-tilelang B=2 hidden=1920: 48.518 us
-2026-11-24 20:44:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mix` with `out_idx=None`
-2026-11-24 20:44:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mix`
-tilelang B=4 hidden=2560: 48.270 us
-batch,hidden,sinkhorn_iters,warmup,repeat,tilelang_projection,tilelang_pair_us,vllm_ascendc_pair_us,vllm_over_tilelang_speedup
-1,1280,20,30,100,cube_fused,50.858,34.911,0.686
-2,1920,20,30,100,cube_fused,48.518,35.408,0.730
-4,2560,20,30,100,cube_fused,48.270,34.921,0.723
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+git pull --ff-only
+python -m pytest -q tests/test_mhc.py -k cube_mk &&
+python bench_vllm_ascend.py --backend tilelang --projection cube_mk \
+  --device npu:0 --output tilelang-cube-mk-pair.csv &&
+python bench_vllm_ascend.py --merge tilelang-cube-mk-pair.csv vllm-pair.csv \
+  --output vllm-ascend-cube-mk-results.csv &&
+cat vllm-ascend-cube-mk-results.csv
