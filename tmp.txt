@@ -1,2 +1,13 @@
-git pull --ff-only
-python bench_cube_stages.py --device npu:0 --output cube-stage-results.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python bench_cube_stages.py --device npu:0 --output cube-stage-results.csv
+2026-11-27 09:54:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 09:54:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=1 H=1280 cube: project=24.907 us, mix=21.943 us, apply_mix=21.425 us, post=19.059 us, project_plus_mix=46.850 us, pair=45.450 us
+B=1 H=1280 cube_mk: project_and_mix=24.211 us, apply_mix=21.456 us, post=19.029 us, pair=41.706 us
+2026-11-27 09:54:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 09:54:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=2 H=1920 cube: project=22.489 us, mix=20.771 us, apply_mix=20.750 us, post=18.286 us, project_plus_mix=43.261 us, pair=45.867 us
+B=2 H=1920 cube_mk: project_and_mix=22.987 us, apply_mix=20.972 us, post=18.651 us, pair=41.149 us
+2026-11-27 09:54:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 09:54:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=4 H=2560 cube: project=23.187 us, mix=21.241 us, apply_mix=21.364 us, post=18.782 us, project_plus_mix=44.428 us, pair=45.241 us
+B=4 H=2560 cube_mk: project_and_mix=22.990 us, apply_mix=21.386 us, post=18.369 us, pair=40.448 us
