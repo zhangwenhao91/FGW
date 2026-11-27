@@ -1,10 +1,102 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  for batch in 1 2 4; do
-    python bench_cube_b2.py --m-only --pre-only \
-      --batch "$batch" --device npu:0 --output "m-only-pre-b${batch}-card4.csv"
-    python bench_cube_b2.py --m-only \
-      --batch "$batch" --device npu:0 --output "m-only-pair-b${batch}-card4.csv"
-  done
-)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && (
+>   set -e
+>   export ASCEND_RT_VISIBLE_DEVICES=4
+>   for batch in 1 2 4; do
+>     python bench_cube_b2.py --m-only --pre-only \
+>       --batch "$batch" --device npu:0 --output "m-only-pre-b${batch}-card4.csv"
+>     python bench_cube_b2.py --m-only \
+>       --batch "$batch" --device npu:0 --output "m-only-pair-b${batch}-card4.csv"
+>   done
+> )
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11/11), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 6 (delta 4), reused 6 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (6/6), 1.77 KiB | 905.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   1e1a143..5f9fc1a  main       -> origin/main
+Updating 1e1a143..5f9fc1a
+Fast-forward
+ bench_cube_b2.py    |  17 +++++++++++++++--
+ fgw_mhc/__init__.py |  18 ++++++++++++++++--
+ fgw_mhc/_kernels.py | 105 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 136 insertions(+), 4 deletions(-)
+[16:45:09] /home/z30086261/Q4/third_party/tilelang-950/3rdparty/tvm/src/tirx/script/printer/expr.cc:75: Warning: Didn't find variable definition for: valid_rows
+[16:45:10] /home/z30086261/Q4/third_party/tilelang-950/3rdparty/tvm/src/relax/script/printer/./../../../script/printer/utils.h:53: Warning: TVMScript printer falls back to the basic address printer with the error:
+Variable is not defined in the environment: valid_rows
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 125, in <module>
+    main()
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 97, in main
+    torch.testing.assert_close(run(route), expected, atol=0.01, rtol=0.01)
+                               ^^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 68, in run
+    residual, layer_in, post = mhc_pre(*inputs, projection=projection)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/fgw_mhc/__init__.py", line 74, in mhc_pre
+    kernel = _compile(
+             ^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/fgw_mhc/__init__.py", line 28, in _compile
+    return getattr(_kernels, stage).compile(**config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 469, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 390, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1709, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1702, in get_tir
+    return self.p1_cache[bound.p1_key].get_tir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1361, in get_tir
+    self.ir_gen.gen(builder)(**tensor_args, **kwargs)
+  File "/home/z30086261/FGW-mHC/fgw_mhc/_kernels.py", line 448, in project_cube_m_only
+    S.vsts(squares_ub[row, 0], S.vsel(total, zero, first), eight)
+                                      
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 910, in rval
+    raise RuntimeError(
+RuntimeError: Immutable variable `total` is used outside its defining region!
+variable `total` is defined in frame: script.ir_builder.tirx.IfFrame(stmts=(), condition=part > 0, then_stmts=(total = T.float32x64()
+squares_ub = T.Buffer((8, 8), scope="shared.dyn")
+row = T.int32()
+first = T.boolx256()
+total_1: T.float32x64 = T.tl.simd.vadd(total, T.tl.simd.vld(T.access_ptr(squares_ub[row, 0], 1, 1), "BRC_B32"), first, "MODE_ZEROING"),), else_stmts=None), current frames: [script.ir_builder.tirx.PrimFuncFrame(stmts=(), name="project_cube_m_only", args=(x, phi, bias, h_post, x_res, x_layer), is_private=False, ret_type=None, buffer_map={x: x, phi: phi, bias: bias, h_post: h_post, x_res: x_res, x_layer: x_layer}, attrs={}, env_threads={}, root_alloc_buffers=()), tl.KernelLaunchFrame(stmts=(), frames=(script.ir_builder.tirx.ForFrame(stmts=(), vars=(bx,), doms=(I.Range(0, 1),)), script.ir_builder.tirx.ForFrame(stmts=(), vars=(sid,), doms=(I.Range(0, 2),)), script.ir_builder.tirx.ForFrame(stmts=(), vars=(tx, ty, tz), doms=(I.Range(0, 1), I.Range(0, 1), I.Range(0, 1))), script.ir_builder.tirx.SSBlockFrame(stmts=(T.ascend_set_hf32_mode(2),), name="tilelang_root", iter_vars=(), reads=(), writes=(), init=None, alloc_buffers=(x_ub, nz_ub, squares_ub, a_l1, b_l1, a_l0, b_l0, acc, raw_ub, partial_ub, sum_ub, bias_ub, totals, weights_ub, post_ub, streams_ub, res_ub, layer_ub, squared, ptr), match_buffers=(), annotations={"vector_count": 2, "layout_map": {acc: tl.AscendFractalLayout(input_size=(16, 32), forward_index=(_j // 16, 0, _i, _j % 16), kind=1), nz_ub: tl.Layout(input_size=(9, 256), forward_index=(_j // 8, _i, _j % 8))}, "tl.simd_pointer_dtypes": {ptr: "float32"}}, iter_values=(), predicate=None, no_realize=False)), grid_vars=(bx, sid), grid_extents=(1, 2), thread_vars=(tx, ty, tz), thread_extents=None), script.ir_builder.tirx.ForFrame(stmts=(row_tile = T.int32()
+sid = T.int32()
+vector_m: T.int32 = row_tile * 16 + sid * 8,), vars=(row_tile,), doms=(I.Range(0, 1),)), script.ir_builder.tirx.ForFrame(stmts=(part = T.int32()
+k: T.int32 = part * 256, x = T.Buffer((1, 5120), "bfloat16", strides=(5120, 1))
+vector_m = T.int32()
+k = T.int32()
+x_ub = T.Buffer((8, 256), "bfloat16", scope="shared.dyn")
+T.ascend_copy(T.region(x[vector_m, k], 1, 8, 256), T.region(x_ub[0, 0], 2, 8, 256)), phi = T.Buffer((5120, 24), strides=(24, 1))
+k = T.int32()
+b_l1 = T.Buffer((256, 32), scope="shared.l1")
+T.ascend_copy(T.region(phi[k, 0], 1, 256, 32), T.region(b_l1[0, 0], 2, 256, 32))), vars=(part,), doms=(I.Range(0, 20),)), tl.SimdVFFrame(stmts=(full: T.boolx256 = T.tl.simd.pset(32, "PAT_ALL"), first: T.boolx256 = T.tl.simd.pset(32, "PAT_VL1"), eight: T.boolx256 = T.tl.simd.pset(32, "PAT_VL8"), full = T.boolx256()
+zero: T.float32x64 = T.tl.simd.vdup(T.float32(0.0), full, "MODE_ZEROING"), vector_m = T.int32()
+valid_rows: T.int32 = T.min(T.max(1 - vector_m, 0), 8))), script.ir_builder.tirx.ForFrame(stmts=(squared = T.Buffer((1,), "float32x64", scope="local")
+zero = T.float32x64()
+squared[0] = zero, for col_tile in T.unroll(4, annotations={"pragma_unroll_explicit": True}):
+    col: T.int32 = col_tile * 64
+    v: T.boolx256 = T.tl.simd.pset(16, "PAT_ALL")
+    x_ub = T.Buffer((8, 256), "bfloat16", scope="shared.dyn")
+    row = T.int32()
+    values: T.float32x64 = T.tl.simd.vcvt(T.tl.simd.vld(T.access_ptr(x_ub[row, col], 64, 1), "UNPK_B16"), v, "PART_EVEN", "MODE_ZEROING")
+    ptr = T.Buffer((1,), "handle", scope="local.var")
+    nz_ub = T.Buffer((9, 256), scope="shared.dyn")
+    ptr[0] = T.access_ptr(nz_ub[row, col], 64, 2)
+    full = T.boolx256()
+    T.tl.simd.vsstb(values, ptr[0], 589824, full)
+    squared = T.Buffer((1,), "float32x64", scope="local")
+    T.tl.simd.vmula(T.access_ptr(squared[0], 1, 3), values, values, full, "MODE_ZEROING"), squared = T.Buffer((1,), "float32x64", scope="local")
+full = T.boolx256()
+total: T.float32x64 = T.tl.simd.vcadd(squared[0], full, "MODE_ZEROING"), part = T.int32()
+if part > 0:
+    total = T.float32x64()
+    squares_ub = T.Buffer((8, 8), scope="shared.dyn")
+    row = T.int32()
+    first = T.boolx256()
+    total_1: T.float32x64 = T.tl.simd.vadd(total, T.tl.simd.vld(T.access_ptr(squares_ub[row, 0], 1, 1), "BRC_B32"), first, "MODE_ZEROING")), vars=(row,), doms=(ir.Range(0x560e097fdb90),))].
+[ERROR] 2026-11-27-16:45:11 (PID:3017756, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
