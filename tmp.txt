@@ -1,2 +1,18 @@
-git pull --ff-only
-python bench_cube_b2.py --device npu:0 --output cube-b2-orders.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
+remote: Enumerating objects: 4, done.
+remote: Counting objects: 100% (4/4), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 1.50 KiB | 1.50 MiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   7671975..b8fc93d  main       -> origin/main
+Updating 7671975..b8fc93d
+Fast-forward
+ bench_cube_b2.py | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
+ create mode 100644 bench_cube_b2.py
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python bench_cube_b2.py --device npu:0 --output cube-b2-orders.csv
+cube: median 46.426 us, range 44.202–48.207 us; position medians [46.578, 46.351, 46.386] us
+cube_mk: median 41.936 us, range 40.742–43.251 us; position medians [41.917, 42.026, 41.714] us
+cube_full: median 36.930 us, range 35.250–37.439 us; position medians [36.941, 36.761, 36.927] us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
