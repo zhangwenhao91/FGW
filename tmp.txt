@@ -1,11 +1,2 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# (   set -e;   export ASCEND_RT_VISIBLE_DEVICES=4;   for batch in 2 4; do     python bench_cube_b2.py --m-only --pre-only       --batch "$batch" --device npu:0 --output "m-only-pre-b${batch}-card4.csv";   done;   for batch in 1 2 4; do     python bench_cube_b2.py --m-only       --batch "$batch" --device npu:0 --output "m-only-pair-b${batch}-card4.csv";   done; )
-cube_full: median 31.037 us, range 30.513–35.410 us; position medians [33.211, 30.788] us
-cube_m_only: median 26.604 us, range 26.221–27.000 us; position medians [26.343, 26.872] us
-cube_full: median 23.480 us, range 23.332–23.538 us; position medians [23.481, 23.434] us
-cube_m_only: median 37.767 us, range 37.724–37.822 us; position medians [37.773, 37.767] us
-cube_full: median 35.098 us, range 34.680–35.642 us; position medians [35.285, 34.973] us
-cube_m_only: median 28.469 us, range 28.265–28.562 us; position medians [28.412, 28.470] us
-cube_full: median 39.630 us, range 39.442–40.523 us; position medians [39.982, 39.630] us
-cube_m_only: median 33.037 us, range 32.909–33.154 us; position medians [33.037, 33.031] us
-cube_full: median 38.952 us, range 38.391–40.975 us; position medians [39.683, 38.952] us
-cube_m_only: median 40.285 us, range 39.309–41.099 us; position medians [39.511, 40.978] us
+git pull --ff-only &&
+bash run_tileops_spec_vllm.sh 4 tuned-pair
