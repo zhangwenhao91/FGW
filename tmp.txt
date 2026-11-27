@@ -1,6 +1,4 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
->   --device npu:0 --output cube-b2-orders-card4.csv
-cube: median 45.892 us, range 45.213–47.404 us; position medians [46.163, 45.794, 45.813] us
-cube_mk: median 41.772 us, range 40.606–42.702 us; position medians [41.831, 41.669, 41.685] us
-cube_full: median 35.775 us, range 35.308–36.717 us; position medians [35.629, 35.784, 36.061] us
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+git pull --ff-only
+ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py -k cube_full_simd -x &&
+ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py --simd \
+  --device npu:0 --output cube-b2-simd-card4.csv
