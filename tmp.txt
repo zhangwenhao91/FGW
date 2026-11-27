@@ -1,4 +1,56 @@
-git pull --ff-only
-ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py -k cube_full_simd -x &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py --simd \
-  --device npu:0 --output cube-b2-simd-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 4 (delta 2), reused 4 (delta 2), pack-reused 0 (from 0)
+Unpacking objects: 100% (4/4), 473 bytes | 473.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   0a5afb8..6fb17ae  main       -> origin/main
+Updating 0a5afb8..6fb17ae
+Fast-forward
+ fgw_mhc/_kernels.py | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python -m pytest -q tests/test_mhc.py -k cube_full_simd -x &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py --simd \
+>   --device npu:0 --output cube-b2-simd-card4.csv
+...F
+=============================================================================================================================================================================== FAILURES ================================================================================================================================================================================
+_________________________________________________________________________________________________________________________________________________________________ test_pre_post[cube_full_simd-3-64-20] _________________________________________________________________________________________________________________________________________________________________
+
+device = device(type='npu', index=0), batch = 3, hidden = 64, repeat = 20, projection = 'cube_full_simd'
+
+    @pytest.mark.parametrize("batch,hidden,repeat", [(1, 1280, 1), (2, 1920, 1), (4, 2560, 1), (3, 64, 20)])
+    @pytest.mark.parametrize("projection", ["vector", "cube_split", "cube", "cube_mk", "cube_full", "cube_full_simd"])
+    def test_pre_post(device, batch, hidden, repeat, projection):
+        rng = torch.Generator().manual_seed(42)
+        x = torch.randn(batch, 4 * hidden, generator=rng).bfloat16()
+        phi = torch.randn(4 * hidden, 24, generator=rng)
+        bias = torch.randn(24, generator=rng)
+        args = (0.7, -0.3, 0.5, repeat, 0.02)
+    
+        expected = pre_reference(phi, x, bias, *args)
+        options = {} if projection == "cube" else {"projection": projection}
+        actual = mhc_pre(phi.to(device), x.to(device), bias.to(device), *args, **options)
+        for output, ref in zip(actual, expected):
+>           torch.testing.assert_close(output.cpu(), ref, atol=0.01, rtol=0.01)
+                                       ^^^^^^^^^^^^
+E           RuntimeError: copy_between_host_and_device_opapi:../torch_npu/csrc/aten/ops/op_api/CopyKernelOpApi.cpp:91 NPU function error: device error type 3, error code is 507015
+E           [ERROR] 2026-11-27-10:16:57 (PID:2295132, Device:0, RankID:-1) ERR00100 PTA call acl api failed
+E           [Error]: The aicore execution is abnormal. 
+E                   Rectify the fault based on the error information in the ascend log.
+E           EZ9999: Internal error!
+E           EZ9999[PID: 2295132] 2026-11-27-10:16:57.037.459 (EZ9999):  An error occurs on the device(chipId:0, dieId:0), the serial number is 37, the error is aicore error, core id is 0, error code = 0, dump info: pc start: 0x120041009000, current: 0x120041009198, sc error info: 0xffffffffffff, su error info: 0xffffffef1a5cf6bf,0x1eeb77fff800fc75, mte error info: 0xc9e25ec50001f3f3, vec error info: 0, cube error info: 0, l1 error info: 0xffbf00177ff6, aic error mask: 0x80395856, para base: 0x12004c6001b0, mte error: 0, aic cond: 0.
+E           The extend info: errcode:(0) errorStr: timeout or trap error. subErrType: 0x4.
+E           For details, see the troubleshooting document on the Ascend official website. Search for the keyword "AI Core Error".[FUNC:PrintDavidCoreInfo][FILE:device_error_proc_c.cc][LINE:721]
+E           TraceBack (most recent call last):
+E                  An error occurred in the kernel task, retCode=0x26, [aicore exception].[FUNC:PreCheckTaskErr][FILE:davinci_kernel_task.cc][LINE:1030]
+E                  rtStreamSynchronize execution failed, reason=aicore exception[FUNC:FuncErrorReason][FILE:error_message_manage.cc][LINE:76]
+
+tests/test_mhc.py:31: RuntimeError
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------- Captured stdout call --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2026-11-27 10:16:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 10:16:56  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+======================================================================================================================================================================== short test summary info ========================================================================================================================================================================
+FAILED tests/test_mhc.py::test_pre_post[cube_full_simd-3-64-20] - RuntimeError: copy_between_host_and_device_opapi:../torch_npu/csrc/aten/ops/op_api/CopyKernelOpApi.cpp:91 NPU function error: device error type 3, error code is 507015
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 passed, 20 deselected in 24.84s
