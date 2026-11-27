@@ -1,2 +1,6 @@
-find profiles-card4 -type f \
-  \( -name 'trace_view.json' -o -name 'kernel_details.csv' \) -print
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# find profiles-card4 -type f \
+>   \( -name 'trace_view.json' -o -name 'kernel_details.csv' \) -print
+profiles-card4/vllm/b1-h1280/f1f1e23b65a3_1_20261127115458064_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json
+profiles-card4/vllm/b1-h1280/f1f1e23b65a3_1_20261127115458064_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv
+profiles-card4/tilelang/b1-h1280/ubuntu162_2557832_20261127115432312_ascend_pt/ASCEND_PROFILER_OUTPUT/trace_view.json
+profiles-card4/tilelang/b1-h1280/ubuntu162_2557832_20261127115432312_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv
