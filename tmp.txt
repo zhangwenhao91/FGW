@@ -1,5 +1,18 @@
-python bench_vllm_ascend.py --backend tilelang --projection cube_mk \
-  --device npu:0 --output tilelang-cube-mk-pair.csv &&
-python bench_vllm_ascend.py --merge tilelang-cube-mk-pair.csv vllm-pair.csv \
-  --output vllm-ascend-cube-mk-results.csv &&
-cat vllm-ascend-cube-mk-results.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python bench_vllm_ascend.py --backend tilelang --projection cube_mk \
+m-ascend-cube-mk-results.csv>   --device npu:0 --output tilelang-cube-mk-pair.csv &&
+> python bench_vllm_ascend.py --merge tilelang-cube-mk-pair.csv vllm-pair.csv \
+>   --output vllm-ascend-cube-mk-results.csv &&
+> cat vllm-ascend-cube-mk-results.csv
+2026-11-27 09:51:29  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 09:51:31  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+tilelang B=1 hidden=1280: 41.345 us
+2026-11-27 09:51:32  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 09:51:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+tilelang B=2 hidden=1920: 37.085 us
+2026-11-27 09:51:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-27 09:51:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+tilelang B=4 hidden=2560: 51.649 us
+batch,hidden,sinkhorn_iters,warmup,repeat,tilelang_projection,tilelang_pair_us,vllm_ascendc_pair_us,vllm_over_tilelang_speedup
+1,1280,20,30,100,cube_mk,41.345,34.911,0.844
+2,1920,20,30,100,cube_mk,37.085,35.408,0.955
+4,2560,20,30,100,cube_mk,51.650,34.921,0.676
