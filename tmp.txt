@@ -1,15 +1,5 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only
-remote: Enumerating objects: 7, done.
-remote: Counting objects: 100% (7/7), done.
-remote: Compressing objects: 100% (2/2), done.
-remote: Total 4 (delta 2), reused 4 (delta 2), pack-reused 0 (from 0)
-Unpacking objects: 100% (4/4), 690 bytes | 690.00 KiB/s, done.
-From https://github.com/zhangwenhao91/FGW-mHC
-   3497456..388d873  main       -> origin/main
-Updating 3497456..388d873
-Fast-forward
- fgw_mhc/_kernels.py | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python -m pytest -q tests/test_mhc.py -k cube_mk -x
-....                                                                                                                                                                                                                                                                                                                                                              [100%]
-4 passed, 12 deselected in 16.81s
+python bench_vllm_ascend.py --backend tilelang --projection cube_mk \
+  --device npu:0 --output tilelang-cube-mk-pair.csv &&
+python bench_vllm_ascend.py --merge tilelang-cube-mk-pair.csv vllm-pair.csv \
+  --output vllm-ascend-cube-mk-results.csv &&
+cat vllm-ascend-cube-mk-results.csv
