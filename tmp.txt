@@ -1,27 +1,4 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python bench_tileops_mhc.py \
->   --tileops-repo ../TileOPs-mhc-baseline --device npu:0 \
->   --output tileops-mhc-card4.csv
-Traceback (most recent call last):
-  File "/home/z30086261/FGW-mHC/bench_tileops_mhc.py", line 100, in <module>
-    main()
-  File "/home/z30086261/FGW-mHC/bench_tileops_mhc.py", line 85, in main
-    record("pre", batch, hidden, repeat, eps, args.projection,
-  File "/home/z30086261/FGW-mHC/bench_tileops_mhc.py", line 67, in record
-    fgw_us, tileops_us = compare(ours, theirs, ref, torch, args)
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW-mHC/bench_tileops_mhc.py", line 15, in compare
-    torch.testing.assert_close(op(), reference, atol=0.01, rtol=0.01)
-                               ^^^^
-  File "<MHCPreFwdOp boundary>", line 2, in _call_boundary
-  File "/home/z30086261/TileOPs-mhc-baseline/src/tileops/_ops/_signature_codegen.py", line 1675, in call
-    result = op._execute(inputs, writes, written, execution, key, plan)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/TileOPs-mhc-baseline/src/tileops/_ops/op_base.py", line 1057, in _execute
-    self._bind_target(plan.call.device)
-  File "/home/z30086261/TileOPs-mhc-baseline/src/tileops/_ops/op_base.py", line 1698, in _bind_target
-    target = select_target(self.target, device)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/TileOPs-mhc-baseline/src/tileops/backend/_dispatch.py", line 80, in select_target
-    raise UnknownTargetError(
-tileops.backend._errors.UnknownTargetError: no backend registered target 'ascend'; known targets: []
-[ERROR] 2026-11-27-10:59:26 (PID:2432908, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+git pull --ff-only
+ASCEND_RT_VISIBLE_DEVICES=4 python bench_tileops_mhc.py \
+  --tileops-repo ../TileOPs-mhc-baseline --device npu:0 \
+  --output tileops-mhc-card4.csv
