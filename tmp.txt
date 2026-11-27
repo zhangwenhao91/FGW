@@ -1,10 +1,10 @@
 (zwh) root@ubuntu162:/home/z30086261/FGW-mHC# bash run_tileops_spec_vllm.sh 4
-tilelang pre B=1 hidden=1280: 51.008 us
-tilelang post B=1 hidden=1280: 26.280 us
-tilelang pre B=2 hidden=1920: 26.687 us
-tilelang post B=2 hidden=1920: 17.570 us
-tilelang pre B=4 hidden=2560: 26.465 us
-tilelang post B=4 hidden=2560: 17.390 us
+tilelang pre B=1 hidden=1280: 32.158 us
+tilelang post B=1 hidden=1280: 22.643 us
+tilelang pre B=2 hidden=1920: 30.497 us
+tilelang post B=2 hidden=1920: 25.180 us
+tilelang pre B=4 hidden=2560: 29.423 us
+tilelang post B=4 hidden=2560: 24.930 us
 grep: write error: Broken pipe
 /usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
   @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
@@ -12,27 +12,27 @@ grep: write error: Broken pipe
   @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
 /usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
   @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-27 16:21:33 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-27 16:21:33 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-27 16:21:33 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-27 16:21:33 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-27 16:21:34 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-vllm pre B=1 hidden=1280: 19.724 us
-vllm post B=1 hidden=1280: 13.767 us
-vllm pre B=2 hidden=1920: 20.969 us
-vllm post B=2 hidden=1920: 13.820 us
-vllm pre B=4 hidden=2560: 21.571 us
-vllm post B=4 hidden=2560: 13.906 us
+INFO 11-27 16:30:43 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-27 16:30:43 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-27 16:30:43 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-27 16:30:43 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-27 16:30:43 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm pre B=1 hidden=1280: 25.137 us
+vllm post B=1 hidden=1280: 19.884 us
+vllm pre B=2 hidden=1920: 26.311 us
+vllm post B=2 hidden=1920: 18.573 us
+vllm pre B=4 hidden=2560: 26.712 us
+vllm post B=4 hidden=2560: 18.304 us
 batch,hidden,sinkhorn_iters,warmup,repeat,sinkhorn_eps,stage,tilelang_projection,tilelang_stage_us,vllm_ascendc_stage_us,vllm_over_tilelang_speedup
-1,1280,1,30,100,0.02,pre,cube_full,51.008,19.724,0.387
-1,1280,1,30,100,0.02,post,cube_full,26.280,13.767,0.524
-2,1920,1,30,100,0.02,pre,cube_full,26.687,20.969,0.786
-2,1920,1,30,100,0.02,post,cube_full,17.570,13.820,0.787
-4,2560,1,30,100,0.02,pre,cube_full,26.465,21.571,0.815
-4,2560,1,30,100,0.02,post,cube_full,17.390,13.905,0.800
-tilelang B=1 hidden=1280: 43.835 us
-tilelang B=2 hidden=1920: 43.495 us
-tilelang B=4 hidden=2560: 39.672 us
+1,1280,1,30,100,0.02,pre,cube_full,32.158,25.137,0.782
+1,1280,1,30,100,0.02,post,cube_full,22.643,19.884,0.878
+2,1920,1,30,100,0.02,pre,cube_full,30.497,26.311,0.863
+2,1920,1,30,100,0.02,post,cube_full,25.180,18.573,0.738
+4,2560,1,30,100,0.02,pre,cube_full,29.423,26.712,0.908
+4,2560,1,30,100,0.02,post,cube_full,24.930,18.305,0.734
+tilelang B=1 hidden=1280: 41.993 us
+tilelang B=2 hidden=1920: 45.965 us
+tilelang B=4 hidden=2560: 39.244 us
 grep: write error: Broken pipe
 /usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
   @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
@@ -40,15 +40,15 @@ grep: write error: Broken pipe
   @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
 /usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
   @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-27 16:22:20 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-27 16:22:20 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-27 16:22:20 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-27 16:22:20 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-27 16:22:20 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-vllm B=1 hidden=1280: 34.010 us
-vllm B=2 hidden=1920: 34.408 us
-vllm B=4 hidden=2560: 32.844 us
+INFO 11-27 16:31:21 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-27 16:31:21 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-27 16:31:21 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-27 16:31:21 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-27 16:31:22 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=1 hidden=1280: 34.435 us
+vllm B=2 hidden=1920: 32.171 us
+vllm B=4 hidden=2560: 32.370 us
 batch,hidden,sinkhorn_iters,warmup,repeat,sinkhorn_eps,tilelang_projection,tilelang_pair_us,vllm_ascendc_pair_us,vllm_over_tilelang_speedup
-1,1280,1,30,100,0.02,cube_full,43.834,34.010,0.776
-2,1920,1,30,100,0.02,cube_full,43.495,34.408,0.791
-4,2560,1,30,100,0.02,cube_full,39.672,32.844,0.828
+1,1280,1,30,100,0.02,cube_full,41.993,34.435,0.820
+2,1920,1,30,100,0.02,cube_full,45.965,32.171,0.700
+4,2560,1,30,100,0.02,cube_full,39.244,32.370,0.825
