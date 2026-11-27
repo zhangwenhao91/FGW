@@ -1,138 +1,54 @@
-阶段一：Pre 算子（自研 Tilelang Kernel）
-计算属性
-变量
-含义
-数值
-变化规则
-hc_mult
-残差流数
- 4
-不可改变
-hidden_size
-隐藏维度 
-4096 / 5120 / 7168
-编译期固定
-hc_sinkhorn_iters
-Sinkhorn 交替归一化轮数
-20
-不可改变
-hc_eps
-数值稳定项（pre / sinkhorn 共用 1e-6）
-1e-6
-不可改变 
-num_tokens
-批×seq 展平的 token 数
-动态
-动态 | 正整数
-rms_eps
-RMS 归一化 epsilon
-1e-20
-不可改变
-hc_shifted
- 半层偏移开关
-True
- 不可改变
-hc_post_mult_value
- post 系数乘数
-2.0
-不可改变
-n_splits
-投影 split-K 数
-1
-固定
-mix_channels
-系数通道数 
-24 = 4 + 4 + 16
-固定，由 `hc_mult` 派生
-输入输出规格
-名称
-输入输出
-形状
-类型
-residual
-输入
-[N, 4, H]
-BF16 
-gemm_out_mul
-输入
-[1, N, 24]
-FP32
-gemm_out_sqrsum
-输入
-[1, N]
-FP32
-mhc_scale
-输入
-[3]
-FP32
-mhc_base
-输入
-[24]
-FP32
-prev_pre_mix
-输入
-[N, 4]
-FP32
-layer_input
-输出
-[N, H]
-BF16
-next_pre_mix
-输出
-[N, 4, 1]
-FP32 
-post_mix
-输出
-[N, 4, 1]
-FP32 
-comb_mix
-输出
-[N, 4, 4]
-FP32 
-阶段二：Post 算子（使用 TileKernels 仓现有算子）
-计算属性
-变量 
-含义 
-数值 
-变化规则
-hc_mult
-残差流数
-4
-不可改变
-hidden_size
-隐藏维度
-4096 / 5120 / 7168
-编译期固定
-num_tokens
-token 数
-动态 
-任意正整数
-h_blk
-H 方向分块
-4096 / 2560 / 3584
-编译期固定（由 hidden_size 推导）
-输入输出规格
-名称
-输入输出
-形状
-类型
-hidden 
-输入
-[N, H]
-BF16 
-residual
-输入
-[N, 4, H]
-BF16 
-post_mix
-输入
-[N, 4]
-FP32 
-comb_mix
-输入
-[N, 4, 4]
-FP32 
-O 
-输出
-[N, 4, H]
-BF16 
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# bash run_tileops_spec_vllm.sh 4
+tilelang pre B=1 hidden=1280: 51.008 us
+tilelang post B=1 hidden=1280: 26.280 us
+tilelang pre B=2 hidden=1920: 26.687 us
+tilelang post B=2 hidden=1920: 17.570 us
+tilelang pre B=4 hidden=2560: 26.465 us
+tilelang post B=4 hidden=2560: 17.390 us
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-27 16:21:33 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-27 16:21:33 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-27 16:21:33 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-27 16:21:33 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-27 16:21:34 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm pre B=1 hidden=1280: 19.724 us
+vllm post B=1 hidden=1280: 13.767 us
+vllm pre B=2 hidden=1920: 20.969 us
+vllm post B=2 hidden=1920: 13.820 us
+vllm pre B=4 hidden=2560: 21.571 us
+vllm post B=4 hidden=2560: 13.906 us
+batch,hidden,sinkhorn_iters,warmup,repeat,sinkhorn_eps,stage,tilelang_projection,tilelang_stage_us,vllm_ascendc_stage_us,vllm_over_tilelang_speedup
+1,1280,1,30,100,0.02,pre,cube_full,51.008,19.724,0.387
+1,1280,1,30,100,0.02,post,cube_full,26.280,13.767,0.524
+2,1920,1,30,100,0.02,pre,cube_full,26.687,20.969,0.786
+2,1920,1,30,100,0.02,post,cube_full,17.570,13.820,0.787
+4,2560,1,30,100,0.02,pre,cube_full,26.465,21.571,0.815
+4,2560,1,30,100,0.02,post,cube_full,17.390,13.905,0.800
+tilelang B=1 hidden=1280: 43.835 us
+tilelang B=2 hidden=1920: 43.495 us
+tilelang B=4 hidden=2560: 39.672 us
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-27 16:22:20 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-27 16:22:20 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-27 16:22:20 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-27 16:22:20 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-27 16:22:20 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=1 hidden=1280: 34.010 us
+vllm B=2 hidden=1920: 34.408 us
+vllm B=4 hidden=2560: 32.844 us
+batch,hidden,sinkhorn_iters,warmup,repeat,sinkhorn_eps,tilelang_projection,tilelang_pair_us,vllm_ascendc_pair_us,vllm_over_tilelang_speedup
+1,1280,1,30,100,0.02,cube_full,43.834,34.010,0.776
+2,1920,1,30,100,0.02,cube_full,43.495,34.408,0.791
+4,2560,1,30,100,0.02,cube_full,39.672,32.844,0.828
