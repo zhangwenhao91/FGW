@@ -1,5 +1,310 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
-  --device npu:0 --ablate-m-only --projection-buffer-sweep \
-  --launches-per-event 8 --output m-only-projection-buffer-card4.csv \
-  --dump-projection-code projection-code-card4
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+>   --device npu:0 --ablate-m-only --projection-buffer-sweep \
+>   --launches-per-event 8 --output m-only-projection-buffer-card4.csv \
+>   --dump-projection-code projection-code-card4
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 944 bytes | 944.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   a0d9fb4..a92722c  main       -> origin/main
+Updating a0d9fb4..a92722c
+Fast-forward
+ bench_cube_stages.py | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+Generated device source: projection-code-card4/projection_k512_stages1.cpp
+Generated device source: projection-code-card4/projection_k512_stages2.cpp
+Generated device sources differ. Diff: projection-code-card4/pipeline.diff
+N=1024 H=2560 projection_k512_stages1: median 91.369 us, range 91.321–91.409 us
+N=1024 H=2560 projection_k512_stages2: median 91.382 us, range 91.370–91.410 us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+>   --device npu:0 --ablate-m-only --projection-buffer-sweep \
+>   --launches-per-event 8 --output m-only-projection-buffer-card4.csv \
+>   --dump-projection-code projection-code-card4
+Already up to date.
+Generated device source: projection-code-card4/projection_k512_stages1.cpp
+Generated device source: projection-code-card4/projection_k512_stages2.cpp
+Generated device sources differ. Diff: projection-code-card4/pipeline.diff
+N=1024 H=2560 projection_k512_stages1: median 91.449 us, range 91.404–91.520 us
+N=1024 H=2560 projection_k512_stages2: median 91.474 us, range 91.395–91.491 us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# cat projection-code-card4/pipeline.diff 
+--- projection_k512_stages1.cpp
++++ projection_k512_stages2.cpp
+@@ -110,7 +110,20 @@
+   }
+ }
+ 
+-__simt_vf__ __launch_bounds__(32) inline void project_cube_m_only_kernel_simt_vf_0(__ubuf__ uint8_t* buf_dyn_shmem, int32_t row_aiv1) {
++__simt_vf__ __launch_bounds__(32) inline void project_cube_m_only_kernel_simt_vf_0(__ubuf__ uint8_t* buf_dyn_shmem, int32_t row_aiv0) {
++  float value_aiv0 = float(0x0p+0f/*0.000000e+00*/);
++  if (((int32_t)threadIdx.x) < 8) {
++    value_aiv0 = float(0x0p+0f/*0.000000e+00*/);
++    if (((int32_t)threadIdx.x) == 0) {
++      for (int32_t part_aiv0 = 0; part_aiv0 < 20; ++part_aiv0) {
++        value_aiv0 = (value_aiv0 + ((__ubuf__ float*)buf_dyn_shmem)[(((((int64_t)part_aiv0) * (int64_t)64) + (((int64_t)row_aiv0) * (int64_t)8)) + (int64_t)6912)]);
++      }
++    }
++    ((__ubuf__ float*)buf_dyn_shmem)[(((int64_t)((int32_t)threadIdx.x)) + (int64_t)8216)] = value_aiv0;
++  }
++}
++
++__simt_vf__ __launch_bounds__(32) inline void project_cube_m_only_kernel_simt_vf_0_1(__ubuf__ uint8_t* buf_dyn_shmem, int32_t row_aiv1) {
+   float value_aiv1 = float(0x0p+0f/*0.000000e+00*/);
+   if (((int32_t)threadIdx.x) < 8) {
+     value_aiv1 = float(0x0p+0f/*0.000000e+00*/);
+@@ -120,19 +133,6 @@
+       }
+     }
+     ((__ubuf__ float*)buf_dyn_shmem)[(((int64_t)((int32_t)threadIdx.x)) + (int64_t)8216)] = value_aiv1;
+-  }
+-}
+-
+-__simt_vf__ __launch_bounds__(32) inline void project_cube_m_only_kernel_simt_vf_0_1(__ubuf__ uint8_t* buf_dyn_shmem, int32_t row_aiv0) {
+-  float value_aiv0 = float(0x0p+0f/*0.000000e+00*/);
+-  if (((int32_t)threadIdx.x) < 8) {
+-    value_aiv0 = float(0x0p+0f/*0.000000e+00*/);
+-    if (((int32_t)threadIdx.x) == 0) {
+-      for (int32_t part_aiv0 = 0; part_aiv0 < 20; ++part_aiv0) {
+-        value_aiv0 = (value_aiv0 + ((__ubuf__ float*)buf_dyn_shmem)[(((((int64_t)part_aiv0) * (int64_t)64) + (((int64_t)row_aiv0) * (int64_t)8)) + (int64_t)6912)]);
+-      }
+-    }
+-    ((__ubuf__ float*)buf_dyn_shmem)[(((int64_t)((int32_t)threadIdx.x)) + (int64_t)8216)] = value_aiv0;
+   }
+ }
+ 
+@@ -143,83 +143,87 @@
+   __ca__ float *a_l0 = (__ca__ float *)0;
+   __cb__ float *b_l0 = (__cb__ float *)0;
+   __cc__ float *acc = (__cc__ float *)0;
++  int32_t x_ub_aiv0_version_counter_2 = 0;
+   if ASC_IS_AIC {
++    asc_sync_notify(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>(0));
++    asc_sync_notify(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>(1));
+     asc_sync_notify(PIPE_M, PIPE_MTE1, static_cast<event_t>(0));
++    asc_sync_intra_arrive(PIPE_MTE1, 0);
+     asc_sync_intra_arrive(PIPE_MTE1, 16);
+-    asc_sync_intra_arrive(PIPE_MTE1, 0);
+-    asc_sync_notify(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>(0));
++    x_ub_aiv0_version_counter_2 = 0;
+     asc_enable_hf32();
+     asc_set_hf32_round_mode(asc_hf32_round_mode::NEAREST_EVEN);
+     for (int32_t w = 0; w < 3; ++w) {
+       if (((w * 7) + (((int32_t)block_idx) >> 2)) < 16) {
+         for (int32_t part = 0; part < 20; ++part) {
+-          asc_sync_wait(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>(0));
+-          asc_fill_l1((__cbuf__ uint32_t*)((__cbuf__ uint8_t*)((__cbuf__ float*)buf_dyn_l1) + 49152), (uint32_t)((uint32_t)0), { .repeat = static_cast<uint64_t>(1), .blk_num = static_cast<uint64_t>(512), .dst_gap = static_cast<uint64_t>(0)});
++          asc_sync_wait(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>((x_ub_aiv0_version_counter_2 & 1)));
++          asc_fill_l1((__cbuf__ uint32_t*)((__cbuf__ uint8_t*)((__cbuf__ float*)buf_dyn_l1 + ((x_ub_aiv0_version_counter_2 & 1) * 16384)) + 49152), (uint32_t)((uint32_t)0), { .repeat = static_cast<uint64_t>(1), .blk_num = static_cast<uint64_t>(512), .dst_gap = static_cast<uint64_t>(0)});
+           asc_set_gm2l1_nz_para(1, 1, static_cast<uint16_t>(512), 0);
+-          asc_copy_gm2l1_nd2nz(((__cbuf__ float*)buf_dyn_l1), (&(phi[(part * 12288)])), 96, static_cast<asc_load_l2_cache_mode>(0), 512, 24, 0, 0);
+-          asc_sync_notify(PIPE_MTE2, PIPE_MTE1, static_cast<event_t>(0));
++          asc_copy_gm2l1_nd2nz(((__cbuf__ float*)buf_dyn_l1 + ((x_ub_aiv0_version_counter_2 & 1) * 16384)), (&(phi[(part * 12288)])), 96, static_cast<asc_load_l2_cache_mode>(0), 512, 24, 0, 0);
++          asc_sync_notify(PIPE_MTE2, PIPE_MTE1, static_cast<event_t>((x_ub_aiv0_version_counter_2 & 1)));
+           for (int32_t mad = 0; mad < 2; ++mad) {
+             if (mad == 0) {
+-              asc_sync_wait(PIPE_MTE2, PIPE_MTE1, static_cast<event_t>(0));
++              asc_sync_wait(PIPE_MTE2, PIPE_MTE1, static_cast<event_t>((x_ub_aiv0_version_counter_2 & 1)));
+             }
+             asc_sync_wait(PIPE_M, PIPE_MTE1, static_cast<event_t>(0));
+-            asc_copy_l12l0b_transpose(((__cb__ float*)b_l0), ((__cbuf__ float*)buf_dyn_l1), (mad * 16), 0, 16, 4, 32, 2);
++            asc_copy_l12l0b_transpose(((__cb__ float*)b_l0), ((__cbuf__ float*)buf_dyn_l1 + ((x_ub_aiv0_version_counter_2 & 1) * 16384)), (mad * 16), 0, 16, 4, 32, 2);
+             if (mad == 1) {
+-              asc_sync_notify(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>(0));
++              asc_sync_notify(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>((x_ub_aiv0_version_counter_2 & 1)));
+             }
+             if (mad == 0) {
++              asc_sync_intra_wait(PIPE_MTE1, 2);
+               asc_sync_intra_wait(PIPE_MTE1, 18);
+-              asc_sync_intra_wait(PIPE_MTE1, 2);
+-            }
+-            asc_copy_l12l0a(((__ca__ float*)a_l0), ((__cbuf__ float*)buf_dyn_l1 + 16384), 0, (mad * 32), 1, 32, 1, 1);
++            }
++            asc_copy_l12l0a(((__ca__ float*)a_l0), ((__cbuf__ float*)buf_dyn_l1 + 32768), 0, (mad * 32), 1, 32, 1, 1);
+             asc_sync_notify(PIPE_MTE1, PIPE_M, static_cast<event_t>(0));
+             if (mad == 1) {
++              asc_sync_intra_arrive(PIPE_MTE1, 0);
+               asc_sync_intra_arrive(PIPE_MTE1, 16);
+-              asc_sync_intra_arrive(PIPE_MTE1, 0);
+             }
+             asc_sync_wait(PIPE_MTE1, PIPE_M, static_cast<event_t>(0));
+             asc_mmad(((__cc__ float*)acc), ((__ca__ float*)a_l0), ((__cb__ float*)b_l0), 16, 256, 32, (((part == 19) & (mad == 1)) ? 3 : 2), 1, 0, ((part == 0) & (mad == 0)));
+             asc_sync_notify(PIPE_M, PIPE_MTE1, static_cast<event_t>(0));
+           }
+-        }
++          x_ub_aiv0_version_counter_2 = (x_ub_aiv0_version_counter_2 + 1);
++        }
++        asc_sync_intra_wait(PIPE_FIX, 1);
+         asc_sync_intra_wait(PIPE_FIX, 17);
+-        asc_sync_intra_wait(PIPE_FIX, 1);
+         asc_set_l0c_copy_nz_para(1, 0, 0);
+         asc_copy_l0c2ub((&(((__ubuf__ float*)buf_dyn_shmem)[0])), ((__cc__ float*)acc), 32, 16, 32, 16, 0, static_cast<asc_dual_dst_mode>(1), static_cast<asc_unit_flag_mode>(3), static_cast<asc_quant_mode>(0), static_cast<asc_relu_pre_mode>(0), 0, 1, 0, 0);
++        asc_sync_intra_arrive(PIPE_FIX, 3);
+         asc_sync_intra_arrive(PIPE_FIX, 19);
+-        asc_sync_intra_arrive(PIPE_FIX, 3);
+-      }
+-    }
++      }
++    }
++    asc_sync_wait(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>(0));
++    asc_sync_wait(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>(1));
+     asc_sync_wait(PIPE_M, PIPE_MTE1, static_cast<event_t>(0));
+-    asc_sync_wait(PIPE_MTE1, PIPE_MTE2, static_cast<event_t>(0));
++    asc_sync_intra_wait(PIPE_FIX, 17);
+     asc_sync_intra_wait(PIPE_FIX, 1);
+-    asc_sync_intra_wait(PIPE_FIX, 17);
+   }
+   if ASC_IS_AIV {
+     int32_t sid = asc_get_sub_block_id();
++    if (sid == 1) {
++      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
++    }
+     if (sid == 0) {
+       asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+       asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+     }
+     if (sid == 1) {
+-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+       asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
++    }
++    if (sid == 0) {
+       asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+     }
+-    if (sid == 0) {
++    if (sid == 1) {
+       asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+       asc_sync_intra_arrive(PIPE_MTE3, 1);
+     }
+-    if (sid == 1) {
++    if (sid == 0) {
+       asc_sync_intra_arrive(PIPE_MTE3, 1);
+     }
++    x_ub_aiv0_version_counter_2 = 0;
+     for (int32_t w_1 = 0; w_1 < 3; ++w_1) {
+-      if (sid == 0) {
+-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 16) {
+-          asc_sync_pipe(PIPE_MTE2);
+-          asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)8192]))), (__gm__ uint8_t*)((&(bias[0]))), 1, 96, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 96, 96);
+-        }
+-      }
+       if (sid == 1) {
+         if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 16) {
+           asc_sync_pipe(PIPE_MTE2);
+@@ -244,11 +248,6 @@
+             project_cube_m_only_kernel_simd_vf_0(block_idx, w_1, buf_dyn_shmem, part_1);
+             asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+             asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+-            asc_sync_intra_wait(PIPE_MTE3, 0);
+-            asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+-            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 16448)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
+-            asc_sync_intra_arrive(PIPE_MTE3, 2);
+-            asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+           }
+           if (sid == 0) {
+             asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+@@ -258,15 +257,48 @@
+             asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+             asc_sync_intra_wait(PIPE_MTE3, 0);
+             asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+-            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 16384)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
++            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 32768)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
+             asc_sync_intra_arrive(PIPE_MTE3, 2);
+             asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
++          }
++          if (sid == 1) {
++            asc_sync_intra_wait(PIPE_MTE3, 0);
++            asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
++            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 32832)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
++            asc_sync_intra_arrive(PIPE_MTE3, 2);
++            asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
++          }
++          x_ub_aiv0_version_counter_2 = (x_ub_aiv0_version_counter_2 + 1);
++        }
++      }
++      if (sid == 0) {
++        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 16) {
++          asc_sync_pipe(PIPE_MTE2);
++          asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)8192]))), (__gm__ uint8_t*)((&(bias[0]))), 1, 96, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 96, 96);
++        }
++      }
++      if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 16) {
++        if (sid == 0) {
++          for (int32_t row_aiv0 = 0; row_aiv0 < min(max(((1024 - (((int32_t)block_idx) * 16)) - (w_1 * 448)), 0), 8); ++row_aiv0) {
++            asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
++            asc_vf_call<project_cube_m_only_kernel_simt_vf_0>(cce::dim3(32), buf_dyn_shmem, row_aiv0);
++            asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
++            asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
++            asc_copy_ub2gm_align((__gm__ uint8_t*)((&(trace[((((w_1 * 14336) + (((int32_t)block_idx) * 512)) + (row_aiv0 * 32)) + 24)]))), (__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)8216]))), 1, 32, static_cast<asc_store_l2_cache_mode>(4), 32, 32);
++            asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
++            if (row_aiv0 == 0) {
++              asc_sync_intra_wait(PIPE_MTE3, 3);
++            }
++            asc_copy_ub2gm_align((__gm__ uint8_t*)((&(trace[(((w_1 * 14336) + (((int32_t)block_idx) * 512)) + (row_aiv0 * 32))]))), (__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(row_aiv0 * 32)]))), 1, 96, static_cast<asc_store_l2_cache_mode>(4), 96, 96);
++            if ((((1024 - (((int32_t)block_idx) * 16)) - (w_1 * 448)) <= (row_aiv0 + 1)) || (row_aiv0 == 7)) {
++              asc_sync_intra_arrive(PIPE_MTE3, 1);
++            }
+           }
+         }
+         if (sid == 1) {
+           for (int32_t row_aiv1 = 0; row_aiv1 < min(max(((1016 - (((int32_t)block_idx) * 16)) - (w_1 * 448)), 0), 8); ++row_aiv1) {
+             asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+-            asc_vf_call<project_cube_m_only_kernel_simt_vf_0>(cce::dim3(32), buf_dyn_shmem, row_aiv1);
++            asc_vf_call<project_cube_m_only_kernel_simt_vf_0_1>(cce::dim3(32), buf_dyn_shmem, row_aiv1);
+             asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
+             asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
+             asc_copy_ub2gm_align((__gm__ uint8_t*)((&(trace[((((w_1 * 14336) + (((int32_t)block_idx) * 512)) + (row_aiv1 * 32)) + 280)]))), (__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)8216]))), 1, 32, static_cast<asc_store_l2_cache_mode>(4), 32, 32);
+@@ -280,39 +312,26 @@
+             }
+           }
+         }
+-        if (sid == 0) {
+-          for (int32_t row_aiv0 = 0; row_aiv0 < min(max(((1024 - (((int32_t)block_idx) * 16)) - (w_1 * 448)), 0), 8); ++row_aiv0) {
+-            asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+-            asc_vf_call<project_cube_m_only_kernel_simt_vf_0_1>(cce::dim3(32), buf_dyn_shmem, row_aiv0);
+-            asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
+-            asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
+-            asc_copy_ub2gm_align((__gm__ uint8_t*)((&(trace[((((w_1 * 14336) + (((int32_t)block_idx) * 512)) + (row_aiv0 * 32)) + 24)]))), (__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)8216]))), 1, 32, static_cast<asc_store_l2_cache_mode>(4), 32, 32);
+-            asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+-            if (row_aiv0 == 0) {
+-              asc_sync_intra_wait(PIPE_MTE3, 3);
+-            }
+-            asc_copy_ub2gm_align((__gm__ uint8_t*)((&(trace[(((w_1 * 14336) + (((int32_t)block_idx) * 512)) + (row_aiv0 * 32))]))), (__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(row_aiv0 * 32)]))), 1, 96, static_cast<asc_store_l2_cache_mode>(4), 96, 96);
+-            if ((((1024 - (((int32_t)block_idx) * 16)) - (w_1 * 448)) <= (row_aiv0 + 1)) || (row_aiv0 == 7)) {
+-              asc_sync_intra_arrive(PIPE_MTE3, 1);
+-            }
+-          }
+-        }
+-      }
+-    }
+-    if (sid == 1) {
++      }
++    }
++    if (sid == 0) {
+       asc_sync_intra_wait(PIPE_MTE3, 0);
+     }
+-    if (sid == 0) {
++    if (sid == 1) {
+       asc_sync_intra_wait(PIPE_MTE3, 0);
+       asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+-      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+-    }
+-    if (sid == 1) {
++    }
++    if (sid == 0) {
+       asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+       asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
++    }
++    if (sid == 1) {
++      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
++    }
++    if (sid == 0) {
+       asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+     }
+-    if (sid == 0) {
++    if (sid == 1) {
+       asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+     }
+   }
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
