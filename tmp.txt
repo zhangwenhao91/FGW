@@ -1,19 +1,2 @@
-default: median 465.354 us, range 465.253–465.441 us; position medians [465.369, 465.332] us
-full_h_double: median 418.351 us, range 418.216–418.440 us; position medians [418.300, 418.378] us
-cube_m_only_k512_batched N=4096 H=2560 pair max abs error: 0.03125
-tilelang B=4096 hidden=2560: 415.797 us
-grep: write error: Broken pipe
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-28 14:44:56 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-28 14:44:56 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-28 14:44:56 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-28 14:44:56 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-28 14:44:56 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-vllm B=4096 hidden=2560: 264.096 us
-batch,hidden,sinkhorn_iters,warmup,repeat,sinkhorn_eps,pairs_per_event,tilelang_projection,tilelang_pair_us,vllm_ascendc_pair_us,vllm_over_tilelang_speedup
-4096,2560,1,30,100,0.02,8,cube_m_only_k512_batched,415.797,264.096,0.635
+git pull --ff-only &&
+bash run_tileops_spec_vllm.sh 4 profile-n4096-post-double
