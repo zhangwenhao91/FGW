@@ -1,6 +1,60 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
-  --device npu:0 --ablate-m-only --launches-per-event 8 \
-  --compare-block-nz \
-  --profile-projection "projection-block-nz-card4-$(date +%Y%m%d-%H%M%S)" \
-  --output projection-block-nz-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+>   --device npu:0 --ablate-m-only --launches-per-event 8 \
+>   --compare-block-nz \
+>   --profile-projection "projection-block-nz-card4-$(date +%Y%m%d-%H%M%S)" \
+>   --output projection-block-nz-card4.csv
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 5 (delta 4), reused 5 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 923 bytes | 307.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   f68a87e..84d6c2f  main       -> origin/main
+Updating f68a87e..84d6c2f
+Fast-forward
+ bench_cube_stages.py | 11 +++++++++--
+ fgw_mhc/_kernels.py  | 10 +++++++---
+ 2 files changed, 16 insertions(+), 5 deletions(-)
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_cube_stages.py", line 451, in <module>
+    main()
+  File "/home/z30086261/FGW-mHC/bench_cube_stages.py", line 411, in main
+    ablate_m_only(writer, torch, args, inputs, expected, batch, hidden)
+  File "/home/z30086261/FGW-mHC/bench_cube_stages.py", line 201, in ablate_m_only
+    ("projection_block_nz", prepare(512, 2, accumulate_squares=True, separate_nz=True, block_nz=True)),
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/bench_cube_stages.py", line 115, in prepare
+    kernel = _compile(
+             ^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/fgw_mhc/__init__.py", line 28, in _compile
+    return getattr(_kernels, stage).compile(**config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 469, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 390, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1709, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1702, in get_tir
+    return self.p1_cache[bound.p1_key].get_tir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1361, in get_tir
+    self.ir_gen.gen(builder)(**tensor_args, **kwargs)
+  File "/home/z30086261/FGW-mHC/fgw_mhc/_kernels.py", line 658, in project_cube_m_only
+    _m_only_k_window(
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1065, in __call__
+    res = self.ir_gen.gen(builder)(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/fgw_mhc/_kernels.py", line 521, in _m_only_k_window
+    values = S.vgather2(source, indices, full)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/language/simd.py", line 1165, in vgather2
+    inner_load = base.args[0]
+                 ^^^^^^^^^
+AttributeError: 'Var' object has no attribute 'args'
+[ERROR] 2026-11-28-11:52:15 (PID:4030327, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
