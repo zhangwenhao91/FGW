@@ -1,1 +1,82 @@
-git pull --ff-only && bash run_tileops_spec_vllm.sh 4 allocate-b4
+create mode 100644 bench_mhc_allocate.cpp
+cube_full B=4 H=2560 1 pairs/event forward: 30.503 us/pair
+cube_full_fresh B=4 H=2560 1 pairs/event forward: 28.820 us/pair
+cube_full_fresh_direct B=4 H=2560 1 pairs/event forward: 25.412 us/pair
+cube_full_fresh_direct_cpp B=4 H=2560 1 pairs/event forward: 22.827 us/pair
+cube_full B=4 H=2560 8 pairs/event forward: 21.920 us/pair
+cube_full_fresh B=4 H=2560 8 pairs/event forward: 20.964 us/pair
+cube_full_fresh_direct B=4 H=2560 8 pairs/event forward: 18.159 us/pair
+cube_full_fresh_direct_cpp B=4 H=2560 8 pairs/event forward: 14.630 us/pair
+cube_full B=4 H=2560 32 pairs/event forward: 20.643 us/pair
+cube_full_fresh B=4 H=2560 32 pairs/event forward: 19.689 us/pair
+cube_full_fresh_direct B=4 H=2560 32 pairs/event forward: 17.020 us/pair
+cube_full_fresh_direct_cpp B=4 H=2560 32 pairs/event forward: 13.443 us/pair
+cube_full_fresh_direct_cpp B=4 H=2560 32 pairs/event reverse: 13.405 us/pair
+cube_full_fresh_direct B=4 H=2560 32 pairs/event reverse: 17.052 us/pair
+cube_full_fresh B=4 H=2560 32 pairs/event reverse: 19.680 us/pair
+cube_full B=4 H=2560 32 pairs/event reverse: 20.687 us/pair
+cube_full_fresh_direct_cpp B=4 H=2560 8 pairs/event reverse: 14.582 us/pair
+cube_full_fresh_direct B=4 H=2560 8 pairs/event reverse: 18.223 us/pair
+cube_full_fresh B=4 H=2560 8 pairs/event reverse: 20.914 us/pair
+cube_full B=4 H=2560 8 pairs/event reverse: 21.888 us/pair
+cube_full_fresh_direct_cpp B=4 H=2560 1 pairs/event reverse: 23.528 us/pair
+cube_full_fresh_direct B=4 H=2560 1 pairs/event reverse: 27.107 us/pair
+cube_full_fresh B=4 H=2560 1 pairs/event reverse: 30.151 us/pair
+cube_full B=4 H=2560 1 pairs/event reverse: 30.348 us/pair
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:06:09 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:06:09 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:06:09 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:06:09 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:06:09 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 1 pairs/event forward: 35.875 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 26.625 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 24.201 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 24.627 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 24.870 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 32.670 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,4,2560,1,cube_full,1,forward,30.503000
+tilelang,4,2560,1,cube_full_fresh,1,forward,28.819500
+tilelang,4,2560,1,cube_full_fresh_direct,1,forward,25.412500
+tilelang,4,2560,1,cube_full_fresh_direct_cpp,1,forward,22.827500
+tilelang,4,2560,1,cube_full,8,forward,21.919874
+tilelang,4,2560,1,cube_full_fresh,8,forward,20.964376
+tilelang,4,2560,1,cube_full_fresh_direct,8,forward,18.159063
+tilelang,4,2560,1,cube_full_fresh_direct_cpp,8,forward,14.629625
+tilelang,4,2560,1,cube_full,32,forward,20.642609
+tilelang,4,2560,1,cube_full_fresh,32,forward,19.688875
+tilelang,4,2560,1,cube_full_fresh_direct,32,forward,17.019860
+tilelang,4,2560,1,cube_full_fresh_direct_cpp,32,forward,13.442625
+tilelang,4,2560,1,cube_full_fresh_direct_cpp,32,reverse,13.404984
+tilelang,4,2560,1,cube_full_fresh_direct,32,reverse,17.052141
+tilelang,4,2560,1,cube_full_fresh,32,reverse,19.680203
+tilelang,4,2560,1,cube_full,32,reverse,20.687110
+tilelang,4,2560,1,cube_full_fresh_direct_cpp,8,reverse,14.582187
+tilelang,4,2560,1,cube_full_fresh_direct,8,reverse,18.223374
+tilelang,4,2560,1,cube_full_fresh,8,reverse,20.913812
+tilelang,4,2560,1,cube_full,8,reverse,21.887750
+tilelang,4,2560,1,cube_full_fresh_direct_cpp,1,reverse,23.527500
+tilelang,4,2560,1,cube_full_fresh_direct,1,reverse,27.107500
+tilelang,4,2560,1,cube_full_fresh,1,reverse,30.150500
+tilelang,4,2560,1,cube_full,1,reverse,30.347999
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,4,2560,1,,1,forward,35.875000
+vllm,4,2560,1,,8,forward,26.625000
+vllm,4,2560,1,,32,forward,24.200938
+vllm,4,2560,1,,32,reverse,24.627313
+vllm,4,2560,1,,8,reverse,24.870500
+vllm,4,2560,1,,1,reverse,32.670500
+cube_full: 20.665 us/pair, vLLM 24.414 us/pair, 1.181x
+cube_full_fresh: 19.685 us/pair, vLLM 24.414 us/pair, 1.240x
+cube_full_fresh_direct: 17.036 us/pair, vLLM 24.414 us/pair, 1.433x
+cube_full_fresh_direct_cpp: 13.424 us/pair, vLLM 24.414 us/pair, 1.819x
+Direct launcher delta: +2.649 us/pair saved at 32 pairs/event
+C++ allocator delta: +3.612 us/pair saved at 32 pairs/event
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
