@@ -1,2 +1,7 @@
-git pull --ff-only &&
-bash run_tileops_spec_vllm.sh 4 tiling-large
+BEGIN vLLM HcPre N=1024 H=2560
+[INFO] OP(1,python):2026-11-28-11:09:08.790.594 [/vllm-workspace/vllm-ascend/csrc/moe/hc_pre/op_host/hc_pre_tiling_arch35.h:756][OP_TILING][Custom][CalcOpTiling][1] OpName:[HcPre] "HcPre arch35 tiling decision: key=1000, premix=0, kSplit=1, " "mDim=4, kDim=7, kBlocks=7, splitK=1536, mL1=256, kL1=128"
+END vLLM HcPre N=1024 H=2560
+BEGIN vLLM HcPre N=4096 H=2560
+[INFO] OP(1,python):2026-11-28-11:09:08.970.457 [/vllm-workspace/vllm-ascend/csrc/moe/hc_pre/op_host/hc_pre_tiling_arch35.h:756][OP_TILING][Custom][CalcOpTiling][1] OpName:[HcPre] "HcPre arch35 tiling decision: key=1001, premix=0, kSplit=0, " "mDim=16, kDim=1, kBlocks=1, splitK=10240, mL1=256, kL1=128"
+END vLLM HcPre N=4096 H=2560
+Full CANN log: tileops-spec-tiling-card4-20261128-110903.log
