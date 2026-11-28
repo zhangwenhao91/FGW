@@ -1,44 +1,5 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# grep -nE 'asc_copy_ub2l1|asc_copy_l12l0a|asc_sync_intra_(wait|arrive)' \
->   projection-a-static-card4/projection_k512_stages2_a_ping_pong.cpp
-257:    asc_sync_intra_arrive(PIPE_MTE1, 16);
-258:    asc_sync_intra_arrive(PIPE_MTE1, 0);
-259:    asc_sync_intra_arrive(PIPE_MTE1, 17);
-260:    asc_sync_intra_arrive(PIPE_MTE1, 1);
-281:              asc_sync_intra_wait(PIPE_MTE1, 20);
-282:              asc_sync_intra_wait(PIPE_MTE1, 4);
-284:            asc_copy_l12l0a(((__ca__ float*)a_l0), ((__cbuf__ float*)buf_dyn_l1 + 32768), 0, (mad * 32), 1, 32, 1, 1);
-287:              asc_sync_intra_arrive(PIPE_MTE1, 17);
-288:              asc_sync_intra_arrive(PIPE_MTE1, 1);
-306:              asc_sync_intra_wait(PIPE_MTE1, 19);
-307:              asc_sync_intra_wait(PIPE_MTE1, 3);
-309:            asc_copy_l12l0a(((__ca__ float*)a_l0), ((__cbuf__ float*)buf_dyn_l1 + 40960), 0, (mad_1 * 32), 1, 32, 1, 1);
-312:              asc_sync_intra_arrive(PIPE_MTE1, 16);
-313:              asc_sync_intra_arrive(PIPE_MTE1, 0);
-321:        asc_sync_intra_wait(PIPE_FIX, 18);
-322:        asc_sync_intra_wait(PIPE_FIX, 2);
-325:        asc_sync_intra_arrive(PIPE_FIX, 21);
-326:        asc_sync_intra_arrive(PIPE_FIX, 5);
-330:    asc_sync_intra_wait(PIPE_FIX, 2);
-331:    asc_sync_intra_wait(PIPE_FIX, 18);
-346:      asc_sync_intra_arrive(PIPE_MTE3, 2);
-349:      asc_sync_intra_arrive(PIPE_MTE3, 2);
-364:            asc_sync_intra_wait(PIPE_MTE3, 1);
-366:            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 32832)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
-368:            asc_sync_intra_arrive(PIPE_MTE3, 4);
-391:            asc_sync_intra_wait(PIPE_MTE3, 1);
-393:            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 32768)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
-394:            asc_sync_intra_arrive(PIPE_MTE3, 4);
-398:            asc_sync_intra_wait(PIPE_MTE3, 0);
-400:            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 41024)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
-401:            asc_sync_intra_arrive(PIPE_MTE3, 3);
-413:            asc_sync_intra_wait(PIPE_MTE3, 0);
-415:            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 40960)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
-416:            asc_sync_intra_arrive(PIPE_MTE3, 3);
-444:              asc_sync_intra_wait(PIPE_MTE3, 5);
-448:              asc_sync_intra_arrive(PIPE_MTE3, 2);
-461:              asc_sync_intra_wait(PIPE_MTE3, 5);
-465:              asc_sync_intra_arrive(PIPE_MTE3, 2);
-472:      asc_sync_intra_wait(PIPE_MTE3, 0);
-475:      asc_sync_intra_wait(PIPE_MTE3, 0);
-481:      asc_sync_intra_wait(PIPE_MTE3, 1);
-484:      asc_sync_intra_wait(PIPE_MTE3, 1);
+git pull --ff-only &&
+ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+  --device npu:0 --ablate-m-only --launches-per-event 8 \
+  --profile-projection "projection-pipe-card4-$(date +%Y%m%d-%H%M%S)" \
+  --output projection-pipe-baseline-card4.csv
