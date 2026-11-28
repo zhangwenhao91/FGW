@@ -1,16 +1,12 @@
-2026-11-28 10:46:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:46:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-2026-11-28 10:46:50  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:46:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-2026-11-28 10:46:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:47:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-N=1024 H=2560 coefficients_only: median 78.722 us, range 78.645–78.745 us
-N=1024 H=2560 batched_coefficients: median 54.458 us, range 54.381–54.479 us
-2026-11-28 10:47:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:47:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-2026-11-28 10:47:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:47:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-2026-11-28 10:47:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:47:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-N=4096 H=2560 coefficients_only: median 252.539 us, range 252.182–252.640 us
-N=4096 H=2560 batched_coefficients: median 169.834 us, range 169.816–169.872 us
+git pull --ff-only && (
+  set -e
+  export ASCEND_RT_VISIBLE_DEVICES=4
+  for tokens in 1024 4096; do
+    python bench_cube_b2.py --m-only-k-window --batch-coefficients \
+      --pre-only --batch "$tokens" --device npu:0 \
+      --output "batch-coefficients-pre-n${tokens}-card4.csv"
+    python bench_cube_b2.py --m-only-k-window --batch-coefficients \
+      --batch "$tokens" --device npu:0 \
+      --output "batch-coefficients-pair-n${tokens}-card4.csv"
+  done
+)
