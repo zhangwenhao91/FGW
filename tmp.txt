@@ -1,10 +1,10 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
-    --pre-only --batch 4096 --device npu:0 \
-    --output windowed-residual-pre-n4096-card4.csv
-  python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
-    --batch 4096 --device npu:0 \
-    --output windowed-residual-pair-n4096-card4.csv
-)
+2026-11-28 15:19:02  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+[15:19:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:1618: Warning: flag MTE2->V: reverse ordering too loose to bound flag reuse.
+[15:19:07] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:1618: Warning: flag MTE2->V: reverse ordering too loose to bound flag reuse.
+2026-11-28 15:19:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only_k512_batched: median 237.622 us, range 237.472–237.855 us; position medians [237.685, 237.631, 237.605] us
+cube_m_only_k512_cached_input: median 244.313 us, range 244.136–244.518 us; position medians [244.330, 244.268, 244.313] us
+cube_m_only_k512_windowed_cache: median 222.554 us, range 222.453–222.691 us; position medians [222.537, 222.597, 222.547] us
+cube_m_only_k512_batched: median 417.382 us, range 417.123–417.652 us; position medians [417.393, 417.220, 417.535] us
+cube_m_only_k512_cached_input: median 418.389 us, range 418.051–419.196 us; position medians [418.277, 418.601, 418.349] us
+cube_m_only_k512_windowed_cache: median 355.203 us, range 354.159–359.635 us; position medians [355.169, 355.324, 355.476] us
