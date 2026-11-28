@@ -1,8 +1,141 @@
-grep -nE -C 4 \
-  'asc_sync_(wait|notify)\(PIPE_(V, PIPE_MTE2|MTE2, PIPE_V)|asc_copy_gm2ub_align' \
-  guarded-window-cache-staged-card4.cpp
-
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --m-only-k-window --cache-pre-residual --guarded-window-cache \
-  --batch 4096 --device npu:0 \
-  --output staged-window-cache-pair-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# grep -nE -C 4 \
+>   'asc_sync_(wait|notify)\(PIPE_(V, PIPE_MTE2|MTE2, PIPE_V)|asc_copy_gm2ub_align' \
+>   guarded-window-cache-staged-card4.cpp
+426-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+427-    }
+428-    if (sid == 0) {
+429-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+430:      asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+431-    }
+432-    if (sid == 1) {
+433:      asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+434-    }
+435-    if (sid == 0) {
+436-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+437-    }
+438-    if (sid == 1) {
+439-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+440-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+441-      asc_sync_intra_arrive(PIPE_V, 1);
+442:      asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+443-    }
+444-    if (sid == 0) {
+445-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+446:      asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+447-      asc_sync_intra_arrive(PIPE_V, 1);
+448-    }
+449-    input_stage_aiv0_version_counter_2 = 0;
+450-    for (int32_t w_1 = 0; w_1 < 10; ++w_1) {
+451-      if (sid == 0) {
+452-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+453:          asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+454:          asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)55104]))), (__gm__ uint8_t*)((&(bias[0]))), 1, 96, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 96, 96);
+455:          asc_sync_notify(PIPE_MTE2, PIPE_V, static_cast<event_t>(1));
+456-        }
+457-      }
+458-      if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+459-        for (int32_t part_1 = 0; part_1 < 20; ++part_1) {
+460-          if (sid == 1) {
+461:            asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+462:            asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ bfloat16_t*)buf_dyn_shmem)[(int64_t)101888]))), (__gm__ uint8_t*)((&(streams[((((w_1 * 4587520) + (((int32_t)block_idx) * 163840)) + (part_1 * 512)) + 81920)]))), 8, 1024, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 20480, 1024);
+463:            asc_sync_notify(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
+464-          }
+465-          if (sid == 0) {
+466:            asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+467:            asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ bfloat16_t*)buf_dyn_shmem)[(int64_t)101888]))), (__gm__ uint8_t*)((&(streams[(((w_1 * 4587520) + (((int32_t)block_idx) * 163840)) + (part_1 * 512))]))), 8, 1024, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 20480, 1024);
+468:            asc_sync_notify(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
+469-          }
+470-          if (sid == 1) {
+471-            asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+472:            asc_sync_wait(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
+473-            project_cube_m_only_kernel_simd_vf_0(block_idx, w_1, part_1, buf_dyn_shmem);
+474-            asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+475:            asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+476-          }
+477-          if (sid == 0) {
+478-            asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+479:            asc_sync_wait(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
+480-            project_cube_m_only_kernel_simd_vf_0_1(block_idx, w_1, part_1, buf_dyn_shmem);
+481-            asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+482:            asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+483-            asc_sync_intra_wait(PIPE_MTE3, 0);
+484-            asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+485-            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 32768)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)46336]))), 64, 8, 1, 8);
+486-            asc_sync_intra_arrive(PIPE_MTE3, 2);
+--
+497-        }
+498-      }
+499-      if (sid == 1) {
+500-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+501:          asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+502:          asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)55104]))), (__gm__ uint8_t*)((&(bias[0]))), 1, 96, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 96, 96);
+503:          asc_sync_notify(PIPE_MTE2, PIPE_V, static_cast<event_t>(1));
+504-          project_cube_m_only_kernel_simd_vf_1(block_idx, w_1, buf_dyn_shmem);
+505-        }
+506-      }
+507-      if (sid == 0) {
+508-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+509-          project_cube_m_only_kernel_simd_vf_1_1(block_idx, w_1, buf_dyn_shmem);
+510-          asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+511:          asc_sync_wait(PIPE_MTE2, PIPE_V, static_cast<event_t>(1));
+512-          asc_sync_intra_wait(PIPE_V, 3);
+513-          asc_vf_call<project_cube_m_only_kernel_simt_vf_0>(cce::dim3(32), buf_dyn_shmem);
+514-          asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(2));
+515:          asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+516-          asc_sync_intra_arrive(PIPE_V, 1);
+517-        }
+518-      }
+519-      if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+--
+539-      if (sid == 1) {
+540-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+541-          asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+542-          asc_sync_intra_wait(PIPE_V, 3);
+543:          asc_sync_wait(PIPE_MTE2, PIPE_V, static_cast<event_t>(1));
+544-          asc_vf_call<project_cube_m_only_kernel_simt_vf_0_1>(cce::dim3(32), buf_dyn_shmem);
+545-          asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(2));
+546-          asc_sync_intra_arrive(PIPE_V, 1);
+547:          asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+548-        }
+549-      }
+550-      if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+551-        if (sid == 1) {
+--
+576-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+577-    }
+578-    if (sid == 0) {
+579-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+580:      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+581-    }
+582-    if (sid == 1) {
+583:      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+584-    }
+585-    if (sid == 0) {
+586-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+587-    }
+588-    if (sid == 1) {
+589-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+590-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+591:      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+592-    }
+593-    if (sid == 0) {
+594-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+595:      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+596-    }
+597-  }
+598-}
+599-
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# 
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
+>   --m-only-k-window --cache-pre-residual --guarded-window-cache \
+>   --batch 4096 --device npu:0 \
+>   --output staged-window-cache-pair-card4.csv
+2026-11-28 15:38:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 15:38:40  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+2026-11-28 15:38:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+[15:38:45] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:1618: Warning: flag MTE2->V: reverse ordering too loose to bound flag reuse.
+[15:38:45] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:1618: Warning: flag MTE2->V: reverse ordering too loose to bound flag reuse.
+2026-11-28 15:38:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only_k512_batched: median 418.583 us, range 417.682–418.940 us; position medians [418.638, 418.473, 418.583] us
+cube_m_only_k512_windowed_cache: median 356.961 us, range 356.148–357.251 us; position medians [356.915, 356.996, 356.868] us
+cube_m_only_k512_guarded_cache: median 450.901 us, range 449.415–451.232 us; position medians [450.958, 450.939, 450.821] us
