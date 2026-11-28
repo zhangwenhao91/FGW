@@ -1,2 +1,172 @@
-git pull --ff-only && \
-FGW_MHC_CPP_PRE_ALLOCATOR=1 bash run_tileops_spec_vllm.sh 4 validate-b4
+ rename bench_mhc_allocate.cpp => fgw_mhc/_allocate.cpp (68%)
+B4 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 46.772 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 21.668 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 19.387 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 19.323 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 21.098 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 35.711 us/pair
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:10:01 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:10:01 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:10:01 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:10:01 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:10:01 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 1 pairs/event forward: 36.312 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 27.112 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 24.260 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 23.893 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 24.992 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 32.925 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,4,2560,1,cube_full,1,forward,46.771999
+tilelang,4,2560,1,cube_full,8,forward,21.667500
+tilelang,4,2560,1,cube_full,32,forward,19.387203
+tilelang,4,2560,1,cube_full,32,reverse,19.322704
+tilelang,4,2560,1,cube_full,8,reverse,21.097562
+tilelang,4,2560,1,cube_full,1,reverse,35.711000
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,4,2560,1,,1,forward,36.312001
+vllm,4,2560,1,,8,forward,27.112188
+vllm,4,2560,1,,32,forward,24.260093
+vllm,4,2560,1,,32,reverse,23.893453
+vllm,4,2560,1,,8,reverse,24.991937
+vllm,4,2560,1,,1,reverse,32.925500
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:10:22 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:10:22 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:10:22 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:10:22 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:10:22 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 1 pairs/event forward: 31.697 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 24.914 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 23.669 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 23.715 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 24.597 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 31.600 us/pair
+B4 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 27.697 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 19.959 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 18.404 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 18.374 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 20.317 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 36.048 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,4,2560,1,cube_full,1,forward,27.697001
+tilelang,4,2560,1,cube_full,8,forward,19.959001
+tilelang,4,2560,1,cube_full,32,forward,18.404359
+tilelang,4,2560,1,cube_full,32,reverse,18.374047
+tilelang,4,2560,1,cube_full,8,reverse,20.317250
+tilelang,4,2560,1,cube_full,1,reverse,36.048500
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,4,2560,1,,1,forward,31.696500
+vllm,4,2560,1,,8,forward,24.914437
+vllm,4,2560,1,,32,forward,23.669422
+vllm,4,2560,1,,32,reverse,23.714734
+vllm,4,2560,1,,8,reverse,24.596563
+vllm,4,2560,1,,1,reverse,31.599501
+B4 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 28.269 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 19.966 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 18.847 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 18.857 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 19.963 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 28.589 us/pair
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:10:54 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:10:54 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:10:54 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:10:54 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:10:54 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 1 pairs/event forward: 33.078 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 26.349 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 23.303 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 23.915 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 23.902 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 31.729 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,4,2560,1,cube_full,1,forward,28.269000
+tilelang,4,2560,1,cube_full,8,forward,19.966000
+tilelang,4,2560,1,cube_full,32,forward,18.847140
+tilelang,4,2560,1,cube_full,32,reverse,18.857079
+tilelang,4,2560,1,cube_full,8,reverse,19.962563
+tilelang,4,2560,1,cube_full,1,reverse,28.589000
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,4,2560,1,,1,forward,33.078000
+vllm,4,2560,1,,8,forward,26.349375
+vllm,4,2560,1,,32,forward,23.302531
+vllm,4,2560,1,,32,reverse,23.915390
+vllm,4,2560,1,,8,reverse,23.902062
+vllm,4,2560,1,,1,reverse,31.729002
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:11:15 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:11:15 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:11:15 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:11:15 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:11:15 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 1 pairs/event forward: 33.935 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 25.902 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 23.971 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 23.783 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 24.874 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 33.590 us/pair
+B4 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 25.427 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 19.701 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 18.973 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 18.976 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 19.724 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 25.160 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,4,2560,1,cube_full,1,forward,25.426500
+tilelang,4,2560,1,cube_full,8,forward,19.701376
+tilelang,4,2560,1,cube_full,32,forward,18.973218
+tilelang,4,2560,1,cube_full,32,reverse,18.975844
+tilelang,4,2560,1,cube_full,8,reverse,19.723812
+tilelang,4,2560,1,cube_full,1,reverse,25.160500
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,4,2560,1,,1,forward,33.934500
+vllm,4,2560,1,,8,forward,25.902437
+vllm,4,2560,1,,32,forward,23.971500
+vllm,4,2560,1,,32,reverse,23.782907
+vllm,4,2560,1,,8,reverse,24.873937
+vllm,4,2560,1,,1,reverse,33.590499
+Round 1, 1 pairs/event: FGW 41.241 us, vLLM 34.619 us, 0.839x
+Round 1, 8 pairs/event: FGW 21.383 us, vLLM 26.052 us, 1.218x
+Round 1, 32 pairs/event: FGW 19.355 us, vLLM 24.077 us, 1.244x
+Round 2, 1 pairs/event: FGW 31.873 us, vLLM 31.648 us, 0.993x
+Round 2, 8 pairs/event: FGW 20.138 us, vLLM 24.755 us, 1.229x
+Round 2, 32 pairs/event: FGW 18.389 us, vLLM 23.692 us, 1.288x
+Round 3, 1 pairs/event: FGW 28.429 us, vLLM 32.404 us, 1.140x
+Round 3, 8 pairs/event: FGW 19.964 us, vLLM 25.126 us, 1.259x
+Round 3, 32 pairs/event: FGW 18.852 us, vLLM 23.609 us, 1.252x
+Round 4, 1 pairs/event: FGW 25.294 us, vLLM 33.762 us, 1.335x
+Round 4, 8 pairs/event: FGW 19.713 us, vLLM 25.388 us, 1.288x
+Round 4, 32 pairs/event: FGW 18.975 us, vLLM 23.877 us, 1.258x
+1 pairs/event: median 1.066x, range 0.839 to 1.335x, wins 2/4
+8 pairs/event: median 1.244x, range 1.218 to 1.288x, wins 4/4
+32 pairs/event: median 1.255x, range 1.244 to 1.288x, wins 4/4
