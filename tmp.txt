@@ -1,8 +1,59 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  bash run_tileops_spec_vllm.sh 4 large-k512-stages
-  python bench_cube_stages.py --device npu:0 \
-    --ablate-m-only --ablate-k512 --launches-per-event 8 \
-    --output k512-pre-breakdown-card4.csv
-)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && (
+>   set -e
+>   export ASCEND_RT_VISIBLE_DEVICES=4
+>   bash run_tileops_spec_vllm.sh 4 large-k512-stages
+>   python bench_cube_stages.py --device npu:0 \
+>     --ablate-m-only --ablate-k512 --launches-per-event 8 \
+>     --output k512-pre-breakdown-card4.csv
+> )
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 5 (delta 4), reused 5 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 873 bytes | 436.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   6482685..0371f30  main       -> origin/main
+Updating 6482685..0371f30
+Fast-forward
+ bench_cube_stages.py     |  7 +++++--
+ bench_vllm_ascend.py     | 18 ++++++++++++------
+ run_tileops_spec_vllm.sh |  7 ++++---
+ 3 files changed, 21 insertions(+), 11 deletions(-)
+tilelang pre B=1024 hidden=2560: 137.271 us
+tilelang post B=1024 hidden=2560: 17.745 us
+tilelang pre B=4096 hidden=2560: 447.569 us
+tilelang post B=4096 hidden=2560: 161.951 us
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 09:52:19 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 09:52:19 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 09:52:19 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 09:52:19 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 09:52:19 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm pre B=1024 hidden=2560: 33.854 us
+vllm post B=1024 hidden=2560: 22.340 us
+vllm pre B=4096 hidden=2560: 160.848 us
+vllm post B=4096 hidden=2560: 123.519 us
+batch,hidden,sinkhorn_iters,warmup,repeat,sinkhorn_eps,calls_per_event,stage,tilelang_projection,tilelang_stage_us,vllm_ascendc_stage_us,vllm_over_tilelang_speedup
+1024,2560,1,30,100,0.02,8,pre,cube_m_only_k512,137.271,33.854,0.247
+1024,2560,1,30,100,0.02,8,post,cube_m_only_k512,17.745,22.340,1.259
+4096,2560,1,30,100,0.02,8,pre,cube_m_only_k512,447.569,160.848,0.359
+4096,2560,1,30,100,0.02,8,post,cube_m_only_k512,161.951,123.519,0.763
+2026-11-28 09:52:54  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 09:52:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+N=1024 H=2560 full_pre: median 137.898 us, range 137.888–138.054 us
+N=1024 H=2560 coefficients_only: median 120.854 us, range 120.835–120.982 us
+N=1024 H=2560 projection_only: median 92.228 us, range 92.208–92.361 us
+2026-11-28 09:53:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 09:53:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+2026-11-28 09:53:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 09:53:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+N=4096 H=2560 full_pre: median 448.449 us, range 448.413–448.468 us
+N=4096 H=2560 coefficients_only: median 393.384 us, range 393.350–393.428 us
+N=4096 H=2560 projection_only: median 298.292 us, range 298.239–298.311 us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
