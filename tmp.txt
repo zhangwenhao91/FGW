@@ -1,1 +1,43 @@
-git pull --ff-only && bash run_tileops_spec_vllm.sh 4 profile-b4
+tilelang B=4 H=2560 before trace: 27.183 us
+[2026-11-28 16:17:20] [WARNING] [103438] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-28 16:17:20] [WARNING] [103438] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
+[2026-11-28 16:17:20] [WARNING] [103438] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
+[2026-11-28 16:17:20] [INFO] [103973] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW-mHC/tileops-spec-profile-card4-b4-20261128-161704-103435/tilelang/b4-h2560/ubuntu162_103438_20261128161720326_ascend_pt
+[2026-11-28 16:17:22] [ERROR] [103973] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW-mHC/tileops-spec-profile-card4-b4-20261128-161704-103435/tilelang/b4-h2560/ubuntu162_103438_20261128161720326_ascend_pt/logs
+[2026-11-28 16:17:22] [INFO] [103990] profiler.py: CANN profiling data parsed in a total time of 0:00:02.016253
+[2026-11-28 16:17:23] [INFO] [103973] profiler.py: All profiling data parsed in a total time of 0:00:02.902866
+tilelang B=4 H=2560 after trace: 27.343 us
+tilelang device medians across 32 profiled pairs: pre=10.269 us, post=1.781 us, pre_to_post_gap=7.750 us, pair_span=20.000 us, post_to_next_pre_gap=45.500 us
+Trace for tilelang B=4 H=2560: tileops-spec-profile-card4-b4-20261128-161704-103435/tilelang/b4-h2560
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 16:17:28 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 16:17:28 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 16:17:28 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 16:17:28 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 16:17:28 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 before trace: 24.182 us
+[2026-11-28 16:17:43] [WARNING] [1] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-28 16:17:43] [WARNING] [1] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
+[2026-11-28 16:17:43] [WARNING] [1] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
+[2026-11-28 16:17:43] [INFO] [118] profiler.py: Start parsing profiling data in sync mode at: /fgw-mhc/tileops-spec-profile-card4-b4-20261128-161704-103435/vllm/b4-h2560/5f4e89f8eede_1_20261128161743334_ascend_pt
+[2026-11-28 16:17:46] [INFO] [127] profiler.py: CANN profiling data parsed in a total time of 0:00:02.016072
+[2026-11-28 16:17:46] [INFO] [118] profiler.py: All profiling data parsed in a total time of 0:00:02.988108
+vllm B=4 H=2560 after trace: 23.905 us
+vllm device medians across 32 profiled pairs: pre=8.003 us, post=2.853 us, pre_to_post_gap=29.125 us, pair_span=39.750 us, post_to_next_pre_gap=113.000 us
+Trace for vllm B=4 H=2560: tileops-spec-profile-card4-b4-20261128-161704-103435/vllm/b4-h2560
+backend,batch,hidden,sinkhorn_iters,warmup,repeat,phase,pair_us,pairs_per_event
+tilelang,4,2560,1,30,100,before,27.183391,32
+tilelang,4,2560,1,30,100,after,27.342578,32
+backend,batch,hidden,sinkhorn_iters,warmup,repeat,phase,pair_us,pairs_per_event
+vllm,4,2560,1,30,100,before,24.182094,32
+vllm,4,2560,1,30,100,after,23.905078,32
+backend,pairs,pre_us,post_us,pre_to_post_gap_us,pair_span_us,post_to_next_pre_gap_us
+tilelang,32,10.269000,1.781500,7.750000,20.000000,45.500000
+backend,pairs,pre_us,post_us,pre_to_post_gap_us,pair_span_us,post_to_next_pre_gap_us
+vllm,32,8.003000,2.852500,29.125000,39.750000,113.000000
