@@ -1,5 +1,7 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --m-only-k-window --cache-pre-residual --guarded-window-cache \
-  --batch 4096 --device npu:0 \
-  --verify-windowed-cache guarded-window-cache-staged-card4.cpp
+2026-11-28 15:37:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 15:37:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+Generated device source: guarded-window-cache-staged-card4.cpp
+Alternating-input burst 1: 8 pairs passed
+Alternating-input burst 2: 8 pairs passed
+Alternating-input burst 3: 8 pairs passed
+Alternating-input burst 4: 8 pairs passed
