@@ -1,2 +1,11 @@
-git pull --ff-only &&
-python bench_cube_stages.py --summarize-post-cache /path/to/pre-post-cache-card4-目录
+normal_fv: pre-post-cache-card4-20261128-145825/continuous_pair/ubuntu162_1758_20261128145849172_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv (8 pairs)
+notalloc_ci: pre-post-cache-card4-20261128-145825/continuous_pair_notalloc_ci/ubuntu162_1758_20261128145852896_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv (8 pairs)
+sample,metric,normal_fv_us,notalloc_ci_us,notalloc_minus_normal_us
+first,pre,236.781,236.856,+0.075
+first,post,85.781,143.076,+57.295
+first,pre_to_post_gap,0.022,0.022,+0.000
+first,pair_span,322.584,379.954,+57.370
+subsequent_median,pre,307.889,294.888,-13.001
+subsequent_median,post,109.013,121.733,+12.720
+subsequent_median,pre_to_post_gap,0.022,0.022,+0.000
+subsequent_median,pair_span,416.631,416.167,-0.464
