@@ -1,10 +1,6 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
-    --pre-only --batch 4096 --device npu:0 \
-    --output cached-residual-pre-n4096-card4.csv
-  python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
-    --batch 4096 --device npu:0 \
-    --output cached-residual-pair-n4096-card4.csv
-)
+2026-11-28 15:11:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 15:11:52  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only_k512_batched: median 237.656 us, range 237.394–237.987 us; position medians [237.581, 237.766] us
+cube_m_only_k512_cached_input: median 244.624 us, range 244.380–244.657 us; position medians [244.634, 244.509] us
+cube_m_only_k512_batched: median 418.587 us, range 418.552–418.650 us; position medians [418.601, 418.587] us
+cube_m_only_k512_cached_input: median 419.369 us, range 418.717–419.474 us; position medians [419.369, 419.096] us
