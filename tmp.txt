@@ -1,10 +1,35 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  for tokens in 1024 4096; do
-    python bench_cube_b2.py --m-only-k-window --pre-only --batch "$tokens" \
-      --device npu:0 --output "m-only-k-window-pre-n${tokens}-card4.csv"
-    python bench_cube_b2.py --m-only-k-window --batch "$tokens" \
-      --device npu:0 --output "m-only-k-window-pair-n${tokens}-card4.csv"
-  done
-)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && (
+>   set -e
+>   export ASCEND_RT_VISIBLE_DEVICES=4
+>   for tokens in 1024 4096; do
+>     python bench_cube_b2.py --m-only-k-window --pre-only --batch "$tokens" \
+>       --device npu:0 --output "m-only-k-window-pre-n${tokens}-card4.csv"
+>     python bench_cube_b2.py --m-only-k-window --batch "$tokens" \
+>       --device npu:0 --output "m-only-k-window-pair-n${tokens}-card4.csv"
+>   done
+> )
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 5 (delta 3), reused 5 (delta 3), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 1.02 KiB | 1.02 MiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   885c5cc..43c840a  main       -> origin/main
+Updating 885c5cc..43c840a
+Fast-forward
+ bench_cube_b2.py    | 29 ++++++++++++++++++-----------
+ fgw_mhc/__init__.py |  8 +++++---
+ 2 files changed, 23 insertions(+), 14 deletions(-)
+2026-11-28 09:43:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 09:43:44  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only: median 156.710 us, range 156.649–156.784 us; position medians [156.665, 156.761] us
+cube_m_only_k512: median 136.940 us, range 136.927–136.956 us; position medians [136.953, 136.929] us
+cube_m_only: median 191.313 us, range 191.091–191.424 us; position medians [191.258, 191.313] us
+cube_m_only_k512: median 169.872 us, range 169.842–169.966 us; position medians [169.872, 169.904] us
+2026-11-28 09:43:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 09:44:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only: median 513.524 us, range 513.222–513.611 us; position medians [513.367, 513.574] us
+cube_m_only_k512: median 447.711 us, range 447.663–447.734 us; position medians [447.697, 447.712] us
+cube_m_only: median 788.243 us, range 787.632–788.524 us; position medians [788.243, 788.078] us
+cube_m_only_k512: median 672.697 us, range 672.427–673.453 us; position medians [672.489, 673.148] us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
