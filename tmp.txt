@@ -1,12 +1,3 @@
-2026-11-28 15:29:15  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-[15:29:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:1618: Warning: flag MTE2->V: reverse ordering too loose to bound flag reuse.
-[15:29:19] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:1618: Warning: flag MTE2->V: reverse ordering too loose to bound flag reuse.
-2026-11-28 15:29:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-Generated device source: guarded-window-cache-card4.cpp
-Alternating-input burst 1: 8 pairs passed
-Alternating-input burst 2: 8 pairs passed
-Alternating-input burst 3: 8 pairs passed
-Alternating-input burst 4: 8 pairs passed
-cube_m_only_k512_batched: median 418.505 us, range 417.613–419.069 us; position medians [418.293, 418.301, 418.568] us
-cube_m_only_k512_windowed_cache: median 356.981 us, range 356.277–357.558 us; position medians [357.420, 356.735, 356.943] us
-cube_m_only_k512_guarded_cache: median 357.236 us, range 356.239–358.081 us; position medians [357.212, 357.462, 357.096] us
+grep -nE -C 4 \
+  'PIPE_V, PIPE_MTE2.*\(7\)|PIPE_MTE2, PIPE_V.*\(0\)' \
+  guarded-window-cache-card4.cpp
