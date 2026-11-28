@@ -1,44 +1,6 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
-> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
->   --device npu:0 --ablate-m-only --launches-per-event 8 \
->   --compare-squares \
->   --profile-projection "projection-squares-card4-$(date +%Y%m%d-%H%M%S)" \
->   --output projection-squares-card4.csv
-remote: Enumerating objects: 5, done.
-remote: Counting objects: 100% (5/5), done.
-remote: Total 5 (delta 4), reused 5 (delta 4), pack-reused 0 (from 0)
-Unpacking objects: 100% (5/5), 913 bytes | 456.00 KiB/s, done.
-From https://github.com/zhangwenhao91/FGW-mHC
-   4a60985..b78dcd1  main       -> origin/main
-Updating 4a60985..b78dcd1
-Fast-forward
- bench_cube_stages.py | 16 ++++++++++++----
- fgw_mhc/_kernels.py  | 40 +++++++++++++++++++++++-----------------
- 2 files changed, 35 insertions(+), 21 deletions(-)
-2026-11-28 10:18:57  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:19:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-N=1024 H=2560 projection_k512_stages1: median 91.576 us, range 91.567–91.614 us
-N=1024 H=2560 projection_k512_no_squares: median 73.225 us, range 73.186–73.257 us
-[2026-11-28 10:19:01] [WARNING] [3867651] profiler.py: Profiler won't be using warmup, this can skew profiler results
-[2026-11-28 10:19:02] [INFO] [3868282] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW-mHC/projection-squares-card4-20261128-101854/projection_k512_stages1/ubuntu162_3867651_20261128101901506_ascend_pt
-[2026-11-28 10:19:03] [ERROR] [3868282] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW-mHC/projection-squares-card4-20261128-101854/projection_k512_stages1/ubuntu162_3867651_20261128101901506_ascend_pt/logs
-[2026-11-28 10:19:04] [INFO] [3868299] profiler.py: CANN profiling data parsed in a total time of 0:00:02.013577
-[2026-11-28 10:19:04] [INFO] [3868282] profiler.py: All profiling data parsed in a total time of 0:00:02.870006
-Pipe profiler report: projection-squares-card4-20261128-101854/projection_k512_stages1/ubuntu162_3867651_20261128101901506_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv
-Device_id,Model ID,Task ID,Stream ID,Name,Type,OP State,Accelerator Core,Start Time(us),Duration(us),Wait Time(us),Block Num,Mix Block Num,HF32 Eligible,Input Shapes,Input Data Types,Input Formats,Output Shapes,Output Data Types,Output Formats,Context ID,aicore_time(us),aic_total_cycles,aic_mac_time(us),aic_mac_ratio,aic_scalar_time(us),aic_scalar_ratio,aic_mte1_time(us),aic_mte1_ratio,aic_mte2_time(us),aic_mte2_ratio,aic_mte3_time(us),aic_mte3_ratio,aic_fixpipe_time(us),aic_fixpipe_ratio,aic_icache_miss_rate,aiv_time(us),aiv_total_cycles,aiv_vec_time(us),aiv_vec_ratio,aiv_scalar_time(us),aiv_scalar_ratio,aiv_mte2_time(us),aiv_mte2_ratio,aiv_mte3_time(us),aiv_mte3_ratio,aiv_icache_miss_rate,cube_utilization(%)
-4,4294967295,9971,61,project_cube_m_only_kernel,project_cube_m_only_kernel,N/A,MIX_AIC,1795861141674041.791	,91.770,0,28,56,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,90.8,3168328,13.573,0.149,1.761,0.019,19.367,0.213,29.399,0.324,0.002,0.0,13.212,0.146,0.0,68.53,6332361,58.122,0.848,2.525,0.037,6.408,0.094,9.149,0.134,0.0,74.729
-Pipe profiler report: projection-squares-card4-20261128-101854/projection_k512_stages1/ubuntu162_3867651_20261128101901506_ascend_pt/PROF_000001_20261128101901522_03867651KGQBANAD/mindstudio_profiler_output/op_summary_20261128101903.csv
-Device_id,Model ID,Task ID,Stream ID,Op Name,OP Type,OP State,Task Type,Task Start Time(us),Task Duration(us),Task Wait Time(us),Block Num,Mix Block Num,HF32 Eligible,Input Shapes,Input Data Types,Input Formats,Output Shapes,Output Data Types,Output Formats,Context ID,aicore_time(us),aic_total_cycles,aic_mac_time(us),aic_mac_ratio,aic_scalar_time(us),aic_scalar_ratio,aic_mte1_time(us),aic_mte1_ratio,aic_mte2_time(us),aic_mte2_ratio,aic_mte3_time(us),aic_mte3_ratio,aic_fixpipe_time(us),aic_fixpipe_ratio,aic_icache_miss_rate,aiv_time(us),aiv_total_cycles,aiv_vec_time(us),aiv_vec_ratio,aiv_scalar_time(us),aiv_scalar_ratio,aiv_mte2_time(us),aiv_mte2_ratio,aiv_mte3_time(us),aiv_mte3_ratio,aiv_icache_miss_rate,cube_utilization(%)
-4,4294967295,9971,61,project_cube_m_only_kernel,project_cube_m_only_kernel,N/A,MIX_AIC,1795861141674041.791	,91.770,0,28,56,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,90.8,3168328,13.573,0.149,1.761,0.019,19.367,0.213,29.399,0.324,0.002,0.0,13.212,0.146,0.0,68.53,6332361,58.122,0.848,2.525,0.037,6.408,0.094,9.149,0.134,0.0,74.729
-[2026-11-28 10:19:05] [WARNING] [3867651] profiler.py: Profiler won't be using warmup, this can skew profiler results
-[2026-11-28 10:19:05] [INFO] [3868770] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW-mHC/projection-squares-card4-20261128-101854/projection_k512_no_squares/ubuntu162_3867651_20261128101905177_ascend_pt
-[2026-11-28 10:19:07] [ERROR] [3868770] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW-mHC/projection-squares-card4-20261128-101854/projection_k512_no_squares/ubuntu162_3867651_20261128101905177_ascend_pt/logs
-[2026-11-28 10:19:07] [INFO] [3868786] profiler.py: CANN profiling data parsed in a total time of 0:00:02.013931
-[2026-11-28 10:19:08] [INFO] [3868770] profiler.py: All profiling data parsed in a total time of 0:00:02.862136
-Pipe profiler report: projection-squares-card4-20261128-101854/projection_k512_no_squares/ubuntu162_3867651_20261128101905177_ascend_pt/ASCEND_PROFILER_OUTPUT/kernel_details.csv
-Device_id,Model ID,Task ID,Stream ID,Name,Type,OP State,Accelerator Core,Start Time(us),Duration(us),Wait Time(us),Block Num,Mix Block Num,HF32 Eligible,Input Shapes,Input Data Types,Input Formats,Output Shapes,Output Data Types,Output Formats,Context ID,aicore_time(us),aic_total_cycles,aic_mac_time(us),aic_mac_ratio,aic_scalar_time(us),aic_scalar_ratio,aic_mte1_time(us),aic_mte1_ratio,aic_mte2_time(us),aic_mte2_ratio,aic_mte3_time(us),aic_mte3_ratio,aic_fixpipe_time(us),aic_fixpipe_ratio,aic_icache_miss_rate,aiv_time(us),aiv_total_cycles,aiv_vec_time(us),aiv_vec_ratio,aiv_scalar_time(us),aiv_scalar_ratio,aiv_mte2_time(us),aiv_mte2_ratio,aiv_mte3_time(us),aiv_mte3_ratio,aiv_icache_miss_rate,cube_utilization(%)
-4,4294967295,10011,61,project_cube_m_only_kernel,project_cube_m_only_kernel,N/A,MIX_AIC,1795861145370811.077	,72.608,0,28,56,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,72.27,2533502,13.51,0.187,1.69,0.023,19.536,0.27,30.498,0.422,0.002,0.0,11.332,0.157,0.0,54.72,5055855,46.049,0.842,1.849,0.034,6.635,0.121,4.787,0.087,0.0,75.526
-Pipe profiler report: projection-squares-card4-20261128-101854/projection_k512_no_squares/ubuntu162_3867651_20261128101905177_ascend_pt/PROF_000002_20261128101905194_03867651DRPQDLIO/mindstudio_profiler_output/op_summary_20261128101907.csv
-Device_id,Model ID,Task ID,Stream ID,Op Name,OP Type,OP State,Task Type,Task Start Time(us),Task Duration(us),Task Wait Time(us),Block Num,Mix Block Num,HF32 Eligible,Input Shapes,Input Data Types,Input Formats,Output Shapes,Output Data Types,Output Formats,Context ID,aicore_time(us),aic_total_cycles,aic_mac_time(us),aic_mac_ratio,aic_scalar_time(us),aic_scalar_ratio,aic_mte1_time(us),aic_mte1_ratio,aic_mte2_time(us),aic_mte2_ratio,aic_mte3_time(us),aic_mte3_ratio,aic_fixpipe_time(us),aic_fixpipe_ratio,aic_icache_miss_rate,aiv_time(us),aiv_total_cycles,aiv_vec_time(us),aiv_vec_ratio,aiv_scalar_time(us),aiv_scalar_ratio,aiv_mte2_time(us),aiv_mte2_ratio,aiv_mte3_time(us),aiv_mte3_ratio,aiv_icache_miss_rate,cube_utilization(%)
-4,4294967295,10011,61,project_cube_m_only_kernel,project_cube_m_only_kernel,N/A,MIX_AIC,1795861145370811.077	,72.608,0,28,56,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,72.27,2533502,13.51,0.187,1.69,0.023,19.536,0.27,30.498,0.422,0.002,0.0,11.332,0.157,0.0,54.72,5055855,46.049,0.842,1.849,0.034,6.635,0.121,4.787,0.087,0.0,75.526
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+git pull --ff-only &&
+ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+  --device npu:0 --ablate-m-only --launches-per-event 8 \
+  --accumulate-squares --compare-squares \
+  --profile-projection "projection-deferred-squares-card4-$(date +%Y%m%d-%H%M%S)" \
+  --output projection-deferred-squares-card4.csv
