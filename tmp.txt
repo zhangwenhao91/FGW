@@ -1,10 +1,2 @@
-(
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  for batch in 1 2; do
-    python bench_cube_b2.py --m-only --pre-only --batch "$batch" \
-      --device npu:0 --cycles 4 --output "m-only-pre-b${batch}-card4-rerun.csv"
-    python bench_cube_b2.py --m-only --batch "$batch" \
-      --device npu:0 --cycles 4 --output "m-only-pair-b${batch}-card4-rerun.csv"
-  done
-)
+git pull --ff-only &&
+bash run_tileops_spec_vllm.sh 4 large-pair
