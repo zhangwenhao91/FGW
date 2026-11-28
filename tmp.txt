@@ -1,1 +1,21 @@
-git pull --ff-only && bash run_tileops_spec_vllm.sh 4 allocator-ab-b4
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && bash run_tileops_spec_vllm.sh 4 allocator-ab-b4
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 4 (delta 3), reused 4 (delta 3), pack-reused 0 (from 0)
+Unpacking objects: 100% (4/4), 1.42 KiB | 728.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   337006b..6596648  main       -> origin/main
+Updating 337006b..6596648
+Fast-forward
+ bench_vllm_ascend.py     | 66 ++++++++++++++++++++++++++++++++++++++++++++++--------------------
+ run_tileops_spec_vllm.sh | 30 +++++++++++++++++++++++++++++-
+ 2 files changed, 75 insertions(+), 21 deletions(-)
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_vllm_ascend.py", line 602, in <module>
+    main()
+  File "/home/z30086261/FGW-mHC/bench_vllm_ascend.py", line 530, in main
+    output.flush()
+    ^^^^^^^^^^^^
+AttributeError: 'Tensor' object has no attribute 'flush'
+[ERROR] 2026-11-28-17:15:06 (PID:155987, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
