@@ -1,6 +1,49 @@
-git pull --ff-only && \
-bash run_tileops_spec_vllm.sh 4 sweep-b4 && \
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_tileops_mhc.py \
-  --tileops-repo ../TileOPs-mhc-baseline --device npu:0 \
-  --projection cube_full --sinkhorn-iters 1 --rounds 4 \
-  --output tileops-fast-path-card4.csv
+tilelang B=4 H=2560 1 pairs/event forward: 43.960 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 26.881 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 24.644 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 24.621 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 26.766 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 41.476 us/pair
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 16:30:39 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 16:30:39 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 16:30:39 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 16:30:39 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 16:30:39 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 1 pairs/event forward: 31.489 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 25.134 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 23.703 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 23.911 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 24.677 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 30.221 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,4,2560,1,cube_full,1,forward,43.959999
+tilelang,4,2560,1,cube_full,8,forward,26.880501
+tilelang,4,2560,1,cube_full,32,forward,24.644390
+tilelang,4,2560,1,cube_full,32,reverse,24.620500
+tilelang,4,2560,1,cube_full,8,reverse,26.766000
+tilelang,4,2560,1,cube_full,1,reverse,41.476000
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,4,2560,1,,1,forward,31.488501
+vllm,4,2560,1,,8,forward,25.133625
+vllm,4,2560,1,,32,forward,23.703219
+vllm,4,2560,1,,32,reverse,23.911453
+vllm,4,2560,1,,8,reverse,24.677250
+vllm,4,2560,1,,1,reverse,30.220500
+2026-11-28 16:31:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-28 16:31:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+pre B=1 H=1280 iters=1: FGW 24.215 us, TileOPs 48.362 us, 1.997x
+post B=1 H=1280 iters=: FGW 14.278 us, TileOPs 16.985 us, 1.190x
+2026-11-28 16:31:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-28 16:31:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+pre B=2 H=1920 iters=1: FGW 24.663 us, TileOPs 71.325 us, 2.892x
+post B=2 H=1920 iters=: FGW 14.395 us, TileOPs 17.448 us, 1.212x
+pre B=4 H=2560 iters=1: FGW 29.353 us, TileOPs 119.221 us, 4.062x
+post B=4 H=2560 iters=: FGW 27.033 us, TileOPs 30.484 us, 1.128x
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
