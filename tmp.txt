@@ -1,17 +1,6 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
-> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
->   --simd-reduce --batch 4 --device npu:0 --cycles 4 \
->   --output simd-reduce-pair-orders-b4-card4.csv
-remote: Enumerating objects: 5, done.
-remote: Counting objects: 100% (5/5), done.
-remote: Compressing objects: 100% (1/1), done.
-remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
-Unpacking objects: 100% (3/3), 631 bytes | 631.00 KiB/s, done.
-From https://github.com/zhangwenhao91/FGW-mHC
-   bb27f3e..5394182  main       -> origin/main
-Updating bb27f3e..5394182
-Fast-forward
- bench_cube_b2.py | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
-cube_full: median 26.097 us, range 26.000–26.302 us; position medians [26.131, 26.074] us
-cube_full_simd_reduce: median 26.111 us, range 26.013–26.284 us; position medians [26.095, 26.118] us
+export ASCEND_RT_VISIBLE_DEVICES=4
+
+python bench_cube_b2.py --m-only --pre-only --batch 4 \
+  --device npu:0 --cycles 4 --output m-only-pre-b4-card4-rerun.csv &&
+python bench_cube_b2.py --m-only --batch 4 \
+  --device npu:0 --cycles 4 --output m-only-pair-b4-card4-rerun.csv
