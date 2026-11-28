@@ -1,12 +1,2 @@
-2026-11-28 10:50:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:50:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-cube_m_only_k512_deferred_s2: median 93.813 us, range 93.739–93.945 us; position medians [93.842, 93.813] us
-cube_m_only_k512_batched: median 73.639 us, range 73.515–73.663 us; position medians [73.644, 73.584] us
-cube_m_only_k512_deferred_s2: median 125.259 us, range 125.213–125.568 us; position medians [125.391, 125.259] us
-cube_m_only_k512_batched: median 106.801 us, range 106.767–107.076 us; position medians [106.785, 106.937] us
-2026-11-28 10:50:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
-2026-11-28 10:51:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
-cube_m_only_k512_deferred_s2: median 302.882 us, range 302.756–303.073 us; position medians [302.945, 302.851] us
-cube_m_only_k512_batched: median 236.979 us, range 236.850–237.043 us; position medians [236.911, 237.015] us
-cube_m_only_k512_deferred_s2: median 523.520 us, range 523.449–523.591 us; position medians [523.535, 523.505] us
-cube_m_only_k512_batched: median 465.482 us, range 465.381–465.532 us; position medians [465.456, 465.482] us
+git pull --ff-only &&
+bash run_tileops_spec_vllm.sh 4 large-k512-batched
