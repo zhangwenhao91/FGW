@@ -1,4 +1,7 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --large-post-tiles --batch 4096 --device npu:0 \
-  --output large-post-tiles-n4096-card4.csv
+2026-11-28 14:41:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
+2026-11-28 14:41:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
+2026-11-28 14:41:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
+2026-11-28 14:41:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
+default: median 160.881 us, range 160.653–161.111 us; position medians [160.981, 160.835, 160.821] us
+full_h: median 124.892 us, range 124.628–125.102 us; position medians [124.908, 124.889, 124.876] us
+full_h_double: median 109.391 us, range 109.203–109.849 us; position medians [109.383, 109.415, 109.391] us
