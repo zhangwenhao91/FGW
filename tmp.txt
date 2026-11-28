@@ -1,6 +1,28 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
-  --device npu:0 --ablate-m-only --projection-buffer-sweep \
-  --projection-a-ping-pong --launches-per-event 8 \
-  --output m-only-projection-a-ping-pong-card4.csv \
-  --dump-projection-code projection-a-ping-pong-card4
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+>   --device npu:0 --ablate-m-only --projection-buffer-sweep \
+>   --projection-a-ping-pong --launches-per-event 8 \
+>   --output m-only-projection-a-ping-pong-card4.csv \
+>   --dump-projection-code projection-a-ping-pong-card4
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 5 (delta 4), reused 5 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 953 bytes | 953.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   a92722c..0a829fd  main       -> origin/main
+Updating a92722c..0a829fd
+Fast-forward
+ bench_cube_stages.py | 21 ++++++++++++++-------
+ fgw_mhc/_kernels.py  | 22 +++++++++++++++++-----
+ 2 files changed, 31 insertions(+), 12 deletions(-)
+Generated device source: projection-a-ping-pong-card4/projection_k512_stages1.cpp
+Generated device source: projection-a-ping-pong-card4/projection_k512_stages2.cpp
+2026-11-28 10:04:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 10:04:17  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+Generated device source: projection-a-ping-pong-card4/projection_k512_stages2_a_ping_pong.cpp
+Generated device sources differ. Diff: projection-a-ping-pong-card4/a-ping-pong.diff
+N=1024 H=2560 projection_k512_stages1: median 91.371 us, range 91.229–91.712 us
+N=1024 H=2560 projection_k512_stages2: median 91.260 us, range 91.229–91.622 us
+N=1024 H=2560 projection_k512_stages2_a_ping_pong: median 91.276 us, range 91.269–91.617 us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
