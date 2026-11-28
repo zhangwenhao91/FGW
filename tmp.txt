@@ -1,2 +1,769 @@
-git pull --ff-only &&
-bash run_mhc_entrypoints.sh 4 ../TileOPs-mhc-clean ../TileOPs-mhc-baseline
+2026-11-28 17:52:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 17:52:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 29.627 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 20.840 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 19.655 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 19.545 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 20.617 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 28.741 us/pair
+2026-11-28 17:52:18  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 17:52:22  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 30.589 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 21.199 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 19.908 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 19.921 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 21.045 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 29.768 us/pair
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 30.018 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 21.615 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 20.636 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 20.718 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 21.627 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 29.632 us/pair
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:52:27 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:52:27 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:52:27 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:52:27 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:52:28 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=1 H=1280 1 pairs/event forward: 34.728 us/pair
+vllm B=1 H=1280 8 pairs/event forward: 25.302 us/pair
+vllm B=1 H=1280 32 pairs/event forward: 23.538 us/pair
+vllm B=1 H=1280 32 pairs/event reverse: 23.963 us/pair
+vllm B=1 H=1280 8 pairs/event reverse: 24.925 us/pair
+vllm B=1 H=1280 1 pairs/event reverse: 32.844 us/pair
+vllm B=2 H=1920 1 pairs/event forward: 33.159 us/pair
+vllm B=2 H=1920 8 pairs/event forward: 25.543 us/pair
+vllm B=2 H=1920 32 pairs/event forward: 24.524 us/pair
+vllm B=2 H=1920 32 pairs/event reverse: 24.528 us/pair
+vllm B=2 H=1920 8 pairs/event reverse: 25.882 us/pair
+vllm B=2 H=1920 1 pairs/event reverse: 34.121 us/pair
+vllm B=4 H=2560 1 pairs/event forward: 33.375 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 25.796 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 24.944 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 24.795 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 25.373 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 33.485 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_m_only,1,forward,29.627001
+tilelang,1,1280,1,cube_m_only,8,forward,20.840125
+tilelang,1,1280,1,cube_m_only,32,forward,19.654515
+tilelang,1,1280,1,cube_m_only,32,reverse,19.544781
+tilelang,1,1280,1,cube_m_only,8,reverse,20.617438
+tilelang,1,1280,1,cube_m_only,1,reverse,28.741000
+tilelang,2,1920,1,cube_m_only,1,forward,30.589500
+tilelang,2,1920,1,cube_m_only,8,forward,21.198812
+tilelang,2,1920,1,cube_m_only,32,forward,19.907844
+tilelang,2,1920,1,cube_m_only,32,reverse,19.921157
+tilelang,2,1920,1,cube_m_only,8,reverse,21.045063
+tilelang,2,1920,1,cube_m_only,1,reverse,29.768000
+tilelang,4,2560,1,cube_full,1,forward,30.018000
+tilelang,4,2560,1,cube_full,8,forward,21.614500
+tilelang,4,2560,1,cube_full,32,forward,20.635969
+tilelang,4,2560,1,cube_full,32,reverse,20.718171
+tilelang,4,2560,1,cube_full,8,reverse,21.626750
+tilelang,4,2560,1,cube_full,1,reverse,29.632499
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,1,1280,1,,1,forward,34.727501
+vllm,1,1280,1,,8,forward,25.301500
+vllm,1,1280,1,,32,forward,23.537829
+vllm,1,1280,1,,32,reverse,23.963391
+vllm,1,1280,1,,8,reverse,24.925313
+vllm,1,1280,1,,1,reverse,32.843500
+vllm,2,1920,1,,1,forward,33.158999
+vllm,2,1920,1,,8,forward,25.542875
+vllm,2,1920,1,,32,forward,24.524391
+vllm,2,1920,1,,32,reverse,24.528047
+vllm,2,1920,1,,8,reverse,25.882125
+vllm,2,1920,1,,1,reverse,34.120500
+vllm,4,2560,1,,1,forward,33.375500
+vllm,4,2560,1,,8,forward,25.796125
+vllm,4,2560,1,,32,forward,24.944016
+vllm,4,2560,1,,32,reverse,24.794640
+vllm,4,2560,1,,8,reverse,25.373500
+vllm,4,2560,1,,1,reverse,33.484999
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:52:48 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:52:48 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:52:48 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:52:48 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:52:48 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=1 H=1280 1 pairs/event forward: 35.005 us/pair
+vllm B=1 H=1280 8 pairs/event forward: 25.192 us/pair
+vllm B=1 H=1280 32 pairs/event forward: 23.739 us/pair
+vllm B=1 H=1280 32 pairs/event reverse: 23.584 us/pair
+vllm B=1 H=1280 8 pairs/event reverse: 24.559 us/pair
+vllm B=1 H=1280 1 pairs/event reverse: 31.746 us/pair
+vllm B=2 H=1920 1 pairs/event forward: 32.573 us/pair
+vllm B=2 H=1920 8 pairs/event forward: 25.419 us/pair
+vllm B=2 H=1920 32 pairs/event forward: 23.944 us/pair
+vllm B=2 H=1920 32 pairs/event reverse: 23.775 us/pair
+vllm B=2 H=1920 8 pairs/event reverse: 24.497 us/pair
+vllm B=2 H=1920 1 pairs/event reverse: 31.519 us/pair
+vllm B=4 H=2560 1 pairs/event forward: 32.012 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 24.588 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 23.530 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 23.547 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 24.469 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 31.996 us/pair
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 29.299 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 20.983 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 19.908 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 19.885 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 20.863 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 29.504 us/pair
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 29.719 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 21.243 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 20.049 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 20.076 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 21.035 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 29.187 us/pair
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 29.774 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 21.881 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 20.846 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 20.835 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 21.774 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 29.146 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_m_only,1,forward,29.299000
+tilelang,1,1280,1,cube_m_only,8,forward,20.982999
+tilelang,1,1280,1,cube_m_only,32,forward,19.907890
+tilelang,1,1280,1,cube_m_only,32,reverse,19.884907
+tilelang,1,1280,1,cube_m_only,8,reverse,20.862938
+tilelang,1,1280,1,cube_m_only,1,reverse,29.504499
+tilelang,2,1920,1,cube_m_only,1,forward,29.719500
+tilelang,2,1920,1,cube_m_only,8,forward,21.243376
+tilelang,2,1920,1,cube_m_only,32,forward,20.049078
+tilelang,2,1920,1,cube_m_only,32,reverse,20.076047
+tilelang,2,1920,1,cube_m_only,8,reverse,21.034875
+tilelang,2,1920,1,cube_m_only,1,reverse,29.187000
+tilelang,4,2560,1,cube_full,1,forward,29.774000
+tilelang,4,2560,1,cube_full,8,forward,21.881375
+tilelang,4,2560,1,cube_full,32,forward,20.846171
+tilelang,4,2560,1,cube_full,32,reverse,20.834656
+tilelang,4,2560,1,cube_full,8,reverse,21.774312
+tilelang,4,2560,1,cube_full,1,reverse,29.146001
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,1,1280,1,,1,forward,35.005001
+vllm,1,1280,1,,8,forward,25.191688
+vllm,1,1280,1,,32,forward,23.739140
+vllm,1,1280,1,,32,reverse,23.584297
+vllm,1,1280,1,,8,reverse,24.559250
+vllm,1,1280,1,,1,reverse,31.746000
+vllm,2,1920,1,,1,forward,32.573000
+vllm,2,1920,1,,8,forward,25.418500
+vllm,2,1920,1,,32,forward,23.943859
+vllm,2,1920,1,,32,reverse,23.775125
+vllm,2,1920,1,,8,reverse,24.497250
+vllm,2,1920,1,,1,reverse,31.518999
+vllm,4,2560,1,,1,forward,32.012500
+vllm,4,2560,1,,8,forward,24.588188
+vllm,4,2560,1,,32,forward,23.530359
+vllm,4,2560,1,,32,reverse,23.547328
+vllm,4,2560,1,,8,reverse,24.469125
+vllm,4,2560,1,,1,reverse,31.996001
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 29.206 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 20.861 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 19.632 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 19.600 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 20.776 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 29.072 us/pair
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 33.382 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 21.523 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 20.017 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 20.051 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 21.513 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 33.405 us/pair
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 33.086 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 22.299 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 20.872 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 20.813 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 22.083 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 31.806 us/pair
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:53:24 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:53:24 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:53:24 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:53:24 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:53:24 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=1 H=1280 1 pairs/event forward: 31.174 us/pair
+vllm B=1 H=1280 8 pairs/event forward: 24.406 us/pair
+vllm B=1 H=1280 32 pairs/event forward: 22.880 us/pair
+vllm B=1 H=1280 32 pairs/event reverse: 22.912 us/pair
+vllm B=1 H=1280 8 pairs/event reverse: 23.748 us/pair
+vllm B=1 H=1280 1 pairs/event reverse: 31.005 us/pair
+vllm B=2 H=1920 1 pairs/event forward: 31.577 us/pair
+vllm B=2 H=1920 8 pairs/event forward: 24.131 us/pair
+vllm B=2 H=1920 32 pairs/event forward: 23.301 us/pair
+vllm B=2 H=1920 32 pairs/event reverse: 23.170 us/pair
+vllm B=2 H=1920 8 pairs/event reverse: 23.905 us/pair
+vllm B=2 H=1920 1 pairs/event reverse: 31.104 us/pair
+vllm B=4 H=2560 1 pairs/event forward: 31.430 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 24.453 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 23.546 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 23.392 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 24.370 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 31.700 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_m_only,1,forward,29.205500
+tilelang,1,1280,1,cube_m_only,8,forward,20.861063
+tilelang,1,1280,1,cube_m_only,32,forward,19.632359
+tilelang,1,1280,1,cube_m_only,32,reverse,19.600203
+tilelang,1,1280,1,cube_m_only,8,reverse,20.776375
+tilelang,1,1280,1,cube_m_only,1,reverse,29.072500
+tilelang,2,1920,1,cube_m_only,1,forward,33.382500
+tilelang,2,1920,1,cube_m_only,8,forward,21.522688
+tilelang,2,1920,1,cube_m_only,32,forward,20.016906
+tilelang,2,1920,1,cube_m_only,32,reverse,20.051359
+tilelang,2,1920,1,cube_m_only,8,reverse,21.512688
+tilelang,2,1920,1,cube_m_only,1,reverse,33.405000
+tilelang,4,2560,1,cube_full,1,forward,33.086000
+tilelang,4,2560,1,cube_full,8,forward,22.298813
+tilelang,4,2560,1,cube_full,32,forward,20.871969
+tilelang,4,2560,1,cube_full,32,reverse,20.813343
+tilelang,4,2560,1,cube_full,8,reverse,22.082625
+tilelang,4,2560,1,cube_full,1,reverse,31.805500
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,1,1280,1,,1,forward,31.173500
+vllm,1,1280,1,,8,forward,24.405875
+vllm,1,1280,1,,32,forward,22.880171
+vllm,1,1280,1,,32,reverse,22.911890
+vllm,1,1280,1,,8,reverse,23.747813
+vllm,1,1280,1,,1,reverse,31.005500
+vllm,2,1920,1,,1,forward,31.577500
+vllm,2,1920,1,,8,forward,24.131062
+vllm,2,1920,1,,32,forward,23.300562
+vllm,2,1920,1,,32,reverse,23.169546
+vllm,2,1920,1,,8,reverse,23.904937
+vllm,2,1920,1,,1,reverse,31.103500
+vllm,4,2560,1,,1,forward,31.430000
+vllm,4,2560,1,,8,forward,24.452999
+vllm,4,2560,1,,32,forward,23.546110
+vllm,4,2560,1,,32,reverse,23.391813
+vllm,4,2560,1,,8,reverse,24.369750
+vllm,4,2560,1,,1,reverse,31.700000
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:53:45 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:53:45 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:53:45 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:53:45 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:53:45 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=1 H=1280 1 pairs/event forward: 29.972 us/pair
+vllm B=1 H=1280 8 pairs/event forward: 24.734 us/pair
+vllm B=1 H=1280 32 pairs/event forward: 23.576 us/pair
+vllm B=1 H=1280 32 pairs/event reverse: 23.755 us/pair
+vllm B=1 H=1280 8 pairs/event reverse: 24.642 us/pair
+vllm B=1 H=1280 1 pairs/event reverse: 29.578 us/pair
+vllm B=2 H=1920 1 pairs/event forward: 29.929 us/pair
+vllm B=2 H=1920 8 pairs/event forward: 24.883 us/pair
+vllm B=2 H=1920 32 pairs/event forward: 23.996 us/pair
+vllm B=2 H=1920 32 pairs/event reverse: 23.951 us/pair
+vllm B=2 H=1920 8 pairs/event reverse: 24.606 us/pair
+vllm B=2 H=1920 1 pairs/event reverse: 30.021 us/pair
+vllm B=4 H=2560 1 pairs/event forward: 31.909 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 25.820 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 24.322 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 24.267 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 25.310 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 31.459 us/pair
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 30.609 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 22.106 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 20.839 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 20.791 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 21.926 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 30.457 us/pair
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 30.512 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 22.138 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 20.974 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 20.990 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 22.215 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 31.035 us/pair
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 30.869 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 23.205 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 22.076 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 21.987 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 22.973 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 30.535 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_m_only,1,forward,30.609500
+tilelang,1,1280,1,cube_m_only,8,forward,22.105751
+tilelang,1,1280,1,cube_m_only,32,forward,20.839093
+tilelang,1,1280,1,cube_m_only,32,reverse,20.790922
+tilelang,1,1280,1,cube_m_only,8,reverse,21.926374
+tilelang,1,1280,1,cube_m_only,1,reverse,30.456500
+tilelang,2,1920,1,cube_m_only,1,forward,30.512000
+tilelang,2,1920,1,cube_m_only,8,forward,22.138250
+tilelang,2,1920,1,cube_m_only,32,forward,20.974234
+tilelang,2,1920,1,cube_m_only,32,reverse,20.989954
+tilelang,2,1920,1,cube_m_only,8,reverse,22.214750
+tilelang,2,1920,1,cube_m_only,1,reverse,31.035000
+tilelang,4,2560,1,cube_full,1,forward,30.869500
+tilelang,4,2560,1,cube_full,8,forward,23.205438
+tilelang,4,2560,1,cube_full,32,forward,22.075750
+tilelang,4,2560,1,cube_full,32,reverse,21.987156
+tilelang,4,2560,1,cube_full,8,reverse,22.973437
+tilelang,4,2560,1,cube_full,1,reverse,30.535500
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,1,1280,1,,1,forward,29.972000
+vllm,1,1280,1,,8,forward,24.734375
+vllm,1,1280,1,,32,forward,23.576422
+vllm,1,1280,1,,32,reverse,23.755047
+vllm,1,1280,1,,8,reverse,24.642000
+vllm,1,1280,1,,1,reverse,29.577500
+vllm,2,1920,1,,1,forward,29.929000
+vllm,2,1920,1,,8,forward,24.883312
+vllm,2,1920,1,,32,forward,23.995547
+vllm,2,1920,1,,32,reverse,23.951218
+vllm,2,1920,1,,8,reverse,24.606187
+vllm,2,1920,1,,1,reverse,30.021500
+vllm,4,2560,1,,1,forward,31.909499
+vllm,4,2560,1,,8,forward,25.820499
+vllm,4,2560,1,,32,forward,24.322391
+vllm,4,2560,1,,32,reverse,24.267077
+vllm,4,2560,1,,8,reverse,25.310313
+vllm,4,2560,1,,1,reverse,31.459499
+Round 1, B=1 H=1280, 1 pairs/event: candidate 29.184 us, vLLM 33.786 us, 1.158x
+Round 1, B=1 H=1280, 8 pairs/event: candidate 20.729 us, vLLM 25.113 us, 1.212x
+Round 1, B=1 H=1280, 32 pairs/event: candidate 19.600 us, vLLM 23.751 us, 1.212x
+Round 1, B=2 H=1920, 1 pairs/event: candidate 30.179 us, vLLM 33.640 us, 1.115x
+Round 1, B=2 H=1920, 8 pairs/event: candidate 21.122 us, vLLM 25.712 us, 1.217x
+Round 1, B=2 H=1920, 32 pairs/event: candidate 19.915 us, vLLM 24.526 us, 1.232x
+Round 1, B=4 H=2560, 1 pairs/event: candidate 29.825 us, vLLM 33.430 us, 1.121x
+Round 1, B=4 H=2560, 8 pairs/event: candidate 21.621 us, vLLM 25.585 us, 1.183x
+Round 1, B=4 H=2560, 32 pairs/event: candidate 20.677 us, vLLM 24.869 us, 1.203x
+Round 2, B=1 H=1280, 1 pairs/event: candidate 29.402 us, vLLM 33.376 us, 1.135x
+Round 2, B=1 H=1280, 8 pairs/event: candidate 20.923 us, vLLM 24.875 us, 1.189x
+Round 2, B=1 H=1280, 32 pairs/event: candidate 19.896 us, vLLM 23.662 us, 1.189x
+Round 2, B=2 H=1920, 1 pairs/event: candidate 29.453 us, vLLM 32.046 us, 1.088x
+Round 2, B=2 H=1920, 8 pairs/event: candidate 21.139 us, vLLM 24.958 us, 1.181x
+Round 2, B=2 H=1920, 32 pairs/event: candidate 20.063 us, vLLM 23.859 us, 1.189x
+Round 2, B=4 H=2560, 1 pairs/event: candidate 29.460 us, vLLM 32.004 us, 1.086x
+Round 2, B=4 H=2560, 8 pairs/event: candidate 21.828 us, vLLM 24.529 us, 1.124x
+Round 2, B=4 H=2560, 32 pairs/event: candidate 20.840 us, vLLM 23.539 us, 1.129x
+Round 3, B=1 H=1280, 1 pairs/event: candidate 29.139 us, vLLM 31.090 us, 1.067x
+Round 3, B=1 H=1280, 8 pairs/event: candidate 20.819 us, vLLM 24.077 us, 1.156x
+Round 3, B=1 H=1280, 32 pairs/event: candidate 19.616 us, vLLM 22.896 us, 1.167x
+Round 3, B=2 H=1920, 1 pairs/event: candidate 33.394 us, vLLM 31.340 us, 0.939x
+Round 3, B=2 H=1920, 8 pairs/event: candidate 21.518 us, vLLM 24.018 us, 1.116x
+Round 3, B=2 H=1920, 32 pairs/event: candidate 20.034 us, vLLM 23.235 us, 1.160x
+Round 3, B=4 H=2560, 1 pairs/event: candidate 32.446 us, vLLM 31.565 us, 0.973x
+Round 3, B=4 H=2560, 8 pairs/event: candidate 22.191 us, vLLM 24.411 us, 1.100x
+Round 3, B=4 H=2560, 32 pairs/event: candidate 20.843 us, vLLM 23.469 us, 1.126x
+Round 4, B=1 H=1280, 1 pairs/event: candidate 30.533 us, vLLM 29.775 us, 0.975x
+Round 4, B=1 H=1280, 8 pairs/event: candidate 22.016 us, vLLM 24.688 us, 1.121x
+Round 4, B=1 H=1280, 32 pairs/event: candidate 20.815 us, vLLM 23.666 us, 1.137x
+Round 4, B=2 H=1920, 1 pairs/event: candidate 30.773 us, vLLM 29.975 us, 0.974x
+Round 4, B=2 H=1920, 8 pairs/event: candidate 22.176 us, vLLM 24.745 us, 1.116x
+Round 4, B=2 H=1920, 32 pairs/event: candidate 20.982 us, vLLM 23.973 us, 1.143x
+Round 4, B=4 H=2560, 1 pairs/event: candidate 30.703 us, vLLM 31.684 us, 1.032x
+Round 4, B=4 H=2560, 8 pairs/event: candidate 23.089 us, vLLM 25.565 us, 1.107x
+Round 4, B=4 H=2560, 32 pairs/event: candidate 22.031 us, vLLM 24.295 us, 1.103x
+B=1 H=1280, 1 pairs/event: median 1.101x, range 0.975 to 1.158x, wins 3/4
+B=1 H=1280, 8 pairs/event: median 1.173x, range 1.121 to 1.212x, wins 4/4
+B=1 H=1280, 32 pairs/event: median 1.178x, range 1.137 to 1.212x, wins 4/4
+B=2 H=1920, 1 pairs/event: median 1.031x, range 0.939 to 1.115x, wins 2/4
+B=2 H=1920, 8 pairs/event: median 1.148x, range 1.116 to 1.217x, wins 4/4
+B=2 H=1920, 32 pairs/event: median 1.175x, range 1.143 to 1.232x, wins 4/4
+B=4 H=2560, 1 pairs/event: median 1.059x, range 0.973 to 1.121x, wins 3/4
+B=4 H=2560, 8 pairs/event: median 1.115x, range 1.100 to 1.183x, wins 4/4
+B=4 H=2560, 32 pairs/event: median 1.128x, range 1.103 to 1.203x, wins 4/4
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 53.571 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 40.873 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 38.108 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 37.782 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 40.743 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 53.862 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 54.276 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 40.882 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 38.121 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 38.210 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 41.075 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 54.358 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 53.711 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 41.281 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 38.679 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 38.189 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 41.312 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 53.046 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_full,1,forward,53.571001
+tilelang,1,1280,1,cube_full,8,forward,40.872812
+tilelang,1,1280,1,cube_full,32,forward,38.108140
+tilelang,1,1280,1,cube_full,32,reverse,37.782203
+tilelang,1,1280,1,cube_full,8,reverse,40.742937
+tilelang,1,1280,1,cube_full,1,reverse,53.862499
+tilelang,2,1920,1,cube_full,1,forward,54.276500
+tilelang,2,1920,1,cube_full,8,forward,40.882001
+tilelang,2,1920,1,cube_full,32,forward,38.120735
+tilelang,2,1920,1,cube_full,32,reverse,38.210452
+tilelang,2,1920,1,cube_full,8,reverse,41.075001
+tilelang,2,1920,1,cube_full,1,reverse,54.358499
+tilelang,4,2560,1,cube_full,1,forward,53.711001
+tilelang,4,2560,1,cube_full,8,forward,41.281499
+tilelang,4,2560,1,cube_full,32,forward,38.679205
+tilelang,4,2560,1,cube_full,32,reverse,38.188672
+tilelang,4,2560,1,cube_full,8,reverse,41.311689
+tilelang,4,2560,1,cube_full,1,reverse,53.045999
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 52.896 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 41.100 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 38.564 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 38.633 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 41.433 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 53.322 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 54.420 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 41.696 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 38.601 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 38.617 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 41.440 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 53.579 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 54.111 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 41.872 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 39.241 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 39.073 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 41.955 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 54.417 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_full,1,forward,52.896500
+tilelang,1,1280,1,cube_full,8,forward,41.100187
+tilelang,1,1280,1,cube_full,32,forward,38.564218
+tilelang,1,1280,1,cube_full,32,reverse,38.633453
+tilelang,1,1280,1,cube_full,8,reverse,41.433126
+tilelang,1,1280,1,cube_full,1,reverse,53.322000
+tilelang,2,1920,1,cube_full,1,forward,54.419501
+tilelang,2,1920,1,cube_full,8,forward,41.695625
+tilelang,2,1920,1,cube_full,32,forward,38.601266
+tilelang,2,1920,1,cube_full,32,reverse,38.617421
+tilelang,2,1920,1,cube_full,8,reverse,41.439749
+tilelang,2,1920,1,cube_full,1,reverse,53.578999
+tilelang,4,2560,1,cube_full,1,forward,54.111000
+tilelang,4,2560,1,cube_full,8,forward,41.871876
+tilelang,4,2560,1,cube_full,32,forward,39.241422
+tilelang,4,2560,1,cube_full,32,reverse,39.072782
+tilelang,4,2560,1,cube_full,8,reverse,41.955125
+tilelang,4,2560,1,cube_full,1,reverse,54.417001
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 54.267 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 41.482 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 38.593 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 38.329 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 41.064 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 54.113 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 54.270 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 41.417 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 38.359 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 38.500 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 41.444 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 54.237 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 54.204 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 41.501 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 38.461 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 38.093 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 41.198 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 53.066 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_full,1,forward,54.267500
+tilelang,1,1280,1,cube_full,8,forward,41.482374
+tilelang,1,1280,1,cube_full,32,forward,38.593359
+tilelang,1,1280,1,cube_full,32,reverse,38.328828
+tilelang,1,1280,1,cube_full,8,reverse,41.064125
+tilelang,1,1280,1,cube_full,1,reverse,54.113500
+tilelang,2,1920,1,cube_full,1,forward,54.270001
+tilelang,2,1920,1,cube_full,8,forward,41.417312
+tilelang,2,1920,1,cube_full,32,forward,38.359281
+tilelang,2,1920,1,cube_full,32,reverse,38.499765
+tilelang,2,1920,1,cube_full,8,reverse,41.444438
+tilelang,2,1920,1,cube_full,1,reverse,54.236501
+tilelang,4,2560,1,cube_full,1,forward,54.204499
+tilelang,4,2560,1,cube_full,8,forward,41.500751
+tilelang,4,2560,1,cube_full,32,forward,38.461234
+tilelang,4,2560,1,cube_full,32,reverse,38.093453
+tilelang,4,2560,1,cube_full,8,reverse,41.197749
+tilelang,4,2560,1,cube_full,1,reverse,53.066500
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 53.245 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 41.324 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 38.043 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 37.823 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 40.746 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 52.231 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 54.506 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 41.381 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 38.590 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 38.604 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 41.464 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 54.890 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 54.341 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 41.593 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 38.761 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 38.608 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 41.952 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 54.947 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_full,1,forward,53.245500
+tilelang,1,1280,1,cube_full,8,forward,41.324375
+tilelang,1,1280,1,cube_full,32,forward,38.043095
+tilelang,1,1280,1,cube_full,32,reverse,37.822749
+tilelang,1,1280,1,cube_full,8,reverse,40.745938
+tilelang,1,1280,1,cube_full,1,reverse,52.231001
+tilelang,2,1920,1,cube_full,1,forward,54.506000
+tilelang,2,1920,1,cube_full,8,forward,41.381437
+tilelang,2,1920,1,cube_full,32,forward,38.590265
+tilelang,2,1920,1,cube_full,32,reverse,38.603876
+tilelang,2,1920,1,cube_full,8,reverse,41.463999
+tilelang,2,1920,1,cube_full,1,reverse,54.890499
+tilelang,4,2560,1,cube_full,1,forward,54.340500
+tilelang,4,2560,1,cube_full,8,forward,41.592812
+tilelang,4,2560,1,cube_full,32,forward,38.760906
+tilelang,4,2560,1,cube_full,32,reverse,38.608452
+tilelang,4,2560,1,cube_full,8,reverse,41.951563
+tilelang,4,2560,1,cube_full,1,reverse,54.947000
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 69.576 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 55.329 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 52.372 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 52.194 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 55.282 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 68.715 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 74.412 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 65.224 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 64.207 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 64.437 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 66.741 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 83.942 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 119.045 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 112.831 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 112.207 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 112.275 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 113.155 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 124.901 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_full,1,forward,69.576003
+tilelang,1,1280,1,cube_full,8,forward,55.329312
+tilelang,1,1280,1,cube_full,32,forward,52.371876
+tilelang,1,1280,1,cube_full,32,reverse,52.193938
+tilelang,1,1280,1,cube_full,8,reverse,55.281814
+tilelang,1,1280,1,cube_full,1,reverse,68.715498
+tilelang,2,1920,1,cube_full,1,forward,74.411500
+tilelang,2,1920,1,cube_full,8,forward,65.223690
+tilelang,2,1920,1,cube_full,32,forward,64.207096
+tilelang,2,1920,1,cube_full,32,reverse,64.436641
+tilelang,2,1920,1,cube_full,8,reverse,66.741187
+tilelang,2,1920,1,cube_full,1,reverse,83.942499
+tilelang,4,2560,1,cube_full,1,forward,119.044501
+tilelang,4,2560,1,cube_full,8,forward,112.830687
+tilelang,4,2560,1,cube_full,32,forward,112.207077
+tilelang,4,2560,1,cube_full,32,reverse,112.274703
+tilelang,4,2560,1,cube_full,8,reverse,113.154560
+tilelang,4,2560,1,cube_full,1,reverse,124.901000
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 70.479 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 55.246 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 52.447 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 52.499 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 55.536 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 69.304 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 73.699 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 65.356 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 64.217 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 64.204 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 65.227 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 72.927 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 120.255 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 113.064 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 112.182 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 112.176 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 113.004 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 120.019 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_full,1,forward,70.479002
+tilelang,1,1280,1,cube_full,8,forward,55.245874
+tilelang,1,1280,1,cube_full,32,forward,52.446827
+tilelang,1,1280,1,cube_full,32,reverse,52.499469
+tilelang,1,1280,1,cube_full,8,reverse,55.536250
+tilelang,1,1280,1,cube_full,1,reverse,69.304001
+tilelang,2,1920,1,cube_full,1,forward,73.698502
+tilelang,2,1920,1,cube_full,8,forward,65.355688
+tilelang,2,1920,1,cube_full,32,forward,64.217389
+tilelang,2,1920,1,cube_full,32,reverse,64.204190
+tilelang,2,1920,1,cube_full,8,reverse,65.227251
+tilelang,2,1920,1,cube_full,1,reverse,72.926503
+tilelang,4,2560,1,cube_full,1,forward,120.255001
+tilelang,4,2560,1,cube_full,8,forward,113.063876
+tilelang,4,2560,1,cube_full,32,forward,112.181593
+tilelang,4,2560,1,cube_full,32,reverse,112.175513
+tilelang,4,2560,1,cube_full,8,reverse,113.003749
+tilelang,4,2560,1,cube_full,1,reverse,120.018501
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 70.074 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 55.470 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 52.468 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 52.527 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 55.858 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 69.827 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 76.046 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 65.232 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 64.175 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 64.169 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 65.185 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 74.572 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 119.827 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 113.022 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 112.202 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 112.199 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 113.075 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 119.891 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_full,1,forward,70.073999
+tilelang,1,1280,1,cube_full,8,forward,55.469625
+tilelang,1,1280,1,cube_full,32,forward,52.468359
+tilelang,1,1280,1,cube_full,32,reverse,52.526938
+tilelang,1,1280,1,cube_full,8,reverse,55.857750
+tilelang,1,1280,1,cube_full,1,reverse,69.826502
+tilelang,2,1920,1,cube_full,1,forward,76.045502
+tilelang,2,1920,1,cube_full,8,forward,65.232437
+tilelang,2,1920,1,cube_full,32,forward,64.174533
+tilelang,2,1920,1,cube_full,32,reverse,64.169485
+tilelang,2,1920,1,cube_full,8,reverse,65.184876
+tilelang,2,1920,1,cube_full,1,reverse,74.571501
+tilelang,4,2560,1,cube_full,1,forward,119.826999
+tilelang,4,2560,1,cube_full,8,forward,113.022439
+tilelang,4,2560,1,cube_full,32,forward,112.201627
+tilelang,4,2560,1,cube_full,32,reverse,112.198841
+tilelang,4,2560,1,cube_full,8,reverse,113.074750
+tilelang,4,2560,1,cube_full,1,reverse,119.890999
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=1 H=1280 non-default stream and fresh outputs passed
+tilelang B=1 H=1280 1 pairs/event forward: 67.955 us/pair
+tilelang B=1 H=1280 8 pairs/event forward: 53.470 us/pair
+tilelang B=1 H=1280 32 pairs/event forward: 50.587 us/pair
+tilelang B=1 H=1280 32 pairs/event reverse: 50.477 us/pair
+tilelang B=1 H=1280 8 pairs/event reverse: 53.387 us/pair
+tilelang B=1 H=1280 1 pairs/event reverse: 67.133 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=2 H=1920 non-default stream and fresh outputs passed
+tilelang B=2 H=1920 1 pairs/event forward: 73.152 us/pair
+tilelang B=2 H=1920 8 pairs/event forward: 65.154 us/pair
+tilelang B=2 H=1920 32 pairs/event forward: 64.231 us/pair
+tilelang B=2 H=1920 32 pairs/event reverse: 64.229 us/pair
+tilelang B=2 H=1920 8 pairs/event reverse: 65.174 us/pair
+tilelang B=2 H=1920 1 pairs/event reverse: 72.277 us/pair
+TileOPs public entries from /home/z30086261/TileOPs-mhc-baseline/src, fused=[False, False]
+B=4 H=2560 non-default stream and fresh outputs passed
+tilelang B=4 H=2560 1 pairs/event forward: 120.089 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 113.085 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 112.180 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 112.177 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 113.066 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 120.208 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,1,1280,1,cube_full,1,forward,67.954998
+tilelang,1,1280,1,cube_full,8,forward,53.469812
+tilelang,1,1280,1,cube_full,32,forward,50.587157
+tilelang,1,1280,1,cube_full,32,reverse,50.476765
+tilelang,1,1280,1,cube_full,8,reverse,53.387063
+tilelang,1,1280,1,cube_full,1,reverse,67.132503
+tilelang,2,1920,1,cube_full,1,forward,73.152497
+tilelang,2,1920,1,cube_full,8,forward,65.153815
+tilelang,2,1920,1,cube_full,32,forward,64.231172
+tilelang,2,1920,1,cube_full,32,reverse,64.228781
+tilelang,2,1920,1,cube_full,8,reverse,65.173503
+tilelang,2,1920,1,cube_full,1,reverse,72.276503
+tilelang,4,2560,1,cube_full,1,forward,120.088503
+tilelang,4,2560,1,cube_full,8,forward,113.084875
+tilelang,4,2560,1,cube_full,32,forward,112.180311
+tilelang,4,2560,1,cube_full,32,reverse,112.176720
+tilelang,4,2560,1,cube_full,8,reverse,113.066375
+tilelang,4,2560,1,cube_full,1,reverse,120.207999
+comparison,batch,hidden,pairs_per_event,candidate_us,baseline_us,speedup_median,speedup_min,speedup_max,wins,rounds
+fgw_vs_vllm,1,1280,1,29.293,32.233,1.101,0.975,1.158,3,4
+fgw_vs_vllm,1,1280,8,20.871,24.782,1.173,1.121,1.212,4,4
+fgw_vs_vllm,1,1280,32,19.756,23.664,1.178,1.137,1.212,4,4
+fgw_vs_vllm,2,1920,1,30.476,31.693,1.031,0.939,1.115,2,4
+fgw_vs_vllm,2,1920,8,21.328,24.851,1.148,1.116,1.217,4,4
+fgw_vs_vllm,2,1920,32,20.048,23.916,1.175,1.143,1.232,4,4
+fgw_vs_vllm,4,2560,1,30.264,31.844,1.059,0.973,1.121,3,4
+fgw_vs_vllm,4,2560,8,22.009,25.047,1.115,1.100,1.183,4,4
+fgw_vs_vllm,4,2560,32,20.842,23.917,1.128,1.103,1.203,4,4
+tileops_candidate_vs_original,1,1280,1,53.413,69.519,1.289,1.281,1.316,4,4
+tileops_candidate_vs_original,1,1280,8,41.151,55.348,1.345,1.302,1.355,4,4
+tileops_candidate_vs_original,1,1280,32,38.203,52.378,1.362,1.332,1.378,4,4
+tileops_candidate_vs_original,2,1920,1,54.285,74.311,1.373,1.329,1.458,4,4
+tileops_candidate_vs_original,2,1920,8,41.427,65.250,1.574,1.571,1.610,4,4
+tileops_candidate_vs_original,2,1920,32,38.513,64.220,1.667,1.663,1.685,4,4
+tileops_candidate_vs_original,4,2560,1,53.950,120.143,2.224,2.199,2.285,4,4
+tileops_candidate_vs_original,4,2560,8,41.561,113.041,2.720,2.697,2.736,4,4
+tileops_candidate_vs_original,4,2560,32,38.559,112.189,2.910,2.865,2.931,4,4
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
