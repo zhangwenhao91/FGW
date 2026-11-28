@@ -1,12 +1,12 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  for tokens in 1024 4096; do
-    python bench_cube_b2.py --m-only-k-window --deferred-pipeline \
-      --pre-only --batch "$tokens" --device npu:0 \
-      --output "deferred-pipeline-pre-n${tokens}-card4.csv"
-    python bench_cube_b2.py --m-only-k-window --deferred-pipeline \
-      --batch "$tokens" --device npu:0 \
-      --output "deferred-pipeline-pair-n${tokens}-card4.csv"
-  done
-)
+2026-11-28 10:36:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 10:36:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only_k512_deferred: median 109.136 us, range 109.051–109.265 us; position medians [109.170, 109.124] us
+cube_m_only_k512_deferred_s2: median 93.863 us, range 93.823–93.897 us; position medians [93.863, 93.860] us
+cube_m_only_k512_deferred: median 137.246 us, range 137.142–137.309 us; position medians [137.204, 137.268] us
+cube_m_only_k512_deferred_s2: median 125.050 us, range 125.025–125.071 us; position medians [125.055, 125.043] us
+2026-11-28 10:37:03  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 10:37:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only_k512_deferred: median 353.996 us, range 353.760–354.322 us; position medians [354.115, 353.922] us
+cube_m_only_k512_deferred_s2: median 302.993 us, range 302.882–303.346 us; position medians [303.114, 302.993] us
+cube_m_only_k512_deferred: median 527.642 us, range 527.573–527.768 us; position medians [527.670, 527.642] us
+cube_m_only_k512_deferred_s2: median 523.454 us, range 523.401–523.640 us; position medians [523.454, 523.520] us
