@@ -1,1 +1,23 @@
-git pull --ff-only && bash run_pr25_vllm.sh 4 --tokens 1 128 1024
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && bash run_pr25_vllm.sh 4 --tokens 1 128 1024
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 744 bytes | 744.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   df5b86d..1d4247f  main       -> origin/main
+Updating df5b86d..1d4247f
+Fast-forward
+ bench_pr25_vllm.py | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 193, in <module>
+    main()
+  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 177, in main
+    pre, post = load_ops(args, torch)
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 57, in load_ops
+    raise RuntimeError(
+RuntimeError: /root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/language/annotations.py lacks write_counter; PR #25 requires it for N=1/H=4096, N=1/H=5120, N=1/H=7168. Run with --tokens 1 128 1024 on this build, or use a TileLang build from the PR for the full suite.
+[ERROR] 2026-11-28-15:57:12 (PID:85913, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
