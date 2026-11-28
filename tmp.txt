@@ -1,4 +1,5 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
-  --device npu:0 --ablate-m-only --projection-m-tile-sweep \
-  --launches-per-event 8 --output m256-k128-mad-sweep-card4.csv
+2026-11-28 11:20:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 11:21:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+N=4096 H=2560 projection_m16_k512: median 156.548 us, range 156.481–157.333 us
+N=4096 H=2560 projection_m256_k128_mad64: median 248.315 us, range 248.196–248.940 us
+N=4096 H=2560 projection_m256_k128_mad32: median 248.424 us, range 248.355–249.180 us
