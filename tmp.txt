@@ -1,1 +1,93 @@
-git pull --ff-only && bash run_pr25_vllm.sh 4
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && bash run_pr25_vllm.sh 4
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 4 (delta 1), reused 4 (delta 1), pack-reused 0 (from 0)
+Unpacking objects: 100% (4/4), 3.67 KiB | 3.67 MiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   60472f3..df5b86d  main       -> origin/main
+Updating 60472f3..df5b86d
+Fast-forward
+ bench_pr25_vllm.py | 176 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ run_pr25_vllm.sh   |  33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 209 insertions(+)
+ create mode 100644 bench_pr25_vllm.py
+ create mode 100644 run_pr25_vllm.sh
+Initialized empty Git repository in /home/z30086261/tilelang-asc-pr25/.git/
+remote: Enumerating objects: 2428, done.
+remote: Counting objects: 100% (2428/2428), done.
+remote: Compressing objects: 100% (2225/2225), done.
+remote: Total 2428 (delta 227), reused 1328 (delta 148), pack-reused 0 (from 0)
+Receiving objects: 100% (2428/2428), 13.01 MiB | 8.32 MiB/s, done.
+Resolving deltas: 100% (227/227), done.
+From https://github.com/yangsichan/tilelang-asc
+ * branch            refs/pull/25/head -> FETCH_HEAD
+HEAD is now at 053ddb4 [Examples][Ascend] Allocate mHC Post outputs in L2
+2026-11-28 15:52:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+[15:53:22] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:2046: Warning: Ascend auto-schedule reached an intra-core flag-id high-water mark of 9 for 1:V_MTE3 after safe reuse, exceeding the dav-3510 limit of 8; the later RewriteFlagToBuf pass will compact sparse out-of-range ids or spill excess flag blocks to get_buf/rls_buf when capacity is exceeded.
+2026-11-28 15:53:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+2026-11-28 15:53:30  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `_mhc_post_kernel` with `out_idx=None`
+2026-11-28 15:53:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `_mhc_post_kernel`
+pr25 pre N=1 H=4096: 14.143 us
+pr25 post N=1 H=4096: 12.309 us
+pr25 pair N=1 H=4096: 25.557 us
+2026-11-28 15:53:33  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+[15:54:04] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:2046: Warning: Ascend auto-schedule reached an intra-core flag-id high-water mark of 9 for 4:V_MTE3 after safe reuse, exceeding the dav-3510 limit of 8; the later RewriteFlagToBuf pass will compact sparse out-of-range ids or spill excess flag blocks to get_buf/rls_buf when capacity is exceeded.
+2026-11-28 15:54:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+pr25 pre N=128 H=4096: 14.351 us
+pr25 post N=128 H=4096: 12.414 us
+pr25 pair N=128 H=4096: 26.080 us
+2026-11-28 15:54:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+2026-11-28 15:54:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+pr25 pre N=1024 H=4096: 27.772 us
+pr25 post N=1024 H=4096: 19.538 us
+pr25 pair N=1024 H=4096: 50.017 us
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 168, in main
+    for row in benchmark_case(args, torch, device, pre, post, tokens, hidden):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 90, in benchmark_case
+    actual_pre = run_pre()
+                 ^^^^^^^^^
+  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 88, in run_pre
+    return pre(*pre_inputs)
+           ^^^^^^^^^^^^^^^^
+  File "/home/z30086261/tilelang-asc-pr25/examples/ascend/mhc/mhc_pre.py", line 255, in mhc_pre
+    execute = _get_executor(n, hidden, num_aic_cores, num_vec_cores, x.device.index)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/tilelang-asc-pr25/examples/ascend/mhc/mhc_pre.py", line 199, in _get_executor
+    kernel = _compile_kernel(config["route"], tuple(sorted(config["kernel_kwargs"].items())))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/z30086261/tilelang-asc-pr25/examples/ascend/mhc/mhc_pre.py", line 109, in _compile_kernel
+    return mhc_pre_large.compile(**dict(parameters))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 469, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/__init__.py", line 390, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1709, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1702, in get_tir
+    return self.p1_cache[bound.p1_key].get_tir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/language/eager/builder.py", line 1361, in get_tir
+    self.ir_gen.gen(builder)(**tensor_args, **kwargs)
+  File "/home/z30086261/tilelang-asc-pr25/examples/ascend/mhc/mhc_pre_large.py", line 432, in mhc_pre_large
+    T.annotate_buffer_versions({x_ub: x_versions, x_nz_ub: 2, y_ub: 2, x_l1: 2, phi_l1: 2, x_l0: 2, phi_l0: 2})
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/language/annotations.py", line 156, in annotate_buffer_versions
+    raise ValueError(f"buffer version mode must be one of {_VALID_BUFFER_VERSION_MODES}, got {mode!r} for buffer {buffer}")
+ValueError: buffer version mode must be one of ('auto', 'iteration', 'counter'), got 'write_counter' for buffer x_ub
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 176, in <module>
+    main()
+  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 172, in main
+    raise RuntimeError(f"{args.backend} N={tokens} H={hidden} failed") from exc
+RuntimeError: pr25 N=4096 H=4096 failed
+[ERROR] 2026-11-28-15:54:39 (PID:82164, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
