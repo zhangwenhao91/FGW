@@ -1,9 +1,10 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# python bench_cube_b2.py --m-only --pre-only --batch 4 \
->   --device npu:0 --cycles 4 --output m-only-pre-b4-card4-rerun.csv &&
-> python bench_cube_b2.py --m-only --batch 4 \
->   --device npu:0 --cycles 4 --output m-only-pair-b4-card4-rerun.csv
-cube_full: median 28.287 us, range 28.175–29.057 us; position medians [28.385, 28.287] us
-cube_m_only: median 39.025 us, range 38.507–39.228 us; position medians [38.934, 39.040] us
-cube_full: median 33.334 us, range 32.901–34.041 us; position medians [33.334, 33.173] us
-cube_m_only: median 40.054 us, range 39.917–40.232 us; position medians [40.054, 40.087] us
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+(
+  set -e
+  export ASCEND_RT_VISIBLE_DEVICES=4
+  for batch in 1 2; do
+    python bench_cube_b2.py --m-only --pre-only --batch "$batch" \
+      --device npu:0 --cycles 4 --output "m-only-pre-b${batch}-card4-rerun.csv"
+    python bench_cube_b2.py --m-only --batch "$batch" \
+      --device npu:0 --cycles 4 --output "m-only-pair-b${batch}-card4-rerun.csv"
+  done
+)
