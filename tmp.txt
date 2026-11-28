@@ -1,5 +1,30 @@
-git pull --ff-only && \
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --simd-reduce --batch 4 --device npu:0 --cycles 4 \
-  --output simd-b4-pairs-card4.csv \
-  --profile-simd-pairs "simd-b4-trace-card4-$(date +%Y%m%d-%H%M%S)"
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && \
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
+>   --simd-reduce --batch 4 --device npu:0 --cycles 4 \
+>   --output simd-b4-pairs-card4.csv \
+>   --profile-simd-pairs "simd-b4-trace-card4-$(date +%Y%m%d-%H%M%S)"
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 4 (delta 3), reused 4 (delta 3), pack-reused 0 (from 0)
+Unpacking objects: 100% (4/4), 1.13 KiB | 1.13 MiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   5f084e4..850adb1  main       -> origin/main
+Updating 5f084e4..850adb1
+Fast-forward
+ bench_cube_b2.py     | 13 +++++++++++++
+ bench_vllm_ascend.py | 29 ++++++++++++++++++++++++-----
+ 2 files changed, 37 insertions(+), 5 deletions(-)
+2026-11-28 16:20:55  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-28 16:21:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+cube_full: median 26.086 us, range 26.003–26.379 us; position medians [26.082, 26.093] us
+cube_full_simd_reduce: median 26.120 us, range 26.056–26.425 us; position medians [26.106, 26.128] us
+[2026-11-28 16:21:02] [WARNING] [108041] profiler.py: Profiler won't be using warmup, this can skew profiler results
+[2026-11-28 16:21:02] [WARNING] [108041] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
+[2026-11-28 16:21:02] [WARNING] [108041] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
+[2026-11-28 16:21:02] [INFO] [108504] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW-mHC/simd-b4-trace-card4-20261128-162040/ubuntu162_108041_20261128162102111_ascend_pt
+[2026-11-28 16:21:03] [ERROR] [108504] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW-mHC/simd-b4-trace-card4-20261128-162040/ubuntu162_108041_20261128162102111_ascend_pt/logs
+[2026-11-28 16:21:04] [INFO] [108524] profiler.py: CANN profiling data parsed in a total time of 0:00:02.013735
+[2026-11-28 16:21:05] [INFO] [108504] profiler.py: All profiling data parsed in a total time of 0:00:02.858005
+cube_full device medians across 16 profiled pairs: pre=10.558 us, post=1.736 us, pre_to_post_gap=1.500 us, pair_span=13.875 us
+cube_full_simd_reduce device medians across 16 profiled pairs: pre=7.635 us, post=1.839 us, pre_to_post_gap=4.375 us, pair_span=14.125 us
