@@ -1,5 +1,47 @@
-git pull --ff-only && \
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --b4-post-tiles --batch 4 --device npu:0 --cycles 4 \
-  --output b4-post-tiles-card4.csv && \
-bash run_tileops_spec_vllm.sh 4 sweep-b4
+2026-11-28 16:12:39  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-28 16:12:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+2026-11-28 16:12:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
+2026-11-28 16:12:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
+2026-11-28 16:12:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `post` with `out_idx=None`
+2026-11-28 16:12:48  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `post`
+default: median 27.444 us, range 27.305–27.663 us; position medians [27.470, 27.438, 27.427] us
+two_streams_h512: median 27.453 us, range 27.257–27.673 us; position medians [27.474, 27.505, 27.435] us
+four_streams_h320: median 27.394 us, range 27.267–27.616 us; position medians [27.390, 27.352, 27.453] us
+tilelang B=4 H=2560 1 pairs/event forward: 47.307 us/pair
+tilelang B=4 H=2560 8 pairs/event forward: 28.968 us/pair
+tilelang B=4 H=2560 32 pairs/event forward: 26.649 us/pair
+tilelang B=4 H=2560 32 pairs/event reverse: 26.642 us/pair
+tilelang B=4 H=2560 8 pairs/event reverse: 28.639 us/pair
+tilelang B=4 H=2560 1 pairs/event reverse: 43.226 us/pair
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 16:13:07 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 16:13:07 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 16:13:07 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 16:13:07 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 16:13:08 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 1 pairs/event forward: 33.160 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 25.329 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 24.004 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 24.034 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 25.858 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 33.596 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,4,2560,1,cube_full,1,forward,47.307001
+tilelang,4,2560,1,cube_full,8,forward,28.968250
+tilelang,4,2560,1,cube_full,32,forward,26.648626
+tilelang,4,2560,1,cube_full,32,reverse,26.642312
+tilelang,4,2560,1,cube_full,8,reverse,28.638938
+tilelang,4,2560,1,cube_full,1,reverse,43.225501
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,4,2560,1,,1,forward,33.160001
+vllm,4,2560,1,,8,forward,25.328563
+vllm,4,2560,1,,32,forward,24.003875
+vllm,4,2560,1,,32,reverse,24.033890
+vllm,4,2560,1,,8,reverse,25.857812
+vllm,4,2560,1,,1,reverse,33.596499
