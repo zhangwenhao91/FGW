@@ -1,4 +1,19 @@
-git pull --ff-only && \
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --simd-reduce --fresh-simd-pairs --batch 4 --device npu:0 --cycles 2 \
-  --output simd-b4-fresh-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && \
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
+>   --simd-reduce --fresh-simd-pairs --batch 4 --device npu:0 --cycles 2 \
+>   --output simd-b4-fresh-card4.csv
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 1.01 KiB | 1.01 MiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   b938190..df1493a  main       -> origin/main
+Updating b938190..df1493a
+Fast-forward
+ bench_cube_b2.py | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+cube_full: median 27.458 us, range 27.304–27.917 us; position medians [27.388, 27.458, 27.525, 27.489] us
+cube_full_simd_reduce: median 27.497 us, range 27.304–27.936 us; position medians [27.482, 27.477, 27.469, 27.549] us
+cube_full_fresh: median 20.605 us, range 20.392–20.925 us; position medians [20.682, 20.527, 20.609, 20.574] us
+cube_full_simd_reduce_fresh: median 20.613 us, range 20.405–21.114 us; position medians [20.683, 20.620, 20.538, 20.581] us
