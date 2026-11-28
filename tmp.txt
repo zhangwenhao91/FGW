@@ -1,10 +1,10 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
-    --guarded-window-cache --double-window-stage --batch 4096 --device npu:0 \
-    --verify-windowed-cache double-window-stage-card4.cpp
-  python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
-    --guarded-window-cache --double-window-stage --batch 4096 --device npu:0 \
-    --output double-window-stage-pair-card4.csv
-)
+2026-11-28 15:45:42  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 15:45:49  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+Generated device source: double-window-stage-card4.cpp
+Alternating-input burst 1: 8 pairs passed
+Alternating-input burst 2: 8 pairs passed
+Alternating-input burst 3: 8 pairs passed
+Alternating-input burst 4: 8 pairs passed
+cube_m_only_k512_batched: median 419.003 us, range 418.838–419.362 us; position medians [419.062, 419.034, 418.947] us
+cube_m_only_k512_guarded_cache: median 451.274 us, range 451.104–451.626 us; position medians [451.343, 451.237, 451.281] us
+cube_m_only_k512_double_stage: median 452.017 us, range 451.724–452.346 us; position medians [451.891, 452.132, 452.001] us
