@@ -1,3 +1,147 @@
-grep -nE -C 6 \
-  'asc_sync_(wait|notify)\(PIPE_(V, PIPE_MTE2|MTE2, PIPE_V)' \
-  guarded-window-cache-dependency-card4.cpp
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# grep -nE -C 6 \
+>   'asc_sync_(wait|notify)\(PIPE_(V, PIPE_MTE2|MTE2, PIPE_V)' \
+>   guarded-window-cache-dependency-card4.cpp
+396-    if (sid == 0) {
+397-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+398-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+399-    }
+400-    if (sid == 1) {
+401-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+402:      asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+403-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+404:      asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+405-      asc_sync_intra_arrive(PIPE_V, 1);
+406-    }
+407-    if (sid == 0) {
+408:      asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+409-      asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+410:      asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+411-      asc_sync_intra_arrive(PIPE_V, 1);
+412-    }
+413-    cast_ub_aiv0_version_counter_2 = 0;
+414-    for (int32_t w_1 = 0; w_1 < 10; ++w_1) {
+415-      if (sid == 1) {
+416-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+417:          asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+418-          asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)53056]))), (__gm__ uint8_t*)((&(bias[0]))), 1, 96, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 96, 96);
+419:          asc_sync_notify(PIPE_MTE2, PIPE_V, static_cast<event_t>(1));
+420-        }
+421-      }
+422-      if (sid == 0) {
+423-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+424:          asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+425-          asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)53056]))), (__gm__ uint8_t*)((&(bias[0]))), 1, 96, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 96, 96);
+426:          asc_sync_notify(PIPE_MTE2, PIPE_V, static_cast<event_t>(1));
+427-        }
+428-      }
+429-      if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+430-        for (int32_t part_1 = 0; part_1 < 20; ++part_1) {
+431-          if (sid == 1) {
+432-            if (part_1 == 0) {
+433:              asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+434-            }
+435-            asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ bfloat16_t*)buf_dyn_shmem)[((((int64_t)part_1) * (int64_t)512) + (int64_t)512)]))), (__gm__ uint8_t*)((&(streams[((((w_1 * 4587520) + (((int32_t)block_idx) * 163840)) + (part_1 * 512)) + 81920)]))), 8, 1024, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 20480, 20480);
+436:            asc_sync_notify(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
+437-          }
+438-          if (sid == 0) {
+439-            if (part_1 == 0) {
+440:              asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+441-            }
+442-            asc_copy_gm2ub_align((__ubuf__ uint8_t*)((&(((__ubuf__ bfloat16_t*)buf_dyn_shmem)[((((int64_t)part_1) * (int64_t)512) + (int64_t)512)]))), (__gm__ uint8_t*)((&(streams[(((w_1 * 4587520) + (((int32_t)block_idx) * 163840)) + (part_1 * 512))]))), 8, 1024, 0, 0, 0, static_cast<asc_load_l2_cache_mode>(0), 20480, 20480);
+443:            asc_sync_notify(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
+444-            asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+445:            asc_sync_wait(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
+446-            project_cube_m_only_kernel_simd_vf_0(block_idx, w_1, part_1, buf_dyn_shmem);
+447-            asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+448-          }
+449-          if (sid == 1) {
+450-            asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+451:            asc_sync_wait(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
+452-            project_cube_m_only_kernel_simd_vf_0_1(block_idx, w_1, part_1, buf_dyn_shmem);
+453-            asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+454-          }
+455-          if (sid == 0) {
+456-            asc_sync_intra_wait(PIPE_MTE3, 0);
+457-            asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
+--
+470-        }
+471-      }
+472-      if (sid == 0) {
+473-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+474-          project_cube_m_only_kernel_simd_vf_1(block_idx, w_1, buf_dyn_shmem);
+475-          asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+476:          asc_sync_wait(PIPE_MTE2, PIPE_V, static_cast<event_t>(1));
+477-          asc_sync_intra_wait(PIPE_V, 3);
+478-          asc_vf_call<project_cube_m_only_kernel_simt_vf_0>(cce::dim3(32), buf_dyn_shmem);
+479-          asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(2));
+480:          asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+481-          asc_sync_intra_arrive(PIPE_V, 1);
+482-        }
+483-      }
+484-      if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+485-        if (sid == 0) {
+486-          for (int32_t token_row_aiv0 = 0; token_row_aiv0 < min(max(((4096 - (((int32_t)block_idx) * 16)) - (w_1 * 448)), 0), 8); ++token_row_aiv0) {
+--
+492-              asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+493-            }
+494-            asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+495-            project_cube_m_only_kernel_simd_vf_2(buf_dyn_shmem, token_row_aiv0);
+496-            asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
+497-            if ((((4096 - (((int32_t)block_idx) * 16)) - (w_1 * 448)) <= (token_row_aiv0 + 1)) || (token_row_aiv0 == 7)) {
+498:              asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+499-            }
+500-            asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
+501-            asc_copy_ub2gm_align((__gm__ uint8_t*)((&(x_layer[(((w_1 * 1146880) + (((int32_t)block_idx) * 40960)) + (token_row_aiv0 * 2560))]))), (__ubuf__ uint8_t*)((&(((__ubuf__ bfloat16_t*)buf_dyn_shmem)[(int64_t)101888]))), 1, 5120, static_cast<asc_store_l2_cache_mode>(4), 5120, 5120);
+502-            asc_copy_ub2gm_align((__gm__ uint8_t*)((&(x_res[(((w_1 * 4587520) + (((int32_t)block_idx) * 163840)) + (token_row_aiv0 * 10240))]))), (__ubuf__ uint8_t*)((&(((__ubuf__ bfloat16_t*)buf_dyn_shmem)[(int64_t)82432]))), 1, 20480, static_cast<asc_store_l2_cache_mode>(4), 20480, 20480);
+503-            asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+504-          }
+505-        }
+506-      }
+507-      if (sid == 1) {
+508-        if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+509-          project_cube_m_only_kernel_simd_vf_1_1(block_idx, w_1, buf_dyn_shmem);
+510-          asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+511:          asc_sync_wait(PIPE_MTE2, PIPE_V, static_cast<event_t>(1));
+512-          asc_sync_intra_wait(PIPE_V, 3);
+513-          asc_vf_call<project_cube_m_only_kernel_simt_vf_0_1>(cce::dim3(32), buf_dyn_shmem);
+514-          asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(2));
+515:          asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+516-          asc_sync_intra_arrive(PIPE_V, 1);
+517-        }
+518-      }
+519-      if (((w_1 * 7) + (((int32_t)block_idx) >> 2)) < 64) {
+520-        if (sid == 1) {
+521-          for (int32_t token_row_aiv1 = 0; token_row_aiv1 < min(max(((4088 - (((int32_t)block_idx) * 16)) - (w_1 * 448)), 0), 8); ++token_row_aiv1) {
+--
+527-              asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+528-            }
+529-            asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+530-            project_cube_m_only_kernel_simd_vf_2_1(buf_dyn_shmem, token_row_aiv1);
+531-            asc_sync_notify(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
+532-            if ((((4088 - (((int32_t)block_idx) * 16)) - (w_1 * 448)) <= (token_row_aiv1 + 1)) || (token_row_aiv1 == 7)) {
+533:              asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+534-            }
+535-            asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(1));
+536-            asc_copy_ub2gm_align((__gm__ uint8_t*)((&(x_layer[((((w_1 * 1146880) + (((int32_t)block_idx) * 40960)) + (token_row_aiv1 * 2560)) + 20480)]))), (__ubuf__ uint8_t*)((&(((__ubuf__ bfloat16_t*)buf_dyn_shmem)[(int64_t)101888]))), 1, 5120, static_cast<asc_store_l2_cache_mode>(4), 5120, 5120);
+537-            asc_copy_ub2gm_align((__gm__ uint8_t*)((&(x_res[((((w_1 * 4587520) + (((int32_t)block_idx) * 163840)) + (token_row_aiv1 * 10240)) + 81920)]))), (__ubuf__ uint8_t*)((&(((__ubuf__ bfloat16_t*)buf_dyn_shmem)[(int64_t)82432]))), 1, 20480, static_cast<asc_store_l2_cache_mode>(4), 20480, 20480);
+538-            asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+539-          }
+--
+550-    if (sid == 0) {
+551-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
+552-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+553-    }
+554-    if (sid == 1) {
+555-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(1));
+556:      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+557-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+558:      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+559-    }
+560-    if (sid == 0) {
+561:      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
+562-      asc_sync_wait(PIPE_MTE3, PIPE_V, static_cast<event_t>(2));
+563:      asc_sync_wait(PIPE_V, PIPE_MTE2, static_cast<event_t>(1));
+564-    }
+565-  }
+566-}
+567-
