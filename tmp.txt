@@ -1,3 +1,55 @@
-git pull --ff-only &&
-FGW_MHC_TILEOPS_REPO=../TileOPs-mhc-clean \
-  bash run_tileops_spec_vllm.sh 4 tileops-dispatch-b4
+TileOPs public entries from /home/z30086261/TileOPs-mhc-clean/src, fused=[True, True]
+B4 non-default stream and fresh outputs passed
+tileops_public B=4 H=2560 1 pairs/event forward: 54.946 us/pair
+tileops_kernel B=4 H=2560 1 pairs/event forward: 27.551 us/pair
+tileops_public B=4 H=2560 8 pairs/event forward: 42.098 us/pair
+tileops_kernel B=4 H=2560 8 pairs/event forward: 19.167 us/pair
+tileops_public B=4 H=2560 32 pairs/event forward: 39.137 us/pair
+tileops_kernel B=4 H=2560 32 pairs/event forward: 18.130 us/pair
+tileops_kernel B=4 H=2560 32 pairs/event reverse: 18.054 us/pair
+tileops_public B=4 H=2560 32 pairs/event reverse: 39.000 us/pair
+tileops_kernel B=4 H=2560 8 pairs/event reverse: 19.086 us/pair
+tileops_public B=4 H=2560 8 pairs/event reverse: 41.975 us/pair
+tileops_kernel B=4 H=2560 1 pairs/event reverse: 27.561 us/pair
+tileops_public B=4 H=2560 1 pairs/event reverse: 53.873 us/pair
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 17:37:49 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 17:37:49 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 17:37:49 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 17:37:49 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 17:37:49 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm B=4 H=2560 1 pairs/event forward: 30.465 us/pair
+vllm B=4 H=2560 8 pairs/event forward: 25.340 us/pair
+vllm B=4 H=2560 32 pairs/event forward: 23.860 us/pair
+vllm B=4 H=2560 32 pairs/event reverse: 23.953 us/pair
+vllm B=4 H=2560 8 pairs/event reverse: 25.141 us/pair
+vllm B=4 H=2560 1 pairs/event reverse: 30.489 us/pair
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+tilelang,4,2560,1,tileops_public,1,forward,54.946000
+tilelang,4,2560,1,tileops_kernel,1,forward,27.551000
+tilelang,4,2560,1,tileops_public,8,forward,42.097813
+tilelang,4,2560,1,tileops_kernel,8,forward,19.167375
+tilelang,4,2560,1,tileops_public,32,forward,39.137078
+tilelang,4,2560,1,tileops_kernel,32,forward,18.130110
+tilelang,4,2560,1,tileops_kernel,32,reverse,18.054328
+tilelang,4,2560,1,tileops_public,32,reverse,38.999937
+tilelang,4,2560,1,tileops_kernel,8,reverse,19.086187
+tilelang,4,2560,1,tileops_public,8,reverse,41.974626
+tilelang,4,2560,1,tileops_kernel,1,reverse,27.561500
+tilelang,4,2560,1,tileops_public,1,reverse,53.873001
+backend,batch,hidden,sinkhorn_iters,projection,pairs_per_event,order,pair_us
+vllm,4,2560,1,,1,forward,30.465000
+vllm,4,2560,1,,8,forward,25.339812
+vllm,4,2560,1,,32,forward,23.859954
+vllm,4,2560,1,,32,reverse,23.952875
+vllm,4,2560,1,,8,reverse,25.140875
+vllm,4,2560,1,,1,reverse,30.489000
+tileops_public: 39.069 us/pair, vLLM 23.906 us/pair, 0.612x
+tileops_kernel: 18.092 us/pair, vLLM 23.906 us/pair, 1.321x
+TileOPs public-to-kernel gap: 20.976 us/pair at 32 pairs/event
