@@ -1,4 +1,21 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
-  --device npu:0 --batch 4 --tileops-spec --simd-reduce \
-  --launches-per-event 32 --output simd-reduce-b4-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+>   --device npu:0 --batch 4 --tileops-spec --simd-reduce \
+>   --launches-per-event 32 --output simd-reduce-b4-card4.csv
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11/11), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 6 (delta 4), reused 6 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (6/6), 1.31 KiB | 671.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   21645ba..bb27f3e  main       -> origin/main
+Updating 21645ba..bb27f3e
+Fast-forward
+ bench_cube_stages.py | 14 +++++++++++---
+ fgw_mhc/__init__.py  |  5 +++--
+ fgw_mhc/_kernels.py  | 59 ++++++++++++++++++++++++++++++++++++++++-------------------
+ 3 files changed, 54 insertions(+), 24 deletions(-)
+B=4 H=2560 cube_full: pre=10.247 us, post=8.403 us, pair=26.094 us
+2026-11-28 09:03:21  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_fused` with `out_idx=None`
+2026-11-28 09:03:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_fused`
+B=4 H=2560 cube_full_simd_reduce: pre=7.302 us, post=8.509 us, pair=26.460 us
