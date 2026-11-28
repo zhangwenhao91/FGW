@@ -1,10 +1,53 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
-    --guarded-window-cache --double-window-stage --batch 4096 --device npu:0 \
-    --verify-windowed-cache double-window-stage-card4.cpp
-  python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
-    --guarded-window-cache --double-window-stage --batch 4096 --device npu:0 \
-    --output double-window-stage-pair-card4.csv
-)
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only && (
+>   set -e
+>   export ASCEND_RT_VISIBLE_DEVICES=4
+>   python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
+>     --guarded-window-cache --double-window-stage --batch 4096 --device npu:0 \
+>     --verify-windowed-cache double-window-stage-card4.cpp
+>   python bench_cube_b2.py --m-only-k-window --cache-pre-residual \
+>     --guarded-window-cache --double-window-stage --batch 4096 --device npu:0 \
+>     --output double-window-stage-pair-card4.csv
+> )
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11/11), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 6 (delta 4), reused 6 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (6/6), 1.01 KiB | 258.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   0f8a079..1bb838d  main       -> origin/main
+Updating 0f8a079..1bb838d
+Fast-forward
+ bench_cube_b2.py    |  7 +++++++
+ fgw_mhc/__init__.py | 17 +++++++++--------
+ fgw_mhc/_kernels.py |  7 ++++++-
+ 3 files changed, 22 insertions(+), 9 deletions(-)
+2026-11-28 15:42:36  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+[15:42:39] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage input_stage_aiv0 uses a non-affine loop nest; consider counter mode.
+[15:42:39] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/prepare_multi_buffer.cc:535: Warning: Iteration buffer versioning for storage input_stage_aiv1 uses a non-affine loop nest; consider counter mode.
+2026-11-28 15:42:43  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+Traceback (most recent call last):
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 319, in <module>
+    main()
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 157, in main
+    verify_windowed_cache(torch, inputs, layer, args.verify_windowed_cache, route)
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 33, in verify_windowed_cache
+    mhc_pre(*inputs, projection=route, _launch=dump_launch)
+  File "/home/z30086261/FGW-mHC/fgw_mhc/__init__.py", line 98, in mhc_pre
+    _launch("pre", kernel, x, phi, b, post, x_res.view(batch, 4, hidden), layer, post)
+  File "/home/z30086261/FGW-mHC/bench_cube_b2.py", line 31, in dump_launch
+    kernel(*tensors)
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/kernel.py", line 228, in __call__
+    return self.torch_function(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/jit/adapter/tvm_ffi.py", line 348, in func
+    executable(*tensor_list)
+  File "/root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/3rdparty/tvm/python/tvm/runtime/executable.py", line 46, in __call__
+    return self.jit().main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "/home/z30086261/Q4/third_party/tilelang-950/src/ascend/runtime/ascend_module.cc", line 697, in void tvm::ascend::AscendWrappedFunc<LaunchPolicy>::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, size_t) const [with LaunchPolicy = tvm::ascend::DirectLaunchPolicy; size_t = long unsigned int]
+RuntimeError: aclrtLaunchKernelWithHostArgs failed for project_cube_m_only_kernel with ACL error 107000, grid=28, dyn_ubuf_bytes=228704: [PID: 74212] 2026-11-28-15:42:43.964.186 Invalid_Argument(EE1017): Checking whether the size of the dynamic shared memory exceeds the limit failed. Parameter dynamicShareMemSize is invalid. Reason: the sum of dynamic shared memory and kernel shared memory exceeds the maximum limit.
+TraceBack (most recent call last):
+        The argument is invalid. Reason: rtsLaunchKernelWithHostArgs execution failed.
+
+[ERROR] 2026-11-28-15:42:46 (PID:74212, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
