@@ -1,12 +1,16 @@
-git pull --ff-only && (
-  set -e
-  export ASCEND_RT_VISIBLE_DEVICES=4
-  for tokens in 1024 4096; do
-    python bench_cube_b2.py --m-only-k-window --l0-ping-pong \
-      --pre-only --batch "$tokens" --device npu:0 \
-      --output "l0-ping-pong-pre-n${tokens}-card4.csv"
-    python bench_cube_b2.py --m-only-k-window --l0-ping-pong \
-      --batch "$tokens" --device npu:0 \
-      --output "l0-ping-pong-pair-n${tokens}-card4.csv"
-  done
-)
+2026-11-28 14:35:53  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 14:36:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+2026-11-28 14:36:05  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 14:36:12  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only_k512_batched: median 73.819 us, range 73.719–74.778 us; position medians [74.296, 73.771] us
+cube_m_only_k512_batched_l0: median 73.318 us, range 73.211–74.075 us; position medians [73.254, 73.707] us
+cube_m_only_k512_batched: median 106.656 us, range 106.627–106.678 us; position medians [106.675, 106.634] us
+cube_m_only_k512_batched_l0: median 106.528 us, range 106.466–106.545 us; position medians [106.505, 106.528] us
+2026-11-28 14:36:26  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 14:36:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+2026-11-28 14:36:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 14:36:41  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+cube_m_only_k512_batched: median 237.575 us, range 237.532–237.619 us; position medians [237.589, 237.562] us
+cube_m_only_k512_batched_l0: median 235.903 us, range 235.871–235.998 us; position medians [235.943, 235.895] us
+cube_m_only_k512_batched: median 464.417 us, range 464.382–464.644 us; position medians [464.513, 464.417] us
+cube_m_only_k512_batched_l0: median 462.937 us, range 462.735–463.821 us; position medians [463.278, 462.937] us
