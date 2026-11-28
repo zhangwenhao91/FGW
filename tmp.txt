@@ -1,40 +1,6 @@
-cube_m_only_k512_batched N=4096 H=2560 pair max abs error: 0.03125
-tilelang B=4096 H=2560 before trace: 418.162 us
-[2026-11-28 14:48:32] [WARNING] [4176633] profiler.py: Profiler won't be using warmup, this can skew profiler results
-[2026-11-28 14:48:32] [WARNING] [4176633] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
-[2026-11-28 14:48:32] [WARNING] [4176633] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
-[2026-11-28 14:48:33] [INFO] [4176998] profiler.py: Start parsing profiling data in sync mode at: /home/z30086261/FGW-mHC/tileops-spec-large-k512-post-double-profile-card4-b4096-20261128-144816-4176630/tilelang/b4096-h2560/ubuntu162_4176633_20261128144832568_ascend_pt
-[2026-11-28 14:48:34] [ERROR] [4176998] profiler.py: Failed to get acl to npu flow events. For details, please check the logs at: /home/z30086261/FGW-mHC/tileops-spec-large-k512-post-double-profile-card4-b4096-20261128-144816-4176630/tilelang/b4096-h2560/ubuntu162_4176633_20261128144832568_ascend_pt/logs
-[2026-11-28 14:48:35] [INFO] [4177015] profiler.py: CANN profiling data parsed in a total time of 0:00:02.014141
-[2026-11-28 14:48:36] [INFO] [4176998] profiler.py: All profiling data parsed in a total time of 0:00:02.867771
-tilelang B=4096 H=2560 after trace: 418.203 us
-tilelang device medians across 12 profiled pairs: pre=307.760 us, post=107.607 us, pre_to_post_gap=0.000 us, pair_span=415.500 us, post_to_next_pre_gap=0.000 us
-Trace for tilelang B=4096 H=2560: tileops-spec-large-k512-post-double-profile-card4-b4096-20261128-144816-4176630/tilelang/b4096-h2560
-grep: write error: Broken pipe
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
-/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
-  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
-INFO 11-28 14:48:41 [__init__.py:52] Available plugins for group vllm.platform_plugins:
-INFO 11-28 14:48:41 [__init__.py:54] - ascend -> vllm_ascend:register
-INFO 11-28 14:48:41 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
-INFO 11-28 14:48:41 [__init__.py:272] Platform plugin ascend is activated
-INFO 11-28 14:48:41 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
-vllm B=4096 H=2560 before trace: 263.642 us
-[2026-11-28 14:48:56] [WARNING] [1] profiler.py: Profiler won't be using warmup, this can skew profiler results
-[2026-11-28 14:48:56] [WARNING] [1] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
-[2026-11-28 14:48:56] [WARNING] [1] profiler.py: Please use level1 or level2 if you want to collect aic metrics, reset aic metrics to None!
-[2026-11-28 14:48:57] [INFO] [118] profiler.py: Start parsing profiling data in sync mode at: /fgw-mhc/tileops-spec-large-k512-post-double-profile-card4-b4096-20261128-144816-4176630/vllm/b4096-h2560/99e644991b92_1_20261128144856811_ascend_pt
-[2026-11-28 14:48:59] [INFO] [127] profiler.py: CANN profiling data parsed in a total time of 0:00:02.016900
-[2026-11-28 14:49:00] [INFO] [118] profiler.py: All profiling data parsed in a total time of 0:00:03.007472
-vllm B=4096 H=2560 after trace: 263.712 us
-vllm device medians across 12 profiled pairs: pre=158.344 us, post=101.776 us, pre_to_post_gap=0.125 us, pair_span=260.000 us, post_to_next_pre_gap=0.000 us
-Trace for vllm B=4096 H=2560: tileops-spec-large-k512-post-double-profile-card4-b4096-20261128-144816-4176630/vllm/b4096-h2560
-backend,batch,hidden,sinkhorn_iters,warmup,repeat,phase,pair_us,pairs_per_event
-tilelang,4096,2560,1,30,100,before,418.161824,8
-tilelang,4096,2560,1,30,100,after,418.202564,8
-backend,batch,hidden,sinkhorn_iters,warmup,repeat,phase,pair_us,pairs_per_event
-vllm,4096,2560,1,30,100,before,263.642058,8
-vllm,4096,2560,1,30,100,after,263.712317,8
+git pull --ff-only &&
+export ASCEND_RT_VISIBLE_DEVICES=4 &&
+out="pre-context-card4-$(date +%Y%m%d-%H%M%S)" &&
+python bench_cube_stages.py \
+  --device npu:0 --launches-per-event 8 \
+  --profile-pre-context "$out" --output "$out.csv"
