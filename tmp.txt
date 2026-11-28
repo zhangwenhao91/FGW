@@ -3,21 +3,123 @@ remote: Enumerating objects: 5, done.
 remote: Counting objects: 100% (5/5), done.
 remote: Compressing objects: 100% (1/1), done.
 remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
-Unpacking objects: 100% (3/3), 744 bytes | 744.00 KiB/s, done.
+Unpacking objects: 100% (3/3), 378 bytes | 378.00 KiB/s, done.
 From https://github.com/zhangwenhao91/FGW-mHC
-   df5b86d..1d4247f  main       -> origin/main
-Updating df5b86d..1d4247f
+   1d4247f..66fcf30  main       -> origin/main
+Updating 1d4247f..66fcf30
 Fast-forward
- bench_pr25_vllm.py | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
-Traceback (most recent call last):
-  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 193, in <module>
-    main()
-  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 177, in main
-    pre, post = load_ops(args, torch)
-                ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/z30086261/FGW-mHC/bench_pr25_vllm.py", line 57, in load_ops
-    raise RuntimeError(
-RuntimeError: /root/miniconda3/envs/zwh/lib/python3.12/site-packages/tilelang/ascend/language/annotations.py lacks write_counter; PR #25 requires it for N=1/H=4096, N=1/H=5120, N=1/H=7168. Run with --tokens 1 128 1024 on this build, or use a TileLang build from the PR for the full suite.
-[ERROR] 2026-11-28-15:57:12 (PID:85913, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
+ bench_pr25_vllm.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+pr25 pre N=1 H=4096: 13.403 us
+pr25 post N=1 H=4096: 11.536 us
+pr25 pair N=1 H=4096: 24.405 us
+pr25 pre N=128 H=4096: 13.421 us
+pr25 post N=128 H=4096: 11.623 us
+pr25 pair N=128 H=4096: 24.356 us
+pr25 pre N=1024 H=4096: 27.863 us
+pr25 post N=1024 H=4096: 19.664 us
+pr25 pair N=1024 H=4096: 49.975 us
+2026-11-28 15:59:23  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+[15:59:55] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:2046: Warning: Ascend auto-schedule reached an intra-core flag-id high-water mark of 9 for 4:V_MTE3 after safe reuse, exceeding the dav-3510 limit of 8; the later RewriteFlagToBuf pass will compact sparse out-of-range ids or spill excess flag blocks to get_buf/rls_buf when capacity is exceeded.
+2026-11-28 15:59:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+2026-11-28 15:59:58  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `_mhc_post_kernel` with `out_idx=None`
+2026-11-28 16:00:00  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `_mhc_post_kernel`
+pr25 pre N=1 H=5120: 13.576 us
+pr25 post N=1 H=5120: 11.780 us
+pr25 pair N=1 H=5120: 24.699 us
+2026-11-28 16:00:01  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+[16:00:31] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:2046: Warning: Ascend auto-schedule reached an intra-core flag-id high-water mark of 9 for 4:V_MTE3 after safe reuse, exceeding the dav-3510 limit of 8; the later RewriteFlagToBuf pass will compact sparse out-of-range ids or spill excess flag blocks to get_buf/rls_buf when capacity is exceeded.
+2026-11-28 16:00:34  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+pr25 pre N=128 H=5120: 13.772 us
+pr25 post N=128 H=5120: 11.906 us
+pr25 pair N=128 H=5120: 24.889 us
+2026-11-28 16:00:35  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+2026-11-28 16:01:06  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+pr25 pre N=1024 H=5120: 31.458 us
+pr25 post N=1024 H=5120: 26.079 us
+pr25 pair N=1024 H=5120: 63.375 us
+2026-11-28 16:01:07  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+2026-11-28 16:01:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+2026-11-28 16:01:25  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `_mhc_post_kernel` with `out_idx=None`
+2026-11-28 16:01:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `_mhc_post_kernel`
+pr25 pre N=1 H=7168: 16.887 us
+pr25 post N=1 H=7168: 11.751 us
+pr25 pair N=1 H=7168: 24.468 us
+2026-11-28 16:01:28  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+2026-11-28 16:01:45  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+pr25 pre N=128 H=7168: 13.691 us
+pr25 post N=128 H=7168: 11.800 us
+pr25 pair N=128 H=7168: 24.802 us
+2026-11-28 16:01:46  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `mhc_pre_mk` with `out_idx=None`
+2026-11-28 16:02:10  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `mhc_pre_mk`
+pr25 pre N=1024 H=7168: 39.008 us
+pr25 post N=1024 H=7168: 63.769 us
+pr25 pair N=1024 H=7168: 104.938 us
+grep: write error: Broken pipe
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/usr/local/python3.12.16/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+INFO 11-28 16:02:29 [__init__.py:52] Available plugins for group vllm.platform_plugins:
+INFO 11-28 16:02:29 [__init__.py:54] - ascend -> vllm_ascend:register
+INFO 11-28 16:02:29 [__init__.py:57] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 11-28 16:02:29 [__init__.py:272] Platform plugin ascend is activated
+INFO 11-28 16:02:29 [platform.py:74] Breakable CUDAGraph on Ascend is opt-in; using VLLM_USE_BREAKABLE_CUDAGRAPH=0.
+vllm pre N=1 H=4096: 26.696 us
+vllm post N=1 H=4096: 17.705 us
+vllm pair N=1 H=4096: 42.515 us
+vllm pre N=128 H=4096: 27.261 us
+vllm post N=128 H=4096: 17.719 us
+vllm pair N=128 H=4096: 43.526 us
+vllm pre N=1024 H=4096: 51.620 us
+vllm post N=1024 H=4096: 30.734 us
+vllm pair N=1024 H=4096: 80.666 us
+vllm pre N=1 H=5120: 26.806 us
+vllm post N=1 H=5120: 17.916 us
+vllm pair N=1 H=5120: 42.870 us
+vllm pre N=128 H=5120: 27.301 us
+vllm post N=128 H=5120: 18.122 us
+vllm pair N=128 H=5120: 43.231 us
+vllm pre N=1024 H=5120: 59.187 us
+vllm post N=1024 H=5120: 44.034 us
+vllm pair N=1024 H=5120: 103.655 us
+vllm pre N=1 H=7168: 26.943 us
+vllm post N=1 H=7168: 17.944 us
+vllm pair N=1 H=7168: 43.119 us
+vllm pre N=128 H=7168: 27.678 us
+vllm post N=128 H=7168: 17.902 us
+vllm pair N=128 H=7168: 43.691 us
+vllm pre N=1024 H=7168: 74.636 us
+vllm post N=1024 H=7168: 66.847 us
+vllm pair N=1024 H=7168: 141.608 us
+stage,tokens,hidden,warmup,repeat,calls_per_event,pr25_us,vllm_ascendc_us,pr25_speedup
+pre,1,4096,30,100,8,13.403,26.696,1.992
+post,1,4096,30,100,8,11.536,17.705,1.535
+pair,1,4096,30,100,8,24.405,42.515,1.742
+pre,128,4096,30,100,8,13.421,27.261,2.031
+post,128,4096,30,100,8,11.623,17.719,1.524
+pair,128,4096,30,100,8,24.356,43.526,1.787
+pre,1024,4096,30,100,8,27.863,51.620,1.853
+post,1024,4096,30,100,8,19.664,30.734,1.563
+pair,1024,4096,30,100,8,49.975,80.666,1.614
+pre,1,5120,30,100,8,13.576,26.806,1.975
+post,1,5120,30,100,8,11.780,17.916,1.521
+pair,1,5120,30,100,8,24.699,42.870,1.736
+pre,128,5120,30,100,8,13.772,27.301,1.982
+post,128,5120,30,100,8,11.906,18.122,1.522
+pair,128,5120,30,100,8,24.889,43.231,1.737
+pre,1024,5120,30,100,8,31.458,59.187,1.881
+post,1024,5120,30,100,8,26.079,44.034,1.688
+pair,1024,5120,30,100,8,63.375,103.655,1.636
+pre,1,7168,30,100,8,16.887,26.943,1.596
+post,1,7168,30,100,8,11.751,17.944,1.527
+pair,1,7168,30,100,8,24.468,43.119,1.762
+pre,128,7168,30,100,8,13.691,27.678,2.022
+post,128,7168,30,100,8,11.800,17.902,1.517
+pair,128,7168,30,100,8,24.802,43.691,1.762
+pre,1024,7168,30,100,8,39.008,74.636,1.913
+post,1024,7168,30,100,8,63.769,66.847,1.048
+pair,1024,7168,30,100,8,104.938,141.608,1.349
 (zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
