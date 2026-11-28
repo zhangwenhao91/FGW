@@ -1,4 +1,25 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
-  --device npu:0 --ablate-m-only --launches-per-event 8 \
-  --output m-only-pre-ablation-card4.csv
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# git pull --ff-only &&
+> ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+>   --device npu:0 --ablate-m-only --launches-per-event 8 \
+>   --output m-only-pre-ablation-card4.csv
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 5 (delta 4), reused 5 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 1.53 KiB | 782.00 KiB/s, done.
+From https://github.com/zhangwenhao91/FGW-mHC
+   14412dd..8dbfc32  main       -> origin/main
+Updating 14412dd..8dbfc32
+Fast-forward
+ bench_cube_stages.py | 57 +++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ fgw_mhc/_kernels.py  | 19 +++++++++++--------
+ 2 files changed, 66 insertions(+), 10 deletions(-)
+2026-11-28 09:33:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 09:33:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+N=1024 H=2560 full_pre: median 157.345 us, range 157.264–157.376 us
+N=1024 H=2560 coefficients_only: median 140.430 us, range 140.366–140.485 us
+2026-11-28 09:33:11  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+2026-11-28 09:33:16  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+N=4096 H=2560 full_pre: median 513.262 us, range 512.576–513.347 us
+N=4096 H=2560 coefficients_only: median 456.000 us, range 455.522–456.245 us
+(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
