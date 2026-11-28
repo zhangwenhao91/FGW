@@ -1,4 +1,5 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --m-only-k-window --cache-pre-residual --batch 4096 --device npu:0 \
-  --verify-windowed-cache windowed-cache-n4096-card4.cpp
+Generated device source: windowed-cache-n4096-card4.cpp
+Alternating-input burst 1: 8 pairs passed
+Alternating-input burst 2: 8 pairs passed
+Alternating-input burst 3: 8 pairs passed
+Alternating-input burst 4: 8 pairs passed
