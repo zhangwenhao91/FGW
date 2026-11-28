@@ -1,30 +1,6 @@
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC# cat projection-a-ping-pong-card4/a-ping-pong.diff 
---- projection_k512_stages2.cpp
-+++ projection_k512_stages2_a_ping_pong.cpp
-@@ -174,7 +174,7 @@
-               asc_sync_intra_wait(PIPE_MTE1, 2);
-               asc_sync_intra_wait(PIPE_MTE1, 18);
-             }
--            asc_copy_l12l0a(((__ca__ float*)a_l0), ((__cbuf__ float*)buf_dyn_l1 + 32768), 0, (mad * 32), 1, 32, 1, 1);
-+            asc_copy_l12l0a(((__ca__ float*)a_l0), ((__cbuf__ float*)buf_dyn_l1 + (((part & 1) * 8192) + 32768)), 0, (mad * 32), 1, 32, 1, 1);
-             asc_sync_notify(PIPE_MTE1, PIPE_M, static_cast<event_t>(0));
-             if (mad == 1) {
-               asc_sync_intra_arrive(PIPE_MTE1, 0);
-@@ -257,14 +257,14 @@
-             asc_sync_notify(PIPE_V, PIPE_MTE2, static_cast<event_t>(0));
-             asc_sync_intra_wait(PIPE_MTE3, 0);
-             asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
--            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 32768)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
-+            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + (((part_1 & 1) * 8192) + 32768))), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
-             asc_sync_intra_arrive(PIPE_MTE3, 2);
-             asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
-           }
-           if (sid == 1) {
-             asc_sync_intra_wait(PIPE_MTE3, 0);
-             asc_sync_wait(PIPE_V, PIPE_MTE3, static_cast<event_t>(0));
--            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + 32832)), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
-+            asc_copy_ub2l1((__cbuf__ void*)(((__cbuf__ float*)buf_dyn_l1 + (((part_1 & 1) * 8192) + 32832))), (__ubuf__ void*)((&(((__ubuf__ float*)buf_dyn_shmem)[(int64_t)256]))), 64, 8, 1, 8);
-             asc_sync_intra_arrive(PIPE_MTE3, 2);
-             asc_sync_notify(PIPE_MTE3, PIPE_V, static_cast<event_t>(0));
-           }
-(zwh) root@ubuntu162:/home/z30086261/FGW-mHC#
+git pull --ff-only &&
+ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_stages.py \
+  --device npu:0 --ablate-m-only --projection-buffer-sweep \
+  --projection-a-ping-pong --launches-per-event 8 \
+  --output m-only-projection-a-static-card4.csv \
+  --dump-projection-code projection-a-static-card4
