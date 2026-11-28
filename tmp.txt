@@ -1,9 +1,9 @@
-git pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --m-only-k-window --cache-pre-residual --guarded-window-cache \
-  --batch 4096 --device npu:0 \
-  --verify-windowed-cache guarded-window-cache-dependency-card4.cppgit pull --ff-only &&
-ASCEND_RT_VISIBLE_DEVICES=4 python bench_cube_b2.py \
-  --m-only-k-window --cache-pre-residual --guarded-window-cache \
-  --batch 4096 --device npu:0 \
-  --verify-windowed-cache guarded-window-cache-dependency-card4.cpp
+2026-11-28 15:34:09  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:137): TileLang begins to compile kernel `project_cube_m_only` with `out_idx=None`
+[15:34:13] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:1618: Warning: flag MTE2->V: reverse ordering too loose to bound flag reuse.
+[15:34:13] /home/z30086261/Q4/third_party/tilelang-950/src/ascend/transform/insert_sync.cc:1618: Warning: flag MTE2->V: reverse ordering too loose to bound flag reuse.
+2026-11-28 15:34:14  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:145): TileLang completes to compile kernel `project_cube_m_only`
+Generated device source: guarded-window-cache-dependency-card4.cpp
+Alternating-input burst 1: 8 pairs passed
+Alternating-input burst 2: 8 pairs passed
+Alternating-input burst 3: 8 pairs passed
+Alternating-input burst 4: 8 pairs passed
